@@ -238,6 +238,23 @@ function initGraph() {
         BRAIN_DATA.groupColors
     );
 
+    // Update HUD Node Count
+    const nodeCountEl = document.getElementById('hudNodeCount');
+    if (nodeCountEl) {
+        nodeCountEl.textContent = BRAIN_DATA.graphNodes.length;
+    }
+
+    // Camera update callback for HUD
+    graph.onCameraChange = (state) => {
+        const zoomEl = document.getElementById('hudZoomPill');
+        const rotEl = document.getElementById('hudRotationPill');
+        const orbitBtn = document.getElementById('btnAutoOrbit');
+
+        if (zoomEl) zoomEl.textContent = `🔍 ${state.zoomPercent}%`;
+        if (rotEl) rotEl.textContent = `🔄 ${state.rotationDeg}°`;
+        if (orbitBtn) orbitBtn.classList.toggle('active', state.autoOrbit);
+    };
+
     graph.onNodeClick = (node) => {
         // Map node to a navigable path
         const mapping = {
@@ -305,6 +322,28 @@ function setupEventListeners() {
         }
     });
 
+    // ── Graph HUD Buttons ─────────────────────────────
+    const btnZoomIn = document.getElementById('btnZoomIn');
+    const btnZoomOut = document.getElementById('btnZoomOut');
+    const btnRotateLeft = document.getElementById('btnRotateLeft');
+    const btnRotateRight = document.getElementById('btnRotateRight');
+    const btnAutoOrbit = document.getElementById('btnAutoOrbit');
+    const btnShake = document.getElementById('btnShake');
+    const btnResetView = document.getElementById('btnResetView');
+
+    if (btnZoomIn) btnZoomIn.addEventListener('click', () => graph && graph.zoomIn());
+    if (btnZoomOut) btnZoomOut.addEventListener('click', () => graph && graph.zoomOut());
+    if (btnRotateLeft) btnRotateLeft.addEventListener('click', () => graph && graph.rotateBy(-Math.PI / 8));
+    if (btnRotateRight) btnRotateRight.addEventListener('click', () => graph && graph.rotateBy(Math.PI / 8));
+    if (btnAutoOrbit) btnAutoOrbit.addEventListener('click', () => {
+        if (graph) {
+            const isActive = graph.toggleAutoOrbit();
+            btnAutoOrbit.classList.toggle('active', isActive);
+        }
+    });
+    if (btnShake) btnShake.addEventListener('click', () => graph && graph.reheat(1.0));
+    if (btnResetView) btnResetView.addEventListener('click', () => graph && graph.resetView());
+
     // Search
     const searchInput = document.getElementById('searchInput');
     searchInput.addEventListener('input', (e) => {
@@ -318,15 +357,46 @@ function setupEventListeners() {
         if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
             e.preventDefault();
             searchInput.focus();
+            return;
         }
 
-        // Escape to close search / go back
-        if (e.key === 'Escape') {
-            if (document.activeElement === searchInput) {
+        // If typing inside search input, ignore graph shortcuts
+        if (document.activeElement === searchInput) {
+            if (e.key === 'Escape') {
                 searchInput.value = '';
                 searchInput.blur();
                 filterSidebar('');
-            } else if (currentView !== 'dashboard') {
+            }
+            return;
+        }
+
+        // Graph navigation shortcuts when graph view is active
+        if (currentView === 'graph' && graph) {
+            if (e.key === '+' || e.key === '=') {
+                e.preventDefault();
+                graph.zoomIn();
+            } else if (e.key === '-' || e.key === '_') {
+                e.preventDefault();
+                graph.zoomOut();
+            } else if (e.key === '0') {
+                e.preventDefault();
+                graph.resetView();
+            } else if (e.key.toLowerCase() === 'r') {
+                e.preventDefault();
+                graph.rotateBy(e.shiftKey ? -Math.PI / 8 : Math.PI / 8);
+            } else if (e.key.toLowerCase() === 'o') {
+                e.preventDefault();
+                const isActive = graph.toggleAutoOrbit();
+                if (btnAutoOrbit) btnAutoOrbit.classList.toggle('active', isActive);
+            } else if (e.code === 'Space') {
+                e.preventDefault();
+                graph.reheat(1.0);
+            }
+        }
+
+        // Escape to go back to dashboard
+        if (e.key === 'Escape') {
+            if (currentView !== 'dashboard') {
                 showDashboard();
             }
         }
