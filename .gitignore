@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# IDE
+.vs/
+.vscode/
+*.suo
+*.user
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Build
+bin/
+obj/
+dist/
