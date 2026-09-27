@@ -1,5 +1,8 @@
 # Guia Prático do AI Second Brain
 
+> 📖 **Para o manual detalhado com passo a passo para novos projetos e projetos legados:**  
+> Consulte o documento oficial completo em: **[COMO_UTILIZAR_O_PROJETO.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/COMO_UTILIZAR_O_PROJETO.md)**
+
 ## O que é o Segundo Cérebro?
 
 O conceito de "segundo cérebro" vem da ideia de **externalizar o conhecimento

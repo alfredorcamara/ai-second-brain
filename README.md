@@ -43,6 +43,9 @@ AI_SECOND_BRAIN/
 
 ## Como usar
 
+> 📘 **Manual Prático Completo:**  
+> Veja o passo a passo detalhado para criar novos projetos ou plugar projetos existentes em: **[docs/COMO_UTILIZAR_O_PROJETO.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/COMO_UTILIZAR_O_PROJETO.md)**.
+
 ### 1. Abra este workspace no Antigravity
 O `GEMINI.md` será carregado automaticamente como regra raiz.
 

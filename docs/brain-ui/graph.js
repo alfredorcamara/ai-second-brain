@@ -61,8 +61,15 @@ class BrainGraph {
         this.time = 0;
         this.animFrame = null;
 
+        // 3D Dynamic Spring Physics Parameters
+        this.kSpring = 0.085;     // Spring stiffness between connected nodes
+        this.kHome = 0.026;       // Elastic tether returning nodes to planetary formation
+        this.damping = 0.84;      // Damping / viscosity
+        this.physicsEnergy = 0.0; // Current kinetic energy
+
         // Callbacks
         this.onNodeClick = null;
+        this.onNodeDblClick = null;
         this.onCameraChange = null;
 
         this._initThree();
@@ -325,6 +332,13 @@ class BrainGraph {
         // 2. Perform 3D Relaxation Step so nodes don't collide
         this._relax3DNodes();
 
+        // 2.1 Save equilibrium celestial home positions & masses for spring dynamics
+        for (const node of this.nodes) {
+            node.homePos = node.position.clone();
+            node.velocity = new THREE.Vector3(0, 0, 0);
+            node.mass = node.id === 'brain' ? 999999 : (node.size >= 14 ? 2.5 : 1.2);
+        }
+
         // 3. Build 3D Meshes for Nodes
         for (const node of this.nodes) {
             this._create3DNode(node);
@@ -342,7 +356,8 @@ class BrainGraph {
                 fromNode,
                 toNode,
                 curve: null,
-                lineMesh: null
+                lineMesh: null,
+                restLength: fromNode.position.distanceTo(toNode.position)
             };
 
             this._create3DEdge(edgeObj);
@@ -526,6 +541,117 @@ class BrainGraph {
         edge.lineMesh = line;
     }
 
+    _updateEdgeCurve(edge) {
+        if (!edge || !edge.fromNode || !edge.toNode || !edge.lineMesh) return;
+        const p1 = edge.fromNode.position;
+        const p2 = edge.toNode.position;
+
+        const mid = new THREE.Vector3().addVectors(p1, p2).multiplyScalar(0.5);
+        const elevation = 20 + mid.length() * 0.12;
+        mid.add(mid.clone().normalize().multiplyScalar(elevation));
+
+        edge.curve = new THREE.QuadraticBezierCurve3(p1, mid, p2);
+        const points = edge.curve.getPoints(24);
+        edge.lineMesh.geometry.setFromPoints(points);
+    }
+
+    _updateAllEdges() {
+        for (let i = 0; i < this.edges.length; i++) {
+            this._updateEdgeCurve(this.edges[i]);
+        }
+    }
+
+    // ── 3D Dynamic Spring Physics Engine ──────────────
+    // Recreates the fluid elastic drag feel where moving a node pulls connected nodes!
+    _step3DPhysics() {
+        if (!this.isDraggingNode && this.physicsEnergy < 0.001) return;
+
+        // 1. Hooke's Law Spring Tension along connected edges
+        // Pulls connected neighbor nodes along when a node is dragged!
+        for (let i = 0; i < this.edges.length; i++) {
+            const edge = this.edges[i];
+            const na = edge.fromNode;
+            const nb = edge.toNode;
+            if (!na || !nb) continue;
+
+            const diff = new THREE.Vector3().subVectors(nb.position, na.position);
+            const dist = diff.length() || 0.001;
+            const rest = edge.restLength || 100;
+            const displacement = dist - rest;
+            const forceMag = displacement * this.kSpring;
+
+            const forceVec = diff.clone().normalize().multiplyScalar(forceMag);
+
+            // Pull na towards nb if not pinned by cursor
+            if (na !== this.dragNode) {
+                na.velocity.add(forceVec.clone().multiplyScalar(1 / (na.mass || 1)));
+            }
+            // Pull nb towards na if not pinned by cursor
+            if (nb !== this.dragNode) {
+                nb.velocity.sub(forceVec.clone().multiplyScalar(1 / (nb.mass || 1)));
+            }
+        }
+
+        // 2. Pairwise soft repulsion to keep pulled nodes from overlapping
+        const nodeCount = this.nodes.length;
+        for (let i = 0; i < nodeCount; i++) {
+            const na = this.nodes[i];
+            if (na === this.dragNode) continue;
+
+            for (let j = i + 1; j < nodeCount; j++) {
+                const nb = this.nodes[j];
+                const repDiff = new THREE.Vector3().subVectors(na.position, nb.position);
+                const repDist = repDiff.length() || 0.001;
+                const minDist = (na.size + nb.size) * 2.6;
+
+                if (repDist < minDist) {
+                    const repMag = ((minDist - repDist) / minDist) * 0.9;
+                    const repVec = repDiff.normalize().multiplyScalar(repMag);
+                    na.velocity.add(repVec);
+                    if (nb !== this.dragNode) {
+                        nb.velocity.sub(repVec);
+                    }
+                }
+            }
+        }
+
+        // 3. Elastic tether pulling nodes back toward their celestial home positions
+        for (let i = 0; i < nodeCount; i++) {
+            const node = this.nodes[i];
+            if (node === this.dragNode) continue;
+
+            const homeDiff = new THREE.Vector3().subVectors(node.homePos, node.position);
+            node.velocity.add(homeDiff.multiplyScalar(this.kHome));
+
+            // Damping (viscous friction)
+            node.velocity.multiplyScalar(this.damping);
+
+            // Velocity clamp
+            const speed = node.velocity.length();
+            if (speed > 25) {
+                node.velocity.setLength(25);
+            }
+
+            // Apply movement
+            node.position.add(node.velocity);
+            node.mesh.position.copy(node.position);
+        }
+
+        // 4. Dynamically re-bend all synaptic edge curves
+        this._updateAllEdges();
+
+        // 5. Physics kinetic energy decay when not actively dragging
+        if (!this.isDraggingNode) {
+            this.physicsEnergy *= 0.94;
+            if (this.physicsEnergy < 0.002) {
+                this.physicsEnergy = 0;
+                for (let i = 0; i < nodeCount; i++) {
+                    this.nodes[i].velocity.set(0, 0, 0);
+                }
+            }
+        }
+    }
+
     _init3DParticles() {
         this.particles = [];
         const particleGeo = new THREE.SphereGeometry(1.4, 8, 8);
@@ -577,7 +703,9 @@ class BrainGraph {
                 if (this.raycaster.ray.intersectPlane(this.dragPlane, this.dragIntersection)) {
                     this.dragNode.position.copy(this.dragIntersection);
                     this.dragNode.mesh.position.copy(this.dragIntersection);
-                    this._updateConnectedEdges(this.dragNode);
+                    this.dragNode.velocity.set(0, 0, 0);
+                    this.physicsEnergy = 1.0;
+                    this._step3DPhysics();
                 }
                 return;
             }
@@ -620,6 +748,7 @@ class BrainGraph {
                     const topMesh = intersects[0].object;
                     this.dragNode = topMesh.userData.node;
                     this.isDraggingNode = true;
+                    this.physicsEnergy = 1.0;
 
                     // Plane oriented facing camera at the node position
                     const planeNormal = new THREE.Vector3();
@@ -640,33 +769,49 @@ class BrainGraph {
                 this.dragNode = null;
                 this.controls.enabled = true;
                 this.canvas.style.cursor = this.hoveredNode ? 'pointer' : 'default';
+                this.physicsEnergy = 1.0; // Continue spring physics so nodes bounce back gracefully
             }
         });
 
-        // Click on node (only if user didn't orbit/drag)
+        // Click on node: ONLY select & highlight, do NOT navigate away!
         this.canvas.addEventListener('click', (e) => {
             if (this.hasDraggedPointer) return;
+
+            const rect = this.canvas.getBoundingClientRect();
+            const px = e.clientX - rect.left;
+            const py = e.clientY - rect.top;
 
             this.raycaster.setFromCamera(this.mouse, this.camera);
             const intersects = this.raycaster.intersectObjects(this.interactiveMeshes);
 
             if (intersects.length > 0) {
                 const node = intersects[0].object.userData.node;
-                if (node && this.onNodeClick) {
-                    this.selectedNode = node;
+                this.selectedNode = node;
+                this._setHoveredNode(node, px, py);
+                if (this.onNodeClick) {
                     this.onNodeClick(node);
+                }
+            } else {
+                this.selectedNode = null;
+                this._clearHover();
+                if (this.onNodeClick) {
+                    this.onNodeClick(null);
                 }
             }
         });
 
-        // Double click: Focus camera smoothly on 3D node or reset planet
+        // Double click: Open / Navigate to node (or reset planet on empty background)
         this.canvas.addEventListener('dblclick', () => {
             this.raycaster.setFromCamera(this.mouse, this.camera);
             const intersects = this.raycaster.intersectObjects(this.interactiveMeshes);
 
             if (intersects.length > 0) {
                 const node = intersects[0].object.userData.node;
-                this.focusNode(node);
+                if (this.onNodeDblClick) {
+                    this.onNodeDblClick(node);
+                } else {
+                    this.focusNode(node);
+                }
             } else {
                 this.resetView();
             }
@@ -678,12 +823,8 @@ class BrainGraph {
         });
     }
 
-    _setHoveredNode(node, px, py) {
-        this.hoveredNode = node;
-        this.canvas.style.cursor = 'pointer';
-
-        // 3D Obsidian-style Spotlight Effect:
-        // Connected nodes and edges brighten; unconnected elements dim softly!
+    _applySpotlight(node) {
+        if (!node) return;
         for (const n of this.nodes) {
             const isConn = this._isNodeConnected(node, n);
             const isSelf = n.id === node.id;
@@ -712,12 +853,22 @@ class BrainGraph {
                 edge.lineMesh.material.opacity = 0.04;
             }
         }
+    }
+
+    _setHoveredNode(node, px, py) {
+        this.hoveredNode = node;
+        this.canvas.style.cursor = 'pointer';
+
+        this._applySpotlight(node);
 
         // Tooltip
         const connCount = this._getConnectedEdges(node).length;
         this.tooltip.innerHTML = `
             <div class="tooltip-title">${node.label}</div>
             <div class="tooltip-type">${node.group.toUpperCase()} • ${connCount} conexões 3D</div>
+            <div class="tooltip-hint" style="font-size: 11px; color: #a78bfa; margin-top: 5px; font-weight: 500;">
+                ⚡ Clique para selecionar • Duplo-clique para abrir
+            </div>
         `;
         this._updateTooltipPos(px, py);
         this.tooltip.classList.add('visible');
@@ -727,6 +878,12 @@ class BrainGraph {
         this.hoveredNode = null;
         this.canvas.style.cursor = 'default';
         this.tooltip.classList.remove('visible');
+
+        // If a node is selected, keep its spotlight active!
+        if (this.selectedNode) {
+            this._applySpotlight(this.selectedNode);
+            return;
+        }
 
         // Restore all nodes and edges to equilibrium
         for (const n of this.nodes) {
@@ -836,18 +993,17 @@ class BrainGraph {
     }
 
     reheat() {
-        // Organic 3D planetary pulse
+        // Organic 3D planetary pulse with spring dynamics
         for (const n of this.nodes) {
             if (n.id === 'brain') continue;
             const jitter = new THREE.Vector3(
-                (Math.random() - 0.5) * 16,
-                (Math.random() - 0.5) * 16,
-                (Math.random() - 0.5) * 16
+                (Math.random() - 0.5) * 26,
+                (Math.random() - 0.5) * 26,
+                (Math.random() - 0.5) * 26
             );
-            n.position.add(jitter);
-            n.mesh.position.copy(n.position);
-            this._updateConnectedEdges(n);
+            n.velocity.add(jitter);
         }
+        this.physicsEnergy = 1.0;
     }
 
     _animateCameraTo(destCam, destTarget) {
@@ -890,6 +1046,11 @@ class BrainGraph {
 
     _animate() {
         this.time += 0.015;
+
+        // 0. Step 3D Spring Physics if dragging or kinetic energy is active
+        if (this.isDraggingNode || this.physicsEnergy > 0.001) {
+            this._step3DPhysics();
+        }
 
         // 1. Handle Smooth Camera Flight Transitions
         if (this.cameraAnim) {

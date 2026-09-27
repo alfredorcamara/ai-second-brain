@@ -256,7 +256,21 @@ function initGraph() {
         if (orbitBtn) orbitBtn.classList.toggle('active', state.autoOrbit);
     };
 
+    // Single click: select and highlight node in 3D graph (does NOT navigate away)
     graph.onNodeClick = (node) => {
+        const hudNode = document.getElementById('hudSelectedNode');
+        if (!hudNode) return;
+        if (node) {
+            hudNode.textContent = `🎯 ${node.label} (duplo-clique para abrir)`;
+            hudNode.style.color = '#38bdf8';
+        } else {
+            hudNode.textContent = `⚡ Duplo-clique para abrir`;
+            hudNode.style.color = '#c4b5fd';
+        }
+    };
+
+    // Double click: open / navigate to node details
+    graph.onNodeDblClick = (node) => {
         // Map node to a navigable path
         const mapping = {
             'brain': 'dashboard',
