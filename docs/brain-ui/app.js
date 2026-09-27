@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     buildStats();
     initGraph();
     setupEventListeners();
+    showDashboard();
 });
 
 // ── Sidebar ───────────────────────────────────────

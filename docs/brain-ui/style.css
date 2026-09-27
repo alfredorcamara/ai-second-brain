@@ -796,7 +796,7 @@ body {
     overflow-y: auto;
     display: none;
     background: var(--bg-primary);
-    z-index: 3;
+    z-index: 20;
 }
 
 .dashboard-overlay.active {
