@@ -252,7 +252,7 @@ function initGraph() {
         const orbitBtn = document.getElementById('btnAutoOrbit');
 
         if (zoomEl) zoomEl.textContent = `🔍 ${state.zoomPercent}%`;
-        if (rotEl) rotEl.textContent = `🔄 ${state.rotationDeg}°`;
+        if (rotEl) rotEl.textContent = `🌍 3D Planeta`;
         if (orbitBtn) orbitBtn.classList.toggle('active', state.autoOrbit);
     };
 
