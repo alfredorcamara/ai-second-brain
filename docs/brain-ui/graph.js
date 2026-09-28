@@ -67,6 +67,9 @@ class BrainGraph {
         this.damping = 0.84;      // Damping / viscosity
         this.physicsEnergy = 0.0; // Current kinetic energy
 
+        // Icon Display
+        this.showIcons = false;
+
         // Callbacks
         this.onNodeClick = null;
         this.onNodeDblClick = null;
@@ -322,6 +325,7 @@ class BrainGraph {
                 mesh: null,
                 glowSprite: null,
                 labelSprite: null,
+                iconSprite: null,
                 outerRing: null
             };
 
@@ -456,6 +460,20 @@ class BrainGraph {
         node.labelSprite = this._createLabelSprite(node.label, radius, node.colors.fill);
         node.labelSprite.position.set(0, radius + 11, 0);
         mesh.add(node.labelSprite);
+
+        // 5. Emoji Icon Sprite (hidden by default, toggled via setShowIcons)
+        if (node.icon) {
+            node.iconSprite = this._createIconSprite(node.icon, radius);
+            node.iconSprite.visible = this.showIcons;
+            mesh.add(node.iconSprite);
+
+            // When icons are showing, hide the sphere mesh visual but keep it interactive
+            if (this.showIcons) {
+                mesh.material.visible = false;
+                if (node.glowSprite) node.glowSprite.visible = false;
+                if (node.outerRing) node.outerRing.visible = false;
+            }
+        }
     }
 
     _createLabelSprite(text, nodeRadius, fillColor) {
@@ -512,6 +530,78 @@ class BrainGraph {
         sprite.scale.set(spriteHeight * aspect, spriteHeight, 1);
 
         return sprite;
+    }
+
+    _createIconSprite(emoji, nodeRadius) {
+        const size = 128;
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+
+        // Draw circular backing with subtle glass effect
+        const cx = size / 2;
+        const cy = size / 2;
+        const r = size * 0.42;
+
+        // Outer glass ring
+        ctx.beginPath();
+        ctx.arc(cx, cy, r + 4, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(139, 92, 246, 0.12)';
+        ctx.fill();
+
+        // Inner dark glass circle
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(10, 10, 16, 0.75)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(139, 92, 246, 0.4)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Draw emoji centered
+        ctx.font = `${Math.round(size * 0.52)}px "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(emoji, cx, cy + 2);
+
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.minFilter = THREE.LinearFilter;
+
+        const spriteMat = new THREE.SpriteMaterial({
+            map: tex,
+            transparent: true,
+            opacity: 1.0,
+            depthTest: false
+        });
+
+        const sprite = new THREE.Sprite(spriteMat);
+        const scale = Math.max(18, nodeRadius * 2.5);
+        sprite.scale.set(scale, scale, 1);
+
+        return sprite;
+    }
+
+    setShowIcons(show) {
+        this.showIcons = show;
+
+        for (const node of this.nodes) {
+            if (!node.mesh) continue;
+
+            if (show && node.iconSprite) {
+                // Show icon sprite, hide the 3D sphere visual
+                node.iconSprite.visible = true;
+                node.mesh.material.visible = false;
+                if (node.glowSprite) node.glowSprite.visible = false;
+                if (node.outerRing) node.outerRing.visible = false;
+            } else {
+                // Hide icon sprite, restore 3D sphere
+                if (node.iconSprite) node.iconSprite.visible = false;
+                node.mesh.material.visible = true;
+                if (node.glowSprite) node.glowSprite.visible = true;
+                if (node.outerRing) node.outerRing.visible = true;
+            }
+        }
     }
 
     _create3DEdge(edge) {

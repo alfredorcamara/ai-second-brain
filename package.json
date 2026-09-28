@@ -1,0 +1,21 @@
+{
+  "name": "ai-second-brain",
+  "version": "1.0.0",
+  "description": "Seu segundo cérebro para desenvolvimento com IA. Organiza conhecimento, decisões, memória e governança para todos os seus projetos.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "scan": "node scripts/scan-vault.js",
+    "serve": "node server.js"
+  },
+  "keywords": [
+    "ai",
+    "second-brain",
+    "obsidian",
+    "antigravity",
+    "knowledge-base",
+    "governance"
+  ],
+  "author": "Alfredo",
+  "license": "MIT"
+}

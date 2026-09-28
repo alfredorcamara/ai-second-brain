@@ -81,6 +81,15 @@
                     <span class="breadcrumb-item active">🧠 Visão Geral</span>
                 </div>
                 <div class="topbar-actions">
+                    <div class="vault-status-container">
+                        <span id="vaultStatusBadge" class="vault-status snapshot" title="Status do Cérebro">
+                            <span class="status-dot snapshot"></span> Snapshot
+                        </span>
+                        <input type="file" id="folderPickerInput" webkitdirectory directory multiple style="display:none">
+                        <button id="btnConnectFolder" class="btn-folder-connect" title="Selecionar pasta do projeto para leitura local dinâmica">
+                            📂 Conectar Pasta
+                        </button>
+                    </div>
                     <button id="viewToggle" class="view-toggle" title="Alternar visualização">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="3"/>
@@ -150,6 +159,12 @@
                             <circle cx="12" cy="12" r="3"></circle>
                         </svg>
                     </button>
+                    <div class="graph-btn-sep"></div>
+                    <label class="icon-toggle" title="Mostrar ícones nos nós">
+                        <input type="checkbox" id="toggleIcons">
+                        <span class="icon-toggle-slider"></span>
+                        <span class="icon-toggle-label">🎨</span>
+                    </label>
                 </div>
 
                 <!-- Floating HUD Hints -->
@@ -160,6 +175,7 @@
                     <div class="hint-item"><kbd>Arrastar Nó</kbd> Arrasta nós interligados (física elástica)</div>
                     <div class="hint-item"><kbd>Clique</kbd> Selecionar e destacar nó</div>
                     <div class="hint-item"><kbd>Duplo-Clique</kbd> Abrir documento/projeto</div>
+                    <div class="hint-item"><kbd>I</kbd> Alternar ícones nos nós</div>
                 </div>
             </div>
 
@@ -341,7 +357,9 @@
 
     <script src="three.min.js"></script>
     <script src="OrbitControls.js"></script>
-    <script src="brain-data.js"></script>
+    <script src="marked.min.js"></script>
+    <script src="vault-data.js"></script>
+    <script src="vault.js"></script>
     <script src="graph.js"></script>
     <script src="app.js"></script>
 </body>
