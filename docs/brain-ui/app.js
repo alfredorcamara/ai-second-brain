@@ -31,6 +31,42 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ── Sidebar ───────────────────────────────────────
+function renderNavItem(item) {
+    if (item.isGroup && Array.isArray(item.children) && item.children.length > 0) {
+        const isChildActive = currentPath && item.children.some(c => c.path === currentPath);
+        return `
+            <div class="nav-tree-group ${isChildActive ? 'has-active' : ''}" id="tree-group-${item.id}">
+                <div class="nav-tree-header" onclick="toggleTreeGroup('${item.id}', event)">
+                    <svg class="tree-chevron" id="chevron-${item.id}" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M5.7 13.7l5-5a1 1 0 000-1.4l-5-5a1 1 0 00-1.4 1.4L8.58 8l-4.3 4.3a1 1 0 001.42 1.4z"/>
+                    </svg>
+                    <span class="nav-item-icon">${item.icon || '📁'}</span>
+                    <span class="nav-item-label tree-folder-title" onclick="event.stopPropagation(); navigateTo('${item.path}')" title="Abrir ${item.label}">
+                        ${item.label}
+                    </span>
+                    <span class="nav-item-badge count" title="${item.children.length} arquivos no projeto">${item.children.length}</span>
+                </div>
+                <div class="nav-tree-children" id="tree-children-${item.id}">
+                    ${item.children.map(child => `
+                        <div class="nav-item nav-tree-child ${currentPath === child.path ? 'active' : ''}" data-path="${child.path}" onclick="navigateTo('${child.path}')" title="${child.title || child.label}">
+                            <span class="nav-item-icon">${child.icon || '📄'}</span>
+                            <span class="nav-item-label">${child.label}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="nav-item ${currentPath === item.path ? 'active' : ''}" data-path="${item.path}" onclick="navigateTo('${item.path}')">
+            <span class="nav-item-icon">${item.icon || '📄'}</span>
+            <span class="nav-item-label">${item.label || item.title || item.name}</span>
+            ${item.status ? `<span class="nav-item-badge count" style="width:8px;height:8px;padding:0;border-radius:50;background:var(--${item.status === 'yellow' ? 'warning' : 'danger'})"></span>` : ''}
+        </div>
+    `;
+}
+
 function buildSidebar() {
     const nav = document.getElementById('sidebarNav');
     if (!nav) return;
@@ -47,16 +83,10 @@ function buildSidebar() {
                         <path d="M5.7 13.7l5-5a1 1 0 000-1.4l-5-5a1 1 0 00-1.4 1.4L8.58 8l-4.3 4.3a1 1 0 001.42 1.4z"/>
                     </svg>
                     <span>${section.icon} ${section.label}</span>
-                    ${badgeCount ? `<span class="nav-item-badge count">${badgeCount}</span>` : ''}
+                    ${badgeCount !== undefined ? `<span class="nav-item-badge count">${badgeCount}</span>` : ''}
                 </div>
                 <div class="nav-section-items" id="section-${section.id}">
-                    ${section.items.map(item => `
-                        <div class="nav-item ${currentPath === item.path ? 'active' : ''}" data-path="${item.path}" onclick="navigateTo('${item.path}')">
-                            <span class="nav-item-icon">${item.icon || '📄'}</span>
-                            <span class="nav-item-label">${item.label || item.title || item.name}</span>
-                            ${item.status ? `<span class="nav-item-badge count" style="width:8px;height:8px;padding:0;border-radius:50;background:var(--${item.status === 'yellow' ? 'warning' : 'danger'})"></span>` : ''}
-                        </div>
-                    `).join('')}
+                    ${section.items.map(item => renderNavItem(item)).join('')}
                 </div>
             </div>
         `;
@@ -210,11 +240,26 @@ function toggleSection(sectionId) {
 
     if (items.classList.contains('collapsed')) {
         items.classList.remove('collapsed');
-        items.style.maxHeight = items.scrollHeight + 'px';
+        items.style.maxHeight = 'none';
         if (chevron) chevron.classList.remove('collapsed');
     } else {
         items.classList.add('collapsed');
         items.style.maxHeight = '0';
+        if (chevron) chevron.classList.add('collapsed');
+    }
+}
+
+function toggleTreeGroup(groupId, event) {
+    if (event) event.stopPropagation();
+    const children = document.getElementById(`tree-children-${groupId}`);
+    const chevron = document.getElementById(`chevron-${groupId}`);
+    if (!children) return;
+
+    if (children.classList.contains('collapsed')) {
+        children.classList.remove('collapsed');
+        if (chevron) chevron.classList.remove('collapsed');
+    } else {
+        children.classList.add('collapsed');
         if (chevron) chevron.classList.add('collapsed');
     }
 }
@@ -227,6 +272,21 @@ function navigateTo(path) {
     document.querySelectorAll('.nav-item').forEach(el => {
         el.classList.toggle('active', el.dataset.path === path);
     });
+
+    // Auto-expand parent tree group if navigating to a nested item
+    const activeItem = document.querySelector(`.nav-item[data-path="${path}"]`);
+    if (activeItem) {
+        const parentGroup = activeItem.closest('.nav-tree-group');
+        if (parentGroup) {
+            parentGroup.classList.add('has-active');
+            const children = parentGroup.querySelector('.nav-tree-children');
+            const chevron = parentGroup.querySelector('.tree-chevron');
+            if (children && children.classList.contains('collapsed')) {
+                children.classList.remove('collapsed');
+                if (chevron) chevron.classList.remove('collapsed');
+            }
+        }
+    }
 
     // Special paths
     if (path === 'dashboard') {
@@ -532,21 +592,47 @@ function setupSearch() {
 function filterSidebar(query) {
     const navItems = document.querySelectorAll('.nav-item');
     const sections = document.querySelectorAll('.nav-section');
+    const treeGroups = document.querySelectorAll('.nav-tree-group');
 
     if (!query) {
         navItems.forEach(el => el.style.display = '');
         sections.forEach(el => el.style.display = '');
+        treeGroups.forEach(el => el.style.display = '');
         return;
     }
 
     sections.forEach(section => {
         let hasVisible = false;
-        const items = section.querySelectorAll('.nav-item');
-        items.forEach(item => {
-            const label = item.querySelector('.nav-item-label').textContent.toLowerCase();
+
+        // 1. Filtra itens simples (não-filhos de árvores)
+        section.querySelectorAll('.nav-item:not(.nav-tree-child)').forEach(item => {
+            const label = (item.querySelector('.nav-item-label')?.textContent || '').toLowerCase();
             const match = label.includes(query);
             item.style.display = match ? '' : 'none';
             if (match) hasVisible = true;
+        });
+
+        // 2. Filtra grupos de árvore (projetos)
+        section.querySelectorAll('.nav-tree-group').forEach(group => {
+            let groupHasVisible = false;
+            const headerLabel = (group.querySelector('.nav-tree-header .nav-item-label')?.textContent || '').toLowerCase();
+            const groupMatch = headerLabel.includes(query);
+
+            group.querySelectorAll('.nav-tree-child').forEach(child => {
+                const childLabel = (child.querySelector('.nav-item-label')?.textContent || '').toLowerCase();
+                const match = groupMatch || childLabel.includes(query);
+                child.style.display = match ? '' : 'none';
+                if (match) groupHasVisible = true;
+            });
+
+            group.style.display = groupHasVisible ? '' : 'none';
+            if (groupHasVisible) {
+                hasVisible = true;
+                const childrenContainer = group.querySelector('.nav-tree-children');
+                const chevron = group.querySelector('.tree-chevron');
+                if (childrenContainer) childrenContainer.classList.remove('collapsed');
+                if (chevron) chevron.classList.remove('collapsed');
+            }
         });
 
         section.style.display = hasVisible ? '' : 'none';
@@ -556,7 +642,7 @@ function filterSidebar(query) {
             const chevron = section.querySelector('.chevron');
             if (itemsContainer) {
                 itemsContainer.classList.remove('collapsed');
-                itemsContainer.style.maxHeight = itemsContainer.scrollHeight + 'px';
+                itemsContainer.style.maxHeight = 'none';
             }
             if (chevron) chevron.classList.remove('collapsed');
         }

@@ -1,10 +1,10 @@
 // ═══════════════════════════════════════════════════
 // AI SECOND BRAIN — Dynamic Vault Snapshot
-// Auto-generated: 2026-09-28T19:05:54.271Z
+// Auto-generated: 2026-09-28T19:27:36.855Z
 // ═══════════════════════════════════════════════════
 
 window.VAULT_SNAPSHOT = {
-  "timestamp": 1790622354271,
+  "timestamp": 1790623656855,
   "files": [
     {
       "id": "_agents_rules_00-core_md",
@@ -555,28 +555,39 @@ window.VAULT_SNAPSHOT = {
       "icon": "📁",
       "items": [
         {
-          "id": "projects_Alfredo_teste_CURRENT_STATE_md",
-          "label": "Alfredo_teste — Estado Atual",
-          "icon": "💾",
-          "path": "projects/Alfredo_teste/CURRENT_STATE.md",
-          "size": 187
-        },
-        {
-          "id": "projects_Alfredo_teste_PROJECT_md",
-          "label": "Alfredo_teste",
-          "icon": "📄",
-          "path": "projects/Alfredo_teste/PROJECT.md",
-          "size": 326
-        },
-        {
           "id": "projects_README_md",
-          "label": "Diretório de Projetos — AI Second Brain",
-          "icon": "🧠",
+          "label": "📖 Guia de Projetos",
+          "icon": "📖",
           "path": "projects/README.md",
           "size": 1398
+        },
+        {
+          "id": "proj_Alfredo_teste",
+          "label": "Alfredo_teste",
+          "icon": "🚀",
+          "isGroup": true,
+          "path": "projects/Alfredo_teste/PROJECT.md",
+          "children": [
+            {
+              "id": "projects_Alfredo_teste_PROJECT_md",
+              "label": "PROJECT.md (Visão Geral)",
+              "title": "Alfredo_teste",
+              "icon": "📄",
+              "path": "projects/Alfredo_teste/PROJECT.md",
+              "size": 326
+            },
+            {
+              "id": "projects_Alfredo_teste_CURRENT_STATE_md",
+              "label": "CURRENT_STATE.md (Estado Atual)",
+              "title": "Alfredo_teste — Estado Atual",
+              "icon": "💾",
+              "path": "projects/Alfredo_teste/CURRENT_STATE.md",
+              "size": 187
+            }
+          ]
         }
       ],
-      "badge": 3
+      "badge": 1
     },
     {
       "id": "knowledge",
@@ -1629,7 +1640,7 @@ window.VAULT_SNAPSHOT = {
     "totalFiles": 34,
     "rulesCount": 5,
     "skillsCount": 8,
-    "projectsCount": 3,
+    "projectsCount": 1,
     "knowledgeCount": 6,
     "decisionsCount": 1,
     "memoryCount": 2,

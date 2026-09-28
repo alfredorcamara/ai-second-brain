@@ -185,26 +185,108 @@ function scanVault(rootDir = ROOT_DIR) {
     const sectionsMap = new Map();
     sectionDefs.forEach(s => sectionsMap.set(s.id, s));
 
+    const projectGroups = new Map();
+    let projectsGuideItem = null;
+
     files.forEach(f => {
-        const sec = sectionsMap.get(f.category) || sectionsMap.get('core');
-        sec.items.push({
-            id: f.id,
-            label: f.title,
-            icon: f.icon,
-            path: f.path,
-            size: f.size
-        });
+        if (f.category === 'projects') {
+            const parts = f.path.split('/');
+            if (parts.length <= 2) {
+                // Arquivo na raiz de projects/ (ex: projects/README.md)
+                projectsGuideItem = {
+                    id: f.id,
+                    label: '📖 Guia de Projetos',
+                    icon: '📖',
+                    path: f.path,
+                    size: f.size
+                };
+            } else {
+                const projName = parts[1];
+                if (!projectGroups.has(projName)) {
+                    projectGroups.set(projName, {
+                        id: `proj_${projName}`,
+                        label: projName,
+                        icon: '🚀',
+                        isGroup: true,
+                        path: `projects/${projName}/PROJECT.md`,
+                        children: []
+                    });
+                }
+
+                const group = projectGroups.get(projName);
+                let childLabel = f.name;
+                let childIcon = f.icon;
+
+                if (f.name.toLowerCase() === 'project.md') {
+                    childLabel = 'PROJECT.md (Visão Geral)';
+                    childIcon = '📄';
+                    group.path = f.path; // Ponto de entrada principal
+                } else if (f.name.toLowerCase() === 'current_state.md') {
+                    childLabel = 'CURRENT_STATE.md (Estado Atual)';
+                    childIcon = '💾';
+                } else if (f.name.toLowerCase() === 'architecture.md') {
+                    childLabel = 'ARCHITECTURE.md (Arquitetura)';
+                    childIcon = '🏗️';
+                } else {
+                    const subRel = parts.slice(2).join('/');
+                    childLabel = subRel;
+                }
+
+                group.children.push({
+                    id: f.id,
+                    label: childLabel,
+                    title: f.title,
+                    icon: childIcon,
+                    path: f.path,
+                    size: f.size
+                });
+            }
+        } else {
+            const sec = sectionsMap.get(f.category) || sectionsMap.get('core');
+            sec.items.push({
+                id: f.id,
+                label: f.title,
+                icon: f.icon,
+                path: f.path,
+                size: f.size
+            });
+        }
     });
 
-    // Sort items alphabetically or logically
+    // Configura a seção de Projetos estruturada em árvore
+    const projectsSec = sectionsMap.get('projects');
+    if (projectsSec) {
+        projectsSec.items = [];
+        if (projectsGuideItem) {
+            projectsSec.items.push(projectsGuideItem);
+        }
+        const sortedGroups = Array.from(projectGroups.values()).sort((a, b) => a.label.localeCompare(b.label));
+        sortedGroups.forEach(g => {
+            g.children.sort((a, b) => {
+                const priority = (p) => {
+                    const pLower = p.toLowerCase();
+                    if (pLower.endsWith('project.md')) return 1;
+                    if (pLower.endsWith('current_state.md')) return 2;
+                    if (pLower.endsWith('architecture.md')) return 3;
+                    return 10;
+                };
+                return priority(a.path) - priority(b.path) || a.label.localeCompare(b.label);
+            });
+            projectsSec.items.push(g);
+        });
+        // O badge mostra o número REAL de projetos, não de arquivos
+        projectsSec.badge = projectGroups.size;
+    }
+
+    // Sort items alphabetically or logically in other sections
     sectionDefs.forEach(s => {
-        if (s.id !== 'overview') {
+        if (s.id !== 'overview' && s.id !== 'projects') {
             s.badge = s.items.length;
             s.items.sort((a, b) => a.path.localeCompare(b.path));
         }
     });
 
-    const activeSections = sectionDefs.filter(s => s.items.length > 0);
+    const activeSections = sectionDefs.filter(s => s.items.length > 0 || (s.id === 'projects' && (projectsGuideItem || projectGroups.size > 0)));
 
     // Build Graph Nodes & Edges
     const graphNodes = [
@@ -296,7 +378,7 @@ function scanVault(rootDir = ROOT_DIR) {
         totalFiles: files.length,
         rulesCount: files.filter(f => f.category === 'rules').length,
         skillsCount: files.filter(f => f.category === 'skills').length,
-        projectsCount: files.filter(f => f.category === 'projects').length,
+        projectsCount: projectGroups.size,
         knowledgeCount: files.filter(f => f.category === 'knowledge').length,
         decisionsCount: files.filter(f => f.category === 'decisions').length,
         memoryCount: files.filter(f => f.category === 'memory').length,

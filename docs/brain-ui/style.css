@@ -350,6 +350,88 @@ body {
     color: var(--accent-tertiary);
 }
 
+/* ── Nested Tree Items (Projects / Subfolders) ──── */
+.nav-tree-group {
+    margin: 2px 0;
+}
+
+.nav-tree-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px 6px 24px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    border-radius: 6px;
+    margin: 1px 8px;
+    transition: all var(--transition-fast);
+    user-select: none;
+}
+
+.nav-tree-header:hover {
+    background: var(--bg-hover);
+    color: var(--accent-tertiary);
+}
+
+.nav-tree-header .tree-folder-title {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.nav-tree-header .tree-folder-title:hover {
+    color: var(--accent-primary);
+    text-decoration: underline;
+}
+
+.tree-chevron {
+    width: 10px;
+    height: 10px;
+    color: var(--text-tertiary);
+    transition: transform var(--transition-normal);
+    flex-shrink: 0;
+}
+
+.tree-chevron.collapsed {
+    transform: rotate(-90deg);
+}
+
+.nav-tree-children {
+    display: flex;
+    flex-direction: column;
+    margin-left: 28px;
+    padding-left: 10px;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all var(--transition-normal);
+}
+
+.nav-tree-children.collapsed {
+    display: none;
+}
+
+.nav-item.nav-tree-child {
+    padding: 6px 12px 6px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    margin: 1px 4px 1px 0;
+    border-left: 2px solid transparent;
+}
+
+.nav-item.nav-tree-child:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.nav-item.nav-tree-child.active {
+    background: rgba(99, 102, 241, 0.16);
+    color: #a5b4fc;
+    border-left-color: var(--accent-primary);
+    font-weight: 500;
+}
+
 /* ── Sidebar Footer ──────────────────────────────── */
 .sidebar-footer {
     padding: 12px 20px;
