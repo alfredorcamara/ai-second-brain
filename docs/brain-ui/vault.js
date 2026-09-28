@@ -385,9 +385,10 @@ class VaultManager {
         if (p.includes('memory') || p.includes('state')) return '💾';
         if (p.includes('integration') || p.includes('gateway')) return '🔌';
         if (p.includes('models')) return '🧬';
-        if (p.includes('jobsentinel')) return '⚡';
-        if (p.includes('sabor')) return '🎮';
-        if (p.includes('assistente')) return '📱';
+        if (p.includes('api') || p.includes('backend')) return '⚡';
+        if (p.includes('game') || p.includes('jogo')) return '🎮';
+        if (p.includes('mobile') || p.includes('app')) return '📱';
+        if (p.includes('web') || p.includes('saas') || p.includes('frontend')) return '🌐';
         if (p.includes('decision') || p.includes('adr')) return '⚖️';
         if (p.includes('lesson')) return '💡';
         if (p.includes('template')) return '📋';

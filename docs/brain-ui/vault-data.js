@@ -1,10 +1,10 @@
 // ═══════════════════════════════════════════════════
 // AI SECOND BRAIN — Dynamic Vault Snapshot
-// Auto-generated: 2026-09-28T01:15:21.848Z
+// Auto-generated: 2026-09-28T16:29:18.265Z
 // ═══════════════════════════════════════════════════
 
 window.VAULT_SNAPSHOT = {
-  "timestamp": 1790558121848,
+  "timestamp": 1790612958265,
   "files": [
     {
       "id": "_agents_rules_00-core_md",
@@ -13,10 +13,10 @@ window.VAULT_SNAPSHOT = {
       "title": "Regras Fundamentais do AI Second Brain",
       "category": "rules",
       "icon": "⚙️",
-      "size": 1585,
-      "mtime": 1790519709341.0762,
+      "size": 1911,
+      "mtime": 1790609679156.6394,
       "outgoingLinks": [],
-      "content": "# Regras Fundamentais do AI Second Brain\n\n> Estas regras são aplicadas a **todo** trabalho realizado neste workspace.\n\n## Identidade\n\n- Você opera dentro do **AI Second Brain** do Alfredo.\n- Seu objetivo é ser um parceiro de desenvolvimento, não um gerador de texto.\n- Você acumula conhecimento e respeita decisões anteriores.\n\n## Princípios\n\n1. **Context First** — Sempre leia o contexto antes de agir.\n2. **Decision Aware** — Consulte decisões anteriores antes de alterar arquitetura.\n3. **Memory Persistent** — Atualize a memória após trabalho significativo.\n4. **Quality Over Speed** — Prefira soluções robustas a soluções rápidas.\n5. **Explicit Over Implicit** — Documente premissas e decisões.\n\n## Fluxo de Trabalho Obrigatório\n\n```\n1. ENTENDER → O que está sendo pedido?\n2. CONTEXTUALIZAR → Qual projeto? Qual estado atual?\n3. CLASSIFICAR → Que tipo de tarefa é?\n4. PLANEJAR → Qual a melhor abordagem?\n5. EXECUTAR → Implementar com qualidade.\n6. VALIDAR → Testar e verificar.\n7. DOCUMENTAR → Atualizar docs e memória.\n```\n\n## Convenções\n\n- Código em **C#** segue as convenções da Microsoft e do projeto.\n- SQL segue as convenções do projeto (maiúsculas para keywords).\n- Documentação em **Markdown** com formatação consistente.\n- Commits seguem Conventional Commits.\n- Nomes de arquivos em inglês, conteúdo pode ser em português.\n\n## Comunicação\n\n- Responda em **português brasileiro** por padrão.\n- Use termos técnicos em inglês quando apropriado.\n- Seja direto e objetivo.\n- Cite referências quando relevante.\n"
+      "content": "# Regras Fundamentais do AI Second Brain\n\n> Estas regras são aplicadas a **todo** trabalho realizado neste workspace.\n\n## Identidade\n\n- Você opera dentro do **AI Second Brain** do Alfredo.\n- Seu objetivo é ser um parceiro de desenvolvimento, não um gerador de texto.\n- Você acumula conhecimento e respeita decisões anteriores.\n\n## Princípios\n\n1. **Context First** — Sempre leia o contexto antes de agir.\n2. **Decision Aware** — Consulte decisões anteriores antes de alterar arquitetura.\n3. **Memory Persistent** — Atualize a memória após trabalho significativo.\n4. **Quality Over Speed** — Prefira soluções robustas a soluções rápidas.\n5. **Explicit Over Implicit** — Documente premissas e decisões.\n6. **Zero Fabrication** — NUNCA invente contexto que não existe na documentação do projeto. Não gere arquivos, lore, telas ou especificações especulativas para preencher lacunas. Se algo não existe, declare expressamente como não definido.\n\n## Fluxo de Trabalho Obrigatório\n\n```\n1. ENTENDER → O que está sendo pedido?\n2. CONTEXTUALIZAR → Qual projeto? Qual estado atual?\n3. CLASSIFICAR → Que tipo de tarefa é?\n4. PLANEJAR → Qual a melhor abordagem?\n5. EXECUTAR → Implementar com qualidade.\n6. VALIDAR → Testar e verificar.\n7. DOCUMENTAR → Atualizar docs e memória.\n```\n\n## Convenções\n\n- O código deve seguir os padrões idiomáticos oficiais da linguagem e ecossistema adotados no projeto.\n- Commits seguem Conventional Commits (`feat:`, `fix:`, `docs:`, `refactor:`).\n- Documentação técnica em **Markdown** com formatação padronizada e links verificáveis.\n- Nomes de arquivos técnicos em inglês quando aplicável, conteúdo e documentação em português.\n\n## Comunicação\n\n- Responda em **português brasileiro** por padrão.\n- Use termos técnicos em inglês quando apropriado.\n- Seja direto e objetivo.\n- Cite referências quando relevante.\n"
     },
     {
       "id": "_agents_rules_01-ai-decision_md",
@@ -55,40 +55,16 @@ window.VAULT_SNAPSHOT = {
       "content": "# Regras de Segurança\n\n> Regras de segurança obrigatórias para todos os projetos.\n\n## Classificação de Dados\n\n| Nível | Descrição | Pode enviar para LLM? |\n|-------|-----------|----------------------|\n| **Público** | Dados abertos | ✅ Sim |\n| **Interno** | Dados da empresa | ⚠️ Com cuidado |\n| **Confidencial** | Dados sensíveis | ❌ Não |\n| **Restrito** | PII, credenciais, LGPD | ❌ Nunca |\n\n## Regras Absolutas\n\n1. **NUNCA** envie credenciais, tokens ou secrets para qualquer IA.\n2. **NUNCA** envie dados pessoais (PII) para LLMs externos sem anonimização.\n3. **NUNCA** hardcode credenciais no código — use User Secrets, Key Vault ou variáveis de ambiente.\n4. **SEMPRE** use HTTPS para chamadas de API.\n5. **SEMPRE** valide e sanitize inputs antes de processar.\n6. **SEMPRE** implemente rate limiting em endpoints expostos.\n\n## LGPD\n\n- Dados pessoais devem ter base legal para processamento.\n- Implemente consentimento quando necessário.\n- Mantenha registro de processamento de dados.\n- Implemente direito ao esquecimento quando aplicável.\n\n## Secrets e Credenciais\n\n```\n✅ CORRETO                    ❌ ERRADO\n──────────────────────        ──────────────────────\nappsettings.json              hardcoded no código\n  → User Secrets (dev)\n  → Key Vault (prod)\n  → Environment variables\n```\n\n## Revisão de Segurança\n\nAntes de deploy, verifique:\n- [ ] Nenhuma credencial no código\n- [ ] Inputs validados e sanitizados\n- [ ] Endpoints com autenticação/autorização\n- [ ] Dados sensíveis criptografados\n- [ ] Logs não contêm dados sensíveis\n- [ ] Dependências sem vulnerabilidades conhecidas\n"
     },
     {
-      "id": "_agents_rules_04-dotnet_md",
-      "path": ".agents/rules/04-dotnet.md",
-      "name": "04-dotnet.md",
-      "title": "Regras para .NET",
-      "category": "rules",
-      "icon": "💜",
-      "size": 1770,
-      "mtime": 1790519752783.6062,
-      "outgoingLinks": [],
-      "content": "# Regras para .NET\n\n> Convenções e padrões para desenvolvimento em .NET/C#.\n\n## Versões\n\n- .NET 8+ (LTS preferido)\n- C# 12+\n- Entity Framework Core 8+\n\n## Arquitetura\n\n- Clean Architecture / Vertical Slice conforme o projeto.\n- Separação clara: Domain, Application, Infrastructure, Presentation.\n- Dependency Injection nativa do .NET.\n- Options Pattern para configuração.\n\n## Convenções de Código\n\n```csharp\n// Nomes em PascalCase para públicos\npublic class JobMonitorService { }\npublic interface IJobMonitorService { }\n\n// Nomes em camelCase para privados\nprivate readonly ILogger<JobMonitorService> _logger;\nprivate int _retryCount;\n\n// Async sempre com sufixo Async\npublic Task<Result> ProcessJobAsync(CancellationToken ct) { }\n\n// Cancellation Token em todo método async\npublic async Task ExecuteAsync(CancellationToken cancellationToken) { }\n```\n\n## Padrões Obrigatórios\n\n1. **Result Pattern** — Evite exceções para fluxo de controle.\n2. **CancellationToken** — Em todo método assíncrono.\n3. **ILogger** — Structured logging com Serilog.\n4. **FluentValidation** — Para validação de inputs.\n5. **MediatR** — Para CQRS quando aplicável.\n\n## Entity Framework\n\n- Migrations versionadas.\n- Configurações em classes `IEntityTypeConfiguration<T>`.\n- Queries com `AsNoTracking()` para leitura.\n- Evite N+1 queries — use `Include()` ou projections.\n\n## Testes\n\n- xUnit para testes unitários.\n- FluentAssertions para assertions.\n- NSubstitute ou Moq para mocks.\n- Testcontainers para integração.\n- Mínimo 80% coverage em lógica de negócio.\n\n## Performance\n\n- Use `Span<T>` e `Memory<T>` quando relevante.\n- Prefira `ValueTask` quando aplicável.\n- Cache com `IMemoryCache` ou `IDistributedCache`.\n- Health checks com `IHealthCheck`.\n"
-    },
-    {
-      "id": "_agents_rules_05-sql-server_md",
-      "path": ".agents/rules/05-sql-server.md",
-      "name": "05-sql-server.md",
-      "title": "Regras para SQL Server",
-      "category": "rules",
-      "icon": "🗃️",
-      "size": 1409,
-      "mtime": 1790519761940.8179,
-      "outgoingLinks": [],
-      "content": "# Regras para SQL Server\n\n> Convenções para SQL Server, SQL Agent Jobs e T-SQL.\n\n## Convenções T-SQL\n\n```sql\n-- Keywords em MAIÚSCULAS\nSELECT\n    j.JobName,\n    j.LastRunDate,\n    j.Status\nFROM dbo.Jobs AS j\nINNER JOIN dbo.JobHistory AS jh\n    ON j.JobId = jh.JobId\nWHERE j.IsActive = 1\nORDER BY j.LastRunDate DESC;\n```\n\n## SQL Agent Jobs\n\n- Todo Job deve ter documentação do propósito.\n- Alertas configurados para falha.\n- Histórico de execução monitorado.\n- Jobs críticos com retry automático.\n\n## Performance\n\n- Sempre analise execution plans para queries complexas.\n- Use índices adequados — nem demais, nem de menos.\n- Evite `SELECT *` — selecione apenas colunas necessárias.\n- Use `SET NOCOUNT ON` em stored procedures.\n- Evite cursors — prefira set-based operations.\n- Parametrize queries para evitar SQL injection e melhorar cache de planos.\n\n## Monitoração\n\n- DMVs para análise de performance.\n- Wait stats para diagnóstico.\n- Extended Events para rastreamento.\n- Alertas em `msdb.dbo.sysjobhistory` para Jobs.\n\n## Backup e Recovery\n\n- Full backup diário (mínimo).\n- Transaction log backup a cada 15 minutos para bancos críticos.\n- Teste de restore regularmente.\n- Documente RPO e RTO por banco.\n\n## Segurança\n\n- Princípio do menor privilégio.\n- Não use `sa` para aplicações.\n- Service accounts com permissões mínimas.\n- Auditing habilitado para bancos críticos.\n"
-    },
-    {
-      "id": "_agents_rules_06-documentation_md",
-      "path": ".agents/rules/06-documentation.md",
-      "name": "06-documentation.md",
+      "id": "_agents_rules_04-documentation_md",
+      "path": ".agents/rules/04-documentation.md",
+      "name": "04-documentation.md",
       "title": "Regras de Documentação",
       "category": "rules",
       "icon": "📝",
-      "size": 1444,
-      "mtime": 1790519764017.4075,
+      "size": 1706,
+      "mtime": 1790604219838.682,
       "outgoingLinks": [],
-      "content": "# Regras de Documentação\n\n> Padrões para documentação em todos os projetos.\n\n## Princípios\n\n1. **Documentação é código** — Vive no repositório, versionada com Git.\n2. **Atualizada ou deletada** — Documentação desatualizada é pior que nenhuma.\n3. **Para o próximo desenvolvedor** — Escreva para quem não tem contexto.\n4. **Decisões registradas** — Toda decisão arquitetural gera um ADR.\n\n## Tipos de Documentação\n\n| Tipo | Onde | Quando atualizar |\n|------|------|-----------------|\n| **PROJECT.md** | `projects/<nome>/` | Mudanças de escopo |\n| **ARCHITECTURE.md** | `projects/<nome>/` | Mudanças arquiteturais |\n| **CURRENT_STATE.md** | `projects/<nome>/` | A cada sessão significativa |\n| **ADR** | `projects/<nome>/DECISIONS/` | Cada decisão arquitetural |\n| **Knowledge** | `knowledge/<domínio>/` | Aprendizados novos |\n| **Memory** | `memory/` | Fim de cada sessão |\n\n## Formato de ADR (Architecture Decision Record)\n\n```markdown\n# ADR-XXXX: Título da Decisão\n\n## Status\nProposta | Aceita | Rejeitada | Substituída\n\n## Contexto\nO que motivou esta decisão?\n\n## Decisão\nO que foi decidido?\n\n## Consequências\nO que muda com esta decisão?\n\n## Alternativas Consideradas\nQuais outras opções foram avaliadas?\n```\n\n## Memory Format\n\n```markdown\n# Sessão: YYYY-MM-DD\n\n## O que foi feito\n- Item 1\n- Item 2\n\n## Decisões tomadas\n- Decisão 1\n\n## Próximos passos\n- Passo 1\n\n## Aprendizados\n- Lição 1\n```\n"
+      "content": "# Regras de Documentação\n\n> Padrões para documentação em todos os projetos.\n\n## Princípios\n\n1. **Documentação é código** — Vive no repositório, versionada com Git.\n2. **Atualizada ou deletada** — Documentação desatualizada é pior que nenhuma.\n3. **Para o próximo desenvolvedor** — Escreva para quem não tem contexto.\n4. **Decisões registradas** — Toda decisão arquitetural gera um ADR.\n5. **Zero invenção de contexto** — NUNCA crie documentação especulativa, requisitos fictícios ou placeholders para simular progresso. Se um projeto ou funcionalidade ainda está em fase de ideia, a documentação deve registrar unicamente essa realidade.\n\n## Tipos de Documentação\n\n| Tipo | Onde | Quando atualizar |\n|------|------|-----------------|\n| **PROJECT.md** | `projects/<nome>/` | Mudanças de escopo |\n| **ARCHITECTURE.md** | `projects/<nome>/` | Mudanças arquiteturais |\n| **CURRENT_STATE.md** | `projects/<nome>/` | A cada sessão significativa |\n| **ADR** | `projects/<nome>/DECISIONS/` | Cada decisão arquitetural |\n| **Knowledge** | `knowledge/<domínio>/` | Aprendizados novos |\n| **Memory** | `memory/` | Fim de cada sessão |\n\n## Formato de ADR (Architecture Decision Record)\n\n```markdown\n# ADR-XXXX: Título da Decisão\n\n## Status\nProposta | Aceita | Rejeitada | Substituída\n\n## Contexto\nO que motivou esta decisão?\n\n## Decisão\nO que foi decidido?\n\n## Consequências\nO que muda com esta decisão?\n\n## Alternativas Consideradas\nQuais outras opções foram avaliadas?\n```\n\n## Memory Format\n\n```markdown\n# Sessão: YYYY-MM-DD\n\n## O que foi feito\n- Item 1\n- Item 2\n\n## Decisões tomadas\n- Decisão 1\n\n## Próximos passos\n- Passo 1\n\n## Aprendizados\n- Lição 1\n```\n"
     },
     {
       "id": "_agents_skills_ai-decision-gate_SKILL_md",
@@ -108,7 +84,7 @@ window.VAULT_SNAPSHOT = {
       "name": "SKILL.md",
       "title": "ai-integration",
       "category": "skills",
-      "icon": "🔌",
+      "icon": "📄",
       "size": 2587,
       "mtime": 1790519868711.681,
       "outgoingLinks": [],
@@ -187,28 +163,16 @@ window.VAULT_SNAPSHOT = {
       "content": "---\nname: session-memory\ndescription: >-\n  Gerencia a memória persistente entre sessões de trabalho. Use ao final de\n  uma sessão de trabalho para registrar o que foi feito, decisões tomadas,\n  e próximos passos. Também use no início de uma sessão para carregar\n  o contexto da sessão anterior.\n---\n\n# Session Memory\n\n## Ao Iniciar uma Sessão\n\n1. Leia `memory/current-state.md` para o estado global.\n2. Leia `projects/<projeto>/CURRENT_STATE.md` para o projeto em foco.\n3. Leia `projects/<projeto>/MEMORY/` para sessões anteriores.\n4. Leia `memory/lessons-learned.md` para lições relevantes.\n\n## Ao Finalizar uma Sessão\n\n### 1. Atualizar Estado Global\n\nEdite `memory/current-state.md` com mudanças relevantes.\n\n### 2. Criar Registro de Sessão\n\nCrie arquivo em `projects/<projeto>/MEMORY/sessions/`:\n\nNome: `YYYY-MM-DD-descricao-curta.md`\n\nConteúdo:\n\n```markdown\n# Sessão: YYYY-MM-DD — Descrição Curta\n\n## Contexto\nO que motivou esta sessão de trabalho.\n\n## O que foi feito\n- [ ] Item 1\n- [ ] Item 2\n\n## Decisões tomadas\n- Decisão 1: Motivo\n\n## Problemas encontrados\n- Problema 1: Como foi resolvido\n\n## Próximos passos\n1. Passo 1\n2. Passo 2\n\n## Aprendizados\n- Lição 1\n```\n\n### 3. Atualizar CURRENT_STATE.md do projeto\n\nReflita as mudanças no estado atual do projeto.\n\n### 4. Atualizar Lessons Learned (se aplicável)\n\nSe houve aprendizados significativos, adicione em `memory/lessons-learned.md`.\n\n## Regras\n\n- Seja conciso mas completo.\n- Registre decisões com o motivo.\n- Não omita problemas encontrados.\n- Próximos passos devem ser acionáveis.\n"
     },
     {
-      "id": "_agents_Teste_agent_teste_memory_Teste_SKILL_md",
-      "path": ".agents/Teste_agent/teste_memory/Teste_SKILL.md",
-      "name": "Teste_SKILL.md",
-      "title": "teste",
-      "category": "agents",
-      "icon": "🤖",
-      "size": 134,
-      "mtime": 1790556532044.9878,
-      "outgoingLinks": [],
-      "content": "---\nname: teste\ndescription: >-\n  teste.\n---\n\n# teste\n\n## Processo de Investigação de teste\n\n### 1. Coletar Informações de teste\n\n"
-    },
-    {
       "id": "decisions_GLOBAL_DECISIONS_md",
       "path": "decisions/GLOBAL_DECISIONS.md",
       "name": "GLOBAL_DECISIONS.md",
       "title": "Decisões Globais",
       "category": "decisions",
       "icon": "⚖️",
-      "size": 1250,
-      "mtime": 1790520068776.6985,
+      "size": 1248,
+      "mtime": 1790609892439.0444,
       "outgoingLinks": [],
-      "content": "# Decisões Globais\n\n> Decisões que afetam todos os projetos do AI Second Brain.\n\n## ADR-G001: Adoção do AI Decision Gate Pattern\n- **Status**: Aceita\n- **Data**: 2026-09-27\n- **Descrição**: Todo projeto que utilizar IA deve passar pelo Decision Gate\n  para determinar se a tarefa é determinística, classificação/decisão, ou geração.\n- **Detalhes**: Ver `projects/JobSentinel/DECISIONS/ADR-0001-ai-decision-gate.md`\n\n## ADR-G002: AI Gateway como abstração unificada\n- **Status**: Aceita\n- **Data**: 2026-09-27\n- **Descrição**: Todo acesso a IA deve ser feito através de interfaces abstratas\n  (`IDecisionProvider`, `IGenerativeAIProvider`) para desacoplar de providers.\n- **Detalhes**: Ver `knowledge/ai/AI_GATEWAY.md`\n\n## ADR-G003: Formato Antigravity nativo para AI Second Brain\n- **Status**: Aceita\n- **Data**: 2026-09-27\n- **Descrição**: O AI Second Brain utiliza o formato nativo do Antigravity\n  (Rules, Skills, Plugins) em vez de formatos genéricos.\n- **Motivo**: Garante descoberta automática e funcionamento correto das features.\n\n## ADR-G004: Documentação como código\n- **Status**: Aceita\n- **Data**: 2026-09-27\n- **Descrição**: Toda documentação vive no repositório, versionada com Git,\n  em formato Markdown.\n"
+      "content": "# Decisões Globais\n\n> Decisões que afetam todos os projetos do AI Second Brain.\n\n## ADR-G001: Adoção do AI Decision Gate Pattern\n- **Status**: Aceita\n- **Data**: 2026-09-27\n- **Descrição**: Todo projeto que utilizar IA deve passar pelo Decision Gate\n  para determinar se a tarefa é determinística, classificação/decisão, ou geração.\n- **Detalhes**: Ver `.agents/rules/01-ai-decision.md` e `knowledge/ai/AIJEV.md`\n\n## ADR-G002: AI Gateway como abstração unificada\n- **Status**: Aceita\n- **Data**: 2026-09-27\n- **Descrição**: Todo acesso a IA deve ser feito através de interfaces abstratas\n  (`IDecisionProvider`, `IGenerativeAIProvider`) para desacoplar de providers.\n- **Detalhes**: Ver `knowledge/ai/AI_GATEWAY.md`\n\n## ADR-G003: Formato Antigravity nativo para AI Second Brain\n- **Status**: Aceita\n- **Data**: 2026-09-27\n- **Descrição**: O AI Second Brain utiliza o formato nativo do Antigravity\n  (Rules, Skills, Plugins) em vez de formatos genéricos.\n- **Motivo**: Garante descoberta automática e funcionamento correto das features.\n\n## ADR-G004: Documentação como código\n- **Status**: Aceita\n- **Data**: 2026-09-27\n- **Descrição**: Toda documentação vive no repositório, versionada com Git,\n  em formato Markdown.\n"
     },
     {
       "id": "docs_COMO_UTILIZAR_O_PROJETO_md",
@@ -217,10 +181,10 @@ window.VAULT_SNAPSHOT = {
       "title": "Como Utilizar o AI Second Brain na Prática",
       "category": "docs",
       "icon": "📝",
-      "size": 19440,
-      "mtime": 1790529772453.305,
+      "size": 19447,
+      "mtime": 1790609964421.4382,
       "outgoingLinks": [],
-      "content": "# Como Utilizar o AI Second Brain na Prática\n## Guia Definitivo: Criação de Novos Projetos e Integração de Projetos Existentes\n\n> **Este documento é o manual oficial de governança, onboarding e operação diária do AI Second Brain (Alfredo AI OS).**  \n> Ele orienta passo a passo como iniciar novos projetos do zero (*greenfield*) e como acoplar projetos existentes (*brownfield*), garantindo persistência de memória, governança de IA, padronização técnica e rastreabilidade total de decisões.\n\n---\n\n## 📑 Sumário\n\n1. [O Modelo Mental: Hub Central vs. Repositórios Satélites](#1-o-modelo-mental-hub-central-vs-repositórios-satélites)\n2. [Cenário A: Criação de um NOVO Projeto do Zero (Greenfield)](#2-cenário-a-criação-de-um-novo-projeto-do-zero-greenfield)\n3. [Cenário B: Integração de um Projeto JÁ EXISTENTE (Brownfield)](#3-cenário-b-integração-de-um-projeto-já-existente-brownfield)\n4. [Operação do Dia a Dia: O Ciclo de Vida de uma Sessão de Trabalho](#4-operação-do-dia-a-dia-o-ciclo-de-vida-de-uma-sessão-de-trabalho)\n5. [Governança e Roteamento de IA na Prática (AIJev First)](#5-governança-e-roteamento-de-ia-na-prática-aijev-first)\n6. [Catálogo de Prompts Prontos para o Desenvolvedor](#6-catálogo-de-prompts-prontos-para-o-desenvolvedor)\n7. [Checklists Operacionais de Consulta Rápida](#7-checklists-operacionais-de-consulta-rápida)\n\n---\n\n## 1. O Modelo Mental: Hub Central vs. Repositórios Satélites\n\nO maior erro no desenvolvimento assistido por IA é manter instruções isoladas em chats temporários ou arquivos soltos que se perdem. No **AI Second Brain**, adotamos a arquitetura de **Hub de Conhecimento Central & Repositórios de Implementação**:\n\n```mermaid\ngraph TD\n    subgraph AI_SECOND_BRAIN [\"🧠 HUB CENTRAL: AI_SECOND_BRAIN\"]\n        Rules[\".agents/rules/<br/>Regras Absolutas\"]\n        Skills[\".agents/skills/<br/>Fluxos Especializados\"]\n        Knowledge[\"knowledge/<br/>AIJev, Arquitetura, Gateway\"]\n        Memory[\"memory/<br/>Memória Persistente Global\"]\n        ProjectsMeta[\"projects/<br/>Documentação & Decisões dos Projetos\"]\n        Visualizer[\"docs/brain-ui/<br/>Grafo Neural 3D & Dashboard\"]\n    end\n\n    subgraph Repos [\"💻 REPOSITÓRIOS DE CÓDIGO (Satélites Físicos)\"]\n        Proj1[\"JobSentinel<br/>(Repo .NET / SQL Server)\"]\n        Proj2[\"Sabor em Conflito<br/>(Repo Unity / Godot)\"]\n        Proj3[\"Assistente Mobile<br/>(Repo .NET MAUI / API)\"]\n        ProjNew[\"Seu Novo Projeto<br/>(Repo Greenfield)\"]\n    end\n\n    ProjectsMeta -.-> Proj1\n    ProjectsMeta -.-> Proj2\n    ProjectsMeta -.-> Proj3\n    ProjectsMeta -.-> ProjNew\n    Rules ==> Repos\n    Knowledge ==> Repos\n```\n\n### Onde mora cada informação?\n\n| Tipo de Dado | Onde Fica? | Finalidade |\n| :--- | :--- | :--- |\n| **Código-Fonte Executável** | No repositório físico do projeto (ex: `C:\\Projetos\\SaaS\\MeuProjeto`) | Compilação, testes, Dockerfiles, builds de CI/CD. |\n| **Memória & Estado Atual** | `AI_SECOND_BRAIN/projects/<nome>/CURRENT_STATE.md` | O que foi feito, tarefas ativas e bloqueios. |\n| **Visão Geral e Stack** | `AI_SECOND_BRAIN/projects/<nome>/PROJECT.md` | Contexto de negócio, regras e definições técnicas. |\n| **Decisões Arquiteturais (ADRs)** | `AI_SECOND_BRAIN/projects/<nome>/DECISIONS/` | Histórico imutável de por que certas escolhas foram feitas. |\n| **Mapeamento de Casos de IA** | `AI_SECOND_BRAIN/projects/<nome>/AI/` | Onde e como a IA é usada (AIJev, regras ou LLM). |\n| **Regras Universais de Qualidade** | `AI_SECOND_BRAIN/.agents/rules/` | Padrões de C#, SQL Server, Segurança, etc. |\n\n---\n\n## 2. Cenário A: Criação de um NOVO Projeto do Zero (Greenfield)\n\nQuando você for criar um novo produto SaaS, aplicativo, automação ou jogo, siga este roteiro exato.\n\n### Fluxo Passo a Passo:\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Dev as Alfredo (Você)\n    participant Agent as Antigravity Agent\n    participant Brain as AI_SECOND_BRAIN\n    participant Repo as Novo Repositório de Código\n\n    Dev->>Agent: \"Quero criar um novo projeto chamado [Nome]. Ele faz [X].\"\n    Agent->>Brain: Ativa Skill project-onboarding\n    Agent->>Brain: Cria estrutura em projects/[Nome]/ a partir dos templates\n    Agent->>Dev: Solicita detalhes técnicos ou sugere arquitetura\n    Dev->>Agent: Aprova definições de Stack & Decisões Iniciais\n    Agent->>Brain: Grava PROJECT.md, ARCHITECTURE.md, CURRENT_STATE.md e ADR-001\n    Agent->>Brain: Atualiza README.md, GEMINI.md e Grafo Neural 3D\n    Agent->>Repo: Inicializa o repositório de código com instruções vinculadas\n    Agent->>Dev: Projeto pronto para desenvolvimento do MVP!\n```\n\n### Passo 1: Solicitar o Onboarding ao Agente no Antigravity\nNo chat do Antigravity, envie a seguinte mensagem:\n\n> *\"Quero criar um novo projeto chamado **BillingFlow**. É uma API .NET 9 de conciliação de pagamentos com SQL Server, mensageria RabbitMQ e validação de regras com AIJev. Execute o onboarding desse projeto no Second Brain.\"*\n\nO agente acionará a skill `project-onboarding`.\n\n### Passo 2: Estrutura que o Agente cria em `projects/BillingFlow/`\nO agente criará a pasta canônica do projeto dentro do Segundo Cérebro:\n\n```text\nprojects/BillingFlow/\n├── PROJECT.md                # Visão geral, objetivos de negócio, stack, restrições\n├── ARCHITECTURE.md           # Desenho arquitetural (Clean Arch, endpoints, banco)\n├── CURRENT_STATE.md          # Estado de partida (Fase: Concepção / Setup inicial)\n├── DECISIONS/                # Registro de Decisões Arquiteturais (ADRs)\n│   └── ADR-001-stack-inicial.md\n├── AI/                       # Governança de IA do projeto\n│   ├── AI_USE_CASES.md       # Classificação de cada caso (AIJev vs LLM)\n│   └── AI_ARCHITECTURE.md    # Como o AI Gateway será plugado\n├── DATABASE/                 # Schemas SQL, tabelas planejadas e índices\n├── API/                      # Contratos OpenAPI / Swagger / Endpoints\n├── TESTS/                    # Pirâmide de testes (Unitários, Integração)\n└── MEMORY/                   # Sessões diárias de trabalho deste projeto\n    └── sessions/\n```\n\n### Passo 3: Criar o Repositório Físico do Código\nNo diretório onde você armazena seus códigos (ex: `C:\\Projetos\\SaaS\\BillingFlow`):\n1. Crie o projeto ou rode o scaffolding do framework (ex: `dotnet new webapi -n BillingFlow`).\n2. Crie na raiz do repositório um arquivo `GEMINI.md` (ou `CLAUDE.md` / `.cursorrules`) apontando para o Segundo Cérebro:\n\n```markdown\n# BillingFlow — Instruções de Desenvolvimento\n\n> Este projeto é governado pelo **AI Second Brain** do Alfredo.\n> Antes de implementar código ou tomar decisões, consulte a documentação oficial em:\n> C:\\Projetos\\SaaS\\Google Antigravity\\Projetos\\AI_SECOND_BRAIN\\projects\\BillingFlow\\\n\n## Diretrizes Mandatórias\n1. Siga as regras globais de .NET em: `AI_SECOND_BRAIN/.agents/rules/04-dotnet.md`\n2. Siga as regras de banco de dados em: `AI_SECOND_BRAIN/.agents/rules/05-sql-server.md`\n3. Decisões de IA devem seguir: `AI_SECOND_BRAIN/knowledge/ai/AIJEV.md`\n4. Não altere arquitetura sem registrar um novo ADR em `AI_SECOND_BRAIN/projects/BillingFlow/DECISIONS/`.\n```\n\n### Passo 4: Registrar a Governança de IA (AI Decision Gate)\nSe o novo projeto for utilizar qualquer forma de inteligência:\n1. Abra `projects/BillingFlow/AI/AI_USE_CASES.md`.\n2. Para cada necessidade, preencha a tabela de decisão:\n   - *Exemplo 1:* \"Identificar divergência no valor do boleto\" → **Código Determinístico** (`Math.Abs(pago - esperado) > 0`).\n   - *Exemplo 2:* \"Classificar risco de chargeback por padrão de histórico\" → **AIJev / Jev Decision Tree**.\n   - *Exemplo 3:* \"Gerar e-mail amigável explicando a conciliação ao cliente\" → **LLM** (Gemini / Claude via AI Gateway com fallback).\n\n---\n\n## 3. Cenário B: Integração de um Projeto JÁ EXISTENTE (Brownfield)\n\nSe você já possui um projeto com repositório próprio, código em produção e anos de desenvolvimento (como o **JobSentinel** ou qualquer outro sistema da sua empresa), **você não precisa reescrever o código nem mover a pasta física do repositório**. \n\nO objetivo do Segundo Cérebro é ser a **memória e inteligência governante** desse projeto.\n\n### Fluxo de Adoção para Projetos Existentes:\n\n```mermaid\ngraph LR\n    A[\"1. Varredura Não-Destrutiva<br/>(Ler código existente)\"] --> B[\"2. Criar Pasta Satélite<br/>(projects/NomeProjeto/)\"]\n    B --> C[\"3. Documentar Stack Real<br/>(PROJECT.md)\"]\n    C --> D[\"4. Mapear Decisões Passadas<br/>(ADRs Retroativos)\"]\n    D --> E[\"5. Registrar Estado Atual<br/>(CURRENT_STATE.md)\"]\n    E --> F[\"6. Adicionar Ponte GEMINI.md<br/>(No repo do projeto)\"]\n```\n\n### Passo 1: Executar a Varredura Inicial com o Agente\nAbra o repositório existente no Antigravity ou passe o caminho do projeto para o agente:\n\n> *\"Tenho um projeto existente em `C:\\Projetos\\SaaS\\MeuSistemaLegado`. Preciso que faça o onboarding dele no AI Second Brain. Analise a stack, o banco de dados, os endpoints e crie a documentação correspondente em `projects/MeuSistemaLegado/`.\"*\n\nO agente executará a skill `project-onboarding` em modo brownfield:\n1. Lê o `.csproj`, `package.json`, scripts SQL e Dockerfiles existentes.\n2. Identifica bibliotecas de ORM (ex: Dapper, EF Core), serviços externos e autenticação.\n3. Não modifica **nenhuma linha** de código do sistema legado.\n\n### Passo 2: Criar os ADRs Retroativos (Crucial!)\nUm dos maiores riscos ao usar IA em código legado é o agente tentar \"reescrever tudo\" usando padrões modernos que quebram o sistema em produção (por exemplo, querer substituir Dapper por EF Core ou trocar SQL Server por PostgreSQL).\n\nPara blindar o projeto contra isso, crie ADRs retroativos:\n- `DECISIONS/001-uso-de-dapper-e-procedures.md`:\n  > *\"Decisão: O projeto utiliza Dapper com Stored Procedures por requisitos de alta performance e compatibilidade com o legado. O agente de IA NUNCA deve tentar substituir Dapper por Entity Framework sem autorização expressa do Alfredo.\"*\n\n### Passo 3: Registrar Bloqueios e Débitos Técnicos em `CURRENT_STATE.md`\nNo arquivo `projects/<nome>/CURRENT_STATE.md`, liste exatamente o estado operacional real:\n- O que está 100% testado e funcionando.\n- Quais são os \"pontos sensíveis\" (onde mexer com cuidado).\n- Quais são os bugs conhecidos que ainda não foram corrigidos.\n- Qual é o próximo objetivo prioritário.\n\n---\n\n## 4. Operação do Dia a Dia: O Ciclo de Vida de uma Sessão de Trabalho\n\nPara que o Segundo Cérebro funcione como uma extensão real da sua memória, toda sessão de desenvolvimento deve seguir o ciclo de 3 fases:\n\n```\n┌─────────────────────────────────────────────────────────────┐\n│ 1. ENTRADA (Context Loading)                                │\n│ \"Vou trabalhar no JobSentinel na feature de alertas por     │\n│ Teams. Carregue o estado atual e decisões pendentes.\"       │\n└──────────────────────────────┬──────────────────────────────┘\n                               │\n                               ▼\n┌─────────────────────────────────────────────────────────────┐\n│ 2. DESENVOLVIMENTO (Skills & Governança)                    │\n│ Implementação -> Testes -> Validação -> Revisão             │\n└──────────────────────────────┬──────────────────────────────┘\n                               │\n                               ▼\n┌─────────────────────────────────────────────────────────────┐\n│ 3. SAÍDA (Memory Flush & Sync)                              │\n│ \"Finalizamos por hoje. Atualize CURRENT_STATE.md e registre │\n│ a sessão na memória.\"                                       │\n└─────────────────────────────────────────────────────────────┘\n```\n\n### 1. Início da Sessão\nAntes de pedir código, peça o contexto:\n> *\"Vou trabalhar no [Nome do Projeto]. Me apresente o estado atual e os próximos passos.\"*\n\nO agente lê:\n- `projects/[Nome]/CURRENT_STATE.md`\n- As últimas 3 sessões em `projects/[Nome]/MEMORY/sessions/`\n- As decisões relevantes em `projects/[Nome]/DECISIONS/`\n\n### 2. Durante a Sessão\nO agente utiliza as skills adequadas para cada atividade:\n- **Vai criar endpoint ou serviço?** → Aciona a skill `new-feature`.\n- **Apareceu um erro/bug?** → Aciona a skill `bug-investigation`.\n- **Vai adicionar uma consulta SQL pesada?** → Aciona a skill `database-review`.\n- **A feature envolve inteligência ou decisão?** → Aciona a skill `ai-decision-gate`.\n\n### 3. Fim da Sessão (Memory Flush)\nNunca encerre o Antigravity sem registrar a sessão. Envie:\n> *\"Fechando os trabalhos de hoje no [Nome do Projeto]. Salve a memória da sessão e atualize o CURRENT_STATE.\"*\n\nO agente:\n1. Cria `projects/[Nome]/MEMORY/sessions/YYYY-MM-DD-resumo.md`.\n2. Atualiza `CURRENT_STATE.md` com os itens concluídos e o que ficou pendente.\n3. Se foi tomada uma decisão arquitetural relevante, cria o novo ADR correspondente.\n\n---\n\n## 5. Governança e Roteamento de IA na Prática (AIJev First)\n\nUma das diretrizes centrais do seu sistema é a **política AIJev First**. Quando um projeto precisa resolver um problema de decisão, classificação ou automação, o agente deve seguir rigorosamente a árvore de roteamento:\n\n```mermaid\nflowchart TD\n    Task([Nova Demanda do Projeto]) --> Q1{É 100% determinística?<br/>Matemática, lógica booleana?}\n    Q1 -- SIM --> Code[Implementar CÓDIGO PURO / REGRA DE NEGÓCIO<br/>Sem custo de IA, latência zero]\n    Q1 -- NÃO --> Q2{É uma Decisão ou Classificação?<br/>Ex: Aprovar/Recusar, Categorizar, Rotear?}\n    \n    Q2 -- SIM --> AIJev[Avaliar AIJev / Jev<br/>Árvore de decisão explicável, rápida e barata]\n    AIJev --> AIJevFit{AIJev atende os requisitos?}\n    AIJevFit -- SIM --> ImplAIJev[Implementar via AIJev Pattern]\n    AIJevFit -- NÃO --> AI_Gateway\n    \n    Q2 -- NÃO --> Q3{Precisa gerar texto, código ou sintetizar linguagem?}\n    Q3 -- SIM --> AI_Gateway[AI Gateway Pattern<br/>Provedor Primário: Claude / Gemini<br/>Fallback automático + Cache + Observabilidade]\n    Q3 -- NÃO --> Action[Execução de Script / Automação]\n```\n\n### Tabela Prática de Escolha Técnica:\n\n| Necessidade | Tecnologia Recomendada | Por quê? |\n| :--- | :--- | :--- |\n| Validação de formulários, cálculos tributários, regras de autenticação | **Código C# / TypeScript Puro** | Custo zero, sem falhas de interpretação, determinismo 100%. |\n| Classificação de severidade de erros de SQL Jobs | **AIJev / Jev First** | Muito mais rápido que LLM, sem custo de tokens, 100% auditável. |\n| Detecção de anomalias em volume de transações | **AIJev / Algoritmo Estatístico** | Latência em milissegundos e comportamento previsível. |\n| Diagnóstico detalhado em linguagem natural de por que um job falhou | **LLM (Claude 3.5 Sonnet / Gemini 1.5 Pro)** | Capacidade de raciocínio aberto e contextualização de stack traces. |\n| Chatbot de suporte ao usuário final | **LLM com RAG via AI Gateway** | Respostas conversacionais alimentadas pela base de conhecimento. |\n\n---\n\n## 6. Catálogo de Prompts Prontos para o Desenvolvedor\n\nGuarde esta seção para copiar e colar no Antigravity:\n\n### Para Iniciar um Novo Projeto:\n```text\nAtive a skill project-onboarding. Quero criar um novo projeto chamado [NOME].\nObjetivo: [Descreva em 2 frases o que ele faz].\nStack pretendida: [.NET / React / Python / SQL Server / etc.].\nEle utilizará IA para: [Descreva onde entra a inteligência, se houver].\nCrie a estrutura completa em projects/[NOME]/ com os templates preenchidos.\n```\n\n### Para Plugar um Projeto Existente:\n```text\nAtive a skill project-onboarding para um projeto existente localizado em [CAMINHO_DO_PROJETO].\nAnalise a estrutura atual sem alterar código, identifique a stack e crie a documentação\ncorrespondente em projects/[NOME_DO_PROJETO]/. Em seguida, extraia as 3 principais\ndecisões de arquitetura já consolidadas para salvar como ADRs iniciais.\n```\n\n### Para Iniciar o Dia de Trabalho:\n```text\nVou focar no projeto [NOME] hoje.\nLeia o CURRENT_STATE.md e as últimas decisões em DECISIONS/.\nMe apresente:\n1. O que foi feito recentemente.\n2. Quais são as tarefas prioritárias de hoje.\n3. Há algum bloqueio registrado?\n```\n\n### Para Implementar uma Nova Feature com IA:\n```text\nQuero adicionar a seguinte funcionalidade no projeto [NOME]:\n[Descreva a feature].\nPasse pela skill ai-decision-gate: analise se ela deve ser determinística, usar AIJev ou LLM.\nApresente a proposta de implementação antes de escrever o código.\n```\n\n### Para Encerrar a Sessão e Salvar a Memória:\n```text\nAtive a skill session-memory. Finalizamos a sessão de trabalho no projeto [NOME].\nO que fizemos: [Breve lista ou deixe o agente listar a partir do git diff].\nDecisões tomadas: [Liste se houver].\nPróximos passos: [Liste o que faremos amanhã].\nGrave o arquivo de sessão e atualize o CURRENT_STATE.md do projeto.\n```\n\n---\n\n## 7. Checklists Operacionais de Consulta Rápida\n\n### ✅ Checklist: Novo Projeto (Greenfield)\n- [ ] Criada a pasta `projects/<nome-do-projeto>/` no Second Brain.\n- [ ] Preenchido `PROJECT.md` com objetivo, stack e restrições.\n- [ ] Preenchido `ARCHITECTURE.md` com os diagramas de componentes.\n- [ ] Preenchido `CURRENT_STATE.md` com a milestone inicial.\n- [ ] Registrado `DECISIONS/001-stack-inicial.md`.\n- [ ] Se tiver IA, preenchido `AI/AI_USE_CASES.md` avaliando AIJev First.\n- [ ] Criado o repositório de código e adicionado `GEMINI.md` apontando para o Second Brain.\n- [ ] Adicionado o projeto à tabela de projetos em `README.md` e `GEMINI.md` raiz.\n- [ ] Visualizado e testado o novo nó no **Grafo Neural 3D** (`docs/brain-ui/`).\n\n### ✅ Checklist: Projeto Existente (Brownfield)\n- [ ] Mapeado repositório original sem modificar código.\n- [ ] Criada pasta satélite `projects/<nome-existente>/`.\n- [ ] Documentada a stack real em `PROJECT.md` (versões exatas de runtime e libs).\n- [ ] Registrados os ADRs retroativos das decisões que **não podem ser violadas**.\n- [ ] Registrados os débitos técnicos e pontos críticos em `CURRENT_STATE.md`.\n- [ ] Adicionado arquivo de contexto no repositório de código (`GEMINI.md` / `.cursorrules`).\n- [ ] Avaliadas oportunidades de melhoria de IA com AI Gateway.\n\n### ✅ Checklist: Fim de Turno / Manutenção Contínua\n- [ ] Código testado e com build verde no repositório.\n- [ ] Skill `session-memory` executada para gerar o arquivo diário.\n- [ ] `CURRENT_STATE.md` atualizado com o progresso real.\n- [ ] Nenhuma decisão arquitetural ficou \"apenas no chat\" — todas viraram ADR.\n- [ ] Commit e push realizados no repositório do projeto e no `AI_SECOND_BRAIN`.\n"
+      "content": "# Como Utilizar o AI Second Brain na Prática\n## Guia Definitivo: Criação de Novos Projetos e Integração de Projetos Existentes\n\n> **Este documento é o manual oficial de governança, onboarding e operação diária do AI Second Brain (Alfredo AI OS).**  \n> Ele orienta passo a passo como iniciar novos projetos do zero (*greenfield*) e como acoplar projetos existentes (*brownfield*), garantindo persistência de memória, governança de IA, padronização técnica e rastreabilidade total de decisões.\n\n---\n\n## 📑 Sumário\n\n1. [O Modelo Mental: Hub Central vs. Repositórios Satélites](#1-o-modelo-mental-hub-central-vs-repositórios-satélites)\n2. [Cenário A: Criação de um NOVO Projeto do Zero (Greenfield)](#2-cenário-a-criação-de-um-novo-projeto-do-zero-greenfield)\n3. [Cenário B: Integração de um Projeto JÁ EXISTENTE (Brownfield)](#3-cenário-b-integração-de-um-projeto-já-existente-brownfield)\n4. [Operação do Dia a Dia: O Ciclo de Vida de uma Sessão de Trabalho](#4-operação-do-dia-a-dia-o-ciclo-de-vida-de-uma-sessão-de-trabalho)\n5. [Governança e Roteamento de IA na Prática (AIJev First)](#5-governança-e-roteamento-de-ia-na-prática-aijev-first)\n6. [Catálogo de Prompts Prontos para o Desenvolvedor](#6-catálogo-de-prompts-prontos-para-o-desenvolvedor)\n7. [Checklists Operacionais de Consulta Rápida](#7-checklists-operacionais-de-consulta-rápida)\n\n---\n\n## 1. O Modelo Mental: Hub Central vs. Repositórios Satélites\n\nO maior erro no desenvolvimento assistido por IA é manter instruções isoladas em chats temporários ou arquivos soltos que se perdem. No **AI Second Brain**, adotamos a arquitetura de **Hub de Conhecimento Central & Repositórios de Implementação**:\n\n```mermaid\ngraph TD\n    subgraph AI_SECOND_BRAIN [\"🧠 HUB CENTRAL: AI_SECOND_BRAIN\"]\n        Rules[\".agents/rules/<br/>Regras Absolutas\"]\n        Skills[\".agents/skills/<br/>Fluxos Especializados\"]\n        Knowledge[\"knowledge/<br/>AIJev, Arquitetura, Gateway\"]\n        Memory[\"memory/<br/>Memória Persistente Global\"]\n        ProjectsMeta[\"projects/<br/>Documentação & Decisões dos Projetos\"]\n        Visualizer[\"docs/brain-ui/<br/>Grafo Neural 3D & Dashboard\"]\n    end\n\n    subgraph Repos [\"💻 REPOSITÓRIOS DE CÓDIGO (Satélites Físicos)\"]\n        Proj1[\"API / Backend<br/>(Repo Node / Go / .NET)\"]\n        Proj2[\"Game<br/>(Repo Unity / Godot)\"]\n        Proj3[\"App Mobile<br/>(Repo Flutter / React Native)\"]\n        ProjNew[\"Seu Novo Projeto<br/>(Repo Greenfield)\"]\n    end\n\n    ProjectsMeta -.-> Proj1\n    ProjectsMeta -.-> Proj2\n    ProjectsMeta -.-> Proj3\n    ProjectsMeta -.-> ProjNew\n    Rules ==> Repos\n    Knowledge ==> Repos\n```\n\n### Onde mora cada informação?\n\n| Tipo de Dado | Onde Fica? | Finalidade |\n| :--- | :--- | :--- |\n| **Código-Fonte Executável** | No repositório físico do projeto (ex: `C:\\Projetos\\SaaS\\MeuProjeto`) | Compilação, testes, Dockerfiles, builds de CI/CD. |\n| **Memória & Estado Atual** | `AI_SECOND_BRAIN/projects/<nome>/CURRENT_STATE.md` | O que foi feito, tarefas ativas e bloqueios. |\n| **Visão Geral e Stack** | `AI_SECOND_BRAIN/projects/<nome>/PROJECT.md` | Contexto de negócio, regras e definições técnicas. |\n| **Decisões Arquiteturais (ADRs)** | `AI_SECOND_BRAIN/projects/<nome>/DECISIONS/` | Histórico imutável de por que certas escolhas foram feitas. |\n| **Mapeamento de Casos de IA** | `AI_SECOND_BRAIN/projects/<nome>/AI/` | Onde e como a IA é usada (AIJev, regras ou LLM). |\n| **Regras Universais de Qualidade** | `AI_SECOND_BRAIN/.agents/rules/` | Padrões de C#, SQL Server, Segurança, etc. |\n\n---\n\n## 2. Cenário A: Criação de um NOVO Projeto do Zero (Greenfield)\n\nQuando você for criar um novo produto SaaS, aplicativo, automação ou jogo, siga este roteiro exato.\n\n### Fluxo Passo a Passo:\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Dev as Alfredo (Você)\n    participant Agent as Antigravity Agent\n    participant Brain as AI_SECOND_BRAIN\n    participant Repo as Novo Repositório de Código\n\n    Dev->>Agent: \"Quero criar um novo projeto chamado [Nome]. Ele faz [X].\"\n    Agent->>Brain: Ativa Skill project-onboarding\n    Agent->>Brain: Cria estrutura em projects/[Nome]/ a partir dos templates\n    Agent->>Dev: Solicita detalhes técnicos ou sugere arquitetura\n    Dev->>Agent: Aprova definições de Stack & Decisões Iniciais\n    Agent->>Brain: Grava PROJECT.md, ARCHITECTURE.md, CURRENT_STATE.md e ADR-001\n    Agent->>Brain: Atualiza README.md, GEMINI.md e Grafo Neural 3D\n    Agent->>Repo: Inicializa o repositório de código com instruções vinculadas\n    Agent->>Dev: Projeto pronto para desenvolvimento do MVP!\n```\n\n### Passo 1: Solicitar o Onboarding ao Agente no Antigravity\nNo chat do Antigravity, envie a seguinte mensagem:\n\n> *\"Quero criar um novo projeto chamado **BillingFlow**. É uma API .NET 9 de conciliação de pagamentos com SQL Server, mensageria RabbitMQ e validação de regras com AIJev. Execute o onboarding desse projeto no Second Brain.\"*\n\nO agente acionará a skill `project-onboarding`.\n\n### Passo 2: Estrutura que o Agente cria em `projects/BillingFlow/`\nO agente criará a pasta canônica do projeto dentro do Segundo Cérebro:\n\n```text\nprojects/BillingFlow/\n├── PROJECT.md                # Visão geral, objetivos de negócio, stack, restrições\n├── ARCHITECTURE.md           # Desenho arquitetural (Clean Arch, endpoints, banco)\n├── CURRENT_STATE.md          # Estado de partida (Fase: Concepção / Setup inicial)\n├── DECISIONS/                # Registro de Decisões Arquiteturais (ADRs)\n│   └── ADR-001-stack-inicial.md\n├── AI/                       # Governança de IA do projeto\n│   ├── AI_USE_CASES.md       # Classificação de cada caso (AIJev vs LLM)\n│   └── AI_ARCHITECTURE.md    # Como o AI Gateway será plugado\n├── DATABASE/                 # Schemas SQL, tabelas planejadas e índices\n├── API/                      # Contratos OpenAPI / Swagger / Endpoints\n├── TESTS/                    # Pirâmide de testes (Unitários, Integração)\n└── MEMORY/                   # Sessões diárias de trabalho deste projeto\n    └── sessions/\n```\n\n### Passo 3: Criar o Repositório Físico do Código\nNo diretório onde você armazena seus códigos (ex: `C:\\Projetos\\SaaS\\BillingFlow`):\n1. Crie o projeto ou rode o scaffolding do framework (ex: `dotnet new webapi -n BillingFlow`).\n2. Crie na raiz do repositório um arquivo `GEMINI.md` (ou `CLAUDE.md` / `.cursorrules`) apontando para o Segundo Cérebro:\n\n```markdown\n# BillingFlow — Instruções de Desenvolvimento\n\n> Este projeto é governado pelo **AI Second Brain** do Alfredo.\n> Antes de implementar código ou tomar decisões, consulte a documentação oficial em:\n> C:\\Projetos\\SaaS\\Google Antigravity\\Projetos\\AI_SECOND_BRAIN\\projects\\BillingFlow\\\n\n## Diretrizes Mandatórias\n1. Siga as regras globais de .NET em: `AI_SECOND_BRAIN/.agents/rules/04-dotnet.md`\n2. Siga as regras de banco de dados em: `AI_SECOND_BRAIN/.agents/rules/05-sql-server.md`\n3. Decisões de IA devem seguir: `AI_SECOND_BRAIN/knowledge/ai/AIJEV.md`\n4. Não altere arquitetura sem registrar um novo ADR em `AI_SECOND_BRAIN/projects/BillingFlow/DECISIONS/`.\n```\n\n### Passo 4: Registrar a Governança de IA (AI Decision Gate)\nSe o novo projeto for utilizar qualquer forma de inteligência:\n1. Abra `projects/BillingFlow/AI/AI_USE_CASES.md`.\n2. Para cada necessidade, preencha a tabela de decisão:\n   - *Exemplo 1:* \"Identificar divergência no valor do boleto\" → **Código Determinístico** (`Math.Abs(pago - esperado) > 0`).\n   - *Exemplo 2:* \"Classificar risco de chargeback por padrão de histórico\" → **AIJev / Jev Decision Tree**.\n   - *Exemplo 3:* \"Gerar e-mail amigável explicando a conciliação ao cliente\" → **LLM** (Gemini / Claude via AI Gateway com fallback).\n\n---\n\n## 3. Cenário B: Integração de um Projeto JÁ EXISTENTE (Brownfield)\n\nSe você já possui um projeto com repositório próprio, código em produção e anos de desenvolvimento (como uma API legado, um app existente ou qualquer outro sistema da sua empresa), **você não precisa reescrever o código nem mover a pasta física do repositório**. \n\nO objetivo do Segundo Cérebro é ser a **memória e inteligência governante** desse projeto.\n\n### Fluxo de Adoção para Projetos Existentes:\n\n```mermaid\ngraph LR\n    A[\"1. Varredura Não-Destrutiva<br/>(Ler código existente)\"] --> B[\"2. Criar Pasta Satélite<br/>(projects/NomeProjeto/)\"]\n    B --> C[\"3. Documentar Stack Real<br/>(PROJECT.md)\"]\n    C --> D[\"4. Mapear Decisões Passadas<br/>(ADRs Retroativos)\"]\n    D --> E[\"5. Registrar Estado Atual<br/>(CURRENT_STATE.md)\"]\n    E --> F[\"6. Adicionar Ponte GEMINI.md<br/>(No repo do projeto)\"]\n```\n\n### Passo 1: Executar a Varredura Inicial com o Agente\nAbra o repositório existente no Antigravity ou passe o caminho do projeto para o agente:\n\n> *\"Tenho um projeto existente em `C:\\Projetos\\SaaS\\MeuSistemaLegado`. Preciso que faça o onboarding dele no AI Second Brain. Analise a stack, o banco de dados, os endpoints e crie a documentação correspondente em `projects/MeuSistemaLegado/`.\"*\n\nO agente executará a skill `project-onboarding` em modo brownfield:\n1. Lê o `.csproj`, `package.json`, scripts SQL e Dockerfiles existentes.\n2. Identifica bibliotecas de ORM (ex: Dapper, EF Core), serviços externos e autenticação.\n3. Não modifica **nenhuma linha** de código do sistema legado.\n\n### Passo 2: Criar os ADRs Retroativos (Crucial!)\nUm dos maiores riscos ao usar IA em código legado é o agente tentar \"reescrever tudo\" usando padrões modernos que quebram o sistema em produção (por exemplo, querer substituir Dapper por EF Core ou trocar SQL Server por PostgreSQL).\n\nPara blindar o projeto contra isso, crie ADRs retroativos:\n- `DECISIONS/001-uso-de-dapper-e-procedures.md`:\n  > *\"Decisão: O projeto utiliza Dapper com Stored Procedures por requisitos de alta performance e compatibilidade com o legado. O agente de IA NUNCA deve tentar substituir Dapper por Entity Framework sem autorização expressa do Alfredo.\"*\n\n### Passo 3: Registrar Bloqueios e Débitos Técnicos em `CURRENT_STATE.md`\nNo arquivo `projects/<nome>/CURRENT_STATE.md`, liste exatamente o estado operacional real:\n- O que está 100% testado e funcionando.\n- Quais são os \"pontos sensíveis\" (onde mexer com cuidado).\n- Quais são os bugs conhecidos que ainda não foram corrigidos.\n- Qual é o próximo objetivo prioritário.\n\n---\n\n## 4. Operação do Dia a Dia: O Ciclo de Vida de uma Sessão de Trabalho\n\nPara que o Segundo Cérebro funcione como uma extensão real da sua memória, toda sessão de desenvolvimento deve seguir o ciclo de 3 fases:\n\n```\n┌─────────────────────────────────────────────────────────────┐\n│ 1. ENTRADA (Context Loading)                                │\n│ \"Vou trabalhar no [NomeDoProjeto] na feature de autenticação.│\n│ Carregue o estado atual e decisões pendentes.\"               │\n└──────────────────────────────┬──────────────────────────────┘\n                               │\n                               ▼\n┌─────────────────────────────────────────────────────────────┐\n│ 2. DESENVOLVIMENTO (Skills & Governança)                    │\n│ Implementação -> Testes -> Validação -> Revisão             │\n└──────────────────────────────┬──────────────────────────────┘\n                               │\n                               ▼\n┌─────────────────────────────────────────────────────────────┐\n│ 3. SAÍDA (Memory Flush & Sync)                              │\n│ \"Finalizamos por hoje. Atualize CURRENT_STATE.md e registre │\n│ a sessão na memória.\"                                       │\n└─────────────────────────────────────────────────────────────┘\n```\n\n### 1. Início da Sessão\nAntes de pedir código, peça o contexto:\n> *\"Vou trabalhar no [Nome do Projeto]. Me apresente o estado atual e os próximos passos.\"*\n\nO agente lê:\n- `projects/[Nome]/CURRENT_STATE.md`\n- As últimas 3 sessões em `projects/[Nome]/MEMORY/sessions/`\n- As decisões relevantes em `projects/[Nome]/DECISIONS/`\n\n### 2. Durante a Sessão\nO agente utiliza as skills adequadas para cada atividade:\n- **Vai criar endpoint ou serviço?** → Aciona a skill `new-feature`.\n- **Apareceu um erro/bug?** → Aciona a skill `bug-investigation`.\n- **Vai adicionar uma consulta SQL pesada?** → Aciona a skill `database-review`.\n- **A feature envolve inteligência ou decisão?** → Aciona a skill `ai-decision-gate`.\n\n### 3. Fim da Sessão (Memory Flush)\nNunca encerre o Antigravity sem registrar a sessão. Envie:\n> *\"Fechando os trabalhos de hoje no [Nome do Projeto]. Salve a memória da sessão e atualize o CURRENT_STATE.\"*\n\nO agente:\n1. Cria `projects/[Nome]/MEMORY/sessions/YYYY-MM-DD-resumo.md`.\n2. Atualiza `CURRENT_STATE.md` com os itens concluídos e o que ficou pendente.\n3. Se foi tomada uma decisão arquitetural relevante, cria o novo ADR correspondente.\n\n---\n\n## 5. Governança e Roteamento de IA na Prática (AIJev First)\n\nUma das diretrizes centrais do seu sistema é a **política AIJev First**. Quando um projeto precisa resolver um problema de decisão, classificação ou automação, o agente deve seguir rigorosamente a árvore de roteamento:\n\n```mermaid\nflowchart TD\n    Task([Nova Demanda do Projeto]) --> Q1{É 100% determinística?<br/>Matemática, lógica booleana?}\n    Q1 -- SIM --> Code[Implementar CÓDIGO PURO / REGRA DE NEGÓCIO<br/>Sem custo de IA, latência zero]\n    Q1 -- NÃO --> Q2{É uma Decisão ou Classificação?<br/>Ex: Aprovar/Recusar, Categorizar, Rotear?}\n    \n    Q2 -- SIM --> AIJev[Avaliar AIJev / Jev<br/>Árvore de decisão explicável, rápida e barata]\n    AIJev --> AIJevFit{AIJev atende os requisitos?}\n    AIJevFit -- SIM --> ImplAIJev[Implementar via AIJev Pattern]\n    AIJevFit -- NÃO --> AI_Gateway\n    \n    Q2 -- NÃO --> Q3{Precisa gerar texto, código ou sintetizar linguagem?}\n    Q3 -- SIM --> AI_Gateway[AI Gateway Pattern<br/>Provedor Primário: Claude / Gemini<br/>Fallback automático + Cache + Observabilidade]\n    Q3 -- NÃO --> Action[Execução de Script / Automação]\n```\n\n### Tabela Prática de Escolha Técnica:\n\n| Necessidade | Tecnologia Recomendada | Por quê? |\n| :--- | :--- | :--- |\n| Validação de formulários, cálculos tributários, regras de autenticação | **Código C# / TypeScript Puro** | Custo zero, sem falhas de interpretação, determinismo 100%. |\n| Classificação de severidade de erros de SQL Jobs | **AIJev / Jev First** | Muito mais rápido que LLM, sem custo de tokens, 100% auditável. |\n| Detecção de anomalias em volume de transações | **AIJev / Algoritmo Estatístico** | Latência em milissegundos e comportamento previsível. |\n| Diagnóstico detalhado em linguagem natural de por que um job falhou | **LLM (Claude 3.5 Sonnet / Gemini 1.5 Pro)** | Capacidade de raciocínio aberto e contextualização de stack traces. |\n| Chatbot de suporte ao usuário final | **LLM com RAG via AI Gateway** | Respostas conversacionais alimentadas pela base de conhecimento. |\n\n---\n\n## 6. Catálogo de Prompts Prontos para o Desenvolvedor\n\nGuarde esta seção para copiar e colar no Antigravity:\n\n### Para Iniciar um Novo Projeto:\n```text\nAtive a skill project-onboarding. Quero criar um novo projeto chamado [NOME].\nObjetivo: [Descreva em 2 frases o que ele faz].\nStack pretendida: [.NET / React / Python / SQL Server / etc.].\nEle utilizará IA para: [Descreva onde entra a inteligência, se houver].\nCrie a estrutura completa em projects/[NOME]/ com os templates preenchidos.\n```\n\n### Para Plugar um Projeto Existente:\n```text\nAtive a skill project-onboarding para um projeto existente localizado em [CAMINHO_DO_PROJETO].\nAnalise a estrutura atual sem alterar código, identifique a stack e crie a documentação\ncorrespondente em projects/[NOME_DO_PROJETO]/. Em seguida, extraia as 3 principais\ndecisões de arquitetura já consolidadas para salvar como ADRs iniciais.\n```\n\n### Para Iniciar o Dia de Trabalho:\n```text\nVou focar no projeto [NOME] hoje.\nLeia o CURRENT_STATE.md e as últimas decisões em DECISIONS/.\nMe apresente:\n1. O que foi feito recentemente.\n2. Quais são as tarefas prioritárias de hoje.\n3. Há algum bloqueio registrado?\n```\n\n### Para Implementar uma Nova Feature com IA:\n```text\nQuero adicionar a seguinte funcionalidade no projeto [NOME]:\n[Descreva a feature].\nPasse pela skill ai-decision-gate: analise se ela deve ser determinística, usar AIJev ou LLM.\nApresente a proposta de implementação antes de escrever o código.\n```\n\n### Para Encerrar a Sessão e Salvar a Memória:\n```text\nAtive a skill session-memory. Finalizamos a sessão de trabalho no projeto [NOME].\nO que fizemos: [Breve lista ou deixe o agente listar a partir do git diff].\nDecisões tomadas: [Liste se houver].\nPróximos passos: [Liste o que faremos amanhã].\nGrave o arquivo de sessão e atualize o CURRENT_STATE.md do projeto.\n```\n\n---\n\n## 7. Checklists Operacionais de Consulta Rápida\n\n### ✅ Checklist: Novo Projeto (Greenfield)\n- [ ] Criada a pasta `projects/<nome-do-projeto>/` no Second Brain.\n- [ ] Preenchido `PROJECT.md` com objetivo, stack e restrições.\n- [ ] Preenchido `ARCHITECTURE.md` com os diagramas de componentes.\n- [ ] Preenchido `CURRENT_STATE.md` com a milestone inicial.\n- [ ] Registrado `DECISIONS/001-stack-inicial.md`.\n- [ ] Se tiver IA, preenchido `AI/AI_USE_CASES.md` avaliando AIJev First.\n- [ ] Criado o repositório de código e adicionado `GEMINI.md` apontando para o Second Brain.\n- [ ] Adicionado o projeto à tabela de projetos em `README.md` e `GEMINI.md` raiz.\n- [ ] Visualizado e testado o novo nó no **Grafo Neural 3D** (`docs/brain-ui/`).\n\n### ✅ Checklist: Projeto Existente (Brownfield)\n- [ ] Mapeado repositório original sem modificar código.\n- [ ] Criada pasta satélite `projects/<nome-existente>/`.\n- [ ] Documentada a stack real em `PROJECT.md` (versões exatas de runtime e libs).\n- [ ] Registrados os ADRs retroativos das decisões que **não podem ser violadas**.\n- [ ] Registrados os débitos técnicos e pontos críticos em `CURRENT_STATE.md`.\n- [ ] Adicionado arquivo de contexto no repositório de código (`GEMINI.md` / `.cursorrules`).\n- [ ] Avaliadas oportunidades de melhoria de IA com AI Gateway.\n\n### ✅ Checklist: Fim de Turno / Manutenção Contínua\n- [ ] Código testado e com build verde no repositório.\n- [ ] Skill `session-memory` executada para gerar o arquivo diário.\n- [ ] `CURRENT_STATE.md` atualizado com o progresso real.\n- [ ] Nenhuma decisão arquitetural ficou \"apenas no chat\" — todas viraram ADR.\n- [ ] Commit e push realizados no repositório do projeto e no `AI_SECOND_BRAIN`.\n"
     },
     {
       "id": "docs_GUIA_PRATICO_md",
@@ -229,12 +193,24 @@ window.VAULT_SNAPSHOT = {
       "title": "Guia Prático do AI Second Brain",
       "category": "docs",
       "icon": "📝",
-      "size": 3228,
-      "mtime": 1790529909439.6448,
+      "size": 3602,
+      "mtime": 1790609910246.1472,
       "outgoingLinks": [
         "file:///c:/projetos/saas/google%20antigravity/projetos/ai_second_brain/docs/como_utilizar_o_projeto.md"
       ],
-      "content": "# Guia Prático do AI Second Brain\n\n> 📖 **Para o manual detalhado com passo a passo para novos projetos e projetos legados:**  \n> Consulte o documento oficial completo em: **[COMO_UTILIZAR_O_PROJETO.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/COMO_UTILIZAR_O_PROJETO.md)**\n\n## O que é o Segundo Cérebro?\n\nO conceito de \"segundo cérebro\" vem da ideia de **externalizar o conhecimento\nque está na sua cabeça** para um sistema organizado e pesquisável. Em vez de\ndepender da memória humana para lembrar decisões, contextos, padrões e lições\naprendidas, você documenta tudo em um formato que:\n\n1. **Persiste** — Não se perde entre sessões.\n2. **É pesquisável** — Encontre rapidamente o que precisa.\n3. **É acionável** — O agente de IA usa o conhecimento para trabalhar melhor.\n4. **Evolui** — Acumula conhecimento ao longo do tempo.\n\n## Como usar na prática\n\n### Cenário 1: Começar a trabalhar no JobSentinel\n\n1. Abra o workspace AI_SECOND_BRAIN no Antigravity.\n2. Diga: \"Quero trabalhar no JobSentinel. Me dê o contexto atual.\"\n3. O agente vai:\n   - Ler `projects/JobSentinel/PROJECT.md`\n   - Ler `projects/JobSentinel/CURRENT_STATE.md`\n   - Ler decisões em `DECISIONS/`\n   - Ler memória anterior\n   - Te dar um resumo atualizado\n\n### Cenário 2: Implementar uma nova feature\n\n1. Diga: \"Quero adicionar análise de falhas com IA ao JobSentinel.\"\n2. O agente ativa a skill `ai-decision-gate` automaticamente.\n3. Classifica a tarefa:\n   - Detectar falha → Código/Regras\n   - Classificar falha → AIJev\n   - Explicar falha → LLM\n4. Propõe implementação seguindo o AI Gateway pattern.\n5. Após implementar, atualiza memória e documentação.\n\n### Cenário 3: Investigar um bug\n\n1. Diga: \"O Job X está falhando com erro Y.\"\n2. O agente ativa a skill `bug-investigation`.\n3. Segue o processo estruturado de investigação.\n4. Registra a resolução em memória e lessons-learned.\n\n### Cenário 4: Novo projeto\n\n1. Diga: \"Quero adicionar um novo projeto chamado Z.\"\n2. O agente ativa a skill `project-onboarding`.\n3. Cria toda a estrutura de pastas e arquivos.\n4. Preenche templates com suas informações.\n\n### Cenário 5: Revisão de arquitetura\n\n1. Diga: \"Revise a arquitetura do JobSentinel.\"\n2. O agente ativa a skill `architecture-review`.\n3. Verifica checklist de qualidades arquiteturais.\n4. Registra findings e recomendações.\n\n## Fluxo de uma sessão de trabalho\n\n```\nINÍCIO DA SESSÃO\n      │\n      ▼\n  CONTEXTO (ler estado atual, memória, decisões)\n      │\n      ▼\n  TRABALHO (implementar, debugar, revisar)\n      │\n      ▼\n  REGISTRO (atualizar memória, documentação)\n      │\n      ▼\nFIM DA SESSÃO\n```\n\n## Manutenção do Segundo Cérebro\n\n### Diária\n- Atualizar `CURRENT_STATE.md` dos projetos em foco.\n- Registrar sessão em `MEMORY/sessions/`.\n\n### Semanal\n- Revisar `memory/current-state.md` global.\n- Verificar se lições aprendidas foram registradas.\n\n### Por Sprint\n- Atualizar roadmap dos projetos.\n- Revisar decisões pendentes.\n- Avaliar se knowledge base precisa de atualizações.\n\n### Por Trimestre\n- Revisar arquitetura dos projetos.\n- Avaliar se skills precisam de ajustes.\n- Limpar memória obsoleta.\n"
+      "content": "# Guia Prático do AI Second Brain\n\n> 📖 **Para o manual detalhado com passo a passo para novos projetos e projetos legados:**  \n> Consulte o documento oficial completo em: **[COMO_UTILIZAR_O_PROJETO.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/COMO_UTILIZAR_O_PROJETO.md)**\n\n## O que é o Segundo Cérebro?\n\nO conceito de \"segundo cérebro\" vem da ideia de **externalizar o conhecimento\nque está na sua cabeça** para um sistema organizado e pesquisável. Em vez de\ndepender da memória humana para lembrar decisões, contextos, padrões e lições\naprendidas, você documenta tudo em um formato que:\n\n1. **Persiste** — Não se perde entre sessões.\n2. **É pesquisável** — Encontre rapidamente o que precisa.\n3. **É acionável** — O agente de IA usa o conhecimento para trabalhar melhor.\n4. **Evolui** — Acumula conhecimento ao longo do tempo.\n\n## Como usar na prática\n\n### Cenário 1: Começar a trabalhar em um projeto\n\n1. Abra o workspace AI_SECOND_BRAIN no Antigravity.\n2. Diga: \"Quero trabalhar no [NomeDoProjeto]. Me dê o contexto atual.\"\n3. O agente vai:\n   - Ler `projects/[NomeDoProjeto]/PROJECT.md`\n   - Ler `projects/[NomeDoProjeto]/CURRENT_STATE.md`\n   - Ler decisões em `DECISIONS/`\n   - Ler memórias de sessões anteriores\n   - Te dar um resumo atualizado\n\n### Cenário 2: Implementar uma nova feature com IA\n\n1. Diga: \"Quero adicionar uma funcionalidade de classificação inteligente ao [NomeDoProjeto].\"\n2. O agente ativa a skill `ai-decision-gate` automaticamente.\n3. Classifica a tarefa:\n   - É determinística? → Código puro / Regra de negócio\n   - É classificação ou decisão? → Avaliar AIJev / Árvore de decisão\n   - É raciocínio aberto ou geração? → LLM via AI Gateway\n4. Propõe a arquitetura antes de escrever qualquer código.\n5. Após implementar e validar, atualiza memória e documentação.\n\n### Cenário 3: Investigar um bug ou incidente\n\n1. Diga: \"O módulo X está falhando com o erro Y.\"\n2. O agente ativa a skill `bug-investigation`.\n3. Segue o processo estruturado de investigação (hipótese → teste → causa raiz).\n4. Registra a resolução e atualiza `memory/lessons-learned.md`.\n\n### Cenário 4: Onboarding de um novo projeto\n\n1. Diga: \"Quero iniciar um novo projeto chamado MeuNovoApp.\"\n2. O agente ativa a skill `project-onboarding`.\n3. Cria a estrutura padronizada em `projects/MeuNovoApp/`.\n4. Preenche os templates contratuais com as especificações que você definir.\n\n### Cenário 5: Revisão de arquitetura\n\n1. Diga: \"Revise a arquitetura do [NomeDoProjeto].\"\n2. O agente ativa a skill `architecture-review`.\n3. Verifica checklist de qualidades arquiteturais (desacoplamento, segurança, resiliência).\n4. Registra findings e recomendações em um novo ADR.\n\n## Fluxo de uma sessão de trabalho\n\n```\nINÍCIO DA SESSÃO\n      │\n      ▼\n  CONTEXTO (ler estado atual, memória, decisões)\n      │\n      ▼\n  TRABALHO (implementar, debugar, revisar)\n      │\n      ▼\n  REGISTRO (atualizar memória, documentação)\n      │\n      ▼\nFIM DA SESSÃO\n```\n\n## Manutenção do Segundo Cérebro\n\n### Diária\n- Atualizar `CURRENT_STATE.md` dos projetos em foco.\n- Registrar sessão em `MEMORY/sessions/`.\n\n### Semanal\n- Revisar `memory/current-state.md` global.\n- Verificar se lições aprendidas foram registradas.\n\n### Por Sprint\n- Atualizar roadmap dos projetos.\n- Revisar decisões pendentes.\n- Avaliar se knowledge base precisa de atualizações.\n\n### Por Trimestre\n- Revisar arquitetura dos projetos.\n- Avaliar se skills precisam de ajustes.\n- Limpar memória obsoleta.\n"
+    },
+    {
+      "id": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "path": "docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md",
+      "name": "VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md",
+      "title": "Análise Estratégica: Utilidade Real e Relevância do AI Second Brain",
+      "category": "docs",
+      "icon": "📝",
+      "size": 17528,
+      "mtime": 1790560897278.723,
+      "outgoingLinks": [],
+      "content": "# Análise Estratégica: Utilidade Real e Relevância do AI Second Brain\n\n> **Documento de Avaliação Crítica, Viabilidade Técnica e Recepção de Mercado**  \n> **Data:** Setembro de 2026  \n> **Autor/Contexto:** Alfredo AI OS / AI Second Brain Architecture Review\n\n---\n\n## 1. Contexto e Pergunta Original\n\nEste documento formaliza a avaliação crítica sobre a viabilidade, utilidade prática e potencial de mercado da estratégia de **AI Second Brain** (Segundo Cérebro para Desenvolvimento com IA). \n\nAbaixo encontra-se a transcrição literal da dúvida levantada pelo criador do projeto:\n\n> **Pergunta:**  \n> *\"De forma clara e objetiva e sem inventar a resposta, preciso saber se este projeto e essa estratégia 'segundo cérebro' é realmente útil para projetos que são construídos com IA? É relevante para outros desenvolvedores, acha que eles iriam achar relevante?\"*\n\n---\n\n## 2. Resposta Executiva Original na Íntegra\n\nSendo totalmente direto, objetivo e realista: **sim, a estratégia é real e extremamente útil**, mas **não para todo tipo de desenvolvedor da mesma forma**. \n\nAbaixo está a análise honesta do porquê funciona, onde estão os pontos fortes, as críticas que outros desenvolvedores fariam e quem realmente acharia isso valioso.\n\n### 2.1. Por que é realmente útil para projetos construídos com IA?\nO maior gargalo atual do desenvolvimento com agentes (Google Antigravity, Cursor, Claude Code, Windsurf) não é a capacidade do modelo de gerar código, mas sim:\n\n1. **Amnésia e perda de contexto:** Cada nova sessão ou janela de contexto reinicia o agente. Sem um registro externo, ele esquece *por que* certa biblioteca foi escolhida, quais bugs já foram corrigidos e quais decisões de design foram tomadas.\n2. **\"Context Drift\" e código duplicado:** Sem regras e histórico centralizados, o agente tende a reinventar a roda a cada prompt, criando classes duplicadas, violando padrões de arquitetura e desfazendo correções anteriores.\n3. **Falta de governança no uso de IA:** Desenvolvedores tendem a jogar tudo para LLMs caros e lentos (alucinação, latência, custo), quando uma regra determinística ou um motor de regras (como o AIJev) resolveria com latência zero e custo zero.\n\nAo adotar a estrutura montada no projeto (com `CURRENT_STATE.md`, ADRs, roteamento de tarefas e skills), resolve-se a maior dor de quem programa com IA: **consistência de longo prazo**.\n\n### 2.2. Outros desenvolvedores achariam relevante?\nA recepção depende fundamentalmente do **perfil** do desenvolvedor:\n\n#### A. Quem acharia EXTREMAMENTE relevante (Seu público-alvo):\n* **Indie Hackers e Solo Founders:** Pessoas que mantêm 3, 5 ou mais microsaas sozinhos. Para esse perfil, a troca de contexto entre projetos é brutal. Ter um \"segundo cérebro\" que armazena onde parou, o estado e as regras de cada projeto é um multiplicador de produtividade imenso.\n* **Tech Leads e Engenheiros Sêniores:** Profissionais que já perceberam que o *\"vibe coding\"* (gerar código no improviso sem documentar) cria sistemas incontroláveis após algumas semanas. Eles valorizam ADRs (registros de decisões), linters de comportamento e governança de custo.\n* **Consultores e Freelancers:** Quem atende múltiplos clientes e precisa aplicar padrões de qualidade idênticos em dezenas de repositórios diferentes.\n\n#### B. Quem torceria o nariz ou acharia burocrático:\n* **\"Vibe Coders\" e iniciantes:** Quem usa IA apenas para criar protótipos descartáveis ou tarefas simples de fim de semana achará a estrutura \"pesada\" ou burocrática.\n* **Times focados em um único monorepo:** Para quem trabalha apenas em um grande projeto fechado, a separação em um \"Hub Central fora do repo\" gera uma pergunta comum: *\"Por que não colocar essas pastas (`.agents`, `docs/decisions`) direto dentro do próprio repositório de código?\"*\n\n### 2.3. As críticas e desafios reais dessa abordagem (Sem ilusões)\nSe você for apresentar ou compartilhar essa estratégia com a comunidade técnica, precisa estar ciente dos dois principais pontos de fricção:\n\n1. **O risco do \"Document Rot\" (Documentação desatualizada):**\n   * O sistema só tem valor se o estado atual (`CURRENT_STATE.md`) e a memória forem atualizados com disciplina ao final das sessões. Se o desenvolvedor ou o agente esquecerem de atualizar, a IA passará a tomar decisões baseadas em premissas defasadas. *(O uso de skills como `session-memory` mitiga isso, mas exige o hábito de rodar ao encerrar a tarefa).*\n2. **Fricção de repositório central vs. repositório do projeto:**\n   * Na comunidade de IA hoje, muitos preferem a abordagem de colocar arquivos como `AGENTS.md`, `.cursorrules` ou `CLAUDE.md` **diretamente dentro da raiz de cada projeto individual**. \n   * A sua abordagem de **Hub Central** faz sentido quando você gerencia um *portfólio* de projetos com padrões comuns, mas pode parecer um passo extra para quem prefere tudo em um Git só.\n\n### 2.4. Tabela de Veredito Executivo\n\n| Pergunta | Resposta Objetiva |\n| :--- | :--- |\n| **A estratégia é útil?** | **Sim.** Reduz o tempo de setup a cada sessão de 15 minutos de explicação para 1 comando de leitura de estado, além de evitar regressões arquiteturais. |\n| **Tem valor para outros?** | **Sim.** O mercado está saindo da fase do \"olha o que a IA gerou em 5 minutos\" e entrando na fase da ressaca técnica (\"como eu mantenho esse código vivo por 6 meses?\"). Essa estrutura responde exatamente a essa segunda fase. |\n| **O que torna a sua abordagem única?** | A integração explícita entre **decisão de custo/governança** (não usar LLM quando código/AIJev resolve) e a **persistência de memória ativa**. A maioria das pessoas só cria arquivos de regras estáticas, sem gerenciar o estado da sessão. |\n\n---\n\n## 3. Expansão Analítica: O Cenário Técnico Profundo\n\nPara compreender além da superfície por que essa estratégia se sustenta no estado da arte da engenharia de software contemporânea, precisamos examinar a trajetória da indústria com o uso de LLMs e Agentes Autônomos.\n\n```mermaid\ntimeline\n    title A Evolução do Desenvolvimento de Software com IA\n    2022 - 2023 : Fase 1: Chat Solto : ChatGPT e Copilot Inline : Geração de snippets isolados : Zero retenção de contexto\n    2023 - 2024 : Fase 2: Vibe Coding : Cursor, Windsurf e Claude Code : Prompt-driven coding : Débito técnico rápido e sem regras\n    2024 - 2025 : Fase 3: Regras Locais : Arquivos .cursorrules e AGENTS.md : Primeiras tentativas de conter o caos\n    2025 - 2026 : Fase 4: Agentic OS & Memória : Hubs de Conhecimento, ADRs e Governança : IA com memória persistente e custo controlado\n```\n\n### 3.1. A \"Ressaca Técnica\" do Vibe Coding\n\nEm 2023 e 2024, a euforia do *\"vibe coding\"* (programar conversando livremente com a IA sem documentar ou planejar) dominou as redes. Criavam-se protótipos funcionais em poucas horas. \n\nPorém, em projetos com ciclo de vida real (> 3 a 6 meses), o *vibe coding* colapsa sob três forças destrutivas:\n\n1. **A Lei da Entropia Acelerada por IA:**\n   Um desenvolvedor humano introduz débito técnico lentamente, na velocidade de digitação humana. Um agente de IA com múltiplos arquivos abertos pode introduzir milhares de linhas de débito técnico em minutos. Ele cria classes utilitárias que já existiam, muda a biblioteca de autenticação no meio do caminho ou esquece como tratar erros no banco de dados.\n2. **A Ilusão da Janela de Contexto Gigante (1M+ Tokens):**\n   Mesmo com modelos de ponta suportando janelas imensas, o fenômeno de *Lost in the Middle* e o custo de inferência tornam inviável despejar 500 mil tokens de código toda vez que uma pequena alteração é solicitada. **Contexto curado e cirúrgico supera contexto massivo em 100% dos benchmarks práticos de engenharia.**\n3. **A Amnésia do \"Porquê\":**\n   O Git mostra *o que* mudou (`diff`). O Git não explica com clareza *por que* o agente substituiu uma query LINQ por Dapper há três semanas atrás. Sem ADRs (`DECISIONS/`), o próximo agente desfaz a otimização achando que está \"limpando o código\".\n\n---\n\n## 4. Os 5 Pilares de Valor do AI Second Brain\n\nO projeto **AI Second Brain** atua como uma camada de abstração entre a inteligência volátil dos LLMs e a estabilidade exigida pelos sistemas de produção:\n\n```mermaid\ngraph TD\n    subgraph Caos [\"❌ Desenvolvimento com IA Sem Estrutura\"]\n        C1[\"Chat Volátil\"] --> C2[\"Perda de Decisões\"]\n        C2 --> C3[\"Alucinação Arquitetural\"]\n        C3 --> C4[\"Custo Alto de LLM para Tudo\"]\n        C4 --> C5[\"Débito Técnico Incontrolável\"]\n    end\n\n    subgraph Ordem [\"✅ Com AI Second Brain\"]\n        S1[\"Hub Central / GEMINI.md\"] --> S2[\"Memória & CURRENT_STATE.md\"]\n        S2 --> S3[\"ADRs Imutáveis (DECISIONS/)\"]\n        S3 --> S4[\"Roteamento: Determinístico vs AIJev vs LLM\"]\n        S4 --> S5[\"Código Sustentável e Reprodutível\"]\n    end\n```\n\n### 1. Persistência de Estado Trans-Sessão (`CURRENT_STATE.md`)\n* **Problema:** Ao abrir o editor na segunda-feira de manhã, o desenvolvedor gasta de 10 a 20 minutos relembrando o agente: *\"estávamos refatorando a fila do RabbitMQ, o bug do SQL Server já foi mitigado, faltam os testes da controller...\"*.\n* **Solução no Second Brain:** O arquivo `CURRENT_STATE.md` mantém as tarefas ativas, tarefas concluídas e impedimentos. A primeira ação do agente é ler esse arquivo. O tempo de retomada de contexto cai de 15 minutos para **5 segundos**.\n\n### 2. Governança e Roteamento de IA (AIJev First)\n* **Problema:** Desenvolvedores utilizam chamadas de LLM para tarefas que poderiam ser resolvidas por código determinístico ou regras de decisão. Isso introduz latência (1-3 segundos por requisição), contas de API exorbitantes e risco de alucinação em produção.\n* **Solução no Second Brain:** A árvore de decisão obriga o agente a avaliar:\n  1. *É determinístico?* → Código/Regex/Regra de Negócio tradicional.\n  2. *É decisão/classificação tabular?* → Avaliar **AIJev/Jev** (determinismo, alta performance, custo zero de token).\n  3. *Precisa de raciocínio aberto ou linguagem natural?* → LLM generativo, com validação e fallback obrigatórios.\n\n### 3. Rastreabilidade Arquitetural Imutável (ADRs)\n* **Problema:** Regressões arquiteturais causadas por agentes que propõem refatorações que violam restrições contratuais, limitações de banco ou decisões prévias.\n* **Solução no Second Brain:** O diretório `DECISIONS/` em cada projeto armazena ADRs numeradas. Antes de mudar um padrão, a regra mestra (`GEMINI.md`) exige consulta às decisões existentes.\n\n### 4. Reuso Transversal de Regras e Skills\n* **Problema:** O desenvolvedor precisa configurar arquivos `.cursorrules` ou prompts em cada novo repositório que cria, repetindo regras sobre boas práticas de SQL Server, Entity Framework, injeção de dependência e segurança.\n* **Solução no Second Brain:** Regras em `.agents/rules/` e skills em `.agents/skills/` são centralizadas e compartilhadas por todos os projetos satélites.\n\n### 5. Blindagem Cognitiva para Desenvolvedores Solo\n* **Problema:** Desenvolvedores solo e pequenos times sofrem com fadiga de decisão e sobrecarga cognitiva ao navegar entre múltiplos domínios (ex: backend C#, frontend mobile MAUI, game design).\n* **Solução no Second Brain:** O cérebro central atua como um \"co-fundador técnico\" que mantém a especificação de cada projeto organizada, permitindo que o desenvolvedor alterne entre projetos sem perder o fio da meada.\n\n---\n\n## 5. Como a Comunidade e Outros Desenvolvedores Receberiam Isso\n\nAo expor esse projeto em comunidades como GitHub, Hacker News, Reddit (r/LocalLlama, r/Cursor), YouTube ou LinkedIn, a recepção dividirá o público em nichos bem definidos:\n\n### Matriz de Recepção por Perfil\n\n| Perfil de Desenvolvedor | Nível de Interesse | Principal Ponto de Atração | Principal Objeção Potencial | Resposta Recomendada à Objeção |\n| :--- | :---: | :--- | :--- | :--- |\n| **Indie Hacker / Solo Founder** | 🔥 **Altíssimo (9/10)** | Gerenciar 3 a 10 microsaas sem enlouquecer na troca de contexto. | *\"Manter os arquivos de estado dá trabalho manual.\"* | *\"Mostre que as skills automatizam o registro ao final da sessão via prompt único.\"* |\n| **Tech Lead / Staff Engineer** | 🔥 **Altíssimo (9/10)** | Governança, redução de alucinações, ADRs e controle de custos de LLM. | *\"Já usamos Wiki/Notion/Jira na empresa.\"* | *\"Notion e Jira não são alimentados de forma nativa e contextualizada na IDE pelo agente.\"* |\n| **Consultor / Software House** | 🚀 **Alto (8/10)** | Aplicar padrões idênticos de qualidade e segurança em múltiplos clientes. | *\"Cada cliente tem um repositório Git separado e fechado.\"* | *\"O modelo satélite foi desenhado exatamente para manter os clientes isolados do hub de conhecimento.\"* |\n| **Dev de Produto Único (Monorepo)** | ⚖️ **Médio (5/10)** | Gosta das regras e da memória, mas prefere tudo dentro do próprio repo. | *\"Prefiro colocar `.agents/` direto no repositório do projeto.\"* | *\"Totalmente viável: o Second Brain pode funcionar como hub exportador ou templates portáveis.\"* |\n| **Vibe Coder / Hobbysta** | ❄️ **Baixo (2/10)** | Não quer burocracia, prefere prototipar rápido e descartar o código depois. | *\"Documentar antes de codar mata minha criatividade com a IA.\"* | *\"O foco aqui não é protótipo de fim de semana, mas sistemas que precisam faturar e rodar por anos.\"* |\n\n---\n\n## 6. Comparativo Arquitetural: Hub Central vs. Arquitetura \"In-Repo\"\n\nUma das discussões mais ricas que qualquer desenvolvedor sênior fará sobre o seu projeto é a decisão entre **Hub Central** (sua abordagem) versus **Colocação no Repositório** (a abordagem comum de arquivos `.cursorrules` ou `CLAUDE.md` na raiz do código).\n\n```mermaid\ngraph LR\n    subgraph Abordagem_InRepo [\"Abordagem 1: In-Repo (.cursorrules na raiz)\"]\n        R1[\"Repo A (.rules)\"]\n        R2[\"Repo B (.rules duplicadas)\"]\n        R3[\"Repo C (.rules desatualizadas)\"]\n    end\n\n    subgraph Abordagem_Hub [\"Abordagem 2: Hub Central (AI Second Brain)\"]\n        H[\"AI_SECOND_BRAIN<br/>(Regras, Memória, Decisões, Conhecimento)\"]\n        H --> PA[\"Projeto A\"]\n        H --> PB[\"Projeto B\"]\n        H --> PC[\"Projeto C\"]\n    end\n```\n\n### Prós e Contras das Abordagens\n\n| Critério | In-Repo (Tudo dentro do Repo de Código) | Hub Central (AI Second Brain) |\n| :--- | :--- | :--- |\n| **Portabilidade de Regras** | Baixa: Regras precisam ser copiadas e coladas entre dezenas de repositórios. | **Alta:** Regras globais (segurança, SQL, C#) residem em um só lugar. |\n| **Versionamento com o Código** | **Perfeito:** O Git do projeto guarda o histórico exato do código e das regras juntos. | Exige sincronização entre o commit do satélite e a atualização do estado no hub. |\n| **Visão Portfólio (Multi-SaaS)** | Inexistente: Não há visão consolidada de status entre projetos diferentes. | **Excelente:** Dashboard 3D e pasta `projects/` oferecem status de todo o portfólio. |\n| **Isolamento de Segredos/IP** | Risco de subir regras com dados de clientes para repositórios públicos. | **Seguro:** As anotações de negócio ficam no seu Second Brain privado. |\n\n> **Conclusão Técnica:**  \n> A abordagem de **Hub Central** é superior para o desenvolvedor que gerencia um **ecossistema de produtos**. A abordagem **In-Repo** é superior para times grandes focados em um único produto monolítico. O seu projeto atende perfeitamente ao primeiro grupo.\n\n---\n\n## 7. A Chave do Sucesso: Como Evitar o \"Document Rot\"\n\nO único risco real que pode fazer o AI Second Brain perder sua utilidade é o **Document Rot** (quando o código evolui, mas os arquivos `CURRENT_STATE.md` e `DECISIONS/` não são atualizados, tornando o cérebro um registro obsoleto).\n\nPara garantir que o projeto continue sendo extremamente útil na prática, foram estabelecidas três defesas automáticas:\n\n1. **A Skill `session-memory`:**  \n   Ao invés de obrigar o desenvolvedor a digitar relatórios manuais de fim de expediente, o comando `/learn` ou o encerramento da sessão aciona a skill que resume e persiste o que foi feito automaticamente.\n2. **A Skill `project-onboarding`:**  \n   Inicializa toda a estrutura formal de novos projetos via um único prompt padronizado.\n3. **A Regra Raiz (`GEMINI.md`):**  \n   Faz com que qualquer agente que abra o workspace seja forçado a ler o estado antes de propor código e atualizar o estado após implementar features significativas.\n\n---\n\n## 8. Conclusão e Próximos Passos Recomendados\n\n### Vale a pena manter e investir neste projeto?\n**Com certeza absoluta.** O AI Second Brain ataca a fronteira mais importante do desenvolvimento moderno: a transição de *brinquedos de IA gerando código descartável* para *sistemas de engenharia disciplinados, auditáveis e sustentáveis com IA*.\n\n### Recomendações para compartilhar com a comunidade:\n1. **Criar um Template Open Source:** Disponibilizar uma versão sanitizada deste repositório no GitHub (ex: `antigravity-ai-second-brain-template`) para que outros devs possam clonar e usar.\n2. **Escrever um Artigo Técnico / Post:** Título sugerido: *\"Por que Vibe Coding morre aos 3 meses: Como estruturei um Segundo Cérebro para Agentes de IA\"*.\n3. **Enfatizar o AI Gateway / AIJev:** A diferenciação de custo (saber quando NÃO usar LLM) é um dos tópicos mais quentes da indústria de software em 2026.\n"
     },
     {
       "id": "GEMINI_md",
@@ -243,10 +219,10 @@ window.VAULT_SNAPSHOT = {
       "title": "AI SECOND BRAIN — ALFREDO AI OS",
       "category": "core",
       "icon": "🧠",
-      "size": 3873,
-      "mtime": 1790519654099.0344,
+      "size": 4498,
+      "mtime": 1790609745196.535,
       "outgoingLinks": [],
-      "content": "# AI SECOND BRAIN — ALFREDO AI OS\n\n> Este arquivo é o cérebro central do seu sistema de desenvolvimento com IA.\n> Qualquer agente que trabalhar neste workspace deve seguir estas instruções.\n\n---\n\n## IDENTIDADE\n\nVocê é o agente de desenvolvimento do Alfredo. Você opera dentro de um sistema\nestruturado chamado **AI Second Brain** que organiza conhecimento, decisões,\nmemória e regras para todos os projetos.\n\n---\n\n## ANTES DE EXECUTAR QUALQUER TAREFA\n\n1. **Entenda o projeto** — Leia o `PROJECT.md` do projeto relevante em `projects/`.\n2. **Leia as regras aplicáveis** — Verifique `.agents/rules/` para restrições.\n3. **Leia o estado atual** — Consulte `CURRENT_STATE.md` do projeto.\n4. **Leia decisões anteriores** — Verifique `DECISIONS/` do projeto.\n5. **Identifique o tipo da tarefa** — Classifique antes de agir.\n\n---\n\n## CLASSIFICAÇÃO DE TAREFAS\n\nToda tarefa deve ser classificada antes da execução:\n\n| Tipo | Descrição | Ação |\n|------|-----------|------|\n| **A. Determinística** | Lógica clara, sem ambiguidade | → Código/Regra |\n| **B. Classificação** | Categorizar dados/eventos | → Avaliar AIJev/Jev |\n| **C. Decisão** | Escolher entre alternativas | → Avaliar AIJev/Jev |\n| **D. Geração** | Criar conteúdo/texto/código | → LLM |\n| **E. Raciocínio aberto** | Análise exploratória | → LLM |\n| **F. Execução** | Rodar script/deploy/build | → Código |\n| **G. Investigação** | Debug/análise de logs | → Skill específica |\n\n---\n\n## REGRAS DE ROTEAMENTO DE IA\n\n```\nNOVA TAREFA\n    │\n    ▼\n┌─────────────────┐\n│ É determinística?│\n└────────┬────────┘\n         │\n    SIM ─┴──────► CÓDIGO/REGRA\n         │\n    NÃO\n         ▼\n  É DECISÃO/CLASSIFICAÇÃO?\n         │\n    ┌────┴────┐\n   SIM      NÃO\n    │         │\n    ▼         ▼\n  AIJEV     PRECISA GERAR?\n    │         │\n    ▼    ┌────┴────┐\n  REGRA SIM      NÃO\n  DE     │        │\n  NEGÓCIO▼        ▼\n        LLM      AÇÃO\n         │\n         ▼\n     VALIDAÇÃO\n         │\n         ▼\n       AÇÃO\n```\n\n---\n\n## REGRAS ABSOLUTAS\n\n1. **NUNCA** utilize LLM simplesmente porque ele está disponível.\n2. **NUNCA** utilize AIJev artificialmente quando código determinístico for suficiente.\n3. **NUNCA** invente contexto que não existe na documentação do projeto.\n4. **NUNCA** execute ações destrutivas sem confirmação explícita.\n5. **NUNCA** altere arquitetura sem consultar decisões existentes.\n6. **SEMPRE** valide o resultado de qualquer operação de IA.\n7. **SEMPRE** atualize a memória após implementações significativas.\n8. **SEMPRE** registre decisões arquiteturais relevantes.\n\n---\n\n## ANTES DE CRIAR NOVA INTEGRAÇÃO DE IA\n\nAvalie cada item obrigatoriamente:\n\n- [ ] AIJev é aplicável? → Consulte `knowledge/ai/AIJEV.md`\n- [ ] Qual modelo é adequado? → Consulte `knowledge/ai/MODEL_SELECTION.md`\n- [ ] Custo estimado?\n- [ ] Latência aceitável?\n- [ ] Segurança dos dados? → Consulte `.agents/rules/03-security.md`\n- [ ] Fallback definido?\n- [ ] Validação implementada?\n- [ ] Observabilidade configurada?\n\n---\n\n## DEPOIS DA IMPLEMENTAÇÃO\n\n1. Testar\n2. Revisar\n3. Atualizar documentação do projeto\n4. Atualizar memória (`memory/`)\n5. Registrar decisões relevantes (`decisions/`)\n\n---\n\n## PROJETOS ATIVOS\n\n| Projeto | Tipo | Stack |\n|---------|------|-------|\n| **JobSentinel** | Observabilidade SQL Jobs | .NET, SQL Server, API |\n| **Sabor em Conflito** | Jogo Mobile | Game Design, Unity/Godot |\n| **Assistente Mobile** | App Mobile | .NET MAUI, API |\n\n---\n\n## REFERÊNCIAS\n\n- AIJev: https://aijev.org/pt/\n- Knowledge Base: `knowledge/`\n- Templates: `templates/`\n- Skills: `.agents/skills/`\n- Rules: `.agents/rules/`\n"
+      "content": "# AI SECOND BRAIN — ALFREDO AI OS\n\n> Este arquivo é o cérebro central do seu sistema de desenvolvimento com IA.\n> Qualquer agente que trabalhar neste workspace deve seguir estas instruções.\n\n---\n\n## IDENTIDADE\n\nVocê é o agente de desenvolvimento do Alfredo. Você opera dentro de um sistema\nestruturado chamado **AI Second Brain** que organiza conhecimento, decisões,\nmemória e regras para todos os projetos.\n\n---\n\n## ANTES DE EXECUTAR QUALQUER TAREFA\n\n1. **Entenda o projeto** — Leia o `PROJECT.md` do projeto relevante em `projects/`.\n2. **Leia as regras aplicáveis** — Verifique `.agents/rules/` para restrições.\n3. **Leia o estado atual** — Consulte `CURRENT_STATE.md` do projeto.\n4. **Leia decisões anteriores** — Verifique `DECISIONS/` do projeto.\n5. **Identifique o tipo da tarefa** — Classifique antes de agir.\n\n---\n\n## CLASSIFICAÇÃO DE TAREFAS\n\nToda tarefa deve ser classificada antes da execução:\n\n| Tipo | Descrição | Ação |\n|------|-----------|------|\n| **A. Determinística** | Lógica clara, sem ambiguidade | → Código/Regra |\n| **B. Classificação** | Categorizar dados/eventos | → Avaliar AIJev/Jev |\n| **C. Decisão** | Escolher entre alternativas | → Avaliar AIJev/Jev |\n| **D. Geração** | Criar conteúdo/texto/código | → LLM |\n| **E. Raciocínio aberto** | Análise exploratória | → LLM |\n| **F. Execução** | Rodar script/deploy/build | → Código |\n| **G. Investigação** | Debug/análise de logs | → Skill específica |\n\n---\n\n## REGRAS DE ROTEAMENTO DE IA\n\n```\nNOVA TAREFA\n    │\n    ▼\n┌─────────────────┐\n│ É determinística?│\n└────────┬────────┘\n         │\n    SIM ─┴──────► CÓDIGO/REGRA\n         │\n    NÃO\n         ▼\n  É DECISÃO/CLASSIFICAÇÃO?\n         │\n    ┌────┴────┐\n   SIM      NÃO\n    │         │\n    ▼         ▼\n  AIJEV     PRECISA GERAR?\n    │         │\n    ▼    ┌────┴────┐\n  REGRA SIM      NÃO\n  DE     │        │\n  NEGÓCIO▼        ▼\n        LLM      AÇÃO\n         │\n         ▼\n     VALIDAÇÃO\n         │\n         ▼\n       AÇÃO\n```\n\n---\n\n## REGRAS ABSOLUTAS\n\n1. **NUNCA** utilize LLM simplesmente porque ele está disponível.\n2. **NUNCA** utilize AIJev artificialmente quando código determinístico for suficiente.\n3. **NUNCA** invente contexto que não existe na documentação do projeto.\n   - Jamais crie arquivos, regras de negócio, telas, mecânicas ou especificações especulativas sem solicitação expressa do desenvolvedor.\n   - Se uma informação, documento ou projeto ainda não foi detalhado pelo Alfredo, declare expressamente como \"Não definido / Em conceituação\" ou pergunte antes de agir.\n   - O Segundo Cérebro serve para refletir a realidade dos projetos e decisões reais, NUNCA para fabricar conteúdo fictício ou preencher diretórios artificialmente.\n4. **NUNCA** execute ações destrutivas sem confirmação explícita.\n5. **NUNCA** altere arquitetura sem consultar decisões existentes.\n6. **SEMPRE** valide o resultado de qualquer operação de IA.\n7. **SEMPRE** atualize a memória após implementações significativas.\n8. **SEMPRE** registre decisões arquiteturais relevantes.\n\n---\n\n## ANTES DE CRIAR NOVA INTEGRAÇÃO DE IA\n\nAvalie cada item obrigatoriamente:\n\n- [ ] AIJev é aplicável? → Consulte `knowledge/ai/AIJEV.md`\n- [ ] Qual modelo é adequado? → Consulte `knowledge/ai/MODEL_SELECTION.md`\n- [ ] Custo estimado?\n- [ ] Latência aceitável?\n- [ ] Segurança dos dados? → Consulte `.agents/rules/03-security.md`\n- [ ] Fallback definido?\n- [ ] Validação implementada?\n- [ ] Observabilidade configurada?\n\n---\n\n## DEPOIS DA IMPLEMENTAÇÃO\n\n1. Testar\n2. Revisar\n3. Atualizar documentação do projeto\n4. Atualizar memória (`memory/`)\n5. Registrar decisões relevantes (`decisions/`)\n\n---\n\n## GESTÃO DE PROJETOS\n\nOs projetos conectados a este Segundo Cérebro residem em `projects/`. O workspace suporta qualquer tecnologia, linguagem ou domínio.\n\n- **Novos Projetos**: Crie a pasta em `projects/<nome>/` utilizando o template `templates/project.md`.\n- **Projetos Existentes**: Conecte repositórios externos via junções/symlinks conforme documentado em `docs/COMO_UTILIZAR_O_PROJETO.md`.\n\n---\n\n## REFERÊNCIAS\n\n- AIJev: https://aijev.org/pt/\n- Knowledge Base: `knowledge/`\n- Templates: `templates/`\n- Skills: `.agents/skills/`\n- Rules: `.agents/rules/`\n"
     },
     {
       "id": "knowledge_ai_AIJEV_md",
@@ -266,11 +242,11 @@ window.VAULT_SNAPSHOT = {
       "name": "AI_GATEWAY.md",
       "title": "AI Gateway Pattern",
       "category": "knowledge",
-      "icon": "🔌",
-      "size": 3424,
-      "mtime": 1790519921212.2817,
+      "icon": "📄",
+      "size": 3528,
+      "mtime": 1790609729688.0989,
       "outgoingLinks": [],
-      "content": "# AI Gateway Pattern\n\n## Conceito\n\nO AI Gateway é uma abstração que desacopla seus projetos de provedores\nespecíficos de IA. Todo acesso a IA passa por uma interface unificada.\n\n## Arquitetura\n\n```\n┌──────────────────────────────────────────────────┐\n│                   APPLICATION                     │\n├──────────────────────────────────────────────────┤\n│                   AI GATEWAY                      │\n│                                                   │\n│  ┌─────────────┐  ┌──────────────┐  ┌─────────┐ │\n│  │  Decision    │  │  Generative  │  │ Embed   │ │\n│  │  Provider    │  │  Provider    │  │ Provider│ │\n│  └──────┬──────┘  └──────┬───────┘  └────┬────┘ │\n│         │                │               │       │\n│  ┌──────┴──────┐  ┌──────┴───────┐  ┌────┴────┐ │\n│  │ AIJev       │  │ OpenAI       │  │ OpenAI  │ │\n│  │ Rules       │  │ Azure OpenAI │  │ Local   │ │\n│  │ Deterministic│  │ Groq         │  │         │ │\n│  │ Mock        │  │ Google AI    │  │         │ │\n│  │             │  │ Local        │  │         │ │\n│  └─────────────┘  └──────────────┘  └─────────┘ │\n├──────────────────────────────────────────────────┤\n│                  CROSS-CUTTING                    │\n│  ┌─────────┐ ┌────────┐ ┌────────┐ ┌──────────┐ │\n│  │ Logging │ │ Retry  │ │ Cache  │ │ Metrics  │ │\n│  └─────────┘ └────────┘ └────────┘ └──────────┘ │\n└──────────────────────────────────────────────────┘\n```\n\n## Benefícios\n\n1. **Desacoplamento** — Troque de provider sem mudar código do app.\n2. **Fallback** — Se um provider falhar, use outro.\n3. **Observabilidade** — Métricas centralizadas de uso de IA.\n4. **Custo** — Controle e roteamento por custo/qualidade.\n5. **Segurança** — Ponto único para aplicar regras de dados.\n\n## Implementação Base\n\n```csharp\n// Program.cs / DI Registration\nservices.AddAIGateway(options =>\n{\n    options.DefaultDecisionProvider = \"rules\";\n    options.DefaultGenerativeProvider = \"openai\";\n    \n    options.AddDecisionProvider<RulesDecisionProvider>(\"rules\");\n    options.AddDecisionProvider<JevDecisionProvider>(\"jev\");\n    \n    options.AddGenerativeProvider<OpenAIProvider>(\"openai\");\n    options.AddGenerativeProvider<GroqProvider>(\"groq\");\n    \n    options.EnableFallback = true;\n    options.EnableRetry = true;\n    options.EnableMetrics = true;\n});\n```\n"
+      "content": "# AI Gateway Pattern\n\n## Conceito\n\nO AI Gateway é uma abstração arquitetural que desacopla sua aplicação de provedores específicos de inteligência artificial. Todo acesso a modelos ou motores de decisão passa por interfaces unificadas.\n\nIsso se aplica a qualquer stack: **Node.js/TypeScript, Python, Go, C#/.NET, Rust, Java, etc.**\n\n## Arquitetura\n\n```\n┌──────────────────────────────────────────────────┐\n│                   APPLICATION                     │\n├──────────────────────────────────────────────────┤\n│                   AI GATEWAY                      │\n│                                                   │\n│  ┌─────────────┐  ┌──────────────┐  ┌─────────┐ │\n│  │  Decision    │  │  Generative  │  │ Embed   │ │\n│  │  Provider    │  │  Provider    │  │ Provider│ │\n│  └──────┬──────┘  └──────┬───────┘  └────┬────┘ │\n│         │                │               │       │\n│  ┌──────┴──────┐  ┌──────┴───────┐  ┌────┴────┐ │\n│  │ AIJev       │  │ OpenAI       │  │ OpenAI  │ │\n│  │ Deterministic│  │ Anthropic    │  │ Local   │ │\n│  │ Custom Rules│  │ Google Gemini│  │ Ollama  │ │\n│  │ Mock/Test   │  │ Ollama/Local │  │         │ │\n│  └─────────────┘  └──────────────┘  └─────────┘ │\n├──────────────────────────────────────────────────┤\n│                  CROSS-CUTTING                    │\n│  ┌─────────┐ ┌────────┐ ┌────────┐ ┌──────────┐ │\n│  │ Logging │ │ Retry  │ │ Cache  │ │ Metrics  │ │\n│  └─────────┘ └────────┘ └────────┘ └──────────┘ │\n└──────────────────────────────────────────────────┘\n```\n\n## Benefícios Fundamentais\n\n1. **Desacoplamento**: Troque de OpenAI para Claude, Gemini ou modelo local sem alterar regras de negócio.\n2. **Resiliência e Fallback**: Se uma API externa oscilar ou sofrer rate limit, o gateway recorre automaticamente a um provedor secundário ou regras determinísticas locais.\n3. **Observabilidade Centralizada**: Auditoria de tokens, custos financeiros e latência em um único ponto.\n4. **Governança de Privacidade**: Sanitização obrigatória de dados sensíveis antes do envio para qualquer API de terceiro.\n\n## Contratos Agnósticos de Exemplo\n\n```typescript\n// Contrato de Decisão Estruturada (AIJev / Regras)\ninterface IDecisionProvider {\n  decide(request: DecisionRequest): Promise<DecisionResult>;\n}\n\n// Contrato de Geração Livre / Raciocínio (LLM)\ninterface IGenerativeProvider {\n  generate(prompt: string, options?: GenerationOptions): Promise<string>;\n}\n```\n"
     },
     {
       "id": "knowledge_ai_MODEL_SELECTION_md",
@@ -303,10 +279,22 @@ window.VAULT_SNAPSHOT = {
       "title": "Índice de Conhecimento Global",
       "category": "knowledge",
       "icon": "📄",
-      "size": 837,
-      "mtime": 1790519926105.4395,
+      "size": 1126,
+      "mtime": 1790609714776.8743,
       "outgoingLinks": [],
-      "content": "# Índice de Conhecimento Global\n\n## Estrutura\n\n```\nknowledge/\n├── global/          ← Conhecimento transversal\n│   └── INDEX.md     ← Este arquivo\n├── ai/              ← Inteligência Artificial\n│   ├── AIJEV.md\n│   ├── MODEL_SELECTION.md\n│   └── AI_GATEWAY.md\n├── architecture/    ← Padrões de arquitetura\n│   └── PATTERNS.md\n├── dotnet/          ← .NET e C#\n│   └── PATTERNS.md\n├── sql-server/      ← SQL Server\n│   └── PATTERNS.md\n└── security/        ← Segurança\n    └── OWASP.md\n```\n\n## Como Usar\n\n- Antes de implementar algo, consulte a área relevante.\n- Se aprender algo novo e significativo, adicione aqui.\n- Cada arquivo deve ser autocontido e referenciável.\n- Não duplique informação — linke para a fonte.\n"
+      "content": "# Índice de Conhecimento Global\n\n> Base de conhecimento transversal sobre inteligência artificial, arquitetura de software e segurança para qualquer tipo de projeto.\n\n## Estrutura\n\n```\nknowledge/\n├── global/          ← Conhecimento transversal e índice\n│   └── INDEX.md\n├── ai/              ← Inteligência Artificial e Roteamento\n│   ├── AIJEV.md\n│   ├── MODEL_SELECTION.md\n│   └── AI_GATEWAY.md\n├── architecture/    ← Padrões universais de arquitetura de software\n│   └── PATTERNS.md\n└── security/        ← Segurança de APIs e proteção de dados com IA\n    └── OWASP.md\n```\n\n## Como Usar\n\n- **Universal por Padrão**: As bases em `knowledge/` tratam de princípios fundamentais agnósticos a linguagens (Clean Architecture, Decision Gate, OWASP LLM).\n- **Expansão Sob Demanda**: Conforme novos projetos em stacks específicas forem conectados, o desenvolvedor pode documentar decisões e aprendizados locais ou adicionar subpastas próprias.\n- **Zero Ruído**: Cada arquivo é autocontido e livre de acoplamento a um projeto específico.\n"
+    },
+    {
+      "id": "knowledge_security_OWASP_md",
+      "path": "knowledge/security/OWASP.md",
+      "name": "OWASP.md",
+      "title": "Segurança, OWASP & Proteção de Dados com IA",
+      "category": "knowledge",
+      "icon": "🔒",
+      "size": 2552,
+      "mtime": 1790602721015.545,
+      "outgoingLinks": [],
+      "content": "# Segurança, OWASP & Proteção de Dados com IA\n\n> Referência de segurança aplicada a APIs, dados sensíveis e integração com Inteligência Artificial.\n\n## 1. OWASP Top 10 — Diretrizes para Projetos\n\n| Risco OWASP | Mitigação Prática nos Projetos |\n|---|---|\n| **A01: Broken Access Control** | Autenticação via JWT/OAuth2; autorização baseada em roles/policies em cada endpoint do controller ou minimal API. |\n| **A02: Cryptographic Failures** | TLS 1.3 obrigatório para todas as comunicações HTTP; secrets e chaves de criptografia gerenciados via Azure Key Vault / User Secrets. |\n| **A03: Injection (SQL / Prompt)** | Parametrização estrita de queries via EF Core / Dapper; sanitização e delimitação de system prompts ao chamar LLMs. |\n| **A04: Insecure Design** | Adoção do AI Decision Gate pattern: tarefas críticas não são delegadas cegamente a modelos probabilísticos. |\n| **A05: Security Misconfiguration** | Headers de segurança (HSTS, CSP, X-Frame-Options); desativação de páginas de erro com stack trace em produção. |\n| **A06: Vulnerable Components** | `dotnet list package --vulnerable` e `npm audit` integrados ao pipeline de CI. |\n| **A07: Identification Failures** | Rate limiting nos endpoints de autenticação e proteção contra brute force. |\n| **A08: Software Integrity Failures** | Validação de assinaturas de pacotes e verificação de integridade de dependências. |\n| **A09: Logging & Monitoring Failures** | Structured logging com Serilog; métricas com OpenTelemetry; alertas para anomalias. |\n| **A10: SSRF** | Validação e whitelist de URLs externas antes de realizar requisições via `IHttpClientFactory`. |\n\n## 2. OWASP Top 10 para Aplicações com LLM\n\n1. **Prompt Injection**: Nunca concatene dados não confiáveis diretamente no bloco de instruções do sistema. Utilize delimitadores (ex: `\"\"\"input_do_usuario\"\"\"`) e declare claramente a hierarquia de comandos.\n2. **Insecure Output Handling**: Nunca execute código retornado por LLMs ou passe saídas de LLM diretamente para interpretadores SQL/Shell sem validação programática rigorosa.\n3. **Data Privacy & Exfiltration (LGPD)**: É estritamente proibido enviar PII (CPF, e-mails de clientes, senhas, chaves de API) para endpoints públicos de LLM. Anonimize os logs antes de solicitar análise ao modelo.\n4. **Denial of Wallet**: Defina quotas de tokens por requisição, timeouts agressivos e rate limiting nos serviços que invocam APIs de IA generativa.\n\n---\n*Referência relacionada:* `.agents/rules/03-security.md`\n"
     },
     {
       "id": "memory_current-state_md",
@@ -315,10 +303,10 @@ window.VAULT_SNAPSHOT = {
       "title": "Estado Atual do AI Second Brain",
       "category": "memory",
       "icon": "💾",
-      "size": 840,
-      "mtime": 1790520017862.212,
+      "size": 1347,
+      "mtime": 1790609817138.4517,
       "outgoingLinks": [],
-      "content": "# Estado Atual do AI Second Brain\n\n> Última atualização: 2026-09-27\n\n## Projetos Ativos\n\n| Projeto | Status | Prioridade |\n|---------|--------|-----------|\n| **JobSentinel** | 🟡 Em planejamento | Alta |\n| **Sabor em Conflito** | 🔴 Em conceituação | Média |\n| **Assistente Mobile** | 🔴 Em conceituação | Média |\n\n## Foco Atual\n- Estruturação do AI Second Brain\n- Definição da arquitetura do JobSentinel\n- Estabelecimento do AI Decision Gate pattern\n\n## Sessão Mais Recente\n- **Data**: 2026-09-27\n- **O que foi feito**: Criação completa do AI Second Brain v2 para Antigravity Pro\n- **Decisões**: Adoção do formato nativo Antigravity (Rules, Skills, Plugins)\n\n## Temas em Andamento\n- AI Gateway pattern para todos os projetos\n- AIJev como decisor primário (com fallback)\n- Documentação como código (versionada)\n"
+      "content": "# Estado Atual do AI Second Brain\n\n> Última atualização: 2026-09-28\n\n## Status do Framework: 🟢 Pronto & Agnóstico\n\nO AI Second Brain está estruturado como uma plataforma universal de desenvolvimento com IA, livre de acoplamento a projetos específicos ou stacks pré-determinadas.\n\n## Estrutura do Workspace\n\n| Diretório | Papel | Estado |\n|---|---|---|\n| `.agents/rules/` | Regras universais de governança (IA, Segurança, Docs) | ✅ Agnósticas |\n| `.agents/skills/` | Workflows reutilizáveis para Antigravity | ✅ 8 skills ativas |\n| `knowledge/` | Base de conhecimento em IA, Arquitetura e Segurança | ✅ 100% universal |\n| `projects/` | Projetos conectados pelo desenvolvedor | 🟢 Limpo (pronto para receber) |\n| `memory/` | Memória de continuidade entre sessões | ✅ Operacional |\n| `templates/` | Modelos para novos projetos, specs e ADRs | ✅ Disponíveis |\n\n## Sessão Mais Recente\n- **Data**: 2026-09-28\n- **O que foi feito**: \n  - Desacoplamento completo do Segundo Cérebro: remoção de projetos específicos e regras presas a stacks (.NET, SQL Server).\n  - Transformação da solução em um framework universal aplicável a qualquer linguagem ou tecnologia.\n  - Saneamento da pasta `projects/` para receber novos projetos sob demanda do usuário.\n  - Fortalecimento da regra de \"Zero Fabricação de Contexto\".\n"
     },
     {
       "id": "memory_lessons-learned_md",
@@ -333,112 +321,16 @@ window.VAULT_SNAPSHOT = {
       "content": "# Lições Aprendidas\n\n## 2026-09-27 — Criação do AI Second Brain\n\n### Lição 1: Formato nativo importa\n**Contexto**: A versão 1 usava estrutura genérica (CLAUDE.md).\n**Aprendizado**: Cada ferramenta (Antigravity, Claude Code, Cursor) tem seu\nformato nativo de customização. Usar o formato nativo garante que as features\nda ferramenta funcionem corretamente (descoberta automática de skills, rules, etc).\n**Ação**: Sempre adapte o AI Second Brain para o formato da ferramenta em uso.\n\n### Lição 2: AIJev não substitui código determinístico\n**Contexto**: Tentação de usar AIJev para tudo que envolve decisão.\n**Aprendizado**: Se uma regra pode ser escrita em código (if/else, switch),\nnão precisa de AIJev. AIJev é para decisões que envolvem contexto complexo\nou probabilidades.\n**Ação**: Decision Gate obrigatório antes de integrar qualquer IA.\n\n### Lição 3: LLM não é a resposta para tudo\n**Contexto**: Tendência de chamar LLM para cada problema.\n**Aprendizado**: LLM é caro, lento e não-determinístico. Use apenas quando\nrealmente precisa de geração de texto ou raciocínio aberto.\n**Ação**: Sempre pergunte \"isso pode ser feito sem IA?\" antes de usar LLM.\n"
     },
     {
-      "id": "projects_Assistente-Mobile_CURRENT_STATE_md",
-      "path": "projects/Assistente-Mobile/CURRENT_STATE.md",
-      "name": "CURRENT_STATE.md",
-      "title": "Assistente Mobile — Estado Atual",
+      "id": "projects_README_md",
+      "path": "projects/README.md",
+      "name": "README.md",
+      "title": "Diretório de Projetos — AI Second Brain",
       "category": "projects",
-      "icon": "💾",
-      "size": 257,
-      "mtime": 1790519995761.6575,
+      "icon": "🧠",
+      "size": 1398,
+      "mtime": 1790609688984.4578,
       "outgoingLinks": [],
-      "content": "# Assistente Mobile — Estado Atual\n\n> Última atualização: 2026-09-27\n\n## Status Geral: 🔴 Em conceituação\n\n## Próximos passos\n1. Definir escopo do MVP\n2. Definir arquitetura (Clean Architecture + MAUI)\n3. Criar wireframes\n4. Configurar AI Gateway\n"
-    },
-    {
-      "id": "projects_Assistente-Mobile_PROJECT_md",
-      "path": "projects/Assistente-Mobile/PROJECT.md",
-      "name": "PROJECT.md",
-      "title": "Assistente Mobile",
-      "category": "projects",
-      "icon": "📱",
-      "size": 535,
-      "mtime": 1790519993689.4812,
-      "outgoingLinks": [],
-      "content": "# Assistente Mobile\n\n## Visão Geral\nAplicativo mobile assistente pessoal com IA.\n\n## Stack\n- **Frontend**: .NET MAUI\n- **Backend**: ASP.NET Core Web API\n- **IA**: LLM para assistência, AIJev para decisões\n\n## Objetivos\n1. App mobile funcional com .NET MAUI\n2. Backend API robusto\n3. Integração com IA via AI Gateway\n4. UX/UI premium\n\n## Status\n- [ ] Arquitetura definida\n- [ ] Backend API\n- [ ] App MAUI base\n- [ ] AI Gateway integrado\n- [ ] UX/UI design\n\n## Links\n- Arquitetura: `ARCHITECTURE.md`\n- UX/UI: `UX_UI.md`\n- IA: `AI/`\n"
-    },
-    {
-      "id": "projects_JobSentinel_AI_AI_USE_CASES_md",
-      "path": "projects/JobSentinel/AI/AI_USE_CASES.md",
-      "name": "AI_USE_CASES.md",
-      "title": "JobSentinel — Casos de Uso de IA",
-      "category": "projects",
-      "icon": "⚡",
-      "size": 1260,
-      "mtime": 1790519984308.5986,
-      "outgoingLinks": [],
-      "content": "# JobSentinel — Casos de Uso de IA\n\n## Caso 1: Classificação de Falha de Job\n\n| Aspecto | Detalhe |\n|---------|---------|\n| **Tipo** | Classificação |\n| **Abordagem** | AIJev primeiro, fallback para regras |\n| **Input** | Erro do Job, histórico, contexto |\n| **Output** | Categoria de falha + ação recomendada |\n| **Latência** | < 200ms |\n\n## Caso 2: Explicação de Falha\n\n| Aspecto | Detalhe |\n|---------|---------|\n| **Tipo** | Geração |\n| **Abordagem** | LLM (somente quando Decision Gate autoriza) |\n| **Input** | Erro, contexto, histórico, decisão do AIJev |\n| **Output** | Explicação em linguagem humana |\n| **Latência** | < 5s |\n\n## Caso 3: Detecção de Padrões\n\n| Aspecto | Detalhe |\n|---------|---------|\n| **Tipo** | Análise/Classificação |\n| **Abordagem** | Regras + AIJev para edge cases |\n| **Input** | Histórico de execuções (janela temporal) |\n| **Output** | Padrões identificados + alertas |\n| **Latência** | Batch (não real-time) |\n\n## Caso 4: Recomendação de Ação\n\n| Aspecto | Detalhe |\n|---------|---------|\n| **Tipo** | Decisão |\n| **Abordagem** | AIJev |\n| **Input** | Classificação da falha + estado do sistema |\n| **Output** | Ação recomendada (retry, alert, escalate) |\n| **Latência** | < 200ms |\n"
-    },
-    {
-      "id": "projects_JobSentinel_ARCHITECTURE_md",
-      "path": "projects/JobSentinel/ARCHITECTURE.md",
-      "name": "ARCHITECTURE.md",
-      "title": "JobSentinel — Arquitetura",
-      "category": "projects",
-      "icon": "🏗️",
-      "size": 4494,
-      "mtime": 1790519962746.4512,
-      "outgoingLinks": [],
-      "content": "# JobSentinel — Arquitetura\n\n## Visão Geral\n\n```\n┌─────────────────────────────────────────────────┐\n│                SQL SERVER                        │\n│  ┌──────────┐  ┌──────────┐  ┌──────────┐      │\n│  │  Job A   │  │  Job B   │  │  Job N   │      │\n│  └────┬─────┘  └────┬─────┘  └────┬─────┘      │\n│       └──────────────┼──────────────┘            │\n│                      │                           │\n│              msdb.dbo.sysjobhistory              │\n└──────────────────────┼───────────────────────────┘\n                       │\n                       ▼\n┌──────────────────────────────────────────────────┐\n│              JOBSENTINEL API                      │\n│                                                   │\n│  ┌──────────────┐                                │\n│  │  Collector    │  ← Polling ou Event            │\n│  └──────┬───────┘                                │\n│         ▼                                         │\n│  ┌──────────────┐                                │\n│  │  Normalizer   │  ← Dados estruturados          │\n│  └──────┬───────┘                                │\n│         ▼                                         │\n│  ┌──────────────┐                                │\n│  │  Rule Engine  │  ← Regras determinísticas      │\n│  └──────┬───────┘                                │\n│         ▼                                         │\n│  ┌──────────────┐                                │\n│  │  AI Gateway   │  ← Decision Gate               │\n│  │  ├─ AIJev     │                                │\n│  │  ├─ Rules     │                                │\n│  │  └─ LLM      │                                │\n│  └──────┬───────┘                                │\n│         ▼                                         │\n│  ┌──────────────┐                                │\n│  │  Action Eng.  │  ← Executa decisão             │\n│  └──────┬───────┘                                │\n│         ▼                                         │\n│  ┌──────────────┐                                │\n│  │  Notifier     │  ← Alertas e notificações      │\n│  └──────────────┘                                │\n└──────────────────────┬───────────────────────────┘\n                       │\n                       ▼\n┌──────────────────────────────────────────────────┐\n│                   PORTAL                          │\n│  Dashboard │ Jobs │ Incidentes │ Explicações      │\n└──────────────────────────────────────────────────┘\n```\n\n## Camadas\n\n| Camada | Responsabilidade |\n|--------|-----------------|\n| **Collector** | Coletar dados do SQL Agent |\n| **Normalizer** | Estruturar e enriquecer dados |\n| **Rule Engine** | Aplicar regras determinísticas |\n| **AI Gateway** | Decisões inteligentes (AIJev/LLM) |\n| **Action Engine** | Executar ações decididas |\n| **Notifier** | Notificações e alertas |\n| **Portal** | Visualização para humanos |\n\n## Tecnologias\n\n- ASP.NET Core 8 Web API\n- Entity Framework Core\n- SQL Server (fonte + storage)\n- Serilog (logging)\n- SignalR (real-time no portal)\n- Health Checks\n"
-    },
-    {
-      "id": "projects_JobSentinel_CURRENT_STATE_md",
-      "path": "projects/JobSentinel/CURRENT_STATE.md",
-      "name": "CURRENT_STATE.md",
-      "title": "JobSentinel — Estado Atual",
-      "category": "projects",
-      "icon": "💾",
-      "size": 760,
-      "mtime": 1790519971060.5354,
-      "outgoingLinks": [],
-      "content": "# JobSentinel — Estado Atual\n\n> Última atualização: 2026-09-27\n\n## Status Geral: 🟡 Em planejamento\n\n## O que está definido\n- Conceito e visão do produto\n- Filosofia de uso de IA (AIJev First)\n- Estrutura do AI Second Brain\n\n## O que está em desenvolvimento\n- Arquitetura técnica detalhada\n- Definição dos componentes principais\n- AI Decision Gate pattern\n\n## Bloqueios\n- Definir abordagem de coleta (polling vs event)\n- Avaliar disponibilidade da API AIJev\n- Escolher stack do portal (Blazor vs React)\n\n## Próximos passos\n1. Finalizar arquitetura e criar ADRs\n2. Criar POC de coleta do SQL Agent\n3. Implementar AI Gateway base\n4. Criar portal MVP\n\n## Métricas\n- Cobertura de testes: N/A (não iniciado)\n- Endpoints: N/A\n- Jobs monitorados: N/A\n"
-    },
-    {
-      "id": "projects_JobSentinel_DECISIONS_ADR-0001-ai-decision-gate_md",
-      "path": "projects/JobSentinel/DECISIONS/ADR-0001-ai-decision-gate.md",
-      "name": "ADR-0001-ai-decision-gate.md",
-      "title": "ADR-0001: AI Decision Gate como padrão de roteamento de IA",
-      "category": "projects",
-      "icon": "🚦",
-      "size": 1111,
-      "mtime": 1790519979260.4194,
-      "outgoingLinks": [],
-      "content": "# ADR-0001: AI Decision Gate como padrão de roteamento de IA\n\n## Status\nAceita\n\n## Data\n2026-09-27\n\n## Contexto\nO JobSentinel precisa utilizar IA para analisar falhas de SQL Jobs,\nmas não deve chamar GPT/LLM para cada evento. Precisamos de uma\nestratégia que determine automaticamente quando usar IA e qual tipo.\n\n## Decisão\nAdotar o padrão AI Decision Gate que classifica cada tarefa:\n1. Determinística → Código/Regras\n2. Classificação/Decisão → AIJev/Jev\n3. Geração/Explicação → LLM\n\nTodo acesso a IA passa pelo AI Gateway, que abstrai os providers.\n\n## Consequências\n- Redução de custos com IA (não chama LLM desnecessariamente)\n- Melhor performance (regras determinísticas são mais rápidas)\n- Rastreabilidade de decisões\n- Necessidade de implementar e manter o AI Gateway\n- Necessidade de definir regras de roteamento\n\n## Alternativas Consideradas\n1. **Chamar LLM sempre** — Rejeitada: custo alto, latência, sem rastreabilidade.\n2. **Apenas regras** — Rejeitada: perde capacidade de explicação contextual.\n3. **AIJev apenas** — Rejeitada: não cobre geração de texto.\n"
-    },
-    {
-      "id": "projects_JobSentinel_PROJECT_md",
-      "path": "projects/JobSentinel/PROJECT.md",
-      "name": "PROJECT.md",
-      "title": "JobSentinel",
-      "category": "projects",
-      "icon": "⚡",
-      "size": 1554,
-      "mtime": 1790519956642.1892,
-      "outgoingLinks": [],
-      "content": "# JobSentinel\n\n## Visão Geral\nSistema de observabilidade inteligente para SQL Server Agent Jobs.\nTransforma monitoramento passivo em inteligência operacional ativa.\n\n## Stack\n- **Backend**: .NET 8, C#, ASP.NET Core Web API\n- **Banco**: SQL Server (monitoramento de Jobs do SQL Agent)\n- **IA**: AIJev para decisões, LLM para explicações\n- **Frontend**: Portal web para visualização\n\n## Objetivos\n1. Monitorar SQL Agent Jobs em tempo real\n2. Detectar e classificar falhas automaticamente\n3. Decidir ações com AIJev (escalar, alertar, retry)\n4. Gerar explicações contextualizadas com LLM quando necessário\n5. Prover portal para visibilidade operacional\n\n## Arquitetura de IA\n\n```\nSQL JOB FALHOU\n      │\n      ▼\n  EVENTO DETECTADO\n      │\n      ▼\n  NORMALIZAÇÃO (dados estruturados)\n      │\n      ▼\n  REGRAS DETERMINÍSTICAS (filtros simples)\n      │\n      ▼\n  AIJEV / DECISION GATE\n      │\n      ├── operação normal → registra\n      ├── incidente conhecido → alerta\n      ├── necessita humano → escala\n      └── necessita explicação\n              │\n              ▼\n            LLM\n              │\n              ▼\n          VALIDAÇÃO\n              │\n              ▼\n        EXPLICAÇÃO NO PORTAL\n```\n\n## Status\n- [ ] Arquitetura definida\n- [ ] POC de monitoramento\n- [ ] Decision Gate implementado\n- [ ] AI Gateway configurado\n- [ ] Portal básico\n- [ ] Testes\n\n## Links\n- Arquitetura: `ARCHITECTURE.md`\n- Estado atual: `CURRENT_STATE.md`\n- Decisões: `DECISIONS/`\n- IA: `AI/`\n"
-    },
-    {
-      "id": "projects_Sabor-em-Conflito_CURRENT_STATE_md",
-      "path": "projects/Sabor-em-Conflito/CURRENT_STATE.md",
-      "name": "CURRENT_STATE.md",
-      "title": "Sabor em Conflito — Estado Atual",
-      "category": "projects",
-      "icon": "💾",
-      "size": 263,
-      "mtime": 1790519991301.589,
-      "outgoingLinks": [],
-      "content": "# Sabor em Conflito — Estado Atual\n\n> Última atualização: 2026-09-27\n\n## Status Geral: 🔴 Em conceituação\n\n## Próximos passos\n1. Finalizar game design document\n2. Definir art direction\n3. Escolher engine (Unity vs Godot)\n4. Criar protótipo de gameplay\n"
-    },
-    {
-      "id": "projects_Sabor-em-Conflito_PROJECT_md",
-      "path": "projects/Sabor-em-Conflito/PROJECT.md",
-      "name": "PROJECT.md",
-      "title": "Sabor em Conflito",
-      "category": "projects",
-      "icon": "🎮",
-      "size": 601,
-      "mtime": 1790519986963.3054,
-      "outgoingLinks": [],
-      "content": "# Sabor em Conflito\n\n## Visão Geral\nJogo mobile de estratégia culinária.\n\n## Stack\n- **Engine**: A definir (Unity / Godot)\n- **Backend**: A definir\n- **IA**: Possível uso em NPCs e balanceamento\n\n## Objetivos\n1. Game design definido e documentado\n2. Direção artística estabelecida\n3. Gameplay principal implementado\n4. Personagens e mapas desenhados\n\n## Status\n- [ ] Game design document\n- [ ] Art direction\n- [ ] Prototype\n- [ ] Core gameplay\n- [ ] Characters\n- [ ] Maps\n\n## Links\n- Game Design: `GAME_DESIGN.md`\n- Art Direction: `ART_DIRECTION.md`\n- Characters: `CHARACTERS/`\n- Maps: `MAPS/`\n"
+      "content": "# Diretório de Projetos — AI Second Brain\n\n> Este diretório armazena o contexto, a governança e a memória dos seus projetos.\n\n## Como funciona\n\nPor padrão, este diretório vem **limpo e agnóstico**, pronto para receber qualquer tipo de projeto:\n- APIs / Microservices (Node.js, Go, .NET, Python, Java, Rust)\n- Aplicações Web e SaaS (React, Next.js, Vue, Svelte)\n- Aplicativos Mobile (Flutter, React Native, MAUI, Swift, Kotlin)\n- Jogos (Unity, Godot, Unreal Engine)\n- Scripts, Automações e Engenharia de Dados\n\n---\n\n## Como conectar um projeto\n\nVocê pode utilizar qualquer um dos dois modos descritos no manual:\n\n### Modo 1: Projeto Criado Aqui (Greenfield)\n1. Crie uma pasta para o seu projeto: `projects/<nome-do-projeto>/`\n2. Copie o template `templates/project.md` para `projects/<nome-do-projeto>/PROJECT.md`\n3. Crie o arquivo de estado inicial `projects/<nome-do-projeto>/CURRENT_STATE.md`\n\n### Modo 2: Conectar Projeto Existente (Brownfield via Symlink / Junção)\nSe o seu código-fonte já vive em outro repositório Git no seu computador (ex: `C:\\Projetos\\MeuSistema`):\n1. Crie uma junção NTFS no Windows:\n   ```cmd\n   mklink /J \"projects\\MeuSistema\" \"C:\\Projetos\\MeuSistema\"\n   ```\n2. Adicione os arquivos de contexto (`PROJECT.md`, `CURRENT_STATE.md`) na raiz do seu projeto. O AI Second Brain passará a ler e governar seu projeto automaticamente sem duplicar arquivos.\n"
     },
     {
       "id": "README_md",
@@ -447,12 +339,13 @@ window.VAULT_SNAPSHOT = {
       "title": "AI Second Brain — Alfredo AI OS",
       "category": "core",
       "icon": "🧠",
-      "size": 3698,
-      "mtime": 1790529951123.9373,
+      "size": 4311,
+      "mtime": 1790609800728.3025,
       "outgoingLinks": [
-        "file:///c:/projetos/saas/google%20antigravity/projetos/ai_second_brain/docs/como_utilizar_o_projeto.md"
+        "file:///c:/projetos/saas/google%20antigravity/projetos/ai_second_brain/docs/como_utilizar_o_projeto.md",
+        "file:///c:/projetos/saas/google%20antigravity/projetos/ai_second_brain/docs/valor_e_relevancia_do_segundo_cerebro.md"
       ],
-      "content": "# AI Second Brain — Alfredo AI OS\n\n> Sistema de segundo cérebro para desenvolvimento com IA, otimizado para Google Antigravity Pro.\n\n## O que é\n\nO AI Second Brain é uma estrutura de conhecimento, decisões, memória e governança\nque transforma o agente de IA de um chatbot genérico em um parceiro de desenvolvimento\nque entende o contexto, respeita regras e acumula conhecimento ao longo do tempo.\n\n## Estrutura\n\n```\nAI_SECOND_BRAIN/\n│\n├── GEMINI.md                    ← Cérebro central\n├── README.md                    ← Este arquivo\n│\n├── .agents/                     ← Customizações Antigravity\n│   ├── rules/                   ← Regras persistentes\n│   ├── skills/                  ← Workflows reutilizáveis\n│   └── plugins/                 ← Plugin do AI OS\n│\n├── knowledge/                   ← Base de conhecimento\n│   ├── global/                  ← Conhecimento transversal\n│   ├── ai/                      ← IA, modelos, AIJev\n│   ├── architecture/            ← Padrões e decisões\n│   ├── dotnet/                  ← .NET, C#, Entity Framework\n│   ├── sql-server/              ← SQL Server, Jobs, Performance\n│   └── security/                ← Segurança, LGPD, OWASP\n│\n├── projects/                    ← Projetos ativos\n│   ├── JobSentinel/\n│   ├── Sabor-em-Conflito/\n│   └── Assistente-Mobile/\n│\n├── decisions/                   ← Decisões arquiteturais globais\n├── memory/                      ← Memória persistente\n├── templates/                   ← Templates reutilizáveis\n└── docs/                        ← Documentação do sistema\n    └── brain-ui/                ← Interface de visualização\n```\n\n## Como usar\n\n> 📘 **Manual Prático Completo:**  \n> Veja o passo a passo detalhado para criar novos projetos ou plugar projetos existentes em: **[docs/COMO_UTILIZAR_O_PROJETO.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/COMO_UTILIZAR_O_PROJETO.md)**.\n\n### 1. Abra este workspace no Antigravity\nO `GEMINI.md` será carregado automaticamente como regra raiz.\n\n### 2. As regras são aplicadas automaticamente\nQuando você trabalhar em qualquer arquivo, as regras de `.agents/rules/` serão\ndescobertas e aplicadas conforme o contexto.\n\n### 3. Skills são ativadas sob demanda\nO agente identifica automaticamente quando uma skill é relevante e a ativa.\nVocê também pode invocar manualmente.\n\n### 4. Projetos têm contexto próprio\nCada projeto em `projects/` tem seu `PROJECT.md`, estado atual, decisões e memória.\n\n### 5. A memória persiste entre sessões\nApós cada sessão significativa, o agente atualiza `memory/` com o estado atual.\n\n## Filosofia\n\n```\nALFREDO AI OS\n       │\n  ┌────┴─────────────────┐\n  │                      │\nANTIGRAVITY         KNOWLEDGE\n  │                      │\n  ┌────┼────┐    ┌────┼────┐\n  │    │    │    │    │    │\nRULES SKILLS AGENTS GLOBAL PROJECT MEMORY\n  │    │    │    │    │    │\n  └────┴────┴────┴────┴────┘\n           │\n       AI GATEWAY\n           │\n    ┌──────┼──────┐\n    │      │      │\n  AIJEV   LLM  LOCAL AI\n    │      │      │\n    └──────┼──────┘\n           │\n     SEUS PROJETOS\n           │\n  ┌────────┼────────┐\n  ▼        ▼        ▼\nJobSentinel  Sabor  Assistente\n```\n"
+      "content": "# AI Second Brain — Alfredo AI OS\n\n> Sistema de segundo cérebro para desenvolvimento com IA, otimizado para Google Antigravity Pro.\n\n## O que é\n\nO AI Second Brain é uma estrutura de conhecimento, decisões, memória e governança\nque transforma o agente de IA de um chatbot genérico em um parceiro de desenvolvimento\nque entende o contexto, respeita regras e acumula conhecimento ao longo do tempo.\n\n## Estrutura\n\n```\nAI_SECOND_BRAIN/\n│\n├── GEMINI.md                    ← Cérebro central\n├── README.md                    ← Este arquivo\n│\n├── .agents/                     ← Customizações Antigravity\n│   ├── rules/                   ← Regras persistentes\n│   ├── skills/                  ← Workflows reutilizáveis\n│   └── plugins/                 ← Plugin do AI OS\n│\n├── knowledge/                   ← Base de conhecimento universal\n│   ├── global/                  ← Conhecimento transversal e índice\n│   ├── ai/                      ← IA, modelos, roteamento, AIJev\n│   ├── architecture/            ← Padrões universais de arquitetura\n│   └── security/                ← Segurança com IA, OWASP, privacidade\n│\n├── projects/                    ← Seus projetos (APIs, SaaS, Mobile, Jogos)\n│\n├── decisions/                   ← Decisões arquiteturais globais\n├── memory/                      ← Memória persistente\n├── templates/                   ← Templates reutilizáveis\n└── docs/                        ← Documentação do sistema\n    └── brain-ui/                ← Interface de visualização\n```\n\n## Como usar\n\n> 📘 **Manual Prático Completo:**  \n> Veja o passo a passo detalhado para criar novos projetos ou plugar projetos existentes em: **[docs/COMO_UTILIZAR_O_PROJETO.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/COMO_UTILIZAR_O_PROJETO.md)**.  \n>  \n> 🧠 **Análise Crítica & Relevância de Mercado:**  \n> Entenda por que esta estratégia é essencial para projetos construídos com IA e como ela é percebida pela comunidade em: **[docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md)**.\n\n### 1. Abra este workspace no Antigravity\nO `GEMINI.md` será carregado automaticamente como regra raiz.\n\n### 2. As regras são aplicadas automaticamente\nQuando você trabalhar em qualquer arquivo, as regras de `.agents/rules/` serão\ndescobertas e aplicadas conforme o contexto.\n\n### 3. Skills são ativadas sob demanda\nO agente identifica automaticamente quando uma skill é relevante e a ativa.\nVocê também pode invocar manualmente.\n\n### 4. Projetos têm contexto próprio\nCada projeto em `projects/` tem seu `PROJECT.md`, estado atual, decisões e memória.\n\n### 5. A memória persiste entre sessões\nApós cada sessão significativa, o agente atualiza `memory/` com o estado atual.\n\n## Comandos Operacionais\n\n| Comando | Descrição |\n|---|---|\n| `npm start` *(ou `start-brain.bat`)* | Inicia o Live Vault Server (SSE) e abre o Visualizador 3D no navegador |\n| `npm run doctor` *(ou `npm run check`)* | Executa o linter de integridade: valida links quebrados, contratos de projetos e knowledge |\n| `npm run scan` | Atualiza o snapshot JSON estático do cofre para o visualizador offline |\n\n## Filosofia\n\n```\nALFREDO AI OS\n       │\n  ┌────┴─────────────────┐\n  │                      │\nANTIGRAVITY         KNOWLEDGE\n  │                      │\n  ┌────┼────┐    ┌────┼────┐\n  │    │    │    │    │    │\nRULES SKILLS AGENTS GLOBAL PROJECT MEMORY\n  │    │    │    │    │    │\n  └────┴────┴────┴────┴────┘\n           │\n       AI GATEWAY\n           │\n    ┌──────┼──────┐\n    │      │      │\n  AIJEV   LLM  LOCAL AI\n    │      │      │\n    └──────┼──────┘\n           │\n     SEUS PROJETOS\n           │\n  ┌────────┼────────┐\n  ▼        ▼        ▼\nAPIs/Backend  SaaS/Web    Jogos/Apps\n```\n"
     },
     {
       "id": "templates_ai-use-case_md",
@@ -533,7 +426,7 @@ window.VAULT_SNAPSHOT = {
           "label": "Regras Fundamentais do AI Second Brain",
           "icon": "⚙️",
           "path": ".agents/rules/00-core.md",
-          "size": 1585
+          "size": 1911
         },
         {
           "id": "_agents_rules_01-ai-decision_md",
@@ -557,28 +450,14 @@ window.VAULT_SNAPSHOT = {
           "size": 1725
         },
         {
-          "id": "_agents_rules_04-dotnet_md",
-          "label": "Regras para .NET",
-          "icon": "💜",
-          "path": ".agents/rules/04-dotnet.md",
-          "size": 1770
-        },
-        {
-          "id": "_agents_rules_05-sql-server_md",
-          "label": "Regras para SQL Server",
-          "icon": "🗃️",
-          "path": ".agents/rules/05-sql-server.md",
-          "size": 1409
-        },
-        {
-          "id": "_agents_rules_06-documentation_md",
+          "id": "_agents_rules_04-documentation_md",
           "label": "Regras de Documentação",
           "icon": "📝",
-          "path": ".agents/rules/06-documentation.md",
-          "size": 1444
+          "path": ".agents/rules/04-documentation.md",
+          "size": 1706
         }
       ],
-      "badge": 7
+      "badge": 5
     },
     {
       "id": "skills",
@@ -595,7 +474,7 @@ window.VAULT_SNAPSHOT = {
         {
           "id": "_agents_skills_ai-integration_SKILL_md",
           "label": "ai-integration",
-          "icon": "🔌",
+          "icon": "📄",
           "path": ".agents/skills/ai-integration/SKILL.md",
           "size": 2587
         },
@@ -645,90 +524,19 @@ window.VAULT_SNAPSHOT = {
       "badge": 8
     },
     {
-      "id": "agents",
-      "label": "Agents",
-      "icon": "🤖",
-      "items": [
-        {
-          "id": "_agents_Teste_agent_teste_memory_Teste_SKILL_md",
-          "label": "teste",
-          "icon": "🤖",
-          "path": ".agents/Teste_agent/teste_memory/Teste_SKILL.md",
-          "size": 134
-        }
-      ],
-      "badge": 1
-    },
-    {
       "id": "projects",
       "label": "Projects",
       "icon": "📁",
       "items": [
         {
-          "id": "projects_Assistente-Mobile_CURRENT_STATE_md",
-          "label": "Assistente Mobile — Estado Atual",
-          "icon": "💾",
-          "path": "projects/Assistente-Mobile/CURRENT_STATE.md",
-          "size": 257
-        },
-        {
-          "id": "projects_Assistente-Mobile_PROJECT_md",
-          "label": "Assistente Mobile",
-          "icon": "📱",
-          "path": "projects/Assistente-Mobile/PROJECT.md",
-          "size": 535
-        },
-        {
-          "id": "projects_JobSentinel_AI_AI_USE_CASES_md",
-          "label": "JobSentinel — Casos de Uso de IA",
-          "icon": "⚡",
-          "path": "projects/JobSentinel/AI/AI_USE_CASES.md",
-          "size": 1260
-        },
-        {
-          "id": "projects_JobSentinel_ARCHITECTURE_md",
-          "label": "JobSentinel — Arquitetura",
-          "icon": "🏗️",
-          "path": "projects/JobSentinel/ARCHITECTURE.md",
-          "size": 4494
-        },
-        {
-          "id": "projects_JobSentinel_CURRENT_STATE_md",
-          "label": "JobSentinel — Estado Atual",
-          "icon": "💾",
-          "path": "projects/JobSentinel/CURRENT_STATE.md",
-          "size": 760
-        },
-        {
-          "id": "projects_JobSentinel_DECISIONS_ADR-0001-ai-decision-gate_md",
-          "label": "ADR-0001: AI Decision Gate como padrão de roteamento de IA",
-          "icon": "🚦",
-          "path": "projects/JobSentinel/DECISIONS/ADR-0001-ai-decision-gate.md",
-          "size": 1111
-        },
-        {
-          "id": "projects_JobSentinel_PROJECT_md",
-          "label": "JobSentinel",
-          "icon": "⚡",
-          "path": "projects/JobSentinel/PROJECT.md",
-          "size": 1554
-        },
-        {
-          "id": "projects_Sabor-em-Conflito_CURRENT_STATE_md",
-          "label": "Sabor em Conflito — Estado Atual",
-          "icon": "💾",
-          "path": "projects/Sabor-em-Conflito/CURRENT_STATE.md",
-          "size": 263
-        },
-        {
-          "id": "projects_Sabor-em-Conflito_PROJECT_md",
-          "label": "Sabor em Conflito",
-          "icon": "🎮",
-          "path": "projects/Sabor-em-Conflito/PROJECT.md",
-          "size": 601
+          "id": "projects_README_md",
+          "label": "Diretório de Projetos — AI Second Brain",
+          "icon": "🧠",
+          "path": "projects/README.md",
+          "size": 1398
         }
       ],
-      "badge": 9
+      "badge": 1
     },
     {
       "id": "knowledge",
@@ -738,9 +546,9 @@ window.VAULT_SNAPSHOT = {
         {
           "id": "knowledge_ai_AI_GATEWAY_md",
           "label": "AI Gateway Pattern",
-          "icon": "🔌",
+          "icon": "📄",
           "path": "knowledge/ai/AI_GATEWAY.md",
-          "size": 3424
+          "size": 3528
         },
         {
           "id": "knowledge_ai_AIJEV_md",
@@ -768,10 +576,17 @@ window.VAULT_SNAPSHOT = {
           "label": "Índice de Conhecimento Global",
           "icon": "📄",
           "path": "knowledge/global/INDEX.md",
-          "size": 837
+          "size": 1126
+        },
+        {
+          "id": "knowledge_security_OWASP_md",
+          "label": "Segurança, OWASP & Proteção de Dados com IA",
+          "icon": "🔒",
+          "path": "knowledge/security/OWASP.md",
+          "size": 2552
         }
       ],
-      "badge": 5
+      "badge": 6
     },
     {
       "id": "decisions",
@@ -783,7 +598,7 @@ window.VAULT_SNAPSHOT = {
           "label": "Decisões Globais",
           "icon": "⚖️",
           "path": "decisions/GLOBAL_DECISIONS.md",
-          "size": 1250
+          "size": 1248
         }
       ],
       "badge": 1
@@ -798,7 +613,7 @@ window.VAULT_SNAPSHOT = {
           "label": "Estado Atual do AI Second Brain",
           "icon": "💾",
           "path": "memory/current-state.md",
-          "size": 840
+          "size": 1347
         },
         {
           "id": "memory_lessons-learned_md",
@@ -856,17 +671,24 @@ window.VAULT_SNAPSHOT = {
           "label": "Como Utilizar o AI Second Brain na Prática",
           "icon": "📝",
           "path": "docs/COMO_UTILIZAR_O_PROJETO.md",
-          "size": 19440
+          "size": 19447
         },
         {
           "id": "docs_GUIA_PRATICO_md",
           "label": "Guia Prático do AI Second Brain",
           "icon": "📝",
           "path": "docs/GUIA_PRATICO.md",
-          "size": 3228
+          "size": 3602
+        },
+        {
+          "id": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+          "label": "Análise Estratégica: Utilidade Real e Relevância do AI Second Brain",
+          "icon": "📝",
+          "path": "docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md",
+          "size": 17528
         }
       ],
-      "badge": 2
+      "badge": 3
     },
     {
       "id": "core",
@@ -878,14 +700,14 @@ window.VAULT_SNAPSHOT = {
           "label": "AI SECOND BRAIN — ALFREDO AI OS",
           "icon": "🧠",
           "path": "GEMINI.md",
-          "size": 3873
+          "size": 4498
         },
         {
           "id": "README_md",
           "label": "AI Second Brain — Alfredo AI OS",
           "icon": "🧠",
           "path": "README.md",
-          "size": 3698
+          "size": 4311
         }
       ],
       "badge": 2
@@ -923,14 +745,6 @@ window.VAULT_SNAPSHOT = {
       "size": 18,
       "icon": "⚡",
       "path": "skills"
-    },
-    {
-      "id": "hub-agents",
-      "label": "Agents Hub",
-      "group": "agents",
-      "size": 18,
-      "icon": "🤖",
-      "path": "agents"
     },
     {
       "id": "hub-projects",
@@ -1013,28 +827,12 @@ window.VAULT_SNAPSHOT = {
       "path": ".agents/rules/03-security.md"
     },
     {
-      "id": "_agents_rules_04-dotnet_md",
-      "label": "Regras para .NET",
-      "group": "rules",
-      "size": 9,
-      "icon": "💜",
-      "path": ".agents/rules/04-dotnet.md"
-    },
-    {
-      "id": "_agents_rules_05-sql-server_md",
-      "label": "Regras para SQL Server",
-      "group": "rules",
-      "size": 9,
-      "icon": "🗃️",
-      "path": ".agents/rules/05-sql-server.md"
-    },
-    {
-      "id": "_agents_rules_06-documentation_md",
+      "id": "_agents_rules_04-documentation_md",
       "label": "Regras de Documentação",
       "group": "rules",
       "size": 9,
       "icon": "📝",
-      "path": ".agents/rules/06-documentation.md"
+      "path": ".agents/rules/04-documentation.md"
     },
     {
       "id": "_agents_skills_ai-decision-gate_SKILL_md",
@@ -1049,7 +847,7 @@ window.VAULT_SNAPSHOT = {
       "label": "ai-integration",
       "group": "skills",
       "size": 12,
-      "icon": "🔌",
+      "icon": "📄",
       "path": ".agents/skills/ai-integration/SKILL.md"
     },
     {
@@ -1101,14 +899,6 @@ window.VAULT_SNAPSHOT = {
       "path": ".agents/skills/session-memory/SKILL.md"
     },
     {
-      "id": "_agents_Teste_agent_teste_memory_Teste_SKILL_md",
-      "label": "teste",
-      "group": "agents",
-      "size": 9,
-      "icon": "🤖",
-      "path": ".agents/Teste_agent/teste_memory/Teste_SKILL.md"
-    },
-    {
       "id": "decisions_GLOBAL_DECISIONS_md",
       "label": "Decisões Globais",
       "group": "decisions",
@@ -1133,6 +923,14 @@ window.VAULT_SNAPSHOT = {
       "path": "docs/GUIA_PRATICO.md"
     },
     {
+      "id": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "label": "Análise Estratégica: Utilidade Real e Relevância do AI Second Brain",
+      "group": "docs",
+      "size": 12,
+      "icon": "📝",
+      "path": "docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md"
+    },
+    {
       "id": "GEMINI_md",
       "label": "AI SECOND BRAIN — ALFREDO AI OS",
       "group": "core",
@@ -1153,7 +951,7 @@ window.VAULT_SNAPSHOT = {
       "label": "AI Gateway Pattern",
       "group": "knowledge",
       "size": 12,
-      "icon": "🔌",
+      "icon": "📄",
       "path": "knowledge/ai/AI_GATEWAY.md"
     },
     {
@@ -1181,6 +979,14 @@ window.VAULT_SNAPSHOT = {
       "path": "knowledge/global/INDEX.md"
     },
     {
+      "id": "knowledge_security_OWASP_md",
+      "label": "Segurança, OWASP & Proteção de Dados com IA",
+      "group": "knowledge",
+      "size": 12,
+      "icon": "🔒",
+      "path": "knowledge/security/OWASP.md"
+    },
+    {
       "id": "memory_current-state_md",
       "label": "Estado Atual do AI Second Brain",
       "group": "memory",
@@ -1197,76 +1003,12 @@ window.VAULT_SNAPSHOT = {
       "path": "memory/lessons-learned.md"
     },
     {
-      "id": "projects_Assistente-Mobile_CURRENT_STATE_md",
-      "label": "Assistente Mobile — Estado Atual",
+      "id": "projects_README_md",
+      "label": "Diretório de Projetos — AI Second Brain",
       "group": "projects",
       "size": 9,
-      "icon": "💾",
-      "path": "projects/Assistente-Mobile/CURRENT_STATE.md"
-    },
-    {
-      "id": "projects_Assistente-Mobile_PROJECT_md",
-      "label": "Assistente Mobile",
-      "group": "projects",
-      "size": 9,
-      "icon": "📱",
-      "path": "projects/Assistente-Mobile/PROJECT.md"
-    },
-    {
-      "id": "projects_JobSentinel_AI_AI_USE_CASES_md",
-      "label": "JobSentinel — Casos de Uso de IA",
-      "group": "projects",
-      "size": 9,
-      "icon": "⚡",
-      "path": "projects/JobSentinel/AI/AI_USE_CASES.md"
-    },
-    {
-      "id": "projects_JobSentinel_ARCHITECTURE_md",
-      "label": "JobSentinel — Arquitetura",
-      "group": "projects",
-      "size": 12,
-      "icon": "🏗️",
-      "path": "projects/JobSentinel/ARCHITECTURE.md"
-    },
-    {
-      "id": "projects_JobSentinel_CURRENT_STATE_md",
-      "label": "JobSentinel — Estado Atual",
-      "group": "projects",
-      "size": 9,
-      "icon": "💾",
-      "path": "projects/JobSentinel/CURRENT_STATE.md"
-    },
-    {
-      "id": "projects_JobSentinel_DECISIONS_ADR-0001-ai-decision-gate_md",
-      "label": "ADR-0001: AI Decision Gate como padrão de roteamento de IA",
-      "group": "projects",
-      "size": 9,
-      "icon": "🚦",
-      "path": "projects/JobSentinel/DECISIONS/ADR-0001-ai-decision-gate.md"
-    },
-    {
-      "id": "projects_JobSentinel_PROJECT_md",
-      "label": "JobSentinel",
-      "group": "projects",
-      "size": 9,
-      "icon": "⚡",
-      "path": "projects/JobSentinel/PROJECT.md"
-    },
-    {
-      "id": "projects_Sabor-em-Conflito_CURRENT_STATE_md",
-      "label": "Sabor em Conflito — Estado Atual",
-      "group": "projects",
-      "size": 9,
-      "icon": "💾",
-      "path": "projects/Sabor-em-Conflito/CURRENT_STATE.md"
-    },
-    {
-      "id": "projects_Sabor-em-Conflito_PROJECT_md",
-      "label": "Sabor em Conflito",
-      "group": "projects",
-      "size": 9,
-      "icon": "🎮",
-      "path": "projects/Sabor-em-Conflito/PROJECT.md"
+      "icon": "🧠",
+      "path": "projects/README.md"
     },
     {
       "id": "README_md",
@@ -1324,10 +1066,6 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "brain",
-      "to": "hub-agents"
-    },
-    {
-      "from": "brain",
       "to": "hub-projects"
     },
     {
@@ -1368,15 +1106,7 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "hub-rules",
-      "to": "_agents_rules_04-dotnet_md"
-    },
-    {
-      "from": "hub-rules",
-      "to": "_agents_rules_05-sql-server_md"
-    },
-    {
-      "from": "hub-rules",
-      "to": "_agents_rules_06-documentation_md"
+      "to": "_agents_rules_04-documentation_md"
     },
     {
       "from": "hub-skills",
@@ -1411,10 +1141,6 @@ window.VAULT_SNAPSHOT = {
       "to": "_agents_skills_session-memory_SKILL_md"
     },
     {
-      "from": "hub-agents",
-      "to": "_agents_Teste_agent_teste_memory_Teste_SKILL_md"
-    },
-    {
       "from": "hub-decisions",
       "to": "decisions_GLOBAL_DECISIONS_md"
     },
@@ -1425,6 +1151,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "hub-docs",
       "to": "docs_GUIA_PRATICO_md"
+    },
+    {
+      "from": "hub-docs",
+      "to": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md"
     },
     {
       "from": "hub-core",
@@ -1451,6 +1181,10 @@ window.VAULT_SNAPSHOT = {
       "to": "knowledge_global_INDEX_md"
     },
     {
+      "from": "hub-knowledge",
+      "to": "knowledge_security_OWASP_md"
+    },
+    {
       "from": "hub-memory",
       "to": "memory_current-state_md"
     },
@@ -1460,39 +1194,7 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "hub-projects",
-      "to": "projects_Assistente-Mobile_CURRENT_STATE_md"
-    },
-    {
-      "from": "hub-projects",
-      "to": "projects_Assistente-Mobile_PROJECT_md"
-    },
-    {
-      "from": "hub-projects",
-      "to": "projects_JobSentinel_AI_AI_USE_CASES_md"
-    },
-    {
-      "from": "hub-projects",
-      "to": "projects_JobSentinel_ARCHITECTURE_md"
-    },
-    {
-      "from": "hub-projects",
-      "to": "projects_JobSentinel_CURRENT_STATE_md"
-    },
-    {
-      "from": "hub-projects",
-      "to": "projects_JobSentinel_DECISIONS_ADR-0001-ai-decision-gate_md"
-    },
-    {
-      "from": "hub-projects",
-      "to": "projects_JobSentinel_PROJECT_md"
-    },
-    {
-      "from": "hub-projects",
-      "to": "projects_Sabor-em-Conflito_CURRENT_STATE_md"
-    },
-    {
-      "from": "hub-projects",
-      "to": "projects_Sabor-em-Conflito_PROJECT_md"
+      "to": "projects_README_md"
     },
     {
       "from": "hub-core",
@@ -1515,76 +1217,12 @@ window.VAULT_SNAPSHOT = {
       "to": "templates_session-memory_md"
     },
     {
-      "from": "_agents_rules_04-dotnet_md",
-      "to": "projects_Assistente-Mobile_PROJECT_md"
-    },
-    {
-      "from": "_agents_rules_04-dotnet_md",
-      "to": "projects_JobSentinel_ARCHITECTURE_md"
-    },
-    {
-      "from": "_agents_rules_04-dotnet_md",
-      "to": "projects_JobSentinel_PROJECT_md"
-    },
-    {
-      "from": "_agents_rules_04-dotnet_md",
-      "to": "projects_Sabor-em-Conflito_PROJECT_md"
-    },
-    {
-      "from": "_agents_rules_04-dotnet_md",
-      "to": "templates_project_md"
-    },
-    {
-      "from": "_agents_rules_06-documentation_md",
-      "to": "projects_Assistente-Mobile_CURRENT_STATE_md"
-    },
-    {
-      "from": "_agents_rules_06-documentation_md",
-      "to": "projects_Assistente-Mobile_PROJECT_md"
-    },
-    {
-      "from": "_agents_rules_06-documentation_md",
-      "to": "projects_JobSentinel_ARCHITECTURE_md"
-    },
-    {
-      "from": "_agents_rules_06-documentation_md",
-      "to": "projects_JobSentinel_CURRENT_STATE_md"
-    },
-    {
-      "from": "_agents_rules_06-documentation_md",
-      "to": "projects_JobSentinel_PROJECT_md"
-    },
-    {
-      "from": "_agents_rules_06-documentation_md",
-      "to": "projects_Sabor-em-Conflito_CURRENT_STATE_md"
-    },
-    {
-      "from": "_agents_rules_06-documentation_md",
-      "to": "projects_Sabor-em-Conflito_PROJECT_md"
-    },
-    {
-      "from": "_agents_rules_06-documentation_md",
+      "from": "_agents_rules_04-documentation_md",
       "to": "templates_project_md"
     },
     {
       "from": "_agents_skills_ai-integration_SKILL_md",
       "to": "_agents_rules_03-security_md"
-    },
-    {
-      "from": "_agents_skills_architecture-review_SKILL_md",
-      "to": "projects_Assistente-Mobile_PROJECT_md"
-    },
-    {
-      "from": "_agents_skills_architecture-review_SKILL_md",
-      "to": "projects_JobSentinel_ARCHITECTURE_md"
-    },
-    {
-      "from": "_agents_skills_architecture-review_SKILL_md",
-      "to": "projects_JobSentinel_PROJECT_md"
-    },
-    {
-      "from": "_agents_skills_architecture-review_SKILL_md",
-      "to": "projects_Sabor-em-Conflito_PROJECT_md"
     },
     {
       "from": "_agents_skills_architecture-review_SKILL_md",
@@ -1595,56 +1233,8 @@ window.VAULT_SNAPSHOT = {
       "to": "memory_lessons-learned_md"
     },
     {
-      "from": "_agents_skills_bug-investigation_SKILL_md",
-      "to": "projects_Assistente-Mobile_CURRENT_STATE_md"
-    },
-    {
-      "from": "_agents_skills_bug-investigation_SKILL_md",
-      "to": "projects_JobSentinel_CURRENT_STATE_md"
-    },
-    {
-      "from": "_agents_skills_bug-investigation_SKILL_md",
-      "to": "projects_Sabor-em-Conflito_CURRENT_STATE_md"
-    },
-    {
       "from": "_agents_skills_new-feature_SKILL_md",
       "to": "_agents_rules_03-security_md"
-    },
-    {
-      "from": "_agents_skills_new-feature_SKILL_md",
-      "to": "_agents_rules_04-dotnet_md"
-    },
-    {
-      "from": "_agents_skills_new-feature_SKILL_md",
-      "to": "_agents_rules_05-sql-server_md"
-    },
-    {
-      "from": "_agents_skills_new-feature_SKILL_md",
-      "to": "projects_Assistente-Mobile_CURRENT_STATE_md"
-    },
-    {
-      "from": "_agents_skills_new-feature_SKILL_md",
-      "to": "projects_Assistente-Mobile_PROJECT_md"
-    },
-    {
-      "from": "_agents_skills_new-feature_SKILL_md",
-      "to": "projects_JobSentinel_ARCHITECTURE_md"
-    },
-    {
-      "from": "_agents_skills_new-feature_SKILL_md",
-      "to": "projects_JobSentinel_CURRENT_STATE_md"
-    },
-    {
-      "from": "_agents_skills_new-feature_SKILL_md",
-      "to": "projects_JobSentinel_PROJECT_md"
-    },
-    {
-      "from": "_agents_skills_new-feature_SKILL_md",
-      "to": "projects_Sabor-em-Conflito_CURRENT_STATE_md"
-    },
-    {
-      "from": "_agents_skills_new-feature_SKILL_md",
-      "to": "projects_Sabor-em-Conflito_PROJECT_md"
     },
     {
       "from": "_agents_skills_new-feature_SKILL_md",
@@ -1664,35 +1254,7 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "_agents_skills_project-onboarding_SKILL_md",
-      "to": "projects_Assistente-Mobile_CURRENT_STATE_md"
-    },
-    {
-      "from": "_agents_skills_project-onboarding_SKILL_md",
-      "to": "projects_Assistente-Mobile_PROJECT_md"
-    },
-    {
-      "from": "_agents_skills_project-onboarding_SKILL_md",
-      "to": "projects_JobSentinel_AI_AI_USE_CASES_md"
-    },
-    {
-      "from": "_agents_skills_project-onboarding_SKILL_md",
-      "to": "projects_JobSentinel_ARCHITECTURE_md"
-    },
-    {
-      "from": "_agents_skills_project-onboarding_SKILL_md",
-      "to": "projects_JobSentinel_CURRENT_STATE_md"
-    },
-    {
-      "from": "_agents_skills_project-onboarding_SKILL_md",
-      "to": "projects_JobSentinel_PROJECT_md"
-    },
-    {
-      "from": "_agents_skills_project-onboarding_SKILL_md",
-      "to": "projects_Sabor-em-Conflito_CURRENT_STATE_md"
-    },
-    {
-      "from": "_agents_skills_project-onboarding_SKILL_md",
-      "to": "projects_Sabor-em-Conflito_PROJECT_md"
+      "to": "projects_README_md"
     },
     {
       "from": "_agents_skills_project-onboarding_SKILL_md",
@@ -1709,30 +1271,6 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "_agents_skills_session-memory_SKILL_md",
       "to": "memory_lessons-learned_md"
-    },
-    {
-      "from": "_agents_skills_session-memory_SKILL_md",
-      "to": "projects_Assistente-Mobile_CURRENT_STATE_md"
-    },
-    {
-      "from": "_agents_skills_session-memory_SKILL_md",
-      "to": "projects_Assistente-Mobile_PROJECT_md"
-    },
-    {
-      "from": "_agents_skills_session-memory_SKILL_md",
-      "to": "projects_JobSentinel_CURRENT_STATE_md"
-    },
-    {
-      "from": "_agents_skills_session-memory_SKILL_md",
-      "to": "projects_JobSentinel_PROJECT_md"
-    },
-    {
-      "from": "_agents_skills_session-memory_SKILL_md",
-      "to": "projects_Sabor-em-Conflito_CURRENT_STATE_md"
-    },
-    {
-      "from": "_agents_skills_session-memory_SKILL_md",
-      "to": "projects_Sabor-em-Conflito_PROJECT_md"
     },
     {
       "from": "_agents_skills_session-memory_SKILL_md",
@@ -1751,34 +1289,6 @@ window.VAULT_SNAPSHOT = {
       "to": "knowledge_ai_AI_GATEWAY_md"
     },
     {
-      "from": "decisions_GLOBAL_DECISIONS_md",
-      "to": "projects_Assistente-Mobile_PROJECT_md"
-    },
-    {
-      "from": "decisions_GLOBAL_DECISIONS_md",
-      "to": "projects_JobSentinel_DECISIONS_ADR-0001-ai-decision-gate_md"
-    },
-    {
-      "from": "decisions_GLOBAL_DECISIONS_md",
-      "to": "projects_JobSentinel_PROJECT_md"
-    },
-    {
-      "from": "decisions_GLOBAL_DECISIONS_md",
-      "to": "projects_Sabor-em-Conflito_PROJECT_md"
-    },
-    {
-      "from": "decisions_GLOBAL_DECISIONS_md",
-      "to": "templates_project_md"
-    },
-    {
-      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
-      "to": "_agents_rules_04-dotnet_md"
-    },
-    {
-      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
-      "to": "_agents_rules_05-sql-server_md"
-    },
-    {
       "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
       "to": "GEMINI_md"
     },
@@ -1788,35 +1298,7 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
-      "to": "projects_Assistente-Mobile_CURRENT_STATE_md"
-    },
-    {
-      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
-      "to": "projects_Assistente-Mobile_PROJECT_md"
-    },
-    {
-      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
-      "to": "projects_JobSentinel_AI_AI_USE_CASES_md"
-    },
-    {
-      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
-      "to": "projects_JobSentinel_ARCHITECTURE_md"
-    },
-    {
-      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
-      "to": "projects_JobSentinel_CURRENT_STATE_md"
-    },
-    {
-      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
-      "to": "projects_JobSentinel_PROJECT_md"
-    },
-    {
-      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
-      "to": "projects_Sabor-em-Conflito_CURRENT_STATE_md"
-    },
-    {
-      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
-      "to": "projects_Sabor-em-Conflito_PROJECT_md"
+      "to": "projects_README_md"
     },
     {
       "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
@@ -1844,35 +1326,19 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_GUIA_PRATICO_md",
-      "to": "projects_Assistente-Mobile_CURRENT_STATE_md"
-    },
-    {
-      "from": "docs_GUIA_PRATICO_md",
-      "to": "projects_Assistente-Mobile_PROJECT_md"
-    },
-    {
-      "from": "docs_GUIA_PRATICO_md",
-      "to": "projects_JobSentinel_ARCHITECTURE_md"
-    },
-    {
-      "from": "docs_GUIA_PRATICO_md",
-      "to": "projects_JobSentinel_CURRENT_STATE_md"
-    },
-    {
-      "from": "docs_GUIA_PRATICO_md",
-      "to": "projects_JobSentinel_PROJECT_md"
-    },
-    {
-      "from": "docs_GUIA_PRATICO_md",
-      "to": "projects_Sabor-em-Conflito_CURRENT_STATE_md"
-    },
-    {
-      "from": "docs_GUIA_PRATICO_md",
-      "to": "projects_Sabor-em-Conflito_PROJECT_md"
-    },
-    {
-      "from": "docs_GUIA_PRATICO_md",
       "to": "templates_project_md"
+    },
+    {
+      "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "to": "GEMINI_md"
+    },
+    {
+      "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "to": "templates_project_md"
+    },
+    {
+      "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "to": "templates_session-memory_md"
     },
     {
       "from": "GEMINI_md",
@@ -1880,43 +1346,23 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "GEMINI_md",
+      "to": "docs_COMO_UTILIZAR_O_PROJETO_md"
+    },
+    {
+      "from": "GEMINI_md",
       "to": "knowledge_ai_MODEL_SELECTION_md"
-    },
-    {
-      "from": "GEMINI_md",
-      "to": "projects_Assistente-Mobile_CURRENT_STATE_md"
-    },
-    {
-      "from": "GEMINI_md",
-      "to": "projects_Assistente-Mobile_PROJECT_md"
-    },
-    {
-      "from": "GEMINI_md",
-      "to": "projects_JobSentinel_CURRENT_STATE_md"
-    },
-    {
-      "from": "GEMINI_md",
-      "to": "projects_JobSentinel_PROJECT_md"
-    },
-    {
-      "from": "GEMINI_md",
-      "to": "projects_Sabor-em-Conflito_CURRENT_STATE_md"
-    },
-    {
-      "from": "GEMINI_md",
-      "to": "projects_Sabor-em-Conflito_PROJECT_md"
     },
     {
       "from": "GEMINI_md",
       "to": "templates_project_md"
     },
     {
-      "from": "knowledge_ai_MODEL_SELECTION_md",
+      "from": "knowledge_ai_AI_GATEWAY_md",
       "to": "GEMINI_md"
     },
     {
-      "from": "knowledge_architecture_PATTERNS_md",
-      "to": "projects_JobSentinel_ARCHITECTURE_md"
+      "from": "knowledge_ai_MODEL_SELECTION_md",
+      "to": "GEMINI_md"
     },
     {
       "from": "knowledge_global_INDEX_md",
@@ -1931,32 +1377,16 @@ window.VAULT_SNAPSHOT = {
       "to": "knowledge_architecture_PATTERNS_md"
     },
     {
-      "from": "knowledge_global_INDEX_md",
-      "to": "projects_JobSentinel_ARCHITECTURE_md"
+      "from": "knowledge_security_OWASP_md",
+      "to": "_agents_rules_03-security_md"
     },
     {
-      "from": "projects_Assistente-Mobile_CURRENT_STATE_md",
-      "to": "projects_JobSentinel_ARCHITECTURE_md"
+      "from": "memory_current-state_md",
+      "to": "templates_project_md"
     },
     {
-      "from": "projects_Assistente-Mobile_PROJECT_md",
-      "to": "projects_JobSentinel_ARCHITECTURE_md"
-    },
-    {
-      "from": "projects_JobSentinel_PROJECT_md",
-      "to": "projects_Assistente-Mobile_CURRENT_STATE_md"
-    },
-    {
-      "from": "projects_JobSentinel_PROJECT_md",
-      "to": "projects_JobSentinel_ARCHITECTURE_md"
-    },
-    {
-      "from": "projects_JobSentinel_PROJECT_md",
-      "to": "projects_JobSentinel_CURRENT_STATE_md"
-    },
-    {
-      "from": "projects_JobSentinel_PROJECT_md",
-      "to": "projects_Sabor-em-Conflito_CURRENT_STATE_md"
+      "from": "projects_README_md",
+      "to": "templates_project_md"
     },
     {
       "from": "README_md",
@@ -1964,55 +1394,19 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "README_md",
+      "to": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md"
+    },
+    {
+      "from": "README_md",
       "to": "GEMINI_md"
     },
     {
       "from": "README_md",
-      "to": "projects_Assistente-Mobile_PROJECT_md"
-    },
-    {
-      "from": "README_md",
-      "to": "projects_JobSentinel_ARCHITECTURE_md"
-    },
-    {
-      "from": "README_md",
-      "to": "projects_JobSentinel_PROJECT_md"
-    },
-    {
-      "from": "README_md",
-      "to": "projects_Sabor-em-Conflito_PROJECT_md"
+      "to": "projects_README_md"
     },
     {
       "from": "README_md",
       "to": "templates_project_md"
-    },
-    {
-      "from": "templates_project_md",
-      "to": "projects_Assistente-Mobile_CURRENT_STATE_md"
-    },
-    {
-      "from": "templates_project_md",
-      "to": "projects_Assistente-Mobile_PROJECT_md"
-    },
-    {
-      "from": "templates_project_md",
-      "to": "projects_JobSentinel_ARCHITECTURE_md"
-    },
-    {
-      "from": "templates_project_md",
-      "to": "projects_JobSentinel_CURRENT_STATE_md"
-    },
-    {
-      "from": "templates_project_md",
-      "to": "projects_JobSentinel_PROJECT_md"
-    },
-    {
-      "from": "templates_project_md",
-      "to": "projects_Sabor-em-Conflito_CURRENT_STATE_md"
-    },
-    {
-      "from": "templates_project_md",
-      "to": "projects_Sabor-em-Conflito_PROJECT_md"
     }
   ],
   "groupColors": {
@@ -2068,16 +1462,16 @@ window.VAULT_SNAPSHOT = {
     }
   },
   "stats": {
-    "totalFiles": 41,
-    "rulesCount": 7,
+    "totalFiles": 32,
+    "rulesCount": 5,
     "skillsCount": 8,
-    "projectsCount": 9,
-    "knowledgeCount": 5,
+    "projectsCount": 1,
+    "knowledgeCount": 6,
     "decisionsCount": 1,
     "memoryCount": 2,
     "templatesCount": 4,
-    "docsCount": 2,
-    "totalNodes": 52,
-    "totalEdges": 176
+    "docsCount": 3,
+    "totalNodes": 42,
+    "totalEdges": 89
   }
 };

@@ -8,6 +8,7 @@
 2. **Atualizada ou deletada** — Documentação desatualizada é pior que nenhuma.
 3. **Para o próximo desenvolvedor** — Escreva para quem não tem contexto.
 4. **Decisões registradas** — Toda decisão arquitetural gera um ADR.
+5. **Zero invenção de contexto** — NUNCA crie documentação especulativa, requisitos fictícios ou placeholders para simular progresso. Se um projeto ou funcionalidade ainda está em fase de ideia, a documentação deve registrar unicamente essa realidade.
 
 ## Tipos de Documentação
 

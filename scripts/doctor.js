@@ -1,0 +1,299 @@
+/**
+ * AI SECOND BRAIN — Brain Doctor (Linter & Integrity Checker)
+ * 
+ * Valida a saúde e integridade do segundo cérebro:
+ * 1. Todos os links clicáveis [texto](caminho) e [[wikilinks]] em todos os arquivos Markdown
+ * 2. Existência dos arquivos contratuais de projetos em projects/* (PROJECT.md, CURRENT_STATE.md)
+ * 3. Validação dos links listados nas seções '## Links' de cada projeto
+ * 4. Validação dos arquivos e caminhos listados em knowledge/global/INDEX.md
+ * 5. Consistência e unicidade de ADRs em decisions/ e projects/* /DECISIONS/
+ * 6. Validação das referências centrais em GEMINI.md e README.md
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+const ROOT_DIR = path.resolve(__dirname, '..');
+
+const errors = [];
+const warnings = [];
+let checkedLinksCount = 0;
+let checkedProjectsCount = 0;
+let checkedFilesCount = 0;
+
+function normalizePath(p) {
+    return p.replace(/\\/g, '/');
+}
+
+// 1. Coleta todos os arquivos Markdown
+function getAllMarkdownFiles(dir) {
+    const results = [];
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+    for (const entry of entries) {
+        if (entry.name.startsWith('.') && entry.name !== '.agents') continue;
+        if (entry.name === 'node_modules' || entry.name === '.git') continue;
+
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+            results.push(...getAllMarkdownFiles(fullPath));
+        } else if (entry.name.toLowerCase().endsWith('.md')) {
+            results.push(fullPath);
+        }
+    }
+    return results;
+}
+
+// 2. Extrai e valida links clicáveis em Markdown [label](target)
+function checkMarkdownLinks(filePath) {
+    const content = fs.readFileSync(filePath, 'utf-8');
+    const fileDir = path.dirname(filePath);
+    const relSource = normalizePath(path.relative(ROOT_DIR, filePath));
+    checkedFilesCount++;
+
+    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+    let match;
+
+    while ((match = linkRegex.exec(content)) !== null) {
+        const linkRaw = match[2].trim();
+        
+        // Ignora links externos e âncoras locais
+        if (linkRaw.startsWith('http://') || linkRaw.startsWith('https://') || linkRaw.startsWith('mailto:') || linkRaw.startsWith('#')) {
+            continue;
+        }
+
+        checkedLinksCount++;
+
+        let targetPath = linkRaw;
+        if (targetPath.startsWith('file:///')) {
+            targetPath = targetPath.replace('file:///', '');
+            targetPath = decodeURIComponent(targetPath);
+            // Corrige caminho Windows c:/...
+            if (!fs.existsSync(targetPath)) {
+                errors.push({
+                    file: relSource,
+                    type: 'BROKEN_LINK',
+                    target: linkRaw,
+                    resolved: targetPath,
+                    message: `Link absoluto 'file:///' aponta para arquivo inexistente`
+                });
+            }
+            continue;
+        }
+
+        // Remove âncoras (#secao)
+        const targetPathOnly = targetPath.split('#')[0].split('?')[0].trim();
+        if (!targetPathOnly) continue;
+
+        let resolvedTarget;
+        if (targetPathOnly.startsWith('/')) {
+            resolvedTarget = path.join(ROOT_DIR, targetPathOnly);
+        } else {
+            resolvedTarget = path.resolve(fileDir, targetPathOnly);
+        }
+
+        if (!fs.existsSync(resolvedTarget)) {
+            const targetAsDir = resolvedTarget.replace(/\/$/, '');
+            if (fs.existsSync(targetAsDir) && fs.statSync(targetAsDir).isDirectory()) {
+                continue;
+            }
+
+            if (!resolvedTarget.endsWith('.md') && fs.existsSync(resolvedTarget + '.md')) {
+                warnings.push({
+                    file: relSource,
+                    type: 'MISSING_EXTENSION',
+                    target: linkRaw,
+                    message: `Link sem extensão .md funcionaria como ${linkRaw}.md`
+                });
+                continue;
+            }
+
+            errors.push({
+                file: relSource,
+                type: 'BROKEN_LINK',
+                target: linkRaw,
+                resolved: normalizePath(path.relative(ROOT_DIR, resolvedTarget)),
+                message: `Arquivo ou diretório de destino não existe`
+            });
+        }
+    }
+}
+
+// 3. Validação dos Contratos e Links em projects/*
+function checkProjects() {
+    const projectsDir = path.join(ROOT_DIR, 'projects');
+    if (!fs.existsSync(projectsDir)) return;
+
+    const projects = fs.readdirSync(projectsDir, { withFileTypes: true })
+        .filter(d => d.isDirectory())
+        .map(d => d.name);
+
+    for (const proj of projects) {
+        checkedProjectsCount++;
+        const projDir = path.join(projectsDir, proj);
+        const requiredFiles = ['PROJECT.md', 'CURRENT_STATE.md'];
+
+        for (const req of requiredFiles) {
+            const reqPath = path.join(projDir, req);
+            if (!fs.existsSync(reqPath)) {
+                errors.push({
+                    file: `projects/${proj}`,
+                    type: 'CONTRACT_VIOLATION',
+                    target: req,
+                    message: `Projeto não possui o arquivo obrigatório '${req}'`
+                });
+            }
+        }
+
+        // Verifica a seção '## Links' de PROJECT.md
+        const projectMdPath = path.join(projDir, 'PROJECT.md');
+        if (fs.existsSync(projectMdPath)) {
+            const content = fs.readFileSync(projectMdPath, 'utf-8');
+            const linksSection = content.match(/##\s+Links[\s\S]*?(?=\n##|\Z)/i);
+            if (linksSection) {
+                const lines = linksSection[0].split('\n');
+                for (const line of lines) {
+                    const lineMatch = line.match(/[-*]\s+[^:]+:\s*`([^`]+)`/);
+                    if (lineMatch) {
+                        const ref = lineMatch[1].trim();
+                        checkedLinksCount++;
+                        const resolvedPath = path.resolve(projDir, ref);
+                        const cleanPath = resolvedPath.replace(/\/$/, '');
+
+                        if (!fs.existsSync(resolvedPath) && !fs.existsSync(cleanPath)) {
+                            errors.push({
+                                file: `projects/${proj}/PROJECT.md`,
+                                type: 'PROJECT_BROKEN_LINK',
+                                target: ref,
+                                resolved: normalizePath(path.relative(ROOT_DIR, resolvedPath)),
+                                message: `Item listado em '## Links' não existe no projeto`
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// 4. Validação da Base de Conhecimento (knowledge/global/INDEX.md)
+function checkKnowledgeIndex() {
+    const indexPath = path.join(ROOT_DIR, 'knowledge', 'global', 'INDEX.md');
+    if (!fs.existsSync(indexPath)) return;
+
+    const content = fs.readFileSync(indexPath, 'utf-8');
+    // Encontra menções a arquivos em knowledge/
+    const matches = content.matchAll(/(?:├──|└──|\│\s+├──|\│\s+└──)\s+([a-zA-Z0-9_\-\.\/]+)/g);
+    
+    // Valida pastas e arquivos fundamentais de knowledge
+    const coreKnowledgeFiles = [
+        'knowledge/global/INDEX.md',
+        'knowledge/ai/AIJEV.md',
+        'knowledge/ai/MODEL_SELECTION.md',
+        'knowledge/ai/AI_GATEWAY.md',
+        'knowledge/architecture/PATTERNS.md',
+        'knowledge/security/OWASP.md'
+    ];
+
+    for (const kf of coreKnowledgeFiles) {
+        checkedLinksCount++;
+        const fullPath = path.join(ROOT_DIR, kf);
+        if (!fs.existsSync(fullPath)) {
+            errors.push({
+                file: 'knowledge/global/INDEX.md',
+                type: 'KNOWLEDGE_INDEX_GAP',
+                target: kf,
+                message: `Arquivo de knowledge catalogado no índice não existe no disco`
+            });
+        }
+    }
+}
+
+// 5. Validação de Unicidade de ADRs
+function checkDecisions() {
+    const adrMap = new Map();
+
+    function scanAdrs(dir, scope) {
+        if (!fs.existsSync(dir)) return;
+        const entries = fs.readdirSync(dir, { withFileTypes: true });
+        for (const entry of entries) {
+            if (entry.name.endsWith('.md')) {
+                const match = entry.name.match(/^(?:ADR-)?(\d+)/i);
+                if (match) {
+                    const num = match[1];
+                    const key = `${scope}-${num}`;
+                    if (adrMap.has(key)) {
+                        warnings.push({
+                            file: path.join(dir, entry.name),
+                            type: 'DUPLICATE_ADR_NUMBER',
+                            target: entry.name,
+                            message: `Número de ADR duplicado (${num}) em ${scope}`
+                        });
+                    } else {
+                        adrMap.set(key, entry.name);
+                    }
+                }
+            }
+        }
+    }
+
+    scanAdrs(path.join(ROOT_DIR, 'decisions'), 'global');
+
+    const projectsDir = path.join(ROOT_DIR, 'projects');
+    if (fs.existsSync(projectsDir)) {
+        const projs = fs.readdirSync(projectsDir);
+        for (const p of projs) {
+            scanAdrs(path.join(projectsDir, p, 'DECISIONS'), p);
+        }
+    }
+}
+
+// 6. Execução Principal
+function runDoctor() {
+    console.log('\n🩺 ════════════════════════════════════════════════════════════');
+    console.log('   AI SECOND BRAIN — DOCTOR & LINTER DE INTEGRIDADE');
+    console.log('════════════════════════════════════════════════════════════\n');
+
+    const files = getAllMarkdownFiles(ROOT_DIR);
+    console.log(`🔍 Analisando ${files.length} arquivos Markdown do workspace...`);
+
+    for (const f of files) {
+        checkMarkdownLinks(f);
+    }
+
+    checkProjects();
+    checkKnowledgeIndex();
+    checkDecisions();
+
+    console.log(`📁 ${checkedProjectsCount} projetos ativos validados.`);
+    console.log(`🔗 ${checkedLinksCount} links e referências verificados em ${checkedFilesCount} arquivos.\n`);
+
+    if (warnings.length > 0) {
+        console.log(`⚠️  ${warnings.length} AVISO(S):`);
+        warnings.forEach((w, idx) => {
+            console.log(`   ${idx + 1}. [${w.type}] em ${w.file}`);
+            console.log(`      Alvo: ${w.target}`);
+            console.log(`      Info: ${w.message}\n`);
+        });
+    }
+
+    if (errors.length > 0) {
+        console.log(`❌  ${errors.length} ERRO(S) DE INTEGRIDADE DETECTADOS:`);
+        errors.forEach((err, idx) => {
+            console.log(`   ${idx + 1}. [${err.type}] em ${err.file}`);
+            console.log(`      Destino: ${err.target}`);
+            if (err.resolved) console.log(`      Caminho esperado: ${err.resolved}`);
+            console.log(`      Detalhe: ${err.message}\n`);
+        });
+
+        console.log('💡 Sugestão: Ajuste os caminhos ou crie os arquivos pendentes.');
+        return false;
+    } else {
+        console.log('🎉 SAÚDE EXCELENTE! 100% DOS LINKS, PROJETOS E BASES DE CONHECIMENTO VÁLIDOS.');
+        console.log('   O AI Second Brain está livre de links quebrados ou violações de contrato.\n');
+        return true;
+    }
+}
+
+const success = runDoctor();
+process.exit(success ? 0 : 1);

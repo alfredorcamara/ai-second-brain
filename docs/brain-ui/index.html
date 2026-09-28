@@ -226,35 +226,8 @@
                         </div>
                     </div>
 
-                    <div class="dash-card status-card" onclick="navigateTo('projects/JobSentinel')">
-                        <div class="status-indicator yellow"></div>
-                        <div class="card-content">
-                            <h3>JobSentinel</h3>
-                            <p>Observabilidade SQL Jobs</p>
-                            <span class="status-badge planning">Em planejamento</span>
-                        </div>
-                        <div class="card-icon">⚡</div>
-                    </div>
-
-                    <div class="dash-card status-card" onclick="navigateTo('projects/Sabor-em-Conflito')">
-                        <div class="status-indicator red"></div>
-                        <div class="card-content">
-                            <h3>Sabor em Conflito</h3>
-                            <p>Jogo Mobile</p>
-                            <span class="status-badge concept">Em conceituação</span>
-                        </div>
-                        <div class="card-icon">🎮</div>
-                    </div>
-
-                    <div class="dash-card status-card" onclick="navigateTo('projects/Assistente-Mobile')">
-                        <div class="status-indicator red"></div>
-                        <div class="card-content">
-                            <h3>Assistente Mobile</h3>
-                            <p>App .NET MAUI</p>
-                            <span class="status-badge concept">Em conceituação</span>
-                        </div>
-                        <div class="card-icon">📱</div>
-                    </div>
+                    <!-- Dynamic Projects Slot (Rendered via App Controller) -->
+                    <div id="dynamicProjectsSlot" style="display: contents;"></div>
 
                     <div class="dash-card flow-card">
                         <h3>🧭 AI Decision Flow</h3>
@@ -344,9 +317,9 @@
                             </div>
                             <div class="arch-connector">│</div>
                             <div class="arch-layer triple">
-                                <div class="arch-box project">JobSentinel</div>
-                                <div class="arch-box project">Sabor</div>
-                                <div class="arch-box project">Assistente</div>
+                                <div class="arch-box project">APIs / Backend</div>
+                                <div class="arch-box project">SaaS / Web</div>
+                                <div class="arch-box project">Jogos / Mobile</div>
                             </div>
                         </div>
                     </div>

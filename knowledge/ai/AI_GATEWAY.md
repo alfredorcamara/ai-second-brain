@@ -2,8 +2,9 @@
 
 ## Conceito
 
-O AI Gateway é uma abstração que desacopla seus projetos de provedores
-específicos de IA. Todo acesso a IA passa por uma interface unificada.
+O AI Gateway é uma abstração arquitetural que desacopla sua aplicação de provedores específicos de inteligência artificial. Todo acesso a modelos ou motores de decisão passa por interfaces unificadas.
+
+Isso se aplica a qualquer stack: **Node.js/TypeScript, Python, Go, C#/.NET, Rust, Java, etc.**
 
 ## Arquitetura
 
@@ -20,10 +21,9 @@ específicos de IA. Todo acesso a IA passa por uma interface unificada.
 │         │                │               │       │
 │  ┌──────┴──────┐  ┌──────┴───────┐  ┌────┴────┐ │
 │  │ AIJev       │  │ OpenAI       │  │ OpenAI  │ │
-│  │ Rules       │  │ Azure OpenAI │  │ Local   │ │
-│  │ Deterministic│  │ Groq         │  │         │ │
-│  │ Mock        │  │ Google AI    │  │         │ │
-│  │             │  │ Local        │  │         │ │
+│  │ Deterministic│  │ Anthropic    │  │ Local   │ │
+│  │ Custom Rules│  │ Google Gemini│  │ Ollama  │ │
+│  │ Mock/Test   │  │ Ollama/Local │  │         │ │
 │  └─────────────┘  └──────────────┘  └─────────┘ │
 ├──────────────────────────────────────────────────┤
 │                  CROSS-CUTTING                    │
@@ -33,31 +33,23 @@ específicos de IA. Todo acesso a IA passa por uma interface unificada.
 └──────────────────────────────────────────────────┘
 ```
 
-## Benefícios
+## Benefícios Fundamentais
 
-1. **Desacoplamento** — Troque de provider sem mudar código do app.
-2. **Fallback** — Se um provider falhar, use outro.
-3. **Observabilidade** — Métricas centralizadas de uso de IA.
-4. **Custo** — Controle e roteamento por custo/qualidade.
-5. **Segurança** — Ponto único para aplicar regras de dados.
+1. **Desacoplamento**: Troque de OpenAI para Claude, Gemini ou modelo local sem alterar regras de negócio.
+2. **Resiliência e Fallback**: Se uma API externa oscilar ou sofrer rate limit, o gateway recorre automaticamente a um provedor secundário ou regras determinísticas locais.
+3. **Observabilidade Centralizada**: Auditoria de tokens, custos financeiros e latência em um único ponto.
+4. **Governança de Privacidade**: Sanitização obrigatória de dados sensíveis antes do envio para qualquer API de terceiro.
 
-## Implementação Base
+## Contratos Agnósticos de Exemplo
 
-```csharp
-// Program.cs / DI Registration
-services.AddAIGateway(options =>
-{
-    options.DefaultDecisionProvider = "rules";
-    options.DefaultGenerativeProvider = "openai";
-    
-    options.AddDecisionProvider<RulesDecisionProvider>("rules");
-    options.AddDecisionProvider<JevDecisionProvider>("jev");
-    
-    options.AddGenerativeProvider<OpenAIProvider>("openai");
-    options.AddGenerativeProvider<GroqProvider>("groq");
-    
-    options.EnableFallback = true;
-    options.EnableRetry = true;
-    options.EnableMetrics = true;
-});
+```typescript
+// Contrato de Decisão Estruturada (AIJev / Regras)
+interface IDecisionProvider {
+  decide(request: DecisionRequest): Promise<DecisionResult>;
+}
+
+// Contrato de Geração Livre / Raciocínio (LLM)
+interface IGenerativeProvider {
+  generate(prompt: string, options?: GenerationOptions): Promise<string>;
+}
 ```

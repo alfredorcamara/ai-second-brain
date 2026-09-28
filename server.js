@@ -53,12 +53,13 @@ function setupWatcher() {
         fs.watch(ROOT_DIR, { recursive: true }, (eventType, filename) => {
             if (!filename) return;
             if (filename.includes('node_modules') || filename.includes('.git')) return;
-            if (filename.endsWith('.md')) {
+            // Dispara se for arquivo Markdown ou alteração estrutural em pastas vitais
+            if (filename.endsWith('.md') || filename.includes('projects') || filename.includes('knowledge') || filename.includes('decisions') || filename.includes('memory')) {
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(() => {
-                    console.log(`⚡ [Watcher] Arquivo alterado: ${filename}`);
-                    broadcastEvent('vault-updated', { file: filename, time: Date.now() });
-                }, 300);
+                    console.log(`⚡ [Watcher] Alteração detectada no Vault (${eventType}): ${filename}`);
+                    broadcastEvent('vault-updated', { file: filename, eventType, time: Date.now() });
+                }, 250);
             }
         });
         watcherActive = true;

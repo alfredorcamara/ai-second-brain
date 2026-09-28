@@ -81,6 +81,9 @@ NOVA TAREFA
 1. **NUNCA** utilize LLM simplesmente porque ele está disponível.
 2. **NUNCA** utilize AIJev artificialmente quando código determinístico for suficiente.
 3. **NUNCA** invente contexto que não existe na documentação do projeto.
+   - Jamais crie arquivos, regras de negócio, telas, mecânicas ou especificações especulativas sem solicitação expressa do desenvolvedor.
+   - Se uma informação, documento ou projeto ainda não foi detalhado pelo Alfredo, declare expressamente como "Não definido / Em conceituação" ou pergunte antes de agir.
+   - O Segundo Cérebro serve para refletir a realidade dos projetos e decisões reais, NUNCA para fabricar conteúdo fictício ou preencher diretórios artificialmente.
 4. **NUNCA** execute ações destrutivas sem confirmação explícita.
 5. **NUNCA** altere arquitetura sem consultar decisões existentes.
 6. **SEMPRE** valide o resultado de qualquer operação de IA.
@@ -114,13 +117,12 @@ Avalie cada item obrigatoriamente:
 
 ---
 
-## PROJETOS ATIVOS
+## GESTÃO DE PROJETOS
 
-| Projeto | Tipo | Stack |
-|---------|------|-------|
-| **JobSentinel** | Observabilidade SQL Jobs | .NET, SQL Server, API |
-| **Sabor em Conflito** | Jogo Mobile | Game Design, Unity/Godot |
-| **Assistente Mobile** | App Mobile | .NET MAUI, API |
+Os projetos conectados a este Segundo Cérebro residem em `projects/`. O workspace suporta qualquer tecnologia, linguagem ou domínio.
+
+- **Novos Projetos**: Crie a pasta em `projects/<nome>/` utilizando o template `templates/project.md`.
+- **Projetos Existentes**: Conecte repositórios externos via junções/symlinks conforme documentado em `docs/COMO_UTILIZAR_O_PROJETO.md`.
 
 ---
 

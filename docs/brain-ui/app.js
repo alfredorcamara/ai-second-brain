@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 2. Build UI from Vault data
     buildSidebar();
     buildStats();
+    renderDashboardProjects();
     initGraph();
     setupEventListeners();
     setupSearch();
@@ -99,12 +100,107 @@ function buildStats() {
         if (el && val !== undefined) el.textContent = val;
     };
 
-    setMetric('metricRules', s.rulesCount || 7);
+    setMetric('metricRules', s.rulesCount || 5);
     setMetric('metricSkills', s.skillsCount || 8);
-    setMetric('metricProjects', s.projectsCount || 9);
-    setMetric('metricKnowledge', s.knowledgeCount || 5);
+    setMetric('metricProjects', s.projectsCount || 0);
+    setMetric('metricKnowledge', s.knowledgeCount || 6);
     setMetric('metricDecisions', s.decisionsCount || 1);
     setMetric('metricMemory', s.memoryCount || 2);
+}
+
+// ── Dynamic Projects Dashboard Rendering ──────────
+function renderDashboardProjects() {
+    const slot = document.getElementById('dynamicProjectsSlot');
+    if (!slot) return;
+
+    const files = (window.VAULT && window.VAULT.data && window.VAULT.data.files) || [];
+    
+    // Identifica projetos reais em projects/<pasta>/...
+    const projectFiles = files.filter(f => {
+        if (!f.path.startsWith('projects/')) return false;
+        const parts = f.path.split('/');
+        return parts.length > 2 && parts[parts.length - 1].toLowerCase() === 'project.md';
+    });
+
+    let projectsMap = new Map();
+    if (projectFiles.length > 0) {
+        projectFiles.forEach(f => {
+            const folderName = f.path.split('/')[1];
+            projectsMap.set(folderName, f);
+        });
+    } else {
+        files.filter(f => f.path.startsWith('projects/') && f.path.split('/').length > 2).forEach(f => {
+            const folderName = f.path.split('/')[1];
+            if (!projectsMap.has(folderName)) {
+                projectsMap.set(folderName, f);
+            }
+        });
+    }
+
+    const projectsList = Array.from(projectsMap.values());
+
+    if (projectsList.length === 0) {
+        // NENHUM PROJETO CADASTRADO NO MOMENTO:
+        slot.innerHTML = `
+            <div class="dash-card status-card" onclick="navigateTo('projects/README.md')" style="cursor: pointer; grid-column: span 2;">
+                <div class="status-indicator" style="background: var(--accent-primary); box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);"></div>
+                <div class="card-content">
+                    <h3>Nenhum Projeto Conectado</h3>
+                    <p>O workspace está limpo e agnóstico. Crie uma pasta em projects/ ou vincule um repositório existente via symlink.</p>
+                    <span class="status-badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
+                        📁 Clique para ver o manual de onboarding
+                    </span>
+                </div>
+                <div class="card-icon" style="opacity: 0.8;">📂</div>
+            </div>
+        `;
+        return;
+    }
+
+    // GERA OS CARDS DINAMICAMENTE PARA CADA PROJETO REAL EXISTENTE:
+    let html = '';
+    projectsList.forEach(proj => {
+        const title = proj.title || proj.path.split('/')[1];
+        
+        let statusBadge = 'Ativo';
+        let statusClass = 'planning';
+        let statusColor = 'green';
+
+        const contentLower = (proj.content || '').toLowerCase();
+        if (contentLower.includes('em planejamento') || contentLower.includes('planejamento')) {
+            statusBadge = 'Em planejamento';
+            statusClass = 'planning';
+            statusColor = 'yellow';
+        } else if (contentLower.includes('em conceituação') || contentLower.includes('conceituação') || contentLower.includes('ideia')) {
+            statusBadge = 'Em conceituação';
+            statusClass = 'concept';
+            statusColor = 'red';
+        } else if (contentLower.includes('produção') || contentLower.includes('em produção')) {
+            statusBadge = 'Em produção';
+            statusClass = 'success';
+            statusColor = 'green';
+        }
+
+        let desc = 'Projeto conectado ao AI Second Brain';
+        const overviewMatch = (proj.content || '').match(/##\s+Visão Geral\s*\n+([^\n#]+)/i);
+        if (overviewMatch && overviewMatch[1]) {
+            desc = overviewMatch[1].trim();
+        }
+
+        html += `
+            <div class="dash-card status-card" onclick="navigateTo('${proj.path}')">
+                <div class="status-indicator ${statusColor}"></div>
+                <div class="card-content">
+                    <h3>${title}</h3>
+                    <p>${desc}</p>
+                    <span class="status-badge ${statusClass}">${statusBadge}</span>
+                </div>
+                <div class="card-icon">${proj.icon || '🚀'}</div>
+            </div>
+        `;
+    });
+
+    slot.innerHTML = html;
 }
 
 function toggleSection(sectionId) {
@@ -370,6 +466,7 @@ function initGraph() {
 function refreshApp() {
     buildSidebar();
     buildStats();
+    renderDashboardProjects();
 
     if (graph) {
         const nodes = (window.VAULT && window.VAULT.data && window.VAULT.data.graphNodes) || [];

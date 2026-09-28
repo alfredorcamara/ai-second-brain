@@ -17,48 +17,48 @@ aprendidas, você documenta tudo em um formato que:
 
 ## Como usar na prática
 
-### Cenário 1: Começar a trabalhar no JobSentinel
+### Cenário 1: Começar a trabalhar em um projeto
 
 1. Abra o workspace AI_SECOND_BRAIN no Antigravity.
-2. Diga: "Quero trabalhar no JobSentinel. Me dê o contexto atual."
+2. Diga: "Quero trabalhar no [NomeDoProjeto]. Me dê o contexto atual."
 3. O agente vai:
-   - Ler `projects/JobSentinel/PROJECT.md`
-   - Ler `projects/JobSentinel/CURRENT_STATE.md`
+   - Ler `projects/[NomeDoProjeto]/PROJECT.md`
+   - Ler `projects/[NomeDoProjeto]/CURRENT_STATE.md`
    - Ler decisões em `DECISIONS/`
-   - Ler memória anterior
+   - Ler memórias de sessões anteriores
    - Te dar um resumo atualizado
 
-### Cenário 2: Implementar uma nova feature
+### Cenário 2: Implementar uma nova feature com IA
 
-1. Diga: "Quero adicionar análise de falhas com IA ao JobSentinel."
+1. Diga: "Quero adicionar uma funcionalidade de classificação inteligente ao [NomeDoProjeto]."
 2. O agente ativa a skill `ai-decision-gate` automaticamente.
 3. Classifica a tarefa:
-   - Detectar falha → Código/Regras
-   - Classificar falha → AIJev
-   - Explicar falha → LLM
-4. Propõe implementação seguindo o AI Gateway pattern.
-5. Após implementar, atualiza memória e documentação.
+   - É determinística? → Código puro / Regra de negócio
+   - É classificação ou decisão? → Avaliar AIJev / Árvore de decisão
+   - É raciocínio aberto ou geração? → LLM via AI Gateway
+4. Propõe a arquitetura antes de escrever qualquer código.
+5. Após implementar e validar, atualiza memória e documentação.
 
-### Cenário 3: Investigar um bug
+### Cenário 3: Investigar um bug ou incidente
 
-1. Diga: "O Job X está falhando com erro Y."
+1. Diga: "O módulo X está falhando com o erro Y."
 2. O agente ativa a skill `bug-investigation`.
-3. Segue o processo estruturado de investigação.
-4. Registra a resolução em memória e lessons-learned.
+3. Segue o processo estruturado de investigação (hipótese → teste → causa raiz).
+4. Registra a resolução e atualiza `memory/lessons-learned.md`.
 
-### Cenário 4: Novo projeto
+### Cenário 4: Onboarding de um novo projeto
 
-1. Diga: "Quero adicionar um novo projeto chamado Z."
+1. Diga: "Quero iniciar um novo projeto chamado MeuNovoApp."
 2. O agente ativa a skill `project-onboarding`.
-3. Cria toda a estrutura de pastas e arquivos.
-4. Preenche templates com suas informações.
+3. Cria a estrutura padronizada em `projects/MeuNovoApp/`.
+4. Preenche os templates contratuais com as especificações que você definir.
 
 ### Cenário 5: Revisão de arquitetura
 
-1. Diga: "Revise a arquitetura do JobSentinel."
+1. Diga: "Revise a arquitetura do [NomeDoProjeto]."
 2. O agente ativa a skill `architecture-review`.
-3. Verifica checklist de qualidades arquiteturais.
-4. Registra findings e recomendações.
+3. Verifica checklist de qualidades arquiteturais (desacoplamento, segurança, resiliência).
+4. Registra findings e recomendações em um novo ADR.
 
 ## Fluxo de uma sessão de trabalho
 

@@ -21,18 +21,13 @@ AI_SECOND_BRAIN/
 │   ├── skills/                  ← Workflows reutilizáveis
 │   └── plugins/                 ← Plugin do AI OS
 │
-├── knowledge/                   ← Base de conhecimento
-│   ├── global/                  ← Conhecimento transversal
-│   ├── ai/                      ← IA, modelos, AIJev
-│   ├── architecture/            ← Padrões e decisões
-│   ├── dotnet/                  ← .NET, C#, Entity Framework
-│   ├── sql-server/              ← SQL Server, Jobs, Performance
-│   └── security/                ← Segurança, LGPD, OWASP
+├── knowledge/                   ← Base de conhecimento universal
+│   ├── global/                  ← Conhecimento transversal e índice
+│   ├── ai/                      ← IA, modelos, roteamento, AIJev
+│   ├── architecture/            ← Padrões universais de arquitetura
+│   └── security/                ← Segurança com IA, OWASP, privacidade
 │
-├── projects/                    ← Projetos ativos
-│   ├── JobSentinel/
-│   ├── Sabor-em-Conflito/
-│   └── Assistente-Mobile/
+├── projects/                    ← Seus projetos (APIs, SaaS, Mobile, Jogos)
 │
 ├── decisions/                   ← Decisões arquiteturais globais
 ├── memory/                      ← Memória persistente
@@ -66,6 +61,14 @@ Cada projeto em `projects/` tem seu `PROJECT.md`, estado atual, decisões e mem�
 ### 5. A memória persiste entre sessões
 Após cada sessão significativa, o agente atualiza `memory/` com o estado atual.
 
+## Comandos Operacionais
+
+| Comando | Descrição |
+|---|---|
+| `npm start` *(ou `start-brain.bat`)* | Inicia o Live Vault Server (SSE) e abre o Visualizador 3D no navegador |
+| `npm run doctor` *(ou `npm run check`)* | Executa o linter de integridade: valida links quebrados, contratos de projetos e knowledge |
+| `npm run scan` | Atualiza o snapshot JSON estático do cofre para o visualizador offline |
+
 ## Filosofia
 
 ```
@@ -93,5 +96,5 @@ RULES SKILLS AGENTS GLOBAL PROJECT MEMORY
            │
   ┌────────┼────────┐
   ▼        ▼        ▼
-JobSentinel  Sabor  Assistente
+APIs/Backend  SaaS/Web    Jogos/Apps
 ```

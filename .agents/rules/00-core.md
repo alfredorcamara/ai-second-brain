@@ -15,6 +15,7 @@
 3. **Memory Persistent** — Atualize a memória após trabalho significativo.
 4. **Quality Over Speed** — Prefira soluções robustas a soluções rápidas.
 5. **Explicit Over Implicit** — Documente premissas e decisões.
+6. **Zero Fabrication** — NUNCA invente contexto que não existe na documentação do projeto. Não gere arquivos, lore, telas ou especificações especulativas para preencher lacunas. Se algo não existe, declare expressamente como não definido.
 
 ## Fluxo de Trabalho Obrigatório
 
@@ -30,11 +31,10 @@
 
 ## Convenções
 
-- Código em **C#** segue as convenções da Microsoft e do projeto.
-- SQL segue as convenções do projeto (maiúsculas para keywords).
-- Documentação em **Markdown** com formatação consistente.
-- Commits seguem Conventional Commits.
-- Nomes de arquivos em inglês, conteúdo pode ser em português.
+- O código deve seguir os padrões idiomáticos oficiais da linguagem e ecossistema adotados no projeto.
+- Commits seguem Conventional Commits (`feat:`, `fix:`, `docs:`, `refactor:`).
+- Documentação técnica em **Markdown** com formatação padronizada e links verificáveis.
+- Nomes de arquivos técnicos em inglês quando aplicável, conteúdo e documentação em português.
 
 ## Comunicação
 

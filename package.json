@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node server.js",
     "scan": "node scripts/scan-vault.js",
-    "serve": "node server.js"
+    "serve": "node server.js",
+    "doctor": "node scripts/doctor.js",
+    "check": "node scripts/doctor.js"
   },
   "keywords": [
     "ai",

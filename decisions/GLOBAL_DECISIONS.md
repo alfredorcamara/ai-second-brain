@@ -7,7 +7,7 @@
 - **Data**: 2026-09-27
 - **Descrição**: Todo projeto que utilizar IA deve passar pelo Decision Gate
   para determinar se a tarefa é determinística, classificação/decisão, ou geração.
-- **Detalhes**: Ver `projects/JobSentinel/DECISIONS/ADR-0001-ai-decision-gate.md`
+- **Detalhes**: Ver `.agents/rules/01-ai-decision.md` e `knowledge/ai/AIJEV.md`
 
 ## ADR-G002: AI Gateway como abstração unificada
 - **Status**: Aceita

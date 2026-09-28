@@ -34,9 +34,9 @@ graph TD
     end
 
     subgraph Repos ["💻 REPOSITÓRIOS DE CÓDIGO (Satélites Físicos)"]
-        Proj1["JobSentinel<br/>(Repo .NET / SQL Server)"]
-        Proj2["Sabor em Conflito<br/>(Repo Unity / Godot)"]
-        Proj3["Assistente Mobile<br/>(Repo .NET MAUI / API)"]
+        Proj1["API / Backend<br/>(Repo Node / Go / .NET)"]
+        Proj2["Game<br/>(Repo Unity / Godot)"]
+        Proj3["App Mobile<br/>(Repo Flutter / React Native)"]
         ProjNew["Seu Novo Projeto<br/>(Repo Greenfield)"]
     end
 
@@ -144,7 +144,7 @@ Se o novo projeto for utilizar qualquer forma de inteligência:
 
 ## 3. Cenário B: Integração de um Projeto JÁ EXISTENTE (Brownfield)
 
-Se você já possui um projeto com repositório próprio, código em produção e anos de desenvolvimento (como o **JobSentinel** ou qualquer outro sistema da sua empresa), **você não precisa reescrever o código nem mover a pasta física do repositório**. 
+Se você já possui um projeto com repositório próprio, código em produção e anos de desenvolvimento (como uma API legado, um app existente ou qualquer outro sistema da sua empresa), **você não precisa reescrever o código nem mover a pasta física do repositório**. 
 
 O objetivo do Segundo Cérebro é ser a **memória e inteligência governante** desse projeto.
 
@@ -192,8 +192,8 @@ Para que o Segundo Cérebro funcione como uma extensão real da sua memória, to
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ 1. ENTRADA (Context Loading)                                │
-│ "Vou trabalhar no JobSentinel na feature de alertas por     │
-│ Teams. Carregue o estado atual e decisões pendentes."       │
+│ "Vou trabalhar no [NomeDoProjeto] na feature de autenticação.│
+│ Carregue o estado atual e decisões pendentes."               │
 └──────────────────────────────┬──────────────────────────────┘
                                │
                                ▼
