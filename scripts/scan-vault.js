@@ -18,14 +18,18 @@ function normalizePath(p) {
 }
 
 // Icon mapping based on category/filename
-function getIconForFile(relPath, title) {
-    const p = relPath.toLowerCase();
+function getIconForFile(relPath, title, category) {
+    const p = normalizePath(relPath).toLowerCase();
+    const clean = p.startsWith('.agents/') ? p.slice('.agents/'.length) : p;
+
     if (p.includes('gemini.md') || p.includes('readme.md')) return '🧠';
+    if (category === 'agents' || clean.startsWith('agents/') || clean.includes('agent')) return '🤖';
     if (p.includes('core')) return '⚙️';
     if (p.includes('ai-decision') || p.includes('decision-gate')) return '🚦';
     if (p.includes('aijev')) return '🎯';
     if (p.includes('security')) return '🔒';
     if (p.includes('dotnet')) return '💜';
+    if (p.includes('database')) return '🗄️';
     if (p.includes('sql')) return '🗃️';
     if (p.includes('documentation') || p.includes('docs')) return '📝';
     if (p.includes('onboarding')) return '🚀';
@@ -47,8 +51,11 @@ function getIconForFile(relPath, title) {
 
 function getCategoryForFile(relPath) {
     const p = normalizePath(relPath).toLowerCase();
-    if (p.startsWith('.agents/rules')) return 'rules';
-    if (p.startsWith('.agents/skills')) return 'skills';
+    const clean = p.startsWith('.agents/') ? p.slice('.agents/'.length) : p;
+
+    if (clean.startsWith('rules/')) return 'rules';
+    if (clean.startsWith('skills/')) return 'skills';
+    if (clean.startsWith('agents/') || clean.includes('agent')) return 'agents';
     if (p.startsWith('projects/')) return 'projects';
     if (p.startsWith('knowledge/')) return 'knowledge';
     if (p.startsWith('decisions/')) return 'decisions';
@@ -108,7 +115,7 @@ function scanVault(rootDir = ROOT_DIR) {
                 const stat = fs.statSync(fullPath);
                 const title = extractTitle(content, name);
                 const category = getCategoryForFile(relPath);
-                const icon = getIconForFile(relPath, title);
+                const icon = getIconForFile(relPath, title, category);
                 const outgoingLinks = extractLinks(content);
 
                 files.push({
@@ -137,6 +144,7 @@ function scanVault(rootDir = ROOT_DIR) {
         ]},
         { id: 'rules', label: 'Rules', icon: '📏', items: [] },
         { id: 'skills', label: 'Skills', icon: '⚡', items: [] },
+        { id: 'agents', label: 'Agents', icon: '🤖', items: [] },
         { id: 'projects', label: 'Projects', icon: '📁', items: [] },
         { id: 'knowledge', label: 'Knowledge', icon: '📚', items: [] },
         { id: 'decisions', label: 'Decisions', icon: '⚖️', items: [] },
@@ -180,8 +188,10 @@ function scanVault(rootDir = ROOT_DIR) {
 
     // Group hubs (anchors for planetary continents)
     const categoryHubs = {
+        'core': { id: 'hub-core', label: 'System Core', group: 'core', size: 18, icon: '⚙️' },
         'rules': { id: 'hub-rules', label: 'Rules Cortex', group: 'rules', size: 18, icon: '📏' },
         'skills': { id: 'hub-skills', label: 'Skills Engine', group: 'skills', size: 18, icon: '⚡' },
+        'agents': { id: 'hub-agents', label: 'Agents Hub', group: 'agents', size: 18, icon: '🤖' },
         'projects': { id: 'hub-projects', label: 'Projects Hub', group: 'projects', size: 18, icon: '📁' },
         'knowledge': { id: 'hub-knowledge', label: 'Knowledge Base', group: 'knowledge', size: 18, icon: '📚' },
         'decisions': { id: 'hub-decisions', label: 'Decisions Ledger', group: 'decisions', size: 16, icon: '⚖️' },
@@ -245,6 +255,7 @@ function scanVault(rootDir = ROOT_DIR) {
         core: { fill: '#6366f1', stroke: '#818cf8', glow: 'rgba(99, 102, 241, 0.4)' },
         rules: { fill: '#f59e0b', stroke: '#fbbf24', glow: 'rgba(245, 158, 11, 0.35)' },
         skills: { fill: '#10b981', stroke: '#34d399', glow: 'rgba(16, 185, 129, 0.35)' },
+        agents: { fill: '#06b6d4', stroke: '#22d3ee', glow: 'rgba(6, 182, 212, 0.35)' },
         projects: { fill: '#8b5cf6', stroke: '#a78bfa', glow: 'rgba(139, 92, 246, 0.35)' },
         knowledge: { fill: '#3b82f6', stroke: '#60a5fa', glow: 'rgba(59, 130, 246, 0.35)' },
         decisions: { fill: '#14b8a6', stroke: '#2dd4bf', glow: 'rgba(20, 184, 166, 0.35)' },

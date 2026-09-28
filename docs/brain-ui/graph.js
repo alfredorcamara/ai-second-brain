@@ -270,14 +270,17 @@ class BrainGraph {
 
         // Group continental sectors on the sphere: (polar theta & azimuth phi)
         const groupSectors = {
-            'core': { theta: 0, phi: 0, r: 0 }, // Center of the planet
-            'rules': { theta: -0.7, phi: 0.8, r: planetRadius }, // North-West continent
-            'skills': { theta: 0.7, phi: 0.8, r: planetRadius }, // North-East continent
+            'core': { theta: 0, phi: 0.35, r: planetRadius * 1.05 }, // North polar crown (System / Core)
+            'rules': { theta: -0.7, phi: 0.85, r: planetRadius }, // North-West continent
+            'skills': { theta: 0.7, phi: 0.85, r: planetRadius }, // North-East continent
+            'agents': { theta: 0.0, phi: 0.8, r: planetRadius }, // North meridian continent
             'ai': { theta: 0.0, phi: 1.45, r: planetRadius * 0.95 }, // Equatorial front
             'knowledge': { theta: -0.85, phi: 2.1, r: planetRadius }, // South-West continent
             'projects': { theta: 0.85, phi: 2.1, r: planetRadius }, // South-East continent
             'memory': { theta: -0.3, phi: 2.7, r: planetRadius * 1.05 }, // South pole
-            'decisions': { theta: 0.3, phi: 2.7, r: planetRadius * 1.05 } // South pole
+            'decisions': { theta: 0.3, phi: 2.7, r: planetRadius * 1.05 }, // South pole
+            'templates': { theta: -1.3, phi: 1.5, r: planetRadius },
+            'docs': { theta: 1.3, phi: 1.5, r: planetRadius }
         };
 
         const groupCounts = {};

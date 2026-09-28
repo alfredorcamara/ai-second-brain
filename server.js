@@ -4,14 +4,16 @@
  * 1. Serves the Brain Visualizer UI
  * 2. Scans and serves all Markdown files across all subfolders dynamically
  * 3. Provides live file watching (SSE) so changes made by AI or user reflect instantly!
+ * 4. Handles port busy (EADDRINUSE) gracefully with auto-fallback to next port!
  */
 
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const { exec } = require('child_process');
 const { scanVault } = require('./scripts/scan-vault');
 
-const PORT = process.env.PORT || 3333;
+const INITIAL_PORT = parseInt(process.env.PORT, 10) || 3333;
 const ROOT_DIR = __dirname;
 const UI_DIR = path.join(ROOT_DIR, 'docs', 'brain-ui');
 
@@ -43,7 +45,10 @@ function broadcastEvent(type, data) {
 
 // Watch workspace for changes in markdown files
 let debounceTimer = null;
+let watcherActive = false;
+
 function setupWatcher() {
+    if (watcherActive) return;
     try {
         fs.watch(ROOT_DIR, { recursive: true }, (eventType, filename) => {
             if (!filename) return;
@@ -56,13 +61,14 @@ function setupWatcher() {
                 }, 300);
             }
         });
+        watcherActive = true;
         console.log('👀 [Watcher] Monitorando alterações em tempo real nos arquivos Markdown...');
     } catch (e) {
         console.warn('⚠️ [Watcher] Watch recursivo não suportado neste ambiente:', e.message);
     }
 }
 
-const server = http.createServer((req, res) => {
+function handleRequest(req, res) {
     // CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -136,7 +142,6 @@ const server = http.createServer((req, res) => {
     let relativeFile = pathname === '/' ? '/index.html' : pathname;
     let filePath = path.join(UI_DIR, relativeFile);
 
-    // If file is not in docs/brain-ui, check if it's in ROOT (e.g. raw markdown or assets)
     if (!fs.existsSync(filePath)) {
         const rootCandidate = path.join(ROOT_DIR, relativeFile);
         if (fs.existsSync(rootCandidate) && rootCandidate.startsWith(ROOT_DIR)) {
@@ -153,13 +158,57 @@ const server = http.createServer((req, res) => {
         res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
         res.end('404 — Arquivo não encontrado');
     }
-});
+}
 
-server.listen(PORT, () => {
-    console.log('\n🧠 ═══════════════════════════════════════════════════════');
-    console.log(`   AI SECOND BRAIN — SERVIDOR AO VIVO EM EXECUÇÃO`);
-    console.log(`   🔗 URL: http://localhost:${PORT}`);
-    console.log('   📂 Varrendo todos os arquivos e subpastas em tempo real');
-    console.log('═══════════════════════════════════════════════════════════\n');
-    setupWatcher();
-});
+function openBrowser(url) {
+    if (process.platform === 'win32') {
+        exec(`start ${url}`);
+    } else if (process.platform === 'darwin') {
+        exec(`open ${url}`);
+    } else {
+        exec(`xdg-open ${url}`);
+    }
+}
+
+function startServer(port, maxAttempts = 10) {
+    const server = http.createServer(handleRequest);
+
+    server.on('error', (err) => {
+        if (err.code === 'EADDRINUSE') {
+            // Check if our server is already answering on this port
+            const checkReq = http.get(`http://localhost:${port}/api/vault`, (res) => {
+                if (res.statusCode === 200) {
+                    console.log('\n🧠 ═══════════════════════════════════════════════════════');
+                    console.log(`   🟢 O AI SECOND BRAIN JÁ ESTÁ EM EXECUÇÃO NA PORTA ${port}!`);
+                    console.log(`   🔗 URL: http://localhost:${port}`);
+                    console.log('═══════════════════════════════════════════════════════════\n');
+                    openBrowser(`http://localhost:${port}`);
+                    return;
+                }
+                // Port busy with something else, try next port
+                console.log(`⚠️ Porta ${port} ocupada. Tentando porta ${port + 1}...`);
+                startServer(port + 1, maxAttempts - 1);
+            });
+
+            checkReq.on('error', () => {
+                console.log(`⚠️ Porta ${port} em uso (soquete fechando). Tentando porta ${port + 1}...`);
+                startServer(port + 1, maxAttempts - 1);
+            });
+        } else {
+            console.error('❌ Erro no servidor:', err);
+        }
+    });
+
+    server.listen(port, () => {
+        const url = `http://localhost:${port}`;
+        console.log('\n🧠 ═══════════════════════════════════════════════════════');
+        console.log(`   AI SECOND BRAIN — SERVIDOR AO VIVO EM EXECUÇÃO`);
+        console.log(`   🔗 URL: ${url}`);
+        console.log('   📂 Varrendo todos os arquivos e subpastas em tempo real');
+        console.log('═══════════════════════════════════════════════════════════\n');
+        setupWatcher();
+        openBrowser(url);
+    });
+}
+
+startServer(INITIAL_PORT);

@@ -205,7 +205,7 @@ class VaultManager {
         rawFiles.forEach(f => {
             const title = this._extractTitle(f.content, f.name);
             const category = this._getCategory(f.relPath);
-            const icon = this._getIcon(f.relPath, title);
+            const icon = this._getIcon(f.relPath, title, category);
             const outgoingLinks = this._extractLinks(f.content);
 
             files.push({
@@ -230,6 +230,7 @@ class VaultManager {
             ]},
             { id: 'rules', label: 'Rules', icon: '📏', items: [] },
             { id: 'skills', label: 'Skills', icon: '⚡', items: [] },
+            { id: 'agents', label: 'Agents', icon: '🤖', items: [] },
             { id: 'projects', label: 'Projects', icon: '📁', items: [] },
             { id: 'knowledge', label: 'Knowledge', icon: '📚', items: [] },
             { id: 'decisions', label: 'Decisions', icon: '⚖️', items: [] },
@@ -269,8 +270,10 @@ class VaultManager {
         const graphEdges = [];
 
         const categoryHubs = {
+            'core': { id: 'hub-core', label: 'System Core', group: 'core', size: 18, icon: '⚙️' },
             'rules': { id: 'hub-rules', label: 'Rules Cortex', group: 'rules', size: 18, icon: '📏' },
             'skills': { id: 'hub-skills', label: 'Skills Engine', group: 'skills', size: 18, icon: '⚡' },
+            'agents': { id: 'hub-agents', label: 'Agents Hub', group: 'agents', size: 18, icon: '🤖' },
             'projects': { id: 'hub-projects', label: 'Projects Hub', group: 'projects', size: 18, icon: '📁' },
             'knowledge': { id: 'hub-knowledge', label: 'Knowledge Base', group: 'knowledge', size: 18, icon: '📚' },
             'decisions': { id: 'hub-decisions', label: 'Decisions Ledger', group: 'decisions', size: 16, icon: '⚖️' },
@@ -347,8 +350,11 @@ class VaultManager {
 
     _getCategory(relPath) {
         const p = relPath.toLowerCase().replace(/\\/g, '/');
-        if (p.startsWith('.agents/rules')) return 'rules';
-        if (p.startsWith('.agents/skills')) return 'skills';
+        const clean = p.startsWith('.agents/') ? p.slice('.agents/'.length) : p;
+
+        if (clean.startsWith('rules/')) return 'rules';
+        if (clean.startsWith('skills/')) return 'skills';
+        if (clean.startsWith('agents/') || clean.includes('agent')) return 'agents';
         if (p.startsWith('projects/')) return 'projects';
         if (p.startsWith('knowledge/')) return 'knowledge';
         if (p.startsWith('decisions/')) return 'decisions';
@@ -358,14 +364,18 @@ class VaultManager {
         return 'core';
     }
 
-    _getIcon(relPath, title) {
-        const p = relPath.toLowerCase();
+    _getIcon(relPath, title, category) {
+        const p = relPath.toLowerCase().replace(/\\/g, '/');
+        const clean = p.startsWith('.agents/') ? p.slice('.agents/'.length) : p;
+
         if (p.includes('gemini.md') || p.includes('readme.md')) return '🧠';
+        if (category === 'agents' || clean.startsWith('agents/') || clean.includes('agent')) return '🤖';
         if (p.includes('core')) return '⚙️';
         if (p.includes('ai-decision') || p.includes('decision-gate')) return '🚦';
         if (p.includes('aijev')) return '🎯';
         if (p.includes('security')) return '🔒';
         if (p.includes('dotnet')) return '💜';
+        if (p.includes('database')) return '🗄️';
         if (p.includes('sql')) return '🗃️';
         if (p.includes('documentation') || p.includes('docs')) return '📝';
         if (p.includes('onboarding')) return '🚀';

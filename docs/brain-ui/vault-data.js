@@ -1,10 +1,10 @@
 // ═══════════════════════════════════════════════════
 // AI SECOND BRAIN — Dynamic Vault Snapshot
-// Auto-generated: 2026-09-27T23:39:19.136Z
+// Auto-generated: 2026-09-28T01:15:21.848Z
 // ═══════════════════════════════════════════════════
 
 window.VAULT_SNAPSHOT = {
-  "timestamp": 1790552359135,
+  "timestamp": 1790558121848,
   "files": [
     {
       "id": "_agents_rules_00-core_md",
@@ -144,7 +144,7 @@ window.VAULT_SNAPSHOT = {
       "name": "SKILL.md",
       "title": "database-review",
       "category": "skills",
-      "icon": "📄",
+      "icon": "🗄️",
       "size": 1630,
       "mtime": 1790519870799.2102,
       "outgoingLinks": [],
@@ -185,6 +185,18 @@ window.VAULT_SNAPSHOT = {
       "mtime": 1790519846215.9138,
       "outgoingLinks": [],
       "content": "---\nname: session-memory\ndescription: >-\n  Gerencia a memória persistente entre sessões de trabalho. Use ao final de\n  uma sessão de trabalho para registrar o que foi feito, decisões tomadas,\n  e próximos passos. Também use no início de uma sessão para carregar\n  o contexto da sessão anterior.\n---\n\n# Session Memory\n\n## Ao Iniciar uma Sessão\n\n1. Leia `memory/current-state.md` para o estado global.\n2. Leia `projects/<projeto>/CURRENT_STATE.md` para o projeto em foco.\n3. Leia `projects/<projeto>/MEMORY/` para sessões anteriores.\n4. Leia `memory/lessons-learned.md` para lições relevantes.\n\n## Ao Finalizar uma Sessão\n\n### 1. Atualizar Estado Global\n\nEdite `memory/current-state.md` com mudanças relevantes.\n\n### 2. Criar Registro de Sessão\n\nCrie arquivo em `projects/<projeto>/MEMORY/sessions/`:\n\nNome: `YYYY-MM-DD-descricao-curta.md`\n\nConteúdo:\n\n```markdown\n# Sessão: YYYY-MM-DD — Descrição Curta\n\n## Contexto\nO que motivou esta sessão de trabalho.\n\n## O que foi feito\n- [ ] Item 1\n- [ ] Item 2\n\n## Decisões tomadas\n- Decisão 1: Motivo\n\n## Problemas encontrados\n- Problema 1: Como foi resolvido\n\n## Próximos passos\n1. Passo 1\n2. Passo 2\n\n## Aprendizados\n- Lição 1\n```\n\n### 3. Atualizar CURRENT_STATE.md do projeto\n\nReflita as mudanças no estado atual do projeto.\n\n### 4. Atualizar Lessons Learned (se aplicável)\n\nSe houve aprendizados significativos, adicione em `memory/lessons-learned.md`.\n\n## Regras\n\n- Seja conciso mas completo.\n- Registre decisões com o motivo.\n- Não omita problemas encontrados.\n- Próximos passos devem ser acionáveis.\n"
+    },
+    {
+      "id": "_agents_Teste_agent_teste_memory_Teste_SKILL_md",
+      "path": ".agents/Teste_agent/teste_memory/Teste_SKILL.md",
+      "name": "Teste_SKILL.md",
+      "title": "teste",
+      "category": "agents",
+      "icon": "🤖",
+      "size": 134,
+      "mtime": 1790556532044.9878,
+      "outgoingLinks": [],
+      "content": "---\nname: teste\ndescription: >-\n  teste.\n---\n\n# teste\n\n## Processo de Investigação de teste\n\n### 1. Coletar Informações de teste\n\n"
     },
     {
       "id": "decisions_GLOBAL_DECISIONS_md",
@@ -604,7 +616,7 @@ window.VAULT_SNAPSHOT = {
         {
           "id": "_agents_skills_database-review_SKILL_md",
           "label": "database-review",
-          "icon": "📄",
+          "icon": "🗄️",
           "path": ".agents/skills/database-review/SKILL.md",
           "size": 1630
         },
@@ -631,6 +643,21 @@ window.VAULT_SNAPSHOT = {
         }
       ],
       "badge": 8
+    },
+    {
+      "id": "agents",
+      "label": "Agents",
+      "icon": "🤖",
+      "items": [
+        {
+          "id": "_agents_Teste_agent_teste_memory_Teste_SKILL_md",
+          "label": "teste",
+          "icon": "🤖",
+          "path": ".agents/Teste_agent/teste_memory/Teste_SKILL.md",
+          "size": 134
+        }
+      ],
+      "badge": 1
     },
     {
       "id": "projects",
@@ -874,6 +901,14 @@ window.VAULT_SNAPSHOT = {
       "path": "dashboard"
     },
     {
+      "id": "hub-core",
+      "label": "System Core",
+      "group": "core",
+      "size": 18,
+      "icon": "⚙️",
+      "path": "core"
+    },
+    {
       "id": "hub-rules",
       "label": "Rules Cortex",
       "group": "rules",
@@ -888,6 +923,14 @@ window.VAULT_SNAPSHOT = {
       "size": 18,
       "icon": "⚡",
       "path": "skills"
+    },
+    {
+      "id": "hub-agents",
+      "label": "Agents Hub",
+      "group": "agents",
+      "size": 18,
+      "icon": "🤖",
+      "path": "agents"
     },
     {
       "id": "hub-projects",
@@ -1030,7 +1073,7 @@ window.VAULT_SNAPSHOT = {
       "label": "database-review",
       "group": "skills",
       "size": 9,
-      "icon": "📄",
+      "icon": "🗄️",
       "path": ".agents/skills/database-review/SKILL.md"
     },
     {
@@ -1056,6 +1099,14 @@ window.VAULT_SNAPSHOT = {
       "size": 9,
       "icon": "💾",
       "path": ".agents/skills/session-memory/SKILL.md"
+    },
+    {
+      "id": "_agents_Teste_agent_teste_memory_Teste_SKILL_md",
+      "label": "teste",
+      "group": "agents",
+      "size": 9,
+      "icon": "🤖",
+      "path": ".agents/Teste_agent/teste_memory/Teste_SKILL.md"
     },
     {
       "id": "decisions_GLOBAL_DECISIONS_md",
@@ -1261,11 +1312,19 @@ window.VAULT_SNAPSHOT = {
   "graphEdges": [
     {
       "from": "brain",
+      "to": "hub-core"
+    },
+    {
+      "from": "brain",
       "to": "hub-rules"
     },
     {
       "from": "brain",
       "to": "hub-skills"
+    },
+    {
+      "from": "brain",
+      "to": "hub-agents"
     },
     {
       "from": "brain",
@@ -1352,6 +1411,10 @@ window.VAULT_SNAPSHOT = {
       "to": "_agents_skills_session-memory_SKILL_md"
     },
     {
+      "from": "hub-agents",
+      "to": "_agents_Teste_agent_teste_memory_Teste_SKILL_md"
+    },
+    {
       "from": "hub-decisions",
       "to": "decisions_GLOBAL_DECISIONS_md"
     },
@@ -1364,7 +1427,7 @@ window.VAULT_SNAPSHOT = {
       "to": "docs_GUIA_PRATICO_md"
     },
     {
-      "from": "brain",
+      "from": "hub-core",
       "to": "GEMINI_md"
     },
     {
@@ -1432,7 +1495,7 @@ window.VAULT_SNAPSHOT = {
       "to": "projects_Sabor-em-Conflito_PROJECT_md"
     },
     {
-      "from": "brain",
+      "from": "hub-core",
       "to": "README_md"
     },
     {
@@ -1968,6 +2031,11 @@ window.VAULT_SNAPSHOT = {
       "stroke": "#34d399",
       "glow": "rgba(16, 185, 129, 0.35)"
     },
+    "agents": {
+      "fill": "#06b6d4",
+      "stroke": "#22d3ee",
+      "glow": "rgba(6, 182, 212, 0.35)"
+    },
     "projects": {
       "fill": "#8b5cf6",
       "stroke": "#a78bfa",
@@ -2000,7 +2068,7 @@ window.VAULT_SNAPSHOT = {
     }
   },
   "stats": {
-    "totalFiles": 40,
+    "totalFiles": 41,
     "rulesCount": 7,
     "skillsCount": 8,
     "projectsCount": 9,
@@ -2009,7 +2077,7 @@ window.VAULT_SNAPSHOT = {
     "memoryCount": 2,
     "templatesCount": 4,
     "docsCount": 2,
-    "totalNodes": 49,
-    "totalEdges": 173
+    "totalNodes": 52,
+    "totalEdges": 176
   }
 };
