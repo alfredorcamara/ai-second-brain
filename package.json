@@ -8,7 +8,9 @@
     "scan": "node scripts/scan-vault.js",
     "serve": "node server.js",
     "doctor": "node scripts/doctor.js",
-    "check": "node scripts/doctor.js"
+    "check": "node scripts/doctor.js",
+    "project:new": "node scripts/create-project.js",
+    "project:link": "node scripts/link-project.js"
   },
   "keywords": [
     "ai",

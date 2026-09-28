@@ -8,6 +8,24 @@ O AI Second Brain é uma estrutura de conhecimento, decisões, memória e govern
 que transforma o agente de IA de um chatbot genérico em um parceiro de desenvolvimento
 que entende o contexto, respeita regras e acumula conhecimento ao longo do tempo.
 
+## 🚀 Comece em 3 Minutos
+
+```bash
+# 1. Clone o repositório
+git clone https://github.com/alfredorcamara/ai-second-brain.git
+cd ai-second-brain
+
+# 2. Crie seu primeiro projeto (Greenfield) OU vincule um repositório existente (Brownfield)
+npm run project:new meu-saas          # Cria a pasta em projects/ com templates prontos
+# OU
+npm run project:link meu-repo "C:\Projetos\MeuRepo" # Conecta via junção sem duplicar arquivos
+
+# 3. Inicie o Cockpit Visual (Grafo 3D & Dashboard em tempo real)
+npm start
+
+# 4. Abra o workspace no Google Antigravity e comece a desenvolver!
+```
+
 ## Estrutura
 
 ```
@@ -65,6 +83,8 @@ Após cada sessão significativa, o agente atualiza `memory/` com o estado atual
 
 | Comando | Descrição |
 |---|---|
+| `npm run project:new <nome>` | Cria um novo projeto em `projects/<nome>/` com contratos e templates prontos |
+| `npm run project:link <nome> <caminho>` | Vincula um repositório Git externo existente via junção NTFS / symlink |
 | `npm start` *(ou `start-brain.bat`)* | Inicia o Live Vault Server (SSE) e abre o Visualizador 3D no navegador |
 | `npm run doctor` *(ou `npm run check`)* | Executa o linter de integridade: valida links quebrados, contratos de projetos e knowledge |
 | `npm run scan` | Atualiza o snapshot JSON estático do cofre para o visualizador offline |
