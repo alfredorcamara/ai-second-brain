@@ -115,6 +115,18 @@ Projeto externo vinculado ao AI Second Brain.
     }
 }
 
+// 6. Atualização automática do Snapshot do Dashboard
+try {
+    const { scanVault } = require('./scan-vault');
+    const vault = scanVault(ROOT_DIR);
+    const outputPath = path.resolve(__dirname, '../docs/brain-ui/vault-data.js');
+    const jsContent = `// ═══════════════════════════════════════════════════\n// AI SECOND BRAIN — Dynamic Vault Snapshot\n// Auto-generated: ${new Date().toISOString()}\n// ═══════════════════════════════════════════════════\n\nwindow.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`;
+    fs.writeFileSync(outputPath, jsContent, 'utf-8');
+    console.log(`📊 Snapshot do Dashboard atualizado com sucesso.`);
+} catch (e) {
+    // silencioso
+}
+
 console.log(`\n🎉 PROJETO CONECTADO COM SUCESSO!`);
 console.log(`   Agora o AI Second Brain monitora e governa este repositório sem duplicar arquivos.`);
 console.log(`   Inicie o servidor ('npm start') para ver o novo projeto no Dashboard.\n`);

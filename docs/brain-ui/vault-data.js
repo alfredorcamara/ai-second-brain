@@ -1,10 +1,10 @@
 // ═══════════════════════════════════════════════════
 // AI SECOND BRAIN — Dynamic Vault Snapshot
-// Auto-generated: 2026-09-28T16:29:18.265Z
+// Auto-generated: 2026-09-28T19:05:54.271Z
 // ═══════════════════════════════════════════════════
 
 window.VAULT_SNAPSHOT = {
-  "timestamp": 1790612958265,
+  "timestamp": 1790622354271,
   "files": [
     {
       "id": "_agents_rules_00-core_md",
@@ -321,6 +321,32 @@ window.VAULT_SNAPSHOT = {
       "content": "# Lições Aprendidas\n\n## 2026-09-27 — Criação do AI Second Brain\n\n### Lição 1: Formato nativo importa\n**Contexto**: A versão 1 usava estrutura genérica (CLAUDE.md).\n**Aprendizado**: Cada ferramenta (Antigravity, Claude Code, Cursor) tem seu\nformato nativo de customização. Usar o formato nativo garante que as features\nda ferramenta funcionem corretamente (descoberta automática de skills, rules, etc).\n**Ação**: Sempre adapte o AI Second Brain para o formato da ferramenta em uso.\n\n### Lição 2: AIJev não substitui código determinístico\n**Contexto**: Tentação de usar AIJev para tudo que envolve decisão.\n**Aprendizado**: Se uma regra pode ser escrita em código (if/else, switch),\nnão precisa de AIJev. AIJev é para decisões que envolvem contexto complexo\nou probabilidades.\n**Ação**: Decision Gate obrigatório antes de integrar qualquer IA.\n\n### Lição 3: LLM não é a resposta para tudo\n**Contexto**: Tendência de chamar LLM para cada problema.\n**Aprendizado**: LLM é caro, lento e não-determinístico. Use apenas quando\nrealmente precisa de geração de texto ou raciocínio aberto.\n**Ação**: Sempre pergunte \"isso pode ser feito sem IA?\" antes de usar LLM.\n"
     },
     {
+      "id": "projects_Alfredo_teste_CURRENT_STATE_md",
+      "path": "projects/Alfredo_teste/CURRENT_STATE.md",
+      "name": "CURRENT_STATE.md",
+      "title": "Alfredo_teste — Estado Atual",
+      "category": "projects",
+      "icon": "💾",
+      "size": 187,
+      "mtime": 1790621882745.2295,
+      "outgoingLinks": [],
+      "content": "# Alfredo_teste — Estado Atual\n\n> Última atualização: 2026-09-28\n\n## Status: 🟢 Ativo / Vinculado ao AI Second Brain\n- Repositório conectado e pronto para desenvolvimento com IA.\n"
+    },
+    {
+      "id": "projects_Alfredo_teste_PROJECT_md",
+      "path": "projects/Alfredo_teste/PROJECT.md",
+      "name": "PROJECT.md",
+      "title": "Alfredo_teste",
+      "category": "projects",
+      "icon": "📄",
+      "size": 326,
+      "mtime": 1790621882745.2295,
+      "outgoingLinks": [
+        "current_state.md"
+      ],
+      "content": "# Alfredo_teste\n\n## Visão Geral\nProjeto externo vinculado ao AI Second Brain.\n\n## Informações Gerais\n- **Tipo**: Brownfield / Repositório Externo\n- **Localização Original**: `C:\\Projetos\\temp2`\n- **Status**: 🟢 Ativo / Em Desenvolvimento\n\n## Links & Documentação\n- Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)\n"
+    },
+    {
       "id": "projects_README_md",
       "path": "projects/README.md",
       "name": "README.md",
@@ -339,13 +365,13 @@ window.VAULT_SNAPSHOT = {
       "title": "AI Second Brain — Alfredo AI OS",
       "category": "core",
       "icon": "🧠",
-      "size": 4311,
-      "mtime": 1790609800728.3025,
+      "size": 5125,
+      "mtime": 1790619944362.8787,
       "outgoingLinks": [
         "file:///c:/projetos/saas/google%20antigravity/projetos/ai_second_brain/docs/como_utilizar_o_projeto.md",
         "file:///c:/projetos/saas/google%20antigravity/projetos/ai_second_brain/docs/valor_e_relevancia_do_segundo_cerebro.md"
       ],
-      "content": "# AI Second Brain — Alfredo AI OS\n\n> Sistema de segundo cérebro para desenvolvimento com IA, otimizado para Google Antigravity Pro.\n\n## O que é\n\nO AI Second Brain é uma estrutura de conhecimento, decisões, memória e governança\nque transforma o agente de IA de um chatbot genérico em um parceiro de desenvolvimento\nque entende o contexto, respeita regras e acumula conhecimento ao longo do tempo.\n\n## Estrutura\n\n```\nAI_SECOND_BRAIN/\n│\n├── GEMINI.md                    ← Cérebro central\n├── README.md                    ← Este arquivo\n│\n├── .agents/                     ← Customizações Antigravity\n│   ├── rules/                   ← Regras persistentes\n│   ├── skills/                  ← Workflows reutilizáveis\n│   └── plugins/                 ← Plugin do AI OS\n│\n├── knowledge/                   ← Base de conhecimento universal\n│   ├── global/                  ← Conhecimento transversal e índice\n│   ├── ai/                      ← IA, modelos, roteamento, AIJev\n│   ├── architecture/            ← Padrões universais de arquitetura\n│   └── security/                ← Segurança com IA, OWASP, privacidade\n│\n├── projects/                    ← Seus projetos (APIs, SaaS, Mobile, Jogos)\n│\n├── decisions/                   ← Decisões arquiteturais globais\n├── memory/                      ← Memória persistente\n├── templates/                   ← Templates reutilizáveis\n└── docs/                        ← Documentação do sistema\n    └── brain-ui/                ← Interface de visualização\n```\n\n## Como usar\n\n> 📘 **Manual Prático Completo:**  \n> Veja o passo a passo detalhado para criar novos projetos ou plugar projetos existentes em: **[docs/COMO_UTILIZAR_O_PROJETO.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/COMO_UTILIZAR_O_PROJETO.md)**.  \n>  \n> 🧠 **Análise Crítica & Relevância de Mercado:**  \n> Entenda por que esta estratégia é essencial para projetos construídos com IA e como ela é percebida pela comunidade em: **[docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md)**.\n\n### 1. Abra este workspace no Antigravity\nO `GEMINI.md` será carregado automaticamente como regra raiz.\n\n### 2. As regras são aplicadas automaticamente\nQuando você trabalhar em qualquer arquivo, as regras de `.agents/rules/` serão\ndescobertas e aplicadas conforme o contexto.\n\n### 3. Skills são ativadas sob demanda\nO agente identifica automaticamente quando uma skill é relevante e a ativa.\nVocê também pode invocar manualmente.\n\n### 4. Projetos têm contexto próprio\nCada projeto em `projects/` tem seu `PROJECT.md`, estado atual, decisões e memória.\n\n### 5. A memória persiste entre sessões\nApós cada sessão significativa, o agente atualiza `memory/` com o estado atual.\n\n## Comandos Operacionais\n\n| Comando | Descrição |\n|---|---|\n| `npm start` *(ou `start-brain.bat`)* | Inicia o Live Vault Server (SSE) e abre o Visualizador 3D no navegador |\n| `npm run doctor` *(ou `npm run check`)* | Executa o linter de integridade: valida links quebrados, contratos de projetos e knowledge |\n| `npm run scan` | Atualiza o snapshot JSON estático do cofre para o visualizador offline |\n\n## Filosofia\n\n```\nALFREDO AI OS\n       │\n  ┌────┴─────────────────┐\n  │                      │\nANTIGRAVITY         KNOWLEDGE\n  │                      │\n  ┌────┼────┐    ┌────┼────┐\n  │    │    │    │    │    │\nRULES SKILLS AGENTS GLOBAL PROJECT MEMORY\n  │    │    │    │    │    │\n  └────┴────┴────┴────┴────┘\n           │\n       AI GATEWAY\n           │\n    ┌──────┼──────┐\n    │      │      │\n  AIJEV   LLM  LOCAL AI\n    │      │      │\n    └──────┼──────┘\n           │\n     SEUS PROJETOS\n           │\n  ┌────────┼────────┐\n  ▼        ▼        ▼\nAPIs/Backend  SaaS/Web    Jogos/Apps\n```\n"
+      "content": "# AI Second Brain — Alfredo AI OS\n\n> Sistema de segundo cérebro para desenvolvimento com IA, otimizado para Google Antigravity Pro.\n\n## O que é\n\nO AI Second Brain é uma estrutura de conhecimento, decisões, memória e governança\nque transforma o agente de IA de um chatbot genérico em um parceiro de desenvolvimento\nque entende o contexto, respeita regras e acumula conhecimento ao longo do tempo.\n\n## 🚀 Comece em 3 Minutos\n\n```bash\n# 1. Clone o repositório\ngit clone https://github.com/alfredorcamara/ai-second-brain.git\ncd ai-second-brain\n\n# 2. Crie seu primeiro projeto (Greenfield) OU vincule um repositório existente (Brownfield)\nnpm run project:new meu-saas          # Cria a pasta em projects/ com templates prontos\n# OU\nnpm run project:link meu-repo \"C:\\Projetos\\MeuRepo\" # Conecta via junção sem duplicar arquivos\n\n# 3. Inicie o Cockpit Visual (Grafo 3D & Dashboard em tempo real)\nnpm start\n\n# 4. Abra o workspace no Google Antigravity e comece a desenvolver!\n```\n\n## Estrutura\n\n```\nAI_SECOND_BRAIN/\n│\n├── GEMINI.md                    ← Cérebro central\n├── README.md                    ← Este arquivo\n│\n├── .agents/                     ← Customizações Antigravity\n│   ├── rules/                   ← Regras persistentes\n│   ├── skills/                  ← Workflows reutilizáveis\n│   └── plugins/                 ← Plugin do AI OS\n│\n├── knowledge/                   ← Base de conhecimento universal\n│   ├── global/                  ← Conhecimento transversal e índice\n│   ├── ai/                      ← IA, modelos, roteamento, AIJev\n│   ├── architecture/            ← Padrões universais de arquitetura\n│   └── security/                ← Segurança com IA, OWASP, privacidade\n│\n├── projects/                    ← Seus projetos (APIs, SaaS, Mobile, Jogos)\n│\n├── decisions/                   ← Decisões arquiteturais globais\n├── memory/                      ← Memória persistente\n├── templates/                   ← Templates reutilizáveis\n└── docs/                        ← Documentação do sistema\n    └── brain-ui/                ← Interface de visualização\n```\n\n## Como usar\n\n> 📘 **Manual Prático Completo:**  \n> Veja o passo a passo detalhado para criar novos projetos ou plugar projetos existentes em: **[docs/COMO_UTILIZAR_O_PROJETO.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/COMO_UTILIZAR_O_PROJETO.md)**.  \n>  \n> 🧠 **Análise Crítica & Relevância de Mercado:**  \n> Entenda por que esta estratégia é essencial para projetos construídos com IA e como ela é percebida pela comunidade em: **[docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md)**.\n\n### 1. Abra este workspace no Antigravity\nO `GEMINI.md` será carregado automaticamente como regra raiz.\n\n### 2. As regras são aplicadas automaticamente\nQuando você trabalhar em qualquer arquivo, as regras de `.agents/rules/` serão\ndescobertas e aplicadas conforme o contexto.\n\n### 3. Skills são ativadas sob demanda\nO agente identifica automaticamente quando uma skill é relevante e a ativa.\nVocê também pode invocar manualmente.\n\n### 4. Projetos têm contexto próprio\nCada projeto em `projects/` tem seu `PROJECT.md`, estado atual, decisões e memória.\n\n### 5. A memória persiste entre sessões\nApós cada sessão significativa, o agente atualiza `memory/` com o estado atual.\n\n## Comandos Operacionais\n\n| Comando | Descrição |\n|---|---|\n| `npm run project:new <nome>` | Cria um novo projeto em `projects/<nome>/` com contratos e templates prontos |\n| `npm run project:link <nome> <caminho>` | Vincula um repositório Git externo existente via junção NTFS / symlink |\n| `npm start` *(ou `start-brain.bat`)* | Inicia o Live Vault Server (SSE) e abre o Visualizador 3D no navegador |\n| `npm run doctor` *(ou `npm run check`)* | Executa o linter de integridade: valida links quebrados, contratos de projetos e knowledge |\n| `npm run scan` | Atualiza o snapshot JSON estático do cofre para o visualizador offline |\n\n## Filosofia\n\n```\nALFREDO AI OS\n       │\n  ┌────┴─────────────────┐\n  │                      │\nANTIGRAVITY         KNOWLEDGE\n  │                      │\n  ┌────┼────┐    ┌────┼────┐\n  │    │    │    │    │    │\nRULES SKILLS AGENTS GLOBAL PROJECT MEMORY\n  │    │    │    │    │    │\n  └────┴────┴────┴────┴────┘\n           │\n       AI GATEWAY\n           │\n    ┌──────┼──────┐\n    │      │      │\n  AIJEV   LLM  LOCAL AI\n    │      │      │\n    └──────┼──────┘\n           │\n     SEUS PROJETOS\n           │\n  ┌────────┼────────┐\n  ▼        ▼        ▼\nAPIs/Backend  SaaS/Web    Jogos/Apps\n```\n"
     },
     {
       "id": "templates_ai-use-case_md",
@@ -529,6 +555,20 @@ window.VAULT_SNAPSHOT = {
       "icon": "📁",
       "items": [
         {
+          "id": "projects_Alfredo_teste_CURRENT_STATE_md",
+          "label": "Alfredo_teste — Estado Atual",
+          "icon": "💾",
+          "path": "projects/Alfredo_teste/CURRENT_STATE.md",
+          "size": 187
+        },
+        {
+          "id": "projects_Alfredo_teste_PROJECT_md",
+          "label": "Alfredo_teste",
+          "icon": "📄",
+          "path": "projects/Alfredo_teste/PROJECT.md",
+          "size": 326
+        },
+        {
           "id": "projects_README_md",
           "label": "Diretório de Projetos — AI Second Brain",
           "icon": "🧠",
@@ -536,7 +576,7 @@ window.VAULT_SNAPSHOT = {
           "size": 1398
         }
       ],
-      "badge": 1
+      "badge": 3
     },
     {
       "id": "knowledge",
@@ -707,7 +747,7 @@ window.VAULT_SNAPSHOT = {
           "label": "AI Second Brain — Alfredo AI OS",
           "icon": "🧠",
           "path": "README.md",
-          "size": 4311
+          "size": 5125
         }
       ],
       "badge": 2
@@ -1003,6 +1043,22 @@ window.VAULT_SNAPSHOT = {
       "path": "memory/lessons-learned.md"
     },
     {
+      "id": "projects_Alfredo_teste_CURRENT_STATE_md",
+      "label": "Alfredo_teste — Estado Atual",
+      "group": "projects",
+      "size": 9,
+      "icon": "💾",
+      "path": "projects/Alfredo_teste/CURRENT_STATE.md"
+    },
+    {
+      "id": "projects_Alfredo_teste_PROJECT_md",
+      "label": "Alfredo_teste",
+      "group": "projects",
+      "size": 9,
+      "icon": "📄",
+      "path": "projects/Alfredo_teste/PROJECT.md"
+    },
+    {
       "id": "projects_README_md",
       "label": "Diretório de Projetos — AI Second Brain",
       "group": "projects",
@@ -1194,6 +1250,14 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "hub-projects",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "hub-projects",
+      "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "hub-projects",
       "to": "projects_README_md"
     },
     {
@@ -1218,11 +1282,23 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "_agents_rules_04-documentation_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "_agents_rules_04-documentation_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "_agents_rules_04-documentation_md",
       "to": "templates_project_md"
     },
     {
       "from": "_agents_skills_ai-integration_SKILL_md",
       "to": "_agents_rules_03-security_md"
+    },
+    {
+      "from": "_agents_skills_architecture-review_SKILL_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
     },
     {
       "from": "_agents_skills_architecture-review_SKILL_md",
@@ -1233,8 +1309,20 @@ window.VAULT_SNAPSHOT = {
       "to": "memory_lessons-learned_md"
     },
     {
+      "from": "_agents_skills_bug-investigation_SKILL_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
       "from": "_agents_skills_new-feature_SKILL_md",
       "to": "_agents_rules_03-security_md"
+    },
+    {
+      "from": "_agents_skills_new-feature_SKILL_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "_agents_skills_new-feature_SKILL_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
     },
     {
       "from": "_agents_skills_new-feature_SKILL_md",
@@ -1251,6 +1339,14 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "_agents_skills_project-onboarding_SKILL_md",
       "to": "GEMINI_md"
+    },
+    {
+      "from": "_agents_skills_project-onboarding_SKILL_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "_agents_skills_project-onboarding_SKILL_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
     },
     {
       "from": "_agents_skills_project-onboarding_SKILL_md",
@@ -1271,6 +1367,14 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "_agents_skills_session-memory_SKILL_md",
       "to": "memory_lessons-learned_md"
+    },
+    {
+      "from": "_agents_skills_session-memory_SKILL_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "_agents_skills_session-memory_SKILL_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
     },
     {
       "from": "_agents_skills_session-memory_SKILL_md",
@@ -1295,6 +1399,14 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
       "to": "knowledge_ai_AI_GATEWAY_md"
+    },
+    {
+      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
     },
     {
       "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
@@ -1326,11 +1438,27 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_GUIA_PRATICO_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_GUIA_PRATICO_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "docs_GUIA_PRATICO_md",
       "to": "templates_project_md"
     },
     {
       "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
       "to": "GEMINI_md"
+    },
+    {
+      "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
     },
     {
       "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
@@ -1351,6 +1479,14 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "GEMINI_md",
       "to": "knowledge_ai_MODEL_SELECTION_md"
+    },
+    {
+      "from": "GEMINI_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "GEMINI_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
     },
     {
       "from": "GEMINI_md",
@@ -1382,7 +1518,23 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "memory_current-state_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "memory_current-state_md",
       "to": "templates_project_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_PROJECT_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_README_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_README_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
     },
     {
       "from": "projects_README_md",
@@ -1402,11 +1554,23 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "README_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "README_md",
       "to": "projects_README_md"
     },
     {
       "from": "README_md",
       "to": "templates_project_md"
+    },
+    {
+      "from": "templates_project_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "templates_project_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
     }
   ],
   "groupColors": {
@@ -1462,16 +1626,16 @@ window.VAULT_SNAPSHOT = {
     }
   },
   "stats": {
-    "totalFiles": 32,
+    "totalFiles": 34,
     "rulesCount": 5,
     "skillsCount": 8,
-    "projectsCount": 1,
+    "projectsCount": 3,
     "knowledgeCount": 6,
     "decisionsCount": 1,
     "memoryCount": 2,
     "templatesCount": 4,
     "docsCount": 3,
-    "totalNodes": 42,
-    "totalEdges": 89
+    "totalNodes": 44,
+    "totalEdges": 116
   }
 };

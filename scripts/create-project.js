@@ -119,6 +119,18 @@ fs.writeFileSync(path.join(projectFolder, 'PROJECT.md'), projectMdContent, 'utf-
 fs.writeFileSync(path.join(projectFolder, 'CURRENT_STATE.md'), currentStateMdContent, 'utf-8');
 fs.writeFileSync(path.join(projectFolder, 'ARCHITECTURE.md'), archMdContent, 'utf-8');
 
+// Atualização automática do Snapshot do Dashboard
+try {
+    const { scanVault } = require('./scan-vault');
+    const vault = scanVault(ROOT_DIR);
+    const outputPath = path.resolve(__dirname, '../docs/brain-ui/vault-data.js');
+    const jsContent = `// ═══════════════════════════════════════════════════\n// AI SECOND BRAIN — Dynamic Vault Snapshot\n// Auto-generated: ${new Date().toISOString()}\n// ═══════════════════════════════════════════════════\n\nwindow.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`;
+    fs.writeFileSync(outputPath, jsContent, 'utf-8');
+    console.log(`📊 Snapshot do Dashboard atualizado com sucesso.`);
+} catch (e) {
+    // silencioso
+}
+
 console.log('✅ Estrutura criada com sucesso:');
 console.log(`   📁 projects/${safeName}/`);
 console.log(`   ├── 📄 PROJECT.md`);

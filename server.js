@@ -86,6 +86,8 @@ function handleRequest(req, res) {
     // API: Dynamic Vault Scan
     if (pathname === '/api/vault') {
         try {
+            delete require.cache[require.resolve('./scripts/scan-vault')];
+            const { scanVault } = require('./scripts/scan-vault');
             const vault = scanVault(ROOT_DIR);
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify(vault));

@@ -26,18 +26,43 @@ function normalizePath(p) {
 }
 
 // 1. Coleta todos os arquivos Markdown
-function getAllMarkdownFiles(dir) {
+function getAllMarkdownFiles(dir, visited = new Set()) {
     const results = [];
-    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    try {
+        const canonical = fs.realpathSync(dir);
+        if (visited.has(canonical)) return results;
+        visited.add(canonical);
+    } catch (e) {
+        return results;
+    }
+
+    let entries = [];
+    try {
+        entries = fs.readdirSync(dir, { withFileTypes: true });
+    } catch (e) {
+        return results;
+    }
+
+    const ignoredFolders = new Set(['node_modules', '.git', 'bin', 'obj', 'dist', 'build', 'vendor', '.vs', '.vscode']);
 
     for (const entry of entries) {
-        if (entry.name.startsWith('.') && entry.name !== '.agents') continue;
-        if (entry.name === 'node_modules' || entry.name === '.git') continue;
+        const name = entry.name;
+        if (name.startsWith('.') && name !== '.agents') continue;
+        if (ignoredFolders.has(name.toLowerCase())) continue;
 
-        const fullPath = path.join(dir, entry.name);
-        if (entry.isDirectory()) {
-            results.push(...getAllMarkdownFiles(fullPath));
-        } else if (entry.name.toLowerCase().endsWith('.md')) {
+        const fullPath = path.join(dir, name);
+        let isDir = entry.isDirectory();
+        if (!isDir && entry.isSymbolicLink()) {
+            try {
+                isDir = fs.statSync(fullPath).isDirectory();
+            } catch (e) {
+                isDir = false;
+            }
+        }
+
+        if (isDir) {
+            results.push(...getAllMarkdownFiles(fullPath, visited));
+        } else if (name.toLowerCase().endsWith('.md')) {
             results.push(fullPath);
         }
     }
@@ -124,9 +149,25 @@ function checkProjects() {
     const projectsDir = path.join(ROOT_DIR, 'projects');
     if (!fs.existsSync(projectsDir)) return;
 
-    const projects = fs.readdirSync(projectsDir, { withFileTypes: true })
-        .filter(d => d.isDirectory())
-        .map(d => d.name);
+    let entries = [];
+    try {
+        entries = fs.readdirSync(projectsDir, { withFileTypes: true });
+    } catch (e) {
+        return;
+    }
+
+    const projects = entries.filter(d => {
+        if (d.name.startsWith('.')) return false;
+        if (d.isDirectory()) return true;
+        if (d.isSymbolicLink()) {
+            try {
+                return fs.statSync(path.join(projectsDir, d.name)).isDirectory();
+            } catch (e) {
+                return false;
+            }
+        }
+        return false;
+    }).map(d => d.name);
 
     for (const proj of projects) {
         checkedProjectsCount++;

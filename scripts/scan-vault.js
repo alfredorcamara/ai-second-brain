@@ -97,38 +97,67 @@ function extractLinks(content) {
 
 function scanVault(rootDir = ROOT_DIR) {
     const files = [];
+    const visitedDirs = new Set();
+    const ignoredFolders = new Set(['node_modules', '.git', 'bin', 'obj', 'dist', 'build', 'vendor', '.vs', '.vscode']);
 
     function walk(currentDir) {
-        const entries = fs.readdirSync(currentDir, { withFileTypes: true });
+        try {
+            const canonical = fs.realpathSync(currentDir);
+            if (visitedDirs.has(canonical)) return;
+            visitedDirs.add(canonical);
+        } catch (e) {
+            return;
+        }
+
+        let entries = [];
+        try {
+            entries = fs.readdirSync(currentDir, { withFileTypes: true });
+        } catch (e) {
+            return;
+        }
+
         for (const entry of entries) {
             const name = entry.name;
             if (name.startsWith('.') && name !== '.agents') continue;
-            if (name === 'node_modules' || name === '.git') continue;
+            if (ignoredFolders.has(name.toLowerCase())) continue;
 
             const fullPath = path.join(currentDir, name);
-            if (entry.isDirectory()) {
+            let isDirectory = entry.isDirectory();
+            if (!isDirectory && entry.isSymbolicLink()) {
+                try {
+                    isDirectory = fs.statSync(fullPath).isDirectory();
+                } catch (e) {
+                    isDirectory = false;
+                }
+            }
+
+            if (isDirectory) {
                 walk(fullPath);
             } else if (name.toLowerCase().endsWith('.md')) {
-                const relPath = normalizePath(path.relative(rootDir, fullPath));
-                const content = fs.readFileSync(fullPath, 'utf-8');
-                const stat = fs.statSync(fullPath);
-                const title = extractTitle(content, name);
-                const category = getCategoryForFile(relPath);
-                const icon = getIconForFile(relPath, title, category);
-                const outgoingLinks = extractLinks(content);
+                try {
+                    const relPath = normalizePath(path.relative(rootDir, fullPath));
+                    const content = fs.readFileSync(fullPath, 'utf-8');
+                    const stat = fs.statSync(fullPath);
+                    const title = extractTitle(content, name);
+                    const category = getCategoryForFile(relPath);
+                    const icon = getIconForFile(relPath, title, category);
+                    const outgoingLinks = extractLinks(content);
 
-                files.push({
-                    id: relPath.replace(/[^a-zA-Z0-9_-]/g, '_'),
-                    path: relPath,
-                    name: name,
-                    title: title,
-                    category: category,
-                    icon: icon,
-                    size: stat.size,
-                    mtime: stat.mtimeMs,
-                    outgoingLinks: outgoingLinks,
-                    content: content
-                });
+                    files.push({
+                        id: relPath.replace(/[^a-zA-Z0-9_-]/g, '_'),
+                        path: relPath,
+                        name: name,
+                        title: title,
+                        category: category,
+                        icon: icon,
+                        size: stat.size,
+                        mtime: stat.mtimeMs,
+                        outgoingLinks: outgoingLinks,
+                        content: content
+                    });
+                } catch (e) {
+                    // Ignora arquivos ilegíveis
+                }
             }
         }
     }

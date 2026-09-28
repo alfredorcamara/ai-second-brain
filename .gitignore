@@ -15,3 +15,8 @@ Thumbs.db
 bin/
 obj/
 dist/
+
+# User Projects (governed locally or via their own repos)
+projects/*
+!projects/README.md
+
