@@ -69,10 +69,32 @@ function setupWatcher() {
     }
 }
 
-function handleRequest(req, res) {
+function readJsonBody(req) {
+    return new Promise((resolve, reject) => {
+        let body = '';
+        req.on('data', chunk => {
+            body += chunk;
+            if (body.length > 2e6) { // 2MB max
+                req.destroy();
+                reject(new Error('Payload too large'));
+            }
+        });
+        req.on('end', () => {
+            try {
+                resolve(body ? JSON.parse(body) : {});
+            } catch (err) {
+                reject(err);
+            }
+        });
+        req.on('error', reject);
+    });
+}
+
+async function handleRequest(req, res) {
     // CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
     if (req.method === 'OPTIONS') {
         res.writeHead(204);
@@ -82,6 +104,265 @@ function handleRequest(req, res) {
 
     const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
     const pathname = parsedUrl.pathname;
+
+    // API: Validação de Caminho no Disco em Tempo Real
+    if (pathname === '/api/projects/validate-path' && req.method === 'POST') {
+        try {
+            const body = await readJsonBody(req);
+            let rawPath = (body.path || '').trim();
+            // Remove aspas de copiar caminho no Windows
+            rawPath = rawPath.replace(/^["']|["']$/g, '');
+
+            if (!rawPath) {
+                res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ valid: false, message: 'Digite ou cole o caminho de uma pasta no seu computador.' }));
+                return;
+            }
+
+            const resolved = path.resolve(rawPath);
+            if (!fs.existsSync(resolved)) {
+                res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ valid: false, message: 'Diretório não encontrado no disco.' }));
+                return;
+            }
+
+            const stat = fs.statSync(resolved);
+            if (!stat.isDirectory()) {
+                res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ valid: false, message: 'O caminho informado não é uma pasta.' }));
+                return;
+            }
+
+            let fileCount = 0;
+            let hasGit = false;
+            let hasPackageJson = false;
+            let hasCsproj = false;
+            try {
+                const entries = fs.readdirSync(resolved);
+                fileCount = entries.length;
+                hasGit = entries.includes('.git');
+                hasPackageJson = entries.includes('package.json');
+                hasCsproj = entries.some(e => e.endsWith('.csproj'));
+            } catch (e) {}
+
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({
+                valid: true,
+                resolvedPath: resolved,
+                fileCount,
+                hasGit,
+                hasPackageJson,
+                hasCsproj,
+                suggestedName: path.basename(resolved).replace(/[^a-zA-Z0-9_\-]/g, '-')
+            }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ valid: false, message: err.message }));
+        }
+        return;
+    }
+
+    // API: Criar Novo Projeto (Greenfield)
+    if (pathname === '/api/projects/new' && req.method === 'POST') {
+        try {
+            const body = await readJsonBody(req);
+            const rawName = (body.name || '').trim();
+            const stack = (body.stack || 'Não definida').trim();
+            const description = (body.description || 'Projeto criado no AI Second Brain').trim();
+
+            if (!rawName) {
+                res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: 'Nome do projeto é obrigatório.' }));
+                return;
+            }
+
+            const safeName = rawName.replace(/[^a-zA-Z0-9_\-]/g, '-');
+            const projectsDir = path.join(ROOT_DIR, 'projects');
+            const targetFolder = path.join(projectsDir, safeName);
+
+            if (fs.existsSync(targetFolder)) {
+                res.writeHead(409, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: `Já existe um projeto chamado '${safeName}'.` }));
+                return;
+            }
+
+            // Cria diretórios da governança
+            fs.mkdirSync(targetFolder, { recursive: true });
+            fs.mkdirSync(path.join(targetFolder, 'DECISIONS'), { recursive: true });
+            fs.mkdirSync(path.join(targetFolder, 'MEMORY', 'sessions'), { recursive: true });
+
+            const today = new Date().toISOString().split('T')[0];
+
+            // PROJECT.md
+            const projectMd = `# ${safeName}
+
+## Visão Geral
+${description}
+
+## Informações Gerais
+- **Tipo**: Greenfield / Projeto Novo
+- **Stack Inicial**: ${stack}
+- **Status**: 🟢 Em Planejamento / Ativo
+- **Data de Criação**: ${today}
+
+## Links & Governança
+- Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)
+- Arquitetura: [ARCHITECTURE.md](ARCHITECTURE.md)
+- Decisões Técnicas: \`DECISIONS/\`
+- Memória de Sessões: \`MEMORY/sessions/\`
+`;
+
+            // CURRENT_STATE.md
+            const currentStateMd = `# ${safeName} — Estado Atual
+
+> Última atualização: ${today}
+
+## Status: 🟢 Em Planejamento / Ativo
+
+## O que já foi definido
+- [x] Inicialização no AI Second Brain com governança e memória ativa.
+- [x] Stack selecionada: **${stack}**.
+
+## Próximos Passos
+1. Definir os requisitos centrais do sistema.
+2. Registrar a primeira decisão de arquitetura em \`DECISIONS/\`.
+`;
+
+            // ARCHITECTURE.md
+            const archMd = `# ${safeName} — Arquitetura da Solução
+
+> Visão arquitetural, padrões e design do sistema.
+
+## 1. Stack Tecnológica
+- **Linguagem / Framework**: ${stack}
+
+## 2. Princípios Adotados
+- Código idiomático e desacoplado.
+- Se utilizar IA: aplicar o AI Decision Gate (\`.agents/rules/01-ai-decision.md\`).
+`;
+
+            fs.writeFileSync(path.join(targetFolder, 'PROJECT.md'), projectMd, 'utf-8');
+            fs.writeFileSync(path.join(targetFolder, 'CURRENT_STATE.md'), currentStateMd, 'utf-8');
+            fs.writeFileSync(path.join(targetFolder, 'ARCHITECTURE.md'), archMd, 'utf-8');
+
+            // Atualiza snapshot do Vault
+            delete require.cache[require.resolve('./scripts/scan-vault')];
+            const { scanVault } = require('./scripts/scan-vault');
+            const vault = scanVault(ROOT_DIR);
+            const snapshotPath = path.join(UI_DIR, 'vault-data.js');
+            fs.writeFileSync(snapshotPath, `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+
+            // Dispara evento SSE
+            broadcastEvent('vault-updated', { project: safeName, type: 'new-project', time: Date.now() });
+
+            res.writeHead(201, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({
+                success: true,
+                name: safeName,
+                path: `projects/${safeName}/PROJECT.md`,
+                message: `Projeto '${safeName}' criado com sucesso!`
+            }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ error: err.message }));
+        }
+        return;
+    }
+
+    // API: Vincular Repositório Existente (Brownfield)
+    if (pathname === '/api/projects/link' && req.method === 'POST') {
+        try {
+            const body = await readJsonBody(req);
+            const rawName = (body.name || '').trim();
+            let targetPathRaw = (body.targetPath || '').trim();
+            targetPathRaw = targetPathRaw.replace(/^["']|["']$/g, '');
+
+            if (!rawName || !targetPathRaw) {
+                res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: 'Nome e caminho da pasta são obrigatórios.' }));
+                return;
+            }
+
+            const targetAbsolutePath = path.resolve(targetPathRaw);
+            if (!fs.existsSync(targetAbsolutePath) || !fs.statSync(targetAbsolutePath).isDirectory()) {
+                res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: 'O caminho de origem não existe ou não é uma pasta válida.' }));
+                return;
+            }
+
+            const safeName = rawName.replace(/[^a-zA-Z0-9_\-]/g, '-');
+            const projectsDir = path.join(ROOT_DIR, 'projects');
+            const destLinkPath = path.join(projectsDir, safeName);
+
+            try {
+                if (fs.existsSync(destLinkPath) || fs.lstatSync(destLinkPath)) {
+                    res.writeHead(409, { 'Content-Type': 'application/json; charset=utf-8' });
+                    res.end(JSON.stringify({ error: `Já existe um projeto ou vínculo com o nome '${safeName}'.` }));
+                    return;
+                }
+            } catch (e) {}
+
+            // Cria junção NTFS (Windows) ou symlink dir (Linux/Mac)
+            const isWindows = process.platform === 'win32';
+            fs.symlinkSync(targetAbsolutePath, destLinkPath, isWindows ? 'junction' : 'dir');
+
+            // Inicializa PROJECT.md e CURRENT_STATE.md se não existirem
+            const projectMdPath = path.join(destLinkPath, 'PROJECT.md');
+            const currentStateMdPath = path.join(destLinkPath, 'CURRENT_STATE.md');
+            const today = new Date().toISOString().split('T')[0];
+
+            if (!fs.existsSync(projectMdPath)) {
+                const starterProjectMd = `# ${safeName}
+
+## Visão Geral
+Projeto externo vinculado ao AI Second Brain.
+
+## Informações Gerais
+- **Tipo**: Brownfield / Repositório Externo
+- **Localização Original**: \`${targetAbsolutePath}\`
+- **Status**: 🟢 Ativo / Vinculado
+- **Data de Vinculação**: ${today}
+
+## Links & Documentação
+- Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)
+`;
+                fs.writeFileSync(projectMdPath, starterProjectMd, 'utf-8');
+            }
+
+            if (!fs.existsSync(currentStateMdPath)) {
+                const starterCurrentStateMd = `# ${safeName} — Estado Atual
+
+> Última atualização: ${today}
+
+## Status: 🟢 Ativo / Vinculado ao AI Second Brain
+- Repositório conectado e pronto para desenvolvimento com IA.
+`;
+                fs.writeFileSync(currentStateMdPath, starterCurrentStateMd, 'utf-8');
+            }
+
+            // Atualiza snapshot do Vault
+            delete require.cache[require.resolve('./scripts/scan-vault')];
+            const { scanVault } = require('./scripts/scan-vault');
+            const vault = scanVault(ROOT_DIR);
+            const snapshotPath = path.join(UI_DIR, 'vault-data.js');
+            fs.writeFileSync(snapshotPath, `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+
+            // Dispara evento SSE
+            broadcastEvent('vault-updated', { project: safeName, type: 'link-project', time: Date.now() });
+
+            res.writeHead(201, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({
+                success: true,
+                name: safeName,
+                path: `projects/${safeName}/PROJECT.md`,
+                message: `Repositório '${safeName}' vinculado com sucesso!`
+            }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ error: err.message }));
+        }
+        return;
+    }
 
     // API: Dynamic Vault Scan
     if (pathname === '/api/vault') {

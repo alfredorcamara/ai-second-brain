@@ -81,6 +81,9 @@
                     <span class="breadcrumb-item active">🧠 Visão Geral</span>
                 </div>
                 <div class="topbar-actions">
+                    <button id="btnQuickstartTop" class="btn-quickstart-top" onclick="openQuickstartWizard()" title="Criar novo projeto ou vincular repositório existente">
+                        <span class="btn-qs-icon">✨</span> Conectar Projeto
+                    </button>
                     <div class="vault-status-container">
                         <span id="vaultStatusBadge" class="vault-status snapshot" title="Status do Cérebro">
                             <span class="status-dot snapshot"></span> Snapshot
@@ -194,6 +197,12 @@
                             <h1>AI Second Brain</h1>
                             <p>Seu segundo cérebro para desenvolvimento com IA. Organiza conhecimento, decisões, memória e governança para todos os seus projetos.</p>
                             <div class="hero-actions">
+                                <button class="btn btn-accent btn-hero-qs" onclick="openQuickstartWizard()">
+                                    <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+                                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/>
+                                    </svg>
+                                    Novo ou Conectar Projeto
+                                </button>
                                 <button class="btn btn-primary" onclick="showView('graph')">
                                     <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
                                         <circle cx="10" cy="10" r="3"/>
@@ -326,6 +335,171 @@
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- Quickstart Studio Modal (Onboarding Wizard) -->
+    <div id="quickstartModal" class="quickstart-modal-backdrop" style="display: none;" onclick="handleModalBackdropClick(event)">
+        <div class="quickstart-modal-card" role="dialog" aria-modal="true" aria-labelledby="qsTitle">
+            <!-- Modal Header -->
+            <div class="qs-header">
+                <div class="qs-badge">⚡ QUICKSTART STUDIO</div>
+                <h2 id="qsTitle" class="qs-title">Adicionar Projeto ao AI Second Brain</h2>
+                <p class="qs-subtitle">Governança, decisões de arquitetura e memória persistente em menos de 3 minutos.</p>
+                <button class="qs-close-btn" onclick="closeQuickstartWizard()" aria-label="Fechar modal">✕</button>
+            </div>
+
+            <!-- Stepper Progress -->
+            <div class="qs-stepper">
+                <div class="qs-step active" id="qsStepIndicator1">
+                    <div class="qs-step-num">1</div>
+                    <span class="qs-step-label">Modo</span>
+                </div>
+                <div class="qs-step-line" id="qsStepLine1"></div>
+                <div class="qs-step" id="qsStepIndicator2">
+                    <div class="qs-step-num">2</div>
+                    <span class="qs-step-label">Configuração</span>
+                </div>
+                <div class="qs-step-line" id="qsStepLine2"></div>
+                <div class="qs-step" id="qsStepIndicator3">
+                    <div class="qs-step-num">3</div>
+                    <span class="qs-step-label">Conectado!</span>
+                </div>
+            </div>
+
+            <!-- Wizard Body -->
+            <div class="qs-body">
+                <!-- Step 1: Mode Selection -->
+                <div class="qs-step-pane active" id="qsPaneStep1">
+                    <div class="qs-mode-cards">
+                        <!-- Greenfield Option -->
+                        <div class="qs-mode-card" onclick="selectQuickstartMode('new')">
+                            <div class="qs-mode-badge greenfield">Novo Sistema</div>
+                            <div class="qs-mode-icon">🚀</div>
+                            <h3 class="qs-mode-title">Criar Projeto do Zero</h3>
+                            <p class="qs-mode-desc">Ideal para novas ideias ou projetos que você vai começar agora com governança de IA.</p>
+                            <ul class="qs-mode-perks">
+                                <li>✨ Cria <code>PROJECT.md</code> e <code>CURRENT_STATE.md</code></li>
+                                <li>🏗️ Template de <code>ARCHITECTURE.md</code></li>
+                                <li>⚖️ Diretório de Decisões e Memória de Sessões</li>
+                            </ul>
+                            <div class="qs-mode-btn">Criar do Zero →</div>
+                        </div>
+
+                        <!-- Brownfield Option -->
+                        <div class="qs-mode-card" onclick="selectQuickstartMode('link')">
+                            <div class="qs-mode-badge brownfield">Repositório Existente</div>
+                            <div class="qs-mode-icon">🔗</div>
+                            <h3 class="qs-mode-title">Vincular Projeto Existente</h3>
+                            <p class="qs-mode-desc">Conecta qualquer pasta ou repo Git que você já tem no computador sem duplicar nenhum arquivo.</p>
+                            <ul class="qs-mode-perks">
+                                <li>⚡ Junção NTFS / Symlink nativo instantâneo</li>
+                                <li>📂 Mantém seu código 100% no local original</li>
+                                <li>🧠 Adiciona governança e memória imediatamente</li>
+                            </ul>
+                            <div class="qs-mode-btn">Vincular Pasta →</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Form Configuration -->
+                <div class="qs-step-pane" id="qsPaneStep2">
+                    <!-- Form for New Project -->
+                    <form id="qsFormNew" class="qs-form" onsubmit="submitQuickstartNew(event)" style="display: none;">
+                        <div class="qs-form-header">
+                            <span class="qs-form-tag greenfield">🚀 Criando Projeto do Zero</span>
+                            <button type="button" class="qs-back-link" onclick="goToQuickstartStep(1)">← Trocar modo</button>
+                        </div>
+                        <div class="qs-field">
+                            <label for="qsNewName">Nome do Projeto <span class="req">*</span></label>
+                            <input type="text" id="qsNewName" placeholder="ex: api-pagamentos, meu-saas, app-mobile" autocomplete="off">
+                            <small class="qs-hint">Use letras, números, hífens ou underscores.</small>
+                        </div>
+                        <div class="qs-field">
+                            <label>Stack Tecnológica Principal</label>
+                            <div class="qs-stack-chips" id="qsStackChips">
+                                <button type="button" class="qs-chip active" data-stack="Node.js / TypeScript">Node.js / TS</button>
+                                <button type="button" class="qs-chip" data-stack="C# / .NET">C# / .NET</button>
+                                <button type="button" class="qs-chip" data-stack="Python">Python</button>
+                                <button type="button" class="qs-chip" data-stack="React / Next.js">React / Next.js</button>
+                                <button type="button" class="qs-chip" data-stack="Go">Go</button>
+                                <button type="button" class="qs-chip" data-stack="Rust">Rust</button>
+                                <button type="button" class="qs-chip" data-stack="Livre / Multi-stack">Livre / Outro</button>
+                            </div>
+                            <input type="hidden" id="qsNewStack" value="Node.js / TypeScript">
+                        </div>
+                        <div class="qs-field">
+                            <label for="qsNewDesc">Descrição Rápida (Opcional)</label>
+                            <input type="text" id="qsNewDesc" placeholder="ex: Microserviço de pagamentos e checkout integrado a IA" autocomplete="off">
+                        </div>
+                        <div class="qs-form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="goToQuickstartStep(1)">Voltar</button>
+                            <button type="submit" class="btn btn-primary btn-submit-qs" id="btnSubmitNew">
+                                <span class="btn-spinner" style="display:none"></span>
+                                <span>🚀 Inicializar Projeto com IA</span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Form for Linking Existing Project -->
+                    <form id="qsFormLink" class="qs-form" onsubmit="submitQuickstartLink(event)" style="display: none;">
+                        <div class="qs-form-header">
+                            <span class="qs-form-tag brownfield">🔗 Vinculando Repositório Existente</span>
+                            <button type="button" class="qs-back-link" onclick="goToQuickstartStep(1)">← Trocar modo</button>
+                        </div>
+                        <div class="qs-field">
+                            <label for="qsLinkPath">Caminho da Pasta no seu Computador <span class="req">*</span></label>
+                            <div class="qs-path-input-wrap">
+                                <input type="text" id="qsLinkPath" placeholder="ex: C:\Projetos\meu-sistema ou D:\Code\Api" autocomplete="off" oninput="debounceValidatePath()">
+                                <button type="button" class="qs-paste-btn" onclick="pasteClipboardPath()" title="Colar caminho da área de transferência">📋 Colar</button>
+                            </div>
+                            <!-- Live Validation Feedback -->
+                            <div id="qsPathFeedback" class="qs-path-feedback" style="display: none;"></div>
+                            <small class="qs-hint">💡 <strong>Dica rápida:</strong> No Windows Explorer, basta clicar com o botão direito na pasta do projeto e selecionar <em>"Copiar como caminho"</em>.</small>
+                        </div>
+                        <div class="qs-field">
+                            <label for="qsLinkName">Nome do Projeto no Segundo Cérebro <span class="req">*</span></label>
+                            <input type="text" id="qsLinkName" placeholder="ex: meu-sistema" autocomplete="off">
+                            <small class="qs-hint">Preenchido automaticamente ao validar a pasta.</small>
+                        </div>
+                        <div class="qs-form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="goToQuickstartStep(1)">Voltar</button>
+                            <button type="submit" class="btn btn-primary btn-submit-qs" id="btnSubmitLink">
+                                <span class="btn-spinner" style="display:none"></span>
+                                <span>🔗 Vincular Repositório ao Cérebro</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 3: Success Screen -->
+                <div class="qs-step-pane" id="qsPaneStep3">
+                    <div class="qs-success-box">
+                        <div class="qs-success-icon-wrap">
+                            <div class="qs-confetti-burst"></div>
+                            <div class="qs-success-check">✓</div>
+                        </div>
+                        <h3 class="qs-success-title" id="qsSuccessTitle">Projeto Conectado com Sucesso!</h3>
+                        <p class="qs-success-msg" id="qsSuccessMsg">O AI Second Brain agora governa este projeto com governança de IA, arquitetura e memória de sessões.</p>
+
+                        <div class="qs-success-artifacts" id="qsSuccessArtifacts">
+                            <!-- Populated dynamically -->
+                        </div>
+
+                        <div class="qs-success-actions">
+                            <button type="button" class="btn btn-primary" id="btnOpenProjectDoc">
+                                📄 Abrir Documentação
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="showView('graph'); closeQuickstartWizard();">
+                                🔮 Ver no Grafo Neural 3D
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="closeQuickstartWizard()">
+                                Concluir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="three.min.js"></script>

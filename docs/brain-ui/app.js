@@ -172,16 +172,16 @@ function renderDashboardProjects() {
     if (projectsList.length === 0) {
         // NENHUM PROJETO CADASTRADO NO MOMENTO:
         slot.innerHTML = `
-            <div class="dash-card status-card" onclick="navigateTo('projects/README.md')" style="cursor: pointer; grid-column: span 2;">
+            <div class="dash-card status-card" onclick="openQuickstartWizard()" style="cursor: pointer; grid-column: span 2; border: 1px dashed rgba(99, 102, 241, 0.45);">
                 <div class="status-indicator" style="background: var(--accent-primary); box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);"></div>
                 <div class="card-content">
                     <h3>Nenhum Projeto Conectado</h3>
-                    <p>O workspace está limpo e agnóstico. Crie uma pasta em projects/ ou vincule um repositório existente via symlink.</p>
+                    <p>O workspace está limpo e agnóstico. Use o Quickstart Studio para criar ou conectar um projeto agora mesmo.</p>
                     <span class="status-badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
-                        📁 Clique para ver o manual de onboarding
+                        ✨ Clique aqui para iniciar o Quickstart de 3 minutos
                     </span>
                 </div>
-                <div class="card-icon" style="opacity: 0.8;">📂</div>
+                <div class="card-icon" style="opacity: 0.8;">🚀</div>
             </div>
         `;
         return;
@@ -773,9 +773,357 @@ function setupEventListeners() {
         }
 
         if (e.key === 'Escape') {
+            const qsModal = document.getElementById('quickstartModal');
+            if (qsModal && qsModal.style.display !== 'none') {
+                closeQuickstartWizard();
+                return;
+            }
             if (currentView !== 'dashboard') {
                 showDashboard();
             }
         }
     });
+
+    // Setup Stack Chips for Quickstart Studio
+    const chipsContainer = document.getElementById('qsStackChips');
+    if (chipsContainer) {
+        chipsContainer.querySelectorAll('.qs-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                chipsContainer.querySelectorAll('.qs-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                const stackVal = chip.dataset.stack || chip.textContent.trim();
+                const hiddenInput = document.getElementById('qsNewStack');
+                if (hiddenInput) hiddenInput.value = stackVal;
+            });
+        });
+    }
 }
+
+// ═══════════════════════════════════════════════════
+// QUICKSTART STUDIO CONTROLLER
+// ═══════════════════════════════════════════════════
+let quickstartMode = 'new';
+let quickstartStep = 1;
+let pathValidationTimer = null;
+
+function openQuickstartWizard(defaultMode = null) {
+    const modal = document.getElementById('quickstartModal');
+    if (!modal) return;
+
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    // Reset fields
+    const nameInput = document.getElementById('qsNewName');
+    const descInput = document.getElementById('qsNewDesc');
+    const linkNameInput = document.getElementById('qsLinkName');
+    const linkPathInput = document.getElementById('qsLinkPath');
+
+    if (nameInput) nameInput.value = '';
+    if (descInput) descInput.value = '';
+    if (linkNameInput) linkNameInput.value = '';
+    if (linkPathInput) linkPathInput.value = '';
+
+    const feedback = document.getElementById('qsPathFeedback');
+    if (feedback) {
+        feedback.style.display = 'none';
+        feedback.className = 'qs-path-feedback';
+        feedback.innerHTML = '';
+    }
+
+    if (defaultMode) {
+        selectQuickstartMode(defaultMode);
+    } else {
+        goToQuickstartStep(1);
+    }
+}
+
+function closeQuickstartWizard() {
+    const modal = document.getElementById('quickstartModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+function handleModalBackdropClick(e) {
+    if (e.target && e.target.id === 'quickstartModal') {
+        closeQuickstartWizard();
+    }
+}
+
+function goToQuickstartStep(step) {
+    quickstartStep = step;
+
+    // Stepper indicators
+    for (let i = 1; i <= 3; i++) {
+        const ind = document.getElementById(`qsStepIndicator${i}`);
+        const line = document.getElementById(`qsStepLine${i}`);
+        if (ind) {
+            ind.classList.toggle('active', i === step);
+            ind.classList.toggle('completed', i < step);
+        }
+        if (line) {
+            line.classList.toggle('active', i < step);
+        }
+    }
+
+    // Panes
+    document.querySelectorAll('.qs-step-pane').forEach(p => p.classList.remove('active'));
+    const targetPane = document.getElementById(`qsPaneStep${step}`);
+    if (targetPane) targetPane.classList.add('active');
+
+    const titleEl = document.getElementById('qsTitle');
+    if (titleEl) {
+        if (step === 1) {
+            titleEl.textContent = 'Adicionar Projeto ao AI Second Brain';
+        } else if (step === 2) {
+            titleEl.textContent = quickstartMode === 'new' 
+                ? 'Criar Novo Projeto com IA' 
+                : 'Vincular Repositório Existente';
+        } else if (step === 3) {
+            titleEl.textContent = 'Projeto Conectado com Sucesso!';
+        }
+    }
+}
+
+function selectQuickstartMode(mode) {
+    quickstartMode = mode;
+    const formNew = document.getElementById('qsFormNew');
+    const formLink = document.getElementById('qsFormLink');
+
+    if (mode === 'new') {
+        if (formNew) formNew.style.display = 'flex';
+        if (formLink) formLink.style.display = 'none';
+        goToQuickstartStep(2);
+        setTimeout(() => document.getElementById('qsNewName')?.focus(), 100);
+    } else {
+        if (formNew) formNew.style.display = 'none';
+        if (formLink) formLink.style.display = 'flex';
+        goToQuickstartStep(2);
+        setTimeout(() => document.getElementById('qsLinkPath')?.focus(), 100);
+    }
+}
+
+async function pasteClipboardPath() {
+    try {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+            const pathInput = document.getElementById('qsLinkPath');
+            if (pathInput) {
+                pathInput.value = text.trim();
+                validatePathLive();
+            }
+        }
+    } catch (err) {
+        const pathInput = document.getElementById('qsLinkPath');
+        if (pathInput) pathInput.focus();
+    }
+}
+
+function debounceValidatePath() {
+    clearTimeout(pathValidationTimer);
+    pathValidationTimer = setTimeout(validatePathLive, 350);
+}
+
+async function validatePathLive() {
+    const input = document.getElementById('qsLinkPath');
+    const feedback = document.getElementById('qsPathFeedback');
+    const nameInput = document.getElementById('qsLinkName');
+    if (!input || !feedback) return;
+
+    const val = input.value.trim().replace(/^["']|["']$/g, '');
+    if (!val) {
+        feedback.style.display = 'none';
+        return;
+    }
+
+    feedback.style.display = 'flex';
+    feedback.className = 'qs-path-feedback';
+    feedback.innerHTML = '<span class="status-dot snapshot" style="margin-right:6px"></span> Verificando caminho no computador...';
+
+    try {
+        const res = await fetch('/api/projects/validate-path', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ path: val })
+        });
+        const data = await res.json();
+
+        if (data.valid) {
+            feedback.className = 'qs-path-feedback valid';
+            let extra = '';
+            if (data.hasGit) extra += ' • Git';
+            if (data.hasPackageJson) extra += ' • Node.js';
+            if (data.hasCsproj) extra += ' • .NET';
+            feedback.innerHTML = `✓ Pasta válida (${data.fileCount} itens)${extra}`;
+
+            // Preenche nome sugerido se vazio
+            if (nameInput && !nameInput.value.trim() && data.suggestedName) {
+                nameInput.value = data.suggestedName;
+            }
+        } else {
+            feedback.className = 'qs-path-feedback invalid';
+            feedback.innerHTML = `✕ ${data.message || 'Pasta não encontrada no disco.'}`;
+        }
+    } catch (err) {
+        feedback.className = 'qs-path-feedback invalid';
+        feedback.innerHTML = `✕ Não foi possível conectar ao servidor local.`;
+    }
+}
+
+async function submitQuickstartNew(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btnSubmitNew');
+    const nameInput = document.getElementById('qsNewName');
+    const stackInput = document.getElementById('qsNewStack');
+    const descInput = document.getElementById('qsNewDesc');
+
+    const name = nameInput ? nameInput.value.trim() : '';
+    const stack = stackInput ? stackInput.value.trim() : 'Node.js / TypeScript';
+    const desc = descInput ? descInput.value.trim() : '';
+
+    if (!name) {
+        alert('Por favor, digite um nome para o projeto.');
+        return;
+    }
+
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="status-dot snapshot" style="margin-right:6px"></span> Criando projeto com IA...';
+
+    try {
+        const res = await fetch('/api/projects/new', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, stack, description: desc })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+            alert(data.error || 'Erro ao criar projeto.');
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+            return;
+        }
+
+        renderQuickstartSuccess({
+            name: data.name,
+            path: data.path,
+            mode: 'new',
+            stack: stack
+        });
+    } catch (err) {
+        alert('Erro ao conectar com servidor local: ' + err.message);
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+}
+
+async function submitQuickstartLink(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btnSubmitLink');
+    const nameInput = document.getElementById('qsLinkName');
+    const pathInput = document.getElementById('qsLinkPath');
+
+    const name = nameInput ? nameInput.value.trim() : '';
+    const pathVal = pathInput ? pathInput.value.trim() : '';
+
+    if (!name || !pathVal) {
+        alert('Por favor, informe o nome e a pasta de origem.');
+        return;
+    }
+
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="status-dot snapshot" style="margin-right:6px"></span> Vinculando repositório...';
+
+    try {
+        const res = await fetch('/api/projects/link', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, targetPath: pathVal })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+            alert(data.error || 'Erro ao vincular repositório.');
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+            return;
+        }
+
+        renderQuickstartSuccess({
+            name: data.name,
+            path: data.path,
+            mode: 'link'
+        });
+    } catch (err) {
+        alert('Erro ao conectar com servidor local: ' + err.message);
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+}
+
+function renderQuickstartSuccess(info) {
+    goToQuickstartStep(3);
+
+    const titleEl = document.getElementById('qsSuccessTitle');
+    const msgEl = document.getElementById('qsSuccessMsg');
+    const artifactsEl = document.getElementById('qsSuccessArtifacts');
+    const openDocBtn = document.getElementById('btnOpenProjectDoc');
+
+    if (titleEl) titleEl.textContent = `Projeto '${info.name}' Conectado!`;
+    if (msgEl) {
+        msgEl.innerHTML = info.mode === 'new'
+            ? `A estrutura completa do projeto foi inicializada em <code>projects/${info.name}</code> com governança, stack <strong>${info.stack || 'Livre'}</strong> e memória de sessões.`
+            : `O repositório foi vinculado via junção nativa em <code>projects/${info.name}</code> sem mover seus arquivos de lugar. O Segundo Cérebro agora governa este projeto em tempo real.`;
+    }
+
+    if (artifactsEl) {
+        artifactsEl.innerHTML = `
+            <div class="qs-artifact-item">
+                <span class="qs-artifact-icon">📄</span>
+                <span><code>projects/${info.name}/PROJECT.md</code></span>
+                <span class="qs-artifact-tag">Visão Geral & Contratos</span>
+            </div>
+            <div class="qs-artifact-item">
+                <span class="qs-artifact-icon">💾</span>
+                <span><code>projects/${info.name}/CURRENT_STATE.md</code></span>
+                <span class="qs-artifact-tag">Estado Atual</span>
+            </div>
+            ${info.mode === 'new' ? `
+            <div class="qs-artifact-item">
+                <span class="qs-artifact-icon">🏗️</span>
+                <span><code>projects/${info.name}/ARCHITECTURE.md</code></span>
+                <span class="qs-artifact-tag">Arquitetura</span>
+            </div>
+            <div class="qs-artifact-item">
+                <span class="qs-artifact-icon">⚖️</span>
+                <span><code>projects/${info.name}/DECISIONS/</code></span>
+                <span class="qs-artifact-tag">Decisões Técnicas</span>
+            </div>
+            <div class="qs-artifact-item">
+                <span class="qs-artifact-icon">🧮</span>
+                <span><code>projects/${info.name}/MEMORY/sessions/</code></span>
+                <span class="qs-artifact-tag">Memória de Sessões</span>
+            </div>
+            ` : ''}
+        `;
+    }
+
+    if (openDocBtn) {
+        openDocBtn.onclick = () => {
+            closeQuickstartWizard();
+            navigateTo(info.path);
+        };
+    }
+
+    // Atualiza imediatamente a interface e o visualizador
+    if (window.VAULT) {
+        window.VAULT.refresh().then(() => {
+            refreshApp();
+        });
+    }
+}
+
