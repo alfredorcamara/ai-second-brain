@@ -1,10 +1,5 @@
-// ═══════════════════════════════════════════════════
-// AI SECOND BRAIN — Dynamic Vault Snapshot
-// Auto-generated: 2026-09-28T19:27:36.855Z
-// ═══════════════════════════════════════════════════
-
 window.VAULT_SNAPSHOT = {
-  "timestamp": 1790623656855,
+  "timestamp": 1790806916142,
   "files": [
     {
       "id": "_agents_rules_00-core_md",
@@ -359,6 +354,45 @@ window.VAULT_SNAPSHOT = {
       "content": "# Diretório de Projetos — AI Second Brain\n\n> Este diretório armazena o contexto, a governança e a memória dos seus projetos.\n\n## Como funciona\n\nPor padrão, este diretório vem **limpo e agnóstico**, pronto para receber qualquer tipo de projeto:\n- APIs / Microservices (Node.js, Go, .NET, Python, Java, Rust)\n- Aplicações Web e SaaS (React, Next.js, Vue, Svelte)\n- Aplicativos Mobile (Flutter, React Native, MAUI, Swift, Kotlin)\n- Jogos (Unity, Godot, Unreal Engine)\n- Scripts, Automações e Engenharia de Dados\n\n---\n\n## Como conectar um projeto\n\nVocê pode utilizar qualquer um dos dois modos descritos no manual:\n\n### Modo 1: Projeto Criado Aqui (Greenfield)\n1. Crie uma pasta para o seu projeto: `projects/<nome-do-projeto>/`\n2. Copie o template `templates/project.md` para `projects/<nome-do-projeto>/PROJECT.md`\n3. Crie o arquivo de estado inicial `projects/<nome-do-projeto>/CURRENT_STATE.md`\n\n### Modo 2: Conectar Projeto Existente (Brownfield via Symlink / Junção)\nSe o seu código-fonte já vive em outro repositório Git no seu computador (ex: `C:\\Projetos\\MeuSistema`):\n1. Crie uma junção NTFS no Windows:\n   ```cmd\n   mklink /J \"projects\\MeuSistema\" \"C:\\Projetos\\MeuSistema\"\n   ```\n2. Adicione os arquivos de contexto (`PROJECT.md`, `CURRENT_STATE.md`) na raiz do seu projeto. O AI Second Brain passará a ler e governar seu projeto automaticamente sem duplicar arquivos.\n"
     },
     {
+      "id": "projects_teste_alfredo_22_ARCHITECTURE_md",
+      "path": "projects/teste_alfredo_22/ARCHITECTURE.md",
+      "name": "ARCHITECTURE.md",
+      "title": "teste_alfredo_22 — Arquitetura da Solução",
+      "category": "projects",
+      "icon": "🏗️",
+      "size": 325,
+      "mtime": 1790806912749.089,
+      "outgoingLinks": [],
+      "content": "# teste_alfredo_22 — Arquitetura da Solução\n\n> Visão arquitetural, padrões e design do sistema.\n\n## 1. Stack Tecnológica\n- **Linguagem / Framework**: Node.js / TypeScript\n\n## 2. Princípios Adotados\n- Código idiomático e desacoplado.\n- Se utilizar IA: aplicar o AI Decision Gate (`.agents/rules/01-ai-decision.md`).\n"
+    },
+    {
+      "id": "projects_teste_alfredo_22_CURRENT_STATE_md",
+      "path": "projects/teste_alfredo_22/CURRENT_STATE.md",
+      "name": "CURRENT_STATE.md",
+      "title": "teste_alfredo_22 — Estado Atual",
+      "category": "projects",
+      "icon": "💾",
+      "size": 399,
+      "mtime": 1790806912711.1902,
+      "outgoingLinks": [],
+      "content": "# teste_alfredo_22 — Estado Atual\n\n> Última atualização: 2026-09-30\n\n## Status: 🟢 Em Planejamento / Ativo\n\n## O que já foi definido\n- [x] Inicialização no AI Second Brain com governança e memória ativa.\n- [x] Stack selecionada: **Node.js / TypeScript**.\n\n## Próximos Passos\n1. Definir os requisitos centrais do sistema.\n2. Registrar a primeira decisão de arquitetura em `DECISIONS/`.\n"
+    },
+    {
+      "id": "projects_teste_alfredo_22_PROJECT_md",
+      "path": "projects/teste_alfredo_22/PROJECT.md",
+      "name": "PROJECT.md",
+      "title": "teste_alfredo_22",
+      "category": "projects",
+      "icon": "📄",
+      "size": 452,
+      "mtime": 1790806912691.933,
+      "outgoingLinks": [
+        "current_state.md",
+        "architecture.md"
+      ],
+      "content": "# teste_alfredo_22\n\n## Visão Geral\nteste_alfredo_22 de teste\n\n## Informações Gerais\n- **Tipo**: Greenfield / Projeto Novo\n- **Stack Inicial**: Node.js / TypeScript\n- **Status**: 🟢 Em Planejamento / Ativo\n- **Data de Criação**: 2026-09-30\n\n## Links & Governança\n- Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)\n- Arquitetura: [ARCHITECTURE.md](ARCHITECTURE.md)\n- Decisões Técnicas: `DECISIONS/`\n- Memória de Sessões: `MEMORY/sessions/`\n"
+    },
+    {
       "id": "README_md",
       "path": "README.md",
       "name": "README.md",
@@ -585,9 +619,42 @@ window.VAULT_SNAPSHOT = {
               "size": 187
             }
           ]
+        },
+        {
+          "id": "proj_teste_alfredo_22",
+          "label": "teste_alfredo_22",
+          "icon": "🚀",
+          "isGroup": true,
+          "path": "projects/teste_alfredo_22/PROJECT.md",
+          "children": [
+            {
+              "id": "projects_teste_alfredo_22_PROJECT_md",
+              "label": "PROJECT.md (Visão Geral)",
+              "title": "teste_alfredo_22",
+              "icon": "📄",
+              "path": "projects/teste_alfredo_22/PROJECT.md",
+              "size": 452
+            },
+            {
+              "id": "projects_teste_alfredo_22_CURRENT_STATE_md",
+              "label": "CURRENT_STATE.md (Estado Atual)",
+              "title": "teste_alfredo_22 — Estado Atual",
+              "icon": "💾",
+              "path": "projects/teste_alfredo_22/CURRENT_STATE.md",
+              "size": 399
+            },
+            {
+              "id": "projects_teste_alfredo_22_ARCHITECTURE_md",
+              "label": "ARCHITECTURE.md (Arquitetura)",
+              "title": "teste_alfredo_22 — Arquitetura da Solução",
+              "icon": "🏗️",
+              "path": "projects/teste_alfredo_22/ARCHITECTURE.md",
+              "size": 325
+            }
+          ]
         }
       ],
-      "badge": 1
+      "badge": 2
     },
     {
       "id": "knowledge",
@@ -1078,6 +1145,30 @@ window.VAULT_SNAPSHOT = {
       "path": "projects/README.md"
     },
     {
+      "id": "projects_teste_alfredo_22_ARCHITECTURE_md",
+      "label": "teste_alfredo_22 — Arquitetura da Solução",
+      "group": "projects",
+      "size": 9,
+      "icon": "🏗️",
+      "path": "projects/teste_alfredo_22/ARCHITECTURE.md"
+    },
+    {
+      "id": "projects_teste_alfredo_22_CURRENT_STATE_md",
+      "label": "teste_alfredo_22 — Estado Atual",
+      "group": "projects",
+      "size": 9,
+      "icon": "💾",
+      "path": "projects/teste_alfredo_22/CURRENT_STATE.md"
+    },
+    {
+      "id": "projects_teste_alfredo_22_PROJECT_md",
+      "label": "teste_alfredo_22",
+      "group": "projects",
+      "size": 9,
+      "icon": "📄",
+      "path": "projects/teste_alfredo_22/PROJECT.md"
+    },
+    {
       "id": "README_md",
       "label": "AI Second Brain — Alfredo AI OS",
       "group": "core",
@@ -1272,6 +1363,18 @@ window.VAULT_SNAPSHOT = {
       "to": "projects_README_md"
     },
     {
+      "from": "hub-projects",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "hub-projects",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "hub-projects",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
       "from": "hub-core",
       "to": "README_md"
     },
@@ -1301,6 +1404,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "_agents_rules_04-documentation_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "_agents_rules_04-documentation_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "_agents_rules_04-documentation_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "_agents_rules_04-documentation_md",
       "to": "templates_project_md"
     },
     {
@@ -1310,6 +1425,14 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "_agents_skills_architecture-review_SKILL_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "_agents_skills_architecture-review_SKILL_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "_agents_skills_architecture-review_SKILL_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
     },
     {
       "from": "_agents_skills_architecture-review_SKILL_md",
@@ -1324,6 +1447,10 @@ window.VAULT_SNAPSHOT = {
       "to": "projects_Alfredo_teste_CURRENT_STATE_md"
     },
     {
+      "from": "_agents_skills_bug-investigation_SKILL_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
       "from": "_agents_skills_new-feature_SKILL_md",
       "to": "_agents_rules_03-security_md"
     },
@@ -1334,6 +1461,18 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "_agents_skills_new-feature_SKILL_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "_agents_skills_new-feature_SKILL_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "_agents_skills_new-feature_SKILL_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "_agents_skills_new-feature_SKILL_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
     },
     {
       "from": "_agents_skills_new-feature_SKILL_md",
@@ -1365,6 +1504,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "_agents_skills_project-onboarding_SKILL_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "_agents_skills_project-onboarding_SKILL_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "_agents_skills_project-onboarding_SKILL_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "_agents_skills_project-onboarding_SKILL_md",
       "to": "README_md"
     },
     {
@@ -1386,6 +1537,14 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "_agents_skills_session-memory_SKILL_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "_agents_skills_session-memory_SKILL_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "_agents_skills_session-memory_SKILL_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
     },
     {
       "from": "_agents_skills_session-memory_SKILL_md",
@@ -1425,6 +1584,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
       "to": "README_md"
     },
     {
@@ -1457,6 +1628,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_GUIA_PRATICO_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_GUIA_PRATICO_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_GUIA_PRATICO_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "docs_GUIA_PRATICO_md",
       "to": "templates_project_md"
     },
     {
@@ -1470,6 +1653,18 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
     },
     {
       "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
@@ -1501,6 +1696,14 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "GEMINI_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "GEMINI_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "GEMINI_md",
       "to": "templates_project_md"
     },
     {
@@ -1510,6 +1713,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "knowledge_ai_MODEL_SELECTION_md",
       "to": "GEMINI_md"
+    },
+    {
+      "from": "knowledge_architecture_PATTERNS_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
       "from": "knowledge_global_INDEX_md",
@@ -1524,12 +1731,20 @@ window.VAULT_SNAPSHOT = {
       "to": "knowledge_architecture_PATTERNS_md"
     },
     {
+      "from": "knowledge_global_INDEX_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
       "from": "knowledge_security_OWASP_md",
       "to": "_agents_rules_03-security_md"
     },
     {
       "from": "memory_current-state_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
     },
     {
       "from": "memory_current-state_md",
@@ -1540,6 +1755,10 @@ window.VAULT_SNAPSHOT = {
       "to": "projects_Alfredo_teste_CURRENT_STATE_md"
     },
     {
+      "from": "projects_Alfredo_teste_PROJECT_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
       "from": "projects_README_md",
       "to": "projects_Alfredo_teste_CURRENT_STATE_md"
     },
@@ -1549,7 +1768,31 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_README_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_README_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "projects_README_md",
       "to": "templates_project_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_ARCHITECTURE_md",
+      "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_PROJECT_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_PROJECT_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_PROJECT_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
     },
     {
       "from": "README_md",
@@ -1573,6 +1816,14 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "README_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "README_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "README_md",
       "to": "templates_project_md"
     },
     {
@@ -1582,6 +1833,18 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "templates_project_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "templates_project_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "templates_project_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "templates_project_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
     }
   ],
   "groupColors": {
@@ -1637,16 +1900,16 @@ window.VAULT_SNAPSHOT = {
     }
   },
   "stats": {
-    "totalFiles": 34,
+    "totalFiles": 37,
     "rulesCount": 5,
     "skillsCount": 8,
-    "projectsCount": 1,
+    "projectsCount": 2,
     "knowledgeCount": 6,
     "decisionsCount": 1,
     "memoryCount": 2,
     "templatesCount": 4,
     "docsCount": 3,
-    "totalNodes": 44,
-    "totalEdges": 116
+    "totalNodes": 47,
+    "totalEdges": 159
   }
 };
