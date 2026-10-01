@@ -9,6 +9,34 @@ let currentPath = null;
 let graph = null;
 let sidebarCollapsed = false;
 
+// ── Toast Notification System ─────────────────────
+function showToast(message, type = 'info', duration = 4000) {
+    let container = document.getElementById('globalToastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'globalToastContainer';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast-item toast-${type}`;
+    
+    let icon = 'ℹ️';
+    if (type === 'success') icon = '✅';
+    if (type === 'error') icon = '❌';
+
+    toast.innerHTML = `<span style="font-size: 16px;">${icon}</span><span style="flex: 1; line-height: 1.4;">${message}</span>`;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('toast-hiding');
+        setTimeout(() => {
+            if (container.contains(toast)) container.removeChild(toast);
+        }, 250);
+    }, duration);
+}
+
 // ── Initialize ────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
     // 1. Initialize Dynamic Vault (Live Server -> Folder -> Snapshot)
@@ -2130,20 +2158,25 @@ async function renderProjectBackupTab() {
     if (!el || !currentProjectData) return;
 
     el.innerHTML = `
-        <div class="pw-card" style="margin-bottom: 20px;">
+        <div class="pw-card" style="margin-bottom: 20px; border-left: 4px solid var(--accent-primary);">
             <div class="pw-card-header">
                 <span class="pw-card-title">📦 Gerar & Exportar Dossiê de Governança</span>
+                <span class="pw-badge" id="pwBackupDiskBadge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);">
+                    ● Sincronizando com o Disco...
+                </span>
             </div>
             <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 13px;">
                 Exporte todo o conhecimento, decisões, arquitetura e estado atual do projeto em formatos padronizados para backup ou compartilhamento com outras IAs.
             </p>
-            <div style="display:flex; gap:12px; flex-wrap:wrap;">
-                <button class="btn btn-primary" onclick="downloadProjectBackup('markdown')">
-                    📥 Baixar Dossiê Consolidado (.md)
-                </button>
-                <button class="btn btn-secondary" onclick="downloadProjectBackup('json')">
-                    📦 Baixar Pacote Completo (.json)
-                </button>
+
+            <div id="pwBackupDiskDetails" style="margin-bottom: 18px;">
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px 16px; display: flex; align-items: center; justify-content: center; color: var(--text-tertiary); font-size: 13px;">
+                    <span class="status-dot snapshot" style="margin-right: 8px;"></span> Gravando arquivos na pasta BACKUPS...
+                </div>
+            </div>
+
+            <div id="pwBackupActionsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+                <!-- Preenchido dinamicamente com os caminhos dos arquivos -->
             </div>
         </div>
 
@@ -2161,16 +2194,113 @@ async function renderProjectBackupTab() {
     try {
         const res = await fetch(`/api/projects/${encodeURIComponent(currentProjectData.name)}/backup`, { method: 'POST' });
         const backupData = await res.json();
+        if (!res.ok) throw new Error(backupData.error || 'Erro ao gerar backup');
+
         const previewEl = document.getElementById('pwBackupPreview');
         const statusEl = document.getElementById('pwBackupStatus');
+        const badgeEl = document.getElementById('pwBackupDiskBadge');
+        const diskDetailsEl = document.getElementById('pwBackupDiskDetails');
+        const actionsGridEl = document.getElementById('pwBackupActionsGrid');
 
-        if (statusEl) statusEl.textContent = `${Object.keys(backupData.files || {}).length} arquivos de governança empacotados`;
+        const localFiles = backupData.localFiles || {};
+        const backupsDir = localFiles.backupsDir || '';
+        const mdFile = localFiles.markdown || {};
+        const jsonFile = localFiles.json || {};
+
+        if (badgeEl) {
+            badgeEl.textContent = '● Gravado Fisicamente no Disco';
+        }
+
+        if (statusEl) {
+            statusEl.textContent = `${Object.keys(backupData.files || {}).length} arquivos de governança empacotados`;
+        }
+
         if (previewEl) {
             previewEl.textContent = backupData.consolidatedMarkdown || JSON.stringify(backupData, null, 2);
+        }
+
+        // Renderiza detalhes da pasta no disco
+        if (diskDetailsEl && backupsDir) {
+            const safeDir = backupsDir.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+            diskDetailsEl.innerHTML = `
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px 16px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                        <div style="font-size: 13px; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 8px;">
+                            <span>📁 Pasta de Destino no Computador:</span>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="openSystemFolder('${safeDir}')" title="Abrir pasta no Windows Explorer">
+                            📂 Abrir Pasta no Windows Explorer
+                        </button>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.3); border-radius: 6px; padding: 8px 12px; font-family: var(--font-mono); font-size: 12px; color: #a78bfa; word-break: break-all; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                        <span>${backupsDir}</span>
+                        <button class="btn btn-ghost btn-xs" onclick="copyToClipboard('${safeDir}')" title="Copiar caminho da pasta">📋 Copiar</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Renderiza cards dos 2 arquivos
+        if (actionsGridEl) {
+            const mdSafePath = (mdFile.path || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+            const jsonSafePath = (jsonFile.path || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+            const mdSizeKb = mdFile.size ? `${(mdFile.size / 1024).toFixed(1)} KB` : '';
+            const jsonSizeKb = jsonFile.size ? `${(jsonFile.size / 1024).toFixed(1)} KB` : '';
+
+            actionsGridEl.innerHTML = `
+                <!-- Card Markdown -->
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                        <strong style="color: #60a5fa; font-size: 13px;">📄 Dossiê Consolidado (.md)</strong>
+                        <span style="font-size: 11px; color: var(--text-tertiary);">${mdSizeKb}</span>
+                    </div>
+                    <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); margin-bottom: 12px; word-break: break-all;">
+                        ${mdFile.filename || `dossie_governanca_${currentProjectData.name}.md`}
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="downloadProjectBackup('markdown')">
+                                📥 Baixar para Downloads
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="openSystemFile('${mdSafePath}')" title="Abrir arquivo no computador">
+                                📄 Abrir Arquivo
+                            </button>
+                        </div>
+                        <button class="btn btn-ghost btn-xs" onclick="copyToClipboard('${mdSafePath}')" style="color: var(--text-tertiary); text-align: left;">
+                            📋 Copiar caminho do arquivo .md
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card JSON -->
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                        <strong style="color: #34d399; font-size: 13px;">📦 Pacote Completo (.json)</strong>
+                        <span style="font-size: 11px; color: var(--text-tertiary);">${jsonSizeKb}</span>
+                    </div>
+                    <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); margin-bottom: 12px; word-break: break-all;">
+                        ${jsonFile.filename || `backup_governanca_${currentProjectData.name}.json`}
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="downloadProjectBackup('json')">
+                                📥 Baixar para Downloads
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="openSystemFile('${jsonSafePath}')" title="Abrir arquivo no computador">
+                                📄 Abrir Arquivo
+                            </button>
+                        </div>
+                        <button class="btn btn-ghost btn-xs" onclick="copyToClipboard('${jsonSafePath}')" style="color: var(--text-tertiary); text-align: left;">
+                            📋 Copiar caminho do arquivo .json
+                        </button>
+                    </div>
+                </div>
+            `;
         }
     } catch (err) {
         const previewEl = document.getElementById('pwBackupPreview');
         if (previewEl) previewEl.textContent = 'Erro ao gerar pré-visualização: ' + err.message;
+        showToast('Erro ao sincronizar backup: ' + err.message, 'error');
     }
 }
 
@@ -2270,16 +2400,18 @@ async function clearProjectMemory() {
 async function downloadProjectBackup(type = 'markdown') {
     if (!currentProject) return;
     try {
+        showToast('Iniciando geração do download...', 'info', 2000);
         const res = await fetch(`/api/projects/${encodeURIComponent(currentProject)}/backup`, { method: 'POST' });
         const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erro ao gerar backup');
 
         let blob, filename;
         if (type === 'markdown') {
             blob = new Blob([data.consolidatedMarkdown || ''], { type: 'text/markdown;charset=utf-8' });
-            filename = `dossie_governanca_${currentProject}.md`;
+            filename = data.localFiles?.markdown?.filename || `dossie_governanca_${currentProject}.md`;
         } else {
             blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json;charset=utf-8' });
-            filename = `backup_governanca_${currentProject}.json`;
+            filename = data.localFiles?.json?.filename || `backup_governanca_${currentProject}.json`;
         }
 
         const url = URL.createObjectURL(blob);
@@ -2288,10 +2420,62 @@ async function downloadProjectBackup(type = 'markdown') {
         a.download = filename;
         document.body.appendChild(a);
         a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+
+        // IMPORTANTE: Não revogar o blob imediatamente! O Chromium precisa de alguns segundos para
+        // iniciar o stream de download para a pasta Downloads do sistema operacional.
+        setTimeout(() => {
+            if (document.body.contains(a)) document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 10000);
+
+        showToast(`✓ Download de '${filename}' iniciado! Verifique a pasta Downloads.`, 'success', 5000);
     } catch (err) {
+        showToast('Erro ao baixar backup: ' + err.message, 'error', 4000);
         alert('Erro ao baixar backup: ' + err.message);
+    }
+}
+
+async function openSystemFolder(targetPath) {
+    if (!targetPath) return;
+    try {
+        showToast('📂 Solicitando abertura no Windows Explorer...', 'info', 2500);
+        const res = await fetch('/api/system/open-folder', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ path: targetPath })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erro ao abrir pasta no sistema');
+        showToast('✓ Pasta aberta com sucesso no Windows Explorer!', 'success', 3500);
+    } catch (err) {
+        showToast('Falha ao abrir pasta: ' + err.message, 'error', 4000);
+    }
+}
+
+async function openSystemFile(targetPath) {
+    if (!targetPath) return;
+    try {
+        showToast('📄 Abrindo arquivo no computador...', 'info', 2500);
+        const res = await fetch('/api/system/open-file', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ path: targetPath })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erro ao abrir arquivo');
+        showToast('✓ Arquivo aberto no aplicativo padrão do Windows!', 'success', 3500);
+    } catch (err) {
+        showToast('Falha ao abrir arquivo: ' + err.message, 'error', 4000);
+    }
+}
+
+async function copyToClipboard(text) {
+    if (!text) return;
+    try {
+        await navigator.clipboard.writeText(text);
+        showToast('✓ Caminho copiado para a área de transferência!', 'success', 3000);
+    } catch (err) {
+        prompt('Copie o caminho:', text);
     }
 }
 

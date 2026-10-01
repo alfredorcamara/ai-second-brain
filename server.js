@@ -665,7 +665,7 @@ Projeto externo vinculado ao AI Second Brain.
                     const full = path.join(dir, item.name);
                     const rel = relBase ? `${relBase}/${item.name}` : item.name;
                     if (item.isDirectory()) {
-                        if (item.name !== 'node_modules' && item.name !== '.git' && item.name !== 'bin' && item.name !== 'obj') {
+                        if (item.name !== 'node_modules' && item.name !== '.git' && item.name !== 'bin' && item.name !== 'obj' && item.name !== 'BACKUPS' && item.name !== '.archive' && item.name !== '.trash') {
                             collectFiles(full, rel);
                         }
                     } else if (item.name.endsWith('.md') || item.name.endsWith('.json')) {
@@ -687,6 +687,35 @@ Projeto externo vinculado ao AI Second Brain.
             }
 
             backupData.consolidatedMarkdown = consolidatedMarkdown;
+
+            // Salva fisicamente os arquivos na pasta BACKUPS do projeto
+            const backupsDir = path.join(projectDir, 'BACKUPS');
+            fs.mkdirSync(backupsDir, { recursive: true });
+
+            const mdFilename = `dossie_governanca_${projectName}.md`;
+            const mdPath = path.join(backupsDir, mdFilename);
+            fs.writeFileSync(mdPath, consolidatedMarkdown, 'utf-8');
+
+            const jsonFilename = `backup_governanca_${projectName}.json`;
+            const jsonPath = path.join(backupsDir, jsonFilename);
+
+            backupData.localFiles = {
+                backupsDir: path.normalize(backupsDir),
+                markdown: {
+                    filename: mdFilename,
+                    path: path.normalize(mdPath),
+                    size: Buffer.byteLength(consolidatedMarkdown, 'utf-8')
+                },
+                json: {
+                    filename: jsonFilename,
+                    path: path.normalize(jsonPath)
+                }
+            };
+
+            // Grava o JSON incluindo os metadados do backup e caminhos locais
+            const jsonContent = JSON.stringify(backupData, null, 2);
+            fs.writeFileSync(jsonPath, jsonContent, 'utf-8');
+            backupData.localFiles.json.size = Buffer.byteLength(jsonContent, 'utf-8');
 
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify(backupData));
@@ -856,6 +885,93 @@ Projeto externo vinculado ao AI Second Brain.
                 size: Buffer.byteLength(content, 'utf-8'),
                 mtime: Date.now()
             }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ error: err.message }));
+        }
+        return;
+    }
+
+    // API: Abrir Pasta no Explorador de Arquivos do Sistema Operacional (Windows Explorer / Finder)
+    if (pathname === '/api/system/open-folder' && req.method === 'POST') {
+        try {
+            const body = await readJsonBody(req);
+            let targetPath = (body.path || '').trim();
+
+            if (!targetPath) {
+                res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: 'Caminho não fornecido.' }));
+                return;
+            }
+
+            if (!path.isAbsolute(targetPath)) {
+                targetPath = path.resolve(ROOT_DIR, targetPath);
+            }
+
+            if (!fs.existsSync(targetPath)) {
+                res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: `Caminho não encontrado no disco: ${targetPath}` }));
+                return;
+            }
+
+            const cleanPath = path.normalize(targetPath).replace(/["'`$|;&<>]/g, '');
+
+            if (process.platform === 'win32') {
+                const stat = fs.statSync(cleanPath);
+                if (stat.isDirectory()) {
+                    exec(`explorer.exe "${cleanPath}"`);
+                } else {
+                    exec(`explorer.exe /select,"${cleanPath}"`);
+                }
+            } else if (process.platform === 'darwin') {
+                exec(`open -R "${cleanPath}"`);
+            } else {
+                exec(`xdg-open "${path.dirname(cleanPath)}"`);
+            }
+
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ success: true, path: cleanPath }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ error: err.message }));
+        }
+        return;
+    }
+
+    // API: Abrir Arquivo no Sistema Operacional (Aplicativo Padrão)
+    if (pathname === '/api/system/open-file' && req.method === 'POST') {
+        try {
+            const body = await readJsonBody(req);
+            let targetPath = (body.path || '').trim();
+
+            if (!targetPath) {
+                res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: 'Caminho não fornecido.' }));
+                return;
+            }
+
+            if (!path.isAbsolute(targetPath)) {
+                targetPath = path.resolve(ROOT_DIR, targetPath);
+            }
+
+            if (!fs.existsSync(targetPath)) {
+                res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: `Arquivo não encontrado no disco: ${targetPath}` }));
+                return;
+            }
+
+            const cleanPath = path.normalize(targetPath).replace(/["'`$|;&<>]/g, '');
+
+            if (process.platform === 'win32') {
+                exec(`cmd.exe /c start "" "${cleanPath}"`);
+            } else if (process.platform === 'darwin') {
+                exec(`open "${cleanPath}"`);
+            } else {
+                exec(`xdg-open "${cleanPath}"`);
+            }
+
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ success: true, path: cleanPath }));
         } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({ error: err.message }));
