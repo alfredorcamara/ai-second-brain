@@ -20,6 +20,11 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 
 ## Sessões Recentes
 - **Data**: 2026-10-01 (Madrugada)
+  - **Gravação Física de Backups & Integração Nativa com Windows Explorer**:
+    - Backend grava fisicamente os arquivos gerados em `projects/<projeto>/BACKUPS/` (`dossie_governanca_<projeto>.md` e `backup_governanca_<projeto>.json`).
+    - Novos endpoints `/api/system/open-folder` e `/api/system/open-file` para abrir a pasta no Windows Explorer (`explorer.exe /select`) ou o arquivo no app padrão (`cmd /c start`).
+    - Correção do download do navegador mantendo o Blob URL ativo por 10s para permitir que o Chromium conclua a gravação sem abortar.
+    - Card enriquecido na aba *Backup & Exportação* com caminho absoluto no disco, botão direto para abrir no Explorer, botões para abrir cada arquivo, baixar e copiar caminhos.
   - **Interatividade Total nos Cards do Project Workspace**:
     - Edição rápida inline no card *Visão Geral & Contratos* para alterar Objetivo, Stack e Status com gravação direta no disco.
     - Seletor de status do ciclo com pílulas luminosas conectadas ao `CURRENT_STATE.md`.
