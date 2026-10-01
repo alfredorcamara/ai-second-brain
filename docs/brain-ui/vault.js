@@ -441,11 +441,20 @@ class VaultManager {
         // Parse with marked.js
         let html = '';
         if (window.marked && typeof window.marked.parse === 'function') {
+            try {
+                if (typeof window.marked.setOptions === 'function') {
+                    window.marked.setOptions({ gfm: true, breaks: false });
+                }
+            } catch (e) {}
             html = window.marked.parse(body);
         } else {
             // Basic fallback if marked not loaded
             html = `<pre>${body.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
         }
+
+        // Post-process Checklists (- [ ] / - [x])
+        html = html.replace(/<li>\s*\[ \]\s*/gi, '<li class="task-list-item"><input type="checkbox" disabled> ');
+        html = html.replace(/<li>\s*\[x\]\s*/gi, '<li class="task-list-item"><input type="checkbox" checked disabled> ');
 
         // Post-process Wikilinks [[target]] -> clickable navigation
         html = html.replace(/\[\[(.*?)\]\]/g, (match, p1) => {

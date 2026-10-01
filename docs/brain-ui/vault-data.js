@@ -1,5 +1,5 @@
 window.VAULT_SNAPSHOT = {
-  "timestamp": 1790824169839,
+  "timestamp": 1790869396512,
   "files": [
     {
       "id": "_agents_rules_00-core_md",
@@ -298,10 +298,10 @@ window.VAULT_SNAPSHOT = {
       "title": "Estado Atual do AI Second Brain",
       "category": "memory",
       "icon": "💾",
-      "size": 2098,
-      "mtime": 1790810144761.4985,
+      "size": 4209,
+      "mtime": 1790826125791.594,
       "outgoingLinks": [],
-      "content": "# Estado Atual do AI Second Brain\n\n> Última atualização: 2026-09-30\n\n## Status do Framework: 🟢 Operacional & UX/UI Avançado\n\nO AI Second Brain está estruturado como uma plataforma universal de governança e desenvolvimento com IA, livre de acoplamento a projetos específicos e equipada com um portal web moderno.\n\n## Estrutura do Workspace\n\n| Diretório | Papel | Estado |\n|---|---|---|\n| `.agents/rules/` | Regras universais de governança (IA, Segurança, Docs) | ✅ Agnósticas |\n| `.agents/skills/` | Workflows reutilizáveis para Antigravity | ✅ 8 skills ativas |\n| `knowledge/` | Base de conhecimento em IA, Arquitetura e Segurança | ✅ 100% universal |\n| `projects/` | Projetos conectados pelo desenvolvedor | 🟢 Suporta Greenfield & Brownfield |\n| `memory/` | Memória de continuidade entre sessões | ✅ Operacional |\n| `templates/` | Modelos para novos projetos, specs e ADRs | ✅ Disponíveis |\n| `docs/brain-ui/` | Portal web interativo de visualização e governança | 🚀 UX/UI com Project Workspace & Grafo 3D |\n\n## Sessão Mais Recente\n- **Data**: 2026-09-30\n- **O que foi feito**: \n  - **Quickstart Studio (Modal de 3 Minutos)**: Onboarding guiado no portal web para criar projetos do zero ou vincular pastas existentes via junções NTFS sem terminal.\n  - **Sidebar \"Dois Mundos\"**: Reorganização visual clara separando \"MEUS PROJETOS\" no topo e \"CÉREBRO & GOVERNANÇA\" abaixo com divisor neon.\n  - **Project Workspace (Página Dedicada do Projeto)**: Hub com 5 abas (Visão Geral, Memória & Saúde, Constelação Neural 3D, Backup & Exportação de Dossiê, Gerenciamento & Desvinculação Segura).\n  - **Constelação Neural 3D (Three.js)**: Grafo orbital onde o projeto é o Sol Central conectado a seus arquivos locais e satélites de governança.\n  - **Grafo Global com Clusters Galácticos**: Projetos agrupados em constelações interligadas por regras comuns.\n  - **APIs de Ciclo de Vida**: Endpoints backend para diagnóstico de memória, arquivamento seguro em `.archive/`, exportação de backup (.md e .json) e desvinculação não destrutiva.\n"
+      "content": "# Estado Atual do AI Second Brain\n\n> Última atualização: 2026-09-30\n\n## Status do Framework: 🟢 Operacional & UX/UI Avançado\n\nO AI Second Brain está estruturado como uma plataforma universal de governança e desenvolvimento com IA, livre de acoplamento a projetos específicos e equipada com um portal web moderno.\n\n## Estrutura do Workspace\n\n| Diretório | Papel | Estado |\n|---|---|---|\n| `.agents/rules/` | Regras universais de governança (IA, Segurança, Docs) | ✅ Agnósticas |\n| `.agents/skills/` | Workflows reutilizáveis para Antigravity | ✅ 8 skills ativas |\n| `knowledge/` | Base de conhecimento em IA, Arquitetura e Segurança | ✅ 100% universal |\n| `projects/` | Projetos conectados pelo desenvolvedor | 🟢 Suporta Greenfield & Brownfield |\n| `memory/` | Memória de continuidade entre sessões | ✅ Operacional |\n| `templates/` | Modelos para novos projetos, specs e ADRs | ✅ Disponíveis |\n| `docs/brain-ui/` | Portal web interativo de visualização e governança | 🚀 UX/UI com Project Workspace & Grafo 3D |\n\n## Sessões Recentes\n- **Data**: 2026-10-01 (Madrugada)\n  - **Gravação Física de Backups & Integração Nativa com Windows Explorer**:\n    - Backend grava fisicamente os arquivos gerados em `projects/<projeto>/BACKUPS/` (`dossie_governanca_<projeto>.md` e `backup_governanca_<projeto>.json`).\n    - Novos endpoints `/api/system/open-folder` e `/api/system/open-file` para abrir a pasta no Windows Explorer (`explorer.exe /select`) ou o arquivo no app padrão (`cmd /c start`).\n    - Correção do download do navegador mantendo o Blob URL ativo por 10s para permitir que o Chromium conclua a gravação sem abortar.\n    - Card enriquecido na aba *Backup & Exportação* com caminho absoluto no disco, botão direto para abrir no Explorer, botões para abrir cada arquivo, baixar e copiar caminhos.\n  - **Interatividade Total nos Cards do Project Workspace**:\n    - Edição rápida inline no card *Visão Geral & Contratos* para alterar Objetivo, Stack e Status com gravação direta no disco.\n    - Seletor de status do ciclo com pílulas luminosas conectadas ao `CURRENT_STATE.md`.\n    - Checklist interativo (*O que já foi definido*) com alternância, retorno ao roadmap e exclusão.\n    - Roadmap dinâmico (*Próximos Passos*) com botão \"✓ Concluir\" em 1 clique e input inline com tecla Enter.\n    - Sistema de Toast visual com glassmorphism para feedback instantâneo de gravação.\n  - **Contratos de Governança 100% Dinâmicos**:\n    - Backend inspeciona arquivos físicos reais no disco, exibindo apenas documentos existentes (`PROJECT.md`, `CURRENT_STATE.md`, etc.).\n    - Identificação de contratos recomendados ausentes (ex: `ARCHITECTURE.md`) com ação de inicialização com 1 clique (`+ Inicializar ARCHITECTURE.md`).\n    - Layout e botões dos chips de governança reformulados com `.btn-gov`, eliminando quebras de linha e desproporções.\n  - **Correções Estruturais & Backend**:\n    - Correção do aninhamento de modais no HTML que impedia a exibição do Live Markdown Editor.\n    - Correção na rota `GET /api/file` no `server.js` com verificação de método HTTP estrita, eliminando erro `400 Bad Request` no salvamento.\n- **Data**: 2026-09-30\n  - **Quickstart Studio (Modal de 3 Minutos)**: Onboarding guiado no portal web para criar projetos do zero ou vincular pastas existentes via junções NTFS sem terminal.\n  - **Sidebar \"Dois Mundos\"**: Reorganização visual clara separando \"MEUS PROJETOS\" no topo e \"CÉREBRO & GOVERNANÇA\" abaixo com divisor neon.\n  - **Project Workspace (Página Dedicada do Projeto)**: Hub com 5 abas (Visão Geral, Memória & Saúde, Constelação Neural 3D, Backup & Exportação de Dossiê, Gerenciamento & Desvinculação Segura).\n  - **Constelação Neural 3D (Three.js)**: Grafo orbital onde o projeto é o Sol Central conectado a seus arquivos locais e satélites de governança.\n  - **Grafo Global com Clusters Galácticos**: Projetos agrupados em constelações interligadas por regras comuns.\n  - **APIs de Ciclo de Vida**: Endpoints backend para diagnóstico de memória, arquivamento seguro em `.archive/`, exportação de backup (.md e .json) e desvinculação não destrutiva.\n"
     },
     {
       "id": "memory_lessons-learned_md",
@@ -316,16 +316,42 @@ window.VAULT_SNAPSHOT = {
       "content": "# Lições Aprendidas\n\n## 2026-09-27 — Criação do AI Second Brain\n\n### Lição 1: Formato nativo importa\n**Contexto**: A versão 1 usava estrutura genérica (CLAUDE.md).\n**Aprendizado**: Cada ferramenta (Antigravity, Claude Code, Cursor) tem seu\nformato nativo de customização. Usar o formato nativo garante que as features\nda ferramenta funcionem corretamente (descoberta automática de skills, rules, etc).\n**Ação**: Sempre adapte o AI Second Brain para o formato da ferramenta em uso.\n\n### Lição 2: AIJev não substitui código determinístico\n**Contexto**: Tentação de usar AIJev para tudo que envolve decisão.\n**Aprendizado**: Se uma regra pode ser escrita em código (if/else, switch),\nnão precisa de AIJev. AIJev é para decisões que envolvem contexto complexo\nou probabilidades.\n**Ação**: Decision Gate obrigatório antes de integrar qualquer IA.\n\n### Lição 3: LLM não é a resposta para tudo\n**Contexto**: Tendência de chamar LLM para cada problema.\n**Aprendizado**: LLM é caro, lento e não-determinístico. Use apenas quando\nrealmente precisa de geração de texto ou raciocínio aberto.\n**Ação**: Sempre pergunte \"isso pode ser feito sem IA?\" antes de usar LLM.\n"
     },
     {
+      "id": "projects_Alfredo_teste_ARCHITECTURE_md",
+      "path": "projects/Alfredo_teste/ARCHITECTURE.md",
+      "name": "ARCHITECTURE.md",
+      "title": "Alfredo_teste — Arquitetura da Solução",
+      "category": "projects",
+      "icon": "🏗️",
+      "size": 528,
+      "mtime": 1790869152096.3108,
+      "outgoingLinks": [],
+      "content": "# Alfredo_teste — Arquitetura da Solução\n\n> Visão arquitetural, padrões e design do sistema.\n> Inicializado em: 2026-10-01\n\n## 1. Visão Geral da Arquitetura\nDescreva a estrutura, camadas e componentes principais da solução.\n\n## 2. Stack Tecnológica\n- **Linguagem / Framework**: Não especificada\n\n## 3. Padrões & Princípios Adotados\n- Código idiomático e desacoplado.\n- Se utilizar IA: aplicar o AI Decision Gate (`.agents/rules/01-ai-decision.md`).\n\n## 4. Estrutura de Diretórios\n```\nsrc/\n  api/\n  services/\n```\n"
+    },
+    {
+      "id": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
+      "path": "projects/Alfredo_teste/BACKUPS/dossie_governanca_Alfredo_teste.md",
+      "name": "dossie_governanca_Alfredo_teste.md",
+      "title": "DOSSIÊ DE GOVERNANÇA: ALFREDO_TESTE",
+      "category": "projects",
+      "icon": "📄",
+      "size": 837,
+      "mtime": 1790869052604.4539,
+      "outgoingLinks": [
+        "current_state.md"
+      ],
+      "content": "# DOSSIÊ DE GOVERNANÇA: ALFREDO_TESTE\n> Exportado automaticamente pelo AI Second Brain em 01/10/2026, 12:37:32\n\n\n---\n## 📄 Arquivo: `CURRENT_STATE.md`\n\n# Alfredo_teste — Estado Atual\n\n> Última atualização: 2026-10-01\n\n## Status: 🚀 Em Desenvolvimento Ativo\n\n## O que já foi definido\n- [x] Inicialização no AI Second Brain com governança ativa.\n- [x] Implementar módulo de autenticação JWT\n\n## Próximos Passos\n1. Definir os próximos passos do projeto.\n\n\n\n---\n## 📄 Arquivo: `PROJECT.md`\n\n# Alfredo_teste\n\n## Visão Geral\nProjeto externo vinculado ao AI Second Brain. \n\n## Informações Gerais\n- **Tipo**: Brownfield / Repositório Externo\n- **Localização Original**: `C:\\Projetos\\temp2`\n- **Status**: 🟢 Ativo / Em Desenvolvimento\n\n## Links & Documentação\n- Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)\n\n"
+    },
+    {
       "id": "projects_Alfredo_teste_CURRENT_STATE_md",
       "path": "projects/Alfredo_teste/CURRENT_STATE.md",
       "name": "CURRENT_STATE.md",
       "title": "Alfredo_teste — Estado Atual",
       "category": "projects",
       "icon": "💾",
-      "size": 316,
-      "mtime": 1790824105213.2732,
+      "size": 317,
+      "mtime": 1790869396417.0103,
       "outgoingLinks": [],
-      "content": "# Alfredo_teste — Estado Atual\n\n> Última atualização: 2026-10-01\n\n## Status: 🚀 Em Desenvolvimento Ativo\n\n## O que já foi definido\n- [x] Inicialização no AI Second Brain com governança ativa.\n- [x] Implementar módulo de autenticação JWT\n\n## Próximos Passos\n1. Definir os próximos passos do projeto.\n\n"
+      "content": "# Alfredo_teste — Estado Atual\n\n> Última atualização: 2026-10-01\n\n## Status: 🟡 Em Testes / Homologação\n\n## O que já foi definido\n- [x] Inicialização no AI Second Brain com governança ativa.\n- [x] Implementar módulo de autenticação JWT\n\n## Próximos Passos\n1. Definir os próximos passos do projeto.\n\n"
     },
     {
       "id": "projects_Alfredo_teste_PROJECT_md",
@@ -364,6 +390,21 @@ window.VAULT_SNAPSHOT = {
       "mtime": 1790806912749.089,
       "outgoingLinks": [],
       "content": "# teste_alfredo_22 — Arquitetura da Solução\n\n> Visão arquitetural, padrões e design do sistema.\n\n## 1. Stack Tecnológica\n- **Linguagem / Framework**: Node.js / TypeScript\n\n## 2. Princípios Adotados\n- Código idiomático e desacoplado.\n- Se utilizar IA: aplicar o AI Decision Gate (`.agents/rules/01-ai-decision.md`).\n"
+    },
+    {
+      "id": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
+      "path": "projects/teste_alfredo_22/BACKUPS/dossie_governanca_teste_alfredo_22.md",
+      "name": "dossie_governanca_teste_alfredo_22.md",
+      "title": "DOSSIÊ DE GOVERNANÇA: TESTE_ALFREDO_22",
+      "category": "projects",
+      "icon": "📄",
+      "size": 1415,
+      "mtime": 1790826522329.7817,
+      "outgoingLinks": [
+        "current_state.md",
+        "architecture.md"
+      ],
+      "content": "# DOSSIÊ DE GOVERNANÇA: TESTE_ALFREDO_22\n> Exportado automaticamente pelo AI Second Brain em 01/10/2026, 00:48:42\n\n\n---\n## 📄 Arquivo: `ARCHITECTURE.md`\n\n# teste_alfredo_22 — Arquitetura da Solução\n\n> Visão arquitetural, padrões e design do sistema.\n\n## 1. Stack Tecnológica\n- **Linguagem / Framework**: Node.js / TypeScript\n\n## 2. Princípios Adotados\n- Código idiomático e desacoplado.\n- Se utilizar IA: aplicar o AI Decision Gate (`.agents/rules/01-ai-decision.md`).\n\n\n---\n## 📄 Arquivo: `CURRENT_STATE.md`\n\n# teste_alfredo_22 — Estado Atual\n\n> Última atualização: 2026-09-30\n\n## Status: 🟢 Em Planejamento / Ativo\n\n## O que já foi definido\n- [x] Inicialização no AI Second Brain com governança e memória ativa.\n- [x] Stack selecionada: **Node.js / TypeScript**.\n\n## Próximos Passos\n1. Definir os requisitos centrais do sistema.\n2. Registrar a primeira decisão de arquitetura em `DECISIONS/`.\n\n\n---\n## 📄 Arquivo: `PROJECT.md`\n\n# teste_alfredo_22\n\n## Visão Geral\nteste_alfredo_22 de teste\n\n## Informações Gerais\n- **Tipo**: Greenfield / Projeto Novo\n- **Stack Inicial**: Node.js / TypeScript\n- **Status**: 🟢 Em Planejamento / Ativo\n- **Data de Criação**: 2026-09-30\n\n## Links & Governança\n- Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)\n- Arquitetura: [ARCHITECTURE.md](ARCHITECTURE.md)\n- Decisões Técnicas: `DECISIONS/`\n- Memória de Sessões: `MEMORY/sessions/`\n\n"
     },
     {
       "id": "projects_teste_alfredo_22_CURRENT_STATE_md",
@@ -616,7 +657,23 @@ window.VAULT_SNAPSHOT = {
               "title": "Alfredo_teste — Estado Atual",
               "icon": "💾",
               "path": "projects/Alfredo_teste/CURRENT_STATE.md",
-              "size": 316
+              "size": 317
+            },
+            {
+              "id": "projects_Alfredo_teste_ARCHITECTURE_md",
+              "label": "ARCHITECTURE.md (Arquitetura)",
+              "title": "Alfredo_teste — Arquitetura da Solução",
+              "icon": "🏗️",
+              "path": "projects/Alfredo_teste/ARCHITECTURE.md",
+              "size": 528
+            },
+            {
+              "id": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
+              "label": "BACKUPS/dossie_governanca_Alfredo_teste.md",
+              "title": "DOSSIÊ DE GOVERNANÇA: ALFREDO_TESTE",
+              "icon": "📄",
+              "path": "projects/Alfredo_teste/BACKUPS/dossie_governanca_Alfredo_teste.md",
+              "size": 837
             }
           ]
         },
@@ -650,6 +707,14 @@ window.VAULT_SNAPSHOT = {
               "icon": "🏗️",
               "path": "projects/teste_alfredo_22/ARCHITECTURE.md",
               "size": 325
+            },
+            {
+              "id": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
+              "label": "BACKUPS/dossie_governanca_teste_alfredo_22.md",
+              "title": "DOSSIÊ DE GOVERNANÇA: TESTE_ALFREDO_22",
+              "icon": "📄",
+              "path": "projects/teste_alfredo_22/BACKUPS/dossie_governanca_teste_alfredo_22.md",
+              "size": 1415
             }
           ]
         }
@@ -731,7 +796,7 @@ window.VAULT_SNAPSHOT = {
           "label": "Estado Atual do AI Second Brain",
           "icon": "💾",
           "path": "memory/current-state.md",
-          "size": 2098
+          "size": 4209
         },
         {
           "id": "memory_lessons-learned_md",
@@ -1137,6 +1202,22 @@ window.VAULT_SNAPSHOT = {
       "path": "memory/lessons-learned.md"
     },
     {
+      "id": "projects_Alfredo_teste_ARCHITECTURE_md",
+      "label": "Alfredo_teste — Arquitetura da Solução",
+      "group": "projects",
+      "size": 9,
+      "icon": "🏗️",
+      "path": "projects/Alfredo_teste/ARCHITECTURE.md"
+    },
+    {
+      "id": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
+      "label": "DOSSIÊ DE GOVERNANÇA: ALFREDO_TESTE",
+      "group": "projects",
+      "size": 9,
+      "icon": "📄",
+      "path": "projects/Alfredo_teste/BACKUPS/dossie_governanca_Alfredo_teste.md"
+    },
+    {
       "id": "projects_Alfredo_teste_CURRENT_STATE_md",
       "label": "Alfredo_teste — Estado Atual",
       "group": "projects",
@@ -1167,6 +1248,14 @@ window.VAULT_SNAPSHOT = {
       "size": 9,
       "icon": "🏗️",
       "path": "projects/teste_alfredo_22/ARCHITECTURE.md"
+    },
+    {
+      "id": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
+      "label": "DOSSIÊ DE GOVERNANÇA: TESTE_ALFREDO_22",
+      "group": "projects",
+      "size": 9,
+      "icon": "📄",
+      "path": "projects/teste_alfredo_22/BACKUPS/dossie_governanca_teste_alfredo_22.md"
     },
     {
       "id": "projects_teste_alfredo_22_CURRENT_STATE_md",
@@ -1376,6 +1465,14 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "hub_proj_Alfredo_teste",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "hub_proj_Alfredo_teste",
+      "to": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md"
+    },
+    {
+      "from": "hub_proj_Alfredo_teste",
       "to": "projects_Alfredo_teste_CURRENT_STATE_md"
     },
     {
@@ -1389,6 +1486,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "hub_proj_teste_alfredo_22",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "hub_proj_teste_alfredo_22",
+      "to": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md"
     },
     {
       "from": "hub_proj_teste_alfredo_22",
@@ -1420,6 +1521,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "_agents_rules_04-documentation_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "_agents_rules_04-documentation_md",
       "to": "projects_Alfredo_teste_CURRENT_STATE_md"
     },
     {
@@ -1445,6 +1550,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "_agents_skills_ai-integration_SKILL_md",
       "to": "_agents_rules_03-security_md"
+    },
+    {
+      "from": "_agents_skills_architecture-review_SKILL_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
     },
     {
       "from": "_agents_skills_architecture-review_SKILL_md",
@@ -1477,6 +1586,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "_agents_skills_new-feature_SKILL_md",
       "to": "_agents_rules_03-security_md"
+    },
+    {
+      "from": "_agents_skills_new-feature_SKILL_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
     },
     {
       "from": "_agents_skills_new-feature_SKILL_md",
@@ -1513,6 +1626,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "_agents_skills_project-onboarding_SKILL_md",
       "to": "GEMINI_md"
+    },
+    {
+      "from": "_agents_skills_project-onboarding_SKILL_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
     },
     {
       "from": "_agents_skills_project-onboarding_SKILL_md",
@@ -1593,6 +1710,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
       "to": "knowledge_ai_AI_GATEWAY_md"
+    },
+    {
+      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
     },
     {
       "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
@@ -1644,6 +1765,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_GUIA_PRATICO_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_GUIA_PRATICO_md",
       "to": "projects_Alfredo_teste_CURRENT_STATE_md"
     },
     {
@@ -1669,6 +1794,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
       "to": "GEMINI_md"
+    },
+    {
+      "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
     },
     {
       "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
@@ -1740,6 +1869,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "knowledge_architecture_PATTERNS_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "knowledge_architecture_PATTERNS_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -1756,6 +1889,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "knowledge_global_INDEX_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "knowledge_global_INDEX_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -1764,7 +1901,23 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "memory_current-state_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "memory_current-state_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
     },
     {
       "from": "memory_current-state_md",
@@ -1772,6 +1925,30 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "memory_current-state_md",
+      "to": "templates_project_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_ARCHITECTURE_md",
+      "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
       "to": "templates_project_md"
     },
     {
@@ -1807,6 +1984,42 @@ window.VAULT_SNAPSHOT = {
       "to": "_agents_rules_01-ai-decision_md"
     },
     {
+      "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
+      "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
+      "to": "templates_project_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_PROJECT_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
       "from": "projects_teste_alfredo_22_PROJECT_md",
       "to": "projects_Alfredo_teste_CURRENT_STATE_md"
     },
@@ -1832,6 +2045,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "README_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "README_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
     },
     {
@@ -1849,6 +2066,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "README_md",
       "to": "templates_project_md"
+    },
+    {
+      "from": "templates_project_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
     },
     {
       "from": "templates_project_md",
@@ -1944,7 +2165,7 @@ window.VAULT_SNAPSHOT = {
     }
   },
   "stats": {
-    "totalFiles": 37,
+    "totalFiles": 40,
     "rulesCount": 5,
     "skillsCount": 8,
     "projectsCount": 2,
@@ -1953,7 +2174,7 @@ window.VAULT_SNAPSHOT = {
     "memoryCount": 2,
     "templatesCount": 4,
     "docsCount": 3,
-    "totalNodes": 49,
-    "totalEdges": 166
+    "totalNodes": 52,
+    "totalEdges": 199
   }
 };

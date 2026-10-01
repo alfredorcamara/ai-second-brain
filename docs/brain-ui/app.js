@@ -2594,9 +2594,10 @@ function switchEditorTab(tab) {
         if (preview) {
             preview.style.display = 'block';
             const val = textarea ? textarea.value : '';
-            preview.innerHTML = window.VAULT && window.VAULT.renderMarkdown 
+            const html = window.VAULT && window.VAULT.renderMarkdown 
                 ? window.VAULT.renderMarkdown(val, activeEditingPath) 
-                : `<pre>${val}</pre>`;
+                : `<pre>${val.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+            preview.innerHTML = `<div class="doc-preview-inner">${html}</div>`;
         }
         if (toolbar) toolbar.style.display = 'none';
     }
