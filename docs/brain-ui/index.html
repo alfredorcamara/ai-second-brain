@@ -189,6 +189,103 @@
                 </div>
             </div>
 
+            <!-- Project Dedicated Workspace (Project Hub) -->
+            <div id="projectWorkspaceView" class="project-workspace-view">
+                <div class="pw-container">
+                    <!-- Project Hero Banner -->
+                    <div class="pw-header-card">
+                        <div class="pw-header-top">
+                            <div class="pw-title-group">
+                                <span class="pw-icon" id="pwIcon">🚀</span>
+                                <div>
+                                    <div class="pw-meta-tags">
+                                        <span class="pw-badge" id="pwTypeBadge">Brownfield 🔗</span>
+                                        <span class="pw-badge stack" id="pwStackBadge">Node.js</span>
+                                        <span class="pw-badge status" id="pwStatusBadge">🟢 Ativo</span>
+                                    </div>
+                                    <h1 class="pw-title" id="pwTitle">Nome do Projeto</h1>
+                                </div>
+                            </div>
+                            <div class="pw-header-actions">
+                                <button class="btn btn-secondary btn-sm" id="btnPwOpenDoc" title="Ver arquivo Markdown raw">
+                                    📄 Ver Markdown
+                                </button>
+                                <button class="btn btn-accent btn-sm" onclick="showDashboard()">
+                                    🧠 Dashboard Geral
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="pw-path-row">
+                            <span class="pw-path-label">Localização no Computador:</span>
+                            <code class="pw-path-code" id="pwRealPath">Carregando caminho...</code>
+                            <button class="pw-copy-btn" id="btnPwCopyPath" onclick="copyProjectPath()" title="Copiar caminho da pasta">📋 Copiar Caminho</button>
+                        </div>
+
+                        <!-- Workspace Navigation Tabs -->
+                        <div class="pw-tabs" id="pwTabs">
+                            <button class="pw-tab active" data-tab="overview" onclick="switchProjectTab('overview')">
+                                <span class="pw-tab-icon">📄</span> Visão Geral
+                            </button>
+                            <button class="pw-tab" data-tab="memory" onclick="switchProjectTab('memory')">
+                                <span class="pw-tab-icon">🧮</span> Memória & Saúde
+                            </button>
+                            <button class="pw-tab" data-tab="graph" onclick="switchProjectTab('graph')">
+                                <span class="pw-tab-icon">🔮</span> Constelação Neural
+                            </button>
+                            <button class="pw-tab" data-tab="backup" onclick="switchProjectTab('backup')">
+                                <span class="pw-tab-icon">📦</span> Backup & Exportação
+                            </button>
+                            <button class="pw-tab" data-tab="settings" onclick="switchProjectTab('settings')">
+                                <span class="pw-tab-icon">⚙️</span> Gerenciar & Desvincular
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tab 1: Visão Geral -->
+                    <div class="pw-tab-pane active" id="pwPaneOverview">
+                        <div id="pwOverviewContent">Carregando visão geral...</div>
+                    </div>
+
+                    <!-- Tab 2: Memória & Saúde -->
+                    <div class="pw-tab-pane" id="pwPaneMemory">
+                        <div id="pwMemoryContent">Carregando diagnóstico de memória...</div>
+                    </div>
+
+                    <!-- Tab 3: Constelação Neural Dedicada -->
+                    <div class="pw-tab-pane" id="pwPaneGraph">
+                        <div class="pw-graph-wrapper">
+                            <canvas id="projectGraphCanvas"></canvas>
+                            <div id="projectGraphTooltip" class="graph-tooltip"></div>
+                            
+                            <div class="graph-hud-pill">
+                                <span class="hud-pill-item"><span class="hud-dot"></span><span id="pwGraphNodeCount">0</span> nós na constelação</span>
+                                <span class="hud-divider"></span>
+                                <span class="hud-pill-item" id="pwHudZoomPill">🔍 100%</span>
+                                <span class="hud-divider"></span>
+                                <span class="hud-pill-item" style="color:#38bdf8;">✨ Sol Central: Projeto</span>
+                            </div>
+
+                            <div class="graph-controls">
+                                <button id="btnPwZoomIn" class="graph-btn" title="Aproximar (+)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
+                                <button id="btnPwZoomOut" class="graph-btn" title="Afastar (-)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
+                                <button id="btnPwResetView" class="graph-btn" title="Centralizar Constelação (⊙)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 4: Backup & Exportação -->
+                    <div class="pw-tab-pane" id="pwPaneBackup">
+                        <div id="pwBackupContent">Carregando dados de backup...</div>
+                    </div>
+
+                    <!-- Tab 5: Gerenciar & Desvincular -->
+                    <div class="pw-tab-pane" id="pwPaneSettings">
+                        <div id="pwSettingsContent">Carregando opções de gerenciamento...</div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Dashboard overlay on first load -->
             <div id="dashboardOverlay" class="dashboard-overlay active">
                 <div class="dashboard-grid">
@@ -497,6 +594,65 @@
                             </button>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Markdown Editor Modal -->
+    <div id="fileEditorModal" class="editor-modal-backdrop" style="display: none;" onclick="handleEditorBackdropClick(event)">
+        <div class="editor-modal-card" role="dialog" aria-modal="true" aria-labelledby="editorModalTitle">
+            <!-- Header -->
+            <div class="editor-header">
+                <div class="editor-title-wrap">
+                    <span class="editor-badge">✏️ EDITOR INTEGRADO</span>
+                    <h2 id="editorModalTitle" class="editor-title">Editar Arquivo</h2>
+                    <code id="editorFilePath" class="editor-file-path">caminho/do/arquivo.md</code>
+                </div>
+                <div class="editor-header-actions">
+                    <div class="editor-tab-toggle">
+                        <button type="button" class="editor-tab-btn active" id="btnEditorTabWrite" onclick="switchEditorTab('write')">
+                            ✏️ Escrever
+                        </button>
+                        <button type="button" class="editor-tab-btn" id="btnEditorTabPreview" onclick="switchEditorTab('preview')">
+                            👁️ Pré-visualizar
+                        </button>
+                    </div>
+                    <button class="editor-close-btn" onclick="closeFileEditor()" aria-label="Fechar editor">✕</button>
+                </div>
+            </div>
+
+            <!-- Toolbar rápida -->
+            <div class="editor-toolbar" id="editorToolbar">
+                <button type="button" class="ed-tool-btn" onclick="insertEditorSyntax('h2')" title="Subtítulo">H2</button>
+                <button type="button" class="ed-tool-btn" onclick="insertEditorSyntax('h3')" title="Seção">H3</button>
+                <button type="button" class="ed-tool-btn" onclick="insertEditorSyntax('bold')" title="Negrito"><strong>B</strong></button>
+                <button type="button" class="ed-tool-btn" onclick="insertEditorSyntax('italic')" title="Itálico"><em>I</em></button>
+                <span class="ed-sep"></span>
+                <button type="button" class="ed-tool-btn" onclick="insertEditorSyntax('bullet')" title="Item de Lista">• Lista</button>
+                <button type="button" class="ed-tool-btn" onclick="insertEditorSyntax('task')" title="Checklist / Tarefa">☑ Tarefa</button>
+                <button type="button" class="ed-tool-btn" onclick="insertEditorSyntax('code')" title="Bloco de Código">&lt;/&gt;</button>
+                <button type="button" class="ed-tool-btn" onclick="insertEditorSyntax('quote')" title="Nota / Citação">“ Nota</button>
+                <span class="editor-shortcut-hint">💡 Ctrl+S para salvar</span>
+            </div>
+
+            <!-- Body (Write & Preview) -->
+            <div class="editor-body">
+                <textarea id="editorTextarea" class="editor-textarea" spellcheck="false" placeholder="Digite seu conteúdo em Markdown aqui..."></textarea>
+                <div id="editorPreviewPane" class="editor-preview-pane doc-markdown-body" style="display: none;"></div>
+            </div>
+
+            <!-- Footer -->
+            <div class="editor-footer">
+                <div class="editor-status" id="editorStatusText">
+                    <span class="status-dot snapshot"></span> Pronto para editar
+                </div>
+                <div class="editor-footer-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeFileEditor()">Cancelar</button>
+                    <button type="button" class="btn btn-primary btn-submit-editor" id="btnSaveFile" onclick="saveFileContent()">
+                        <span class="btn-spinner" style="display:none"></span>
+                        <span>💾 Salvar no Disco</span>
+                    </button>
                 </div>
             </div>
         </div>

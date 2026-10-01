@@ -322,6 +322,26 @@ function scanVault(rootDir = ROOT_DIR) {
         }
     });
 
+    // Add Project Hubs (Galaxy clusters for each project)
+    const projectSubHubs = new Map();
+    projectGroups.forEach((group, projName) => {
+        const pHubId = `hub_proj_${projName}`;
+        const pNode = {
+            id: pHubId,
+            label: projName,
+            group: 'projects',
+            size: 22,
+            icon: '🚀',
+            path: group.path
+        };
+        graphNodes.push(pNode);
+        nodeIds.add(pHubId);
+        projectSubHubs.set(projName, pHubId);
+
+        // Conecta ao hub geral de projetos
+        graphEdges.push({ from: 'hub-projects', to: pHubId });
+    });
+
     // Add each file as a 3D Node
     files.forEach(f => {
         const hub = categoryHubs[f.category];
@@ -336,6 +356,19 @@ function scanVault(rootDir = ROOT_DIR) {
         graphNodes.push(node);
         nodeIds.add(node.id);
 
+        // Se for arquivo de um projeto específico, orbita o nó central do projeto
+        if (f.category === 'projects' && f.path.startsWith('projects/')) {
+            const parts = f.path.split('/');
+            if (parts.length > 2) {
+                const projName = parts[1];
+                const pHubId = projectSubHubs.get(projName);
+                if (pHubId) {
+                    graphEdges.push({ from: pHubId, to: node.id });
+                    return;
+                }
+            }
+        }
+
         // Connect to its category hub
         if (hub) {
             graphEdges.push({ from: hub.id, to: node.id });
@@ -344,7 +377,7 @@ function scanVault(rootDir = ROOT_DIR) {
         }
     });
 
-    // Detect Cross-file links
+    // Detect Cross-file and Inter-project links
     files.forEach(f => {
         files.forEach(target => {
             if (f.id === target.id) return;
@@ -359,6 +392,21 @@ function scanVault(rootDir = ROOT_DIR) {
             }
         });
     });
+
+    // Conecta automaticamente os projetos às regras essenciais de governança
+    projectSubHubs.forEach((pHubId, projName) => {
+        files.forEach(f => {
+            if (f.category === 'rules' && (f.path.includes('01-ai-decision') || f.path.includes('03-security'))) {
+                graphEdges.push({ from: pHubId, to: f.id });
+            }
+        });
+    });
+
+    // Pontes inter-projeto: se houver mais de um projeto, conecta seus hubs como constelações irmãs
+    const projHubKeys = Array.from(projectSubHubs.values());
+    for (let i = 0; i < projHubKeys.length - 1; i++) {
+        graphEdges.push({ from: projHubKeys[i], to: projHubKeys[i + 1] });
+    }
 
     // Group Colors
     const groupColors = {

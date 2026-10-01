@@ -40,11 +40,15 @@ function renderNavItem(item) {
                     <svg class="tree-chevron" id="chevron-${item.id}" viewBox="0 0 16 16" fill="currentColor">
                         <path d="M5.7 13.7l5-5a1 1 0 000-1.4l-5-5a1 1 0 00-1.4 1.4L8.58 8l-4.3 4.3a1 1 0 001.42 1.4z"/>
                     </svg>
-                    <span class="nav-item-icon">${item.icon || '📁'}</span>
-                    <span class="nav-item-label tree-folder-title" onclick="event.stopPropagation(); navigateTo('${item.path}')" title="Abrir ${item.label}">
+                    <span class="nav-item-icon">${item.icon || '🚀'}</span>
+                    <span class="nav-item-label tree-folder-title" onclick="event.stopPropagation(); openProjectWorkspace('${item.label}', 'overview')" title="Abrir Workspace de ${item.label}">
                         ${item.label}
                     </span>
-                    <span class="nav-item-badge count" title="${item.children.length} arquivos no projeto">${item.children.length}</span>
+                    <div class="nav-project-actions">
+                        <button class="nav-act-btn" onclick="event.stopPropagation(); openProjectWorkspace('${item.label}', 'graph')" title="Constelação Neural">🔮</button>
+                        <button class="nav-act-btn" onclick="event.stopPropagation(); openProjectWorkspace('${item.label}', 'settings')" title="Gerenciar Projeto">⚙️</button>
+                    </div>
+                    <span class="nav-item-badge count" title="${item.children.length} arquivos">${item.children.length}</span>
                 </div>
                 <div class="nav-tree-children" id="tree-children-${item.id}">
                     ${item.children.map(child => `
@@ -72,9 +76,48 @@ function buildSidebar() {
     if (!nav) return;
 
     const sections = (window.VAULT && window.VAULT.data && window.VAULT.data.sections) || [];
+    const projectSection = sections.find(s => s.id === 'projects');
+    const frameworkSections = sections.filter(s => s.id !== 'projects');
+
     let html = '';
 
-    for (const section of sections) {
+    // ── MUNDO 1: MEUS PROJETOS (Destaque Primário) ────
+    const projectsCount = (projectSection && projectSection.badge !== undefined) 
+        ? projectSection.badge 
+        : (projectSection ? projectSection.items.filter(i => i.isGroup).length : 0);
+
+    html += `
+        <div class="sidebar-world-header">
+            <span class="world-title">🚀 MEUS PROJETOS <span class="nav-item-badge count" style="margin-left:4px">${projectsCount}</span></span>
+            <button class="world-add-btn" onclick="openQuickstartWizard()" title="Conectar ou Criar Novo Projeto">+ Novo</button>
+        </div>
+    `;
+
+    if (projectSection && projectSection.items && projectSection.items.length > 0) {
+        html += `
+            <div class="nav-section-items" id="section-projects" style="margin-bottom: 8px;">
+                ${projectSection.items.map(item => renderNavItem(item)).join('')}
+            </div>
+        `;
+    } else {
+        html += `
+            <div style="padding: 10px 16px; font-size: 12px; color: var(--text-tertiary);">
+                Nenhum projeto conectado.<br>
+                <a href="javascript:void(0)" onclick="openQuickstartWizard()" style="color: var(--accent-tertiary); font-weight: 600;">+ Adicionar com Quickstart</a>
+            </div>
+        `;
+    }
+
+    // ── DIVISOR: CÉREBRO & FRAMEWORK ──────────────────
+    html += `
+        <div class="sidebar-divider">
+            <span class="divider-label">CÉREBRO & GOVERNANÇA</span>
+            <span class="divider-line"></span>
+        </div>
+    `;
+
+    // ── MUNDO 2: CÉREBRO / FRAMEWORK (Secundário) ─────
+    for (const section of frameworkSections) {
         const badgeCount = section.badge !== undefined ? section.badge : section.items.length;
         html += `
             <div class="nav-section" data-section="${section.id}">
@@ -170,7 +213,7 @@ function renderDashboardProjects() {
     const projectsList = Array.from(projectsMap.values());
 
     if (projectsList.length === 0) {
-        // NENHUM PROJETO CADASTRADO NO MOMENTO:
+        // Nenhum projeto conectado:
         slot.innerHTML = `
             <div class="dash-card status-card" onclick="openQuickstartWizard()" style="cursor: pointer; grid-column: span 2; border: 1px dashed rgba(99, 102, 241, 0.45);">
                 <div class="status-indicator" style="background: var(--accent-primary); box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);"></div>
@@ -187,10 +230,11 @@ function renderDashboardProjects() {
         return;
     }
 
-    // GERA OS CARDS DINAMICAMENTE PARA CADA PROJETO REAL EXISTENTE:
+    // Gera cards acionáveis para cada projeto
     let html = '';
     projectsList.forEach(proj => {
-        const title = proj.title || proj.path.split('/')[1];
+        const folderName = proj.path.split('/')[1];
+        const title = proj.title || folderName;
         
         let statusBadge = 'Ativo';
         let statusClass = 'planning';
@@ -211,19 +255,38 @@ function renderDashboardProjects() {
             statusColor = 'green';
         }
 
-        let desc = 'Projeto conectado ao AI Second Brain';
+        let desc = 'Projeto governado pelo AI Second Brain';
         const overviewMatch = (proj.content || '').match(/##\s+Visão Geral\s*\n+([^\n#]+)/i);
         if (overviewMatch && overviewMatch[1]) {
             desc = overviewMatch[1].trim();
         }
 
+        let stack = 'Livre';
+        const stackMatch = (proj.content || '').match(/-\s+\*\*Stack[^*]*\*\*:\s*([^\r\n]+)/i);
+        if (stackMatch && stackMatch[1]) stack = stackMatch[1].trim();
+
         html += `
-            <div class="dash-card status-card" onclick="navigateTo('${proj.path}')">
+            <div class="dash-card status-card" onclick="openProjectWorkspace('${folderName}')" style="cursor: pointer;">
                 <div class="status-indicator ${statusColor}"></div>
                 <div class="card-content">
-                    <h3>${title}</h3>
-                    <p>${desc}</p>
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                        <h3 style="margin:0;">${title}</h3>
+                        <span class="status-badge" style="font-size:10px; padding:1px 6px;">${stack}</span>
+                    </div>
+                    <p style="margin-bottom:8px;">${desc}</p>
                     <span class="status-badge ${statusClass}">${statusBadge}</span>
+                    
+                    <div class="dash-card-actions">
+                        <button class="btn-dash-act primary" onclick="event.stopPropagation(); openProjectWorkspace('${folderName}', 'overview')">
+                            🚀 Abrir Workspace
+                        </button>
+                        <button class="btn-dash-act" onclick="event.stopPropagation(); openProjectWorkspace('${folderName}', 'graph')">
+                            🔮 Constelação
+                        </button>
+                        <button class="btn-dash-act" onclick="event.stopPropagation(); openProjectWorkspace('${folderName}', 'settings')">
+                            ⚙️ Gerenciar
+                        </button>
+                    </div>
                 </div>
                 <div class="card-icon">${proj.icon || '🚀'}</div>
             </div>
@@ -314,20 +377,22 @@ function navigateTo(path) {
 
 function showDashboard() {
     currentView = 'dashboard';
-    document.getElementById('dashboardOverlay').classList.add('active');
-    document.getElementById('graphView').classList.remove('active');
-    document.getElementById('docView').classList.remove('active');
-    document.getElementById('viewToggle').classList.remove('active');
+    document.getElementById('dashboardOverlay')?.classList.add('active');
+    document.getElementById('graphView')?.classList.remove('active');
+    document.getElementById('docView')?.classList.remove('active');
+    document.getElementById('projectWorkspaceView')?.classList.remove('active');
+    document.getElementById('viewToggle')?.classList.remove('active');
     updateBreadcrumbs([{ label: '🧠 Visão Geral', path: 'dashboard' }]);
 }
 
 function showView(view) {
     if (view === 'graph') {
         currentView = 'graph';
-        document.getElementById('dashboardOverlay').classList.remove('active');
-        document.getElementById('graphView').classList.add('active');
-        document.getElementById('docView').classList.remove('active');
-        document.getElementById('viewToggle').classList.add('active');
+        document.getElementById('dashboardOverlay')?.classList.remove('active');
+        document.getElementById('graphView')?.classList.add('active');
+        document.getElementById('docView')?.classList.remove('active');
+        document.getElementById('projectWorkspaceView')?.classList.remove('active');
+        document.getElementById('viewToggle')?.classList.add('active');
         updateBreadcrumbs([
             { label: '🧠 Visão Geral', path: 'dashboard' },
             { label: '🔮 Grafo Neural', path: 'graph' }
@@ -342,10 +407,11 @@ function showView(view) {
 
 function showDynamicDocument(file) {
     currentView = 'doc';
-    document.getElementById('dashboardOverlay').classList.remove('active');
-    document.getElementById('graphView').classList.remove('active');
-    document.getElementById('docView').classList.add('active');
-    document.getElementById('viewToggle').classList.remove('active');
+    document.getElementById('dashboardOverlay')?.classList.remove('active');
+    document.getElementById('graphView')?.classList.remove('active');
+    document.getElementById('docView')?.classList.add('active');
+    document.getElementById('projectWorkspaceView')?.classList.remove('active');
+    document.getElementById('viewToggle')?.classList.remove('active');
 
     const container = document.getElementById('docContainer');
     const renderedContent = window.VAULT.renderMarkdown(file.content, file.path);
@@ -357,6 +423,9 @@ function showDynamicDocument(file) {
             <span class="doc-meta-item">📁 ${file.path}</span>
             <span class="doc-meta-item">⚡ ${sizeKb} KB</span>
             ${file.mtime ? `<span class="doc-meta-item">🕒 ${new Date(file.mtime).toLocaleDateString('pt-BR')}</span>` : ''}
+            <button class="btn-edit-glow" style="margin-left: auto; padding: 4px 12px; font-size: 11px;" onclick="openFileEditor('${file.path}', null, () => navigateTo('${file.path}'))">
+                ✏️ Editar este Arquivo
+            </button>
         </div>
         <div class="doc-markdown-body">
             ${renderedContent}
@@ -1126,4 +1195,1353 @@ function renderQuickstartSuccess(info) {
         });
     }
 }
+
+// ═══════════════════════════════════════════════════
+// PROJECT DEDICATED WORKSPACE (PROJECT HUB) CONTROLLER
+// ═══════════════════════════════════════════════════
+let currentProject = null;
+let currentProjectData = null;
+let currentProjectTab = 'overview';
+let projectGraph = null;
+
+async function openProjectWorkspace(projectName, defaultTab = 'overview') {
+    currentProject = projectName;
+    currentView = 'project-workspace';
+
+    // Ajusta visibilidade das telas
+    document.getElementById('dashboardOverlay')?.classList.remove('active');
+    document.getElementById('graphView')?.classList.remove('active');
+    document.getElementById('docView')?.classList.remove('active');
+    document.getElementById('viewToggle')?.classList.remove('active');
+
+    const pwView = document.getElementById('projectWorkspaceView');
+    if (pwView) {
+        pwView.classList.add('active');
+        pwView.scrollTop = 0;
+    }
+
+    // Preenche placeholders iniciais
+    const titleEl = document.getElementById('pwTitle');
+    const pathEl = document.getElementById('pwRealPath');
+    const badgeType = document.getElementById('pwTypeBadge');
+    const badgeStack = document.getElementById('pwStackBadge');
+    const badgeStatus = document.getElementById('pwStatusBadge');
+
+    if (titleEl) titleEl.textContent = projectName;
+    if (pathEl) pathEl.textContent = 'Carregando detalhes do projeto...';
+    if (badgeType) badgeType.textContent = 'Carregando...';
+
+    updateBreadcrumbs([
+        { label: '🧠 Visão Geral', path: 'dashboard' },
+        { label: `🚀 ${projectName}`, path: `workspace:${projectName}` }
+    ]);
+
+    // Busca detalhes completos no backend
+    try {
+        const res = await fetch(`/api/projects/${encodeURIComponent(projectName)}/details`);
+        if (!res.ok) throw new Error('Não foi possível obter dados do projeto.');
+        currentProjectData = await res.json();
+
+        if (titleEl) titleEl.textContent = currentProjectData.name;
+        if (pathEl) pathEl.textContent = currentProjectData.realPath || 'Caminho local';
+        if (badgeType) {
+            badgeType.textContent = currentProjectData.isJunction ? 'Brownfield 🔗 (Vínculo Externo)' : 'Greenfield 🚀 (Nativo)';
+        }
+        if (badgeStack) badgeStack.textContent = currentProjectData.stack || 'Livre';
+        if (badgeStatus) badgeStatus.textContent = currentProjectData.status || 'Ativo';
+
+        const openDocBtn = document.getElementById('btnPwOpenDoc');
+        if (openDocBtn) {
+            openDocBtn.onclick = () => navigateTo(`projects/${projectName}/PROJECT.md`);
+        }
+
+        switchProjectTab(defaultTab);
+    } catch (err) {
+        console.error('Erro ao carregar projeto:', err);
+        if (pathEl) pathEl.textContent = 'Erro ao conectar ao projeto.';
+        const overviewEl = document.getElementById('pwOverviewContent');
+        if (overviewEl) {
+            overviewEl.innerHTML = `
+                <div class="pw-card" style="border-color: var(--danger);">
+                    <h3 style="color:var(--danger)">Erro ao carregar detalhes do projeto</h3>
+                    <p>${err.message}</p>
+                    <button class="btn btn-secondary" onclick="showDashboard()">Voltar ao Dashboard</button>
+                </div>
+            `;
+        }
+    }
+}
+
+function switchProjectTab(tabId) {
+    currentProjectTab = tabId;
+
+    // Atualiza botões das abas
+    document.querySelectorAll('#pwTabs .pw-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabId);
+    });
+
+    // Atualiza painéis
+    document.querySelectorAll('.pw-tab-pane').forEach(pane => {
+        pane.classList.remove('active');
+    });
+
+    const targetPaneMap = {
+        'overview': 'pwPaneOverview',
+        'memory': 'pwPaneMemory',
+        'graph': 'pwPaneGraph',
+        'backup': 'pwPaneBackup',
+        'settings': 'pwPaneSettings'
+    };
+
+    const targetId = targetPaneMap[tabId];
+    if (targetId) {
+        document.getElementById(targetId)?.classList.add('active');
+    }
+
+    const tabLabels = {
+        'overview': 'Visão Geral',
+        'memory': 'Memória & Saúde',
+        'graph': 'Constelação Neural',
+        'backup': 'Backup & Exportação',
+        'settings': 'Gerenciar & Desvincular'
+    };
+
+    updateBreadcrumbs([
+        { label: '🧠 Visão Geral', path: 'dashboard' },
+        { label: `🚀 ${currentProject}`, path: `workspace:${currentProject}` },
+        { label: tabLabels[tabId] || 'Aba', path: `workspace:${currentProject}:${tabId}` }
+    ]);
+
+    if (!currentProjectData) return;
+
+    if (tabId === 'overview') renderProjectOverviewTab();
+    if (tabId === 'memory') renderProjectMemoryTab();
+    if (tabId === 'graph') renderProjectGraphTab();
+    if (tabId === 'backup') renderProjectBackupTab();
+    if (tabId === 'settings') renderProjectSettingsTab();
+}
+
+let isOverviewEditing = false;
+
+function toggleOverviewQuickEdit(enable) {
+    isOverviewEditing = enable;
+    renderProjectOverviewTab();
+}
+
+async function saveOverviewQuickEdit() {
+    if (!currentProjectData) return;
+    const vision = (document.getElementById('pwEditVision')?.value || '').trim();
+    const stack = (document.getElementById('pwEditStack')?.value || '').trim();
+    const status = (document.getElementById('pwEditStatus')?.value || '').trim();
+
+    let projectMd = currentProjectData.projectMd || `# ${currentProjectData.name}\n\n`;
+
+    // Atualiza ou insere Visão Geral
+    if (/##\s+Visão Geral/i.test(projectMd)) {
+        projectMd = projectMd.replace(/##\s+Visão Geral\s*\n+([^#]+)/i, `## Visão Geral\n${vision}\n\n`);
+    } else {
+        projectMd = projectMd.replace(/(#[^\n\r]+)/, `$1\n\n## Visão Geral\n${vision}\n`);
+    }
+
+    // Atualiza Stack
+    if (/-\s+\*\*Stack[^*]*\*\*:[^\n\r]*/i.test(projectMd)) {
+        projectMd = projectMd.replace(/-\s+\*\*Stack[^*]*\*\*:[^\n\r]*/i, `- **Stack**: ${stack}`);
+    } else if (/##\s+Informações Gerais/i.test(projectMd)) {
+        projectMd = projectMd.replace(/(##\s+Informações Gerais[^\n\r]*)/i, `$1\n- **Stack**: ${stack}`);
+    }
+
+    // Atualiza Status
+    if (/-\s+\*\*Status\*\*:[^\n\r]*/i.test(projectMd)) {
+        projectMd = projectMd.replace(/-\s+\*\*Status\*\*:[^\n\r]*/i, `- **Status**: ${status}`);
+    } else if (/##\s+Informações Gerais/i.test(projectMd)) {
+        projectMd = projectMd.replace(/(##\s+Informações Gerais[^\n\r]*)/i, `$1\n- **Status**: ${status}`);
+    }
+
+    try {
+        const res = await fetch('/api/file/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                path: `projects/${currentProjectData.name}/PROJECT.md`,
+                content: projectMd
+            })
+        });
+        if (!res.ok) throw new Error('Falha ao salvar no disco.');
+
+        currentProjectData.projectMd = projectMd;
+        if (stack) currentProjectData.stack = stack;
+        if (status) currentProjectData.status = status;
+
+        const badgeStack = document.getElementById('pwStackBadge');
+        if (badgeStack && stack) badgeStack.textContent = stack;
+        const badgeStatus = document.getElementById('pwStatusBadge');
+        if (badgeStatus && status) badgeStatus.textContent = status;
+
+        isOverviewEditing = false;
+        renderProjectOverviewTab();
+        showSecondBrainToast('✨ Visão Geral do Projeto atualizada com sucesso no disco!');
+    } catch (err) {
+        alert('Erro ao salvar: ' + err.message);
+    }
+}
+
+// Helpers para Estado Atual & Roadmap
+function parseCurrentStateSections(md) {
+    const raw = md || '';
+    
+    // Status
+    let status = '🟢 Ativo / Em Desenvolvimento';
+    const statusMatch = raw.match(/##\s+Status:\s*([^\n\r]+)/i);
+    if (statusMatch && statusMatch[1]) status = statusMatch[1].trim();
+
+    // Defined items
+    let definedItems = [];
+    const definedMatch = raw.match(/##\s+O que já foi definido\s*\n+([\s\S]*?)(?=##|$)/i);
+    if (definedMatch && definedMatch[1]) {
+        definedItems = definedMatch[1]
+            .split('\n')
+            .map(line => line.trim())
+            .filter(line => line.startsWith('-') || line.startsWith('*'))
+            .map(line => line.replace(/^[-*]\s*(\[[ xX]\]\s*)?/, '').trim())
+            .filter(Boolean);
+    }
+
+    // Next steps
+    let nextSteps = [];
+    const nextStepsMatch = raw.match(/##\s+Próximos Passos\s*\n+([\s\S]*?)(?=##|$)/i);
+    if (nextStepsMatch && nextStepsMatch[1]) {
+        nextSteps = nextStepsMatch[1]
+            .split('\n')
+            .map(line => line.trim())
+            .filter(line => /^\d+\.|\*|-/.test(line))
+            .map(line => line.replace(/^(\d+\.|[-*])\s*/, '').trim())
+            .filter(Boolean);
+    }
+
+    return { status, definedItems, nextSteps };
+}
+
+function buildCurrentStateMarkdown(projectName, status, definedItems, nextSteps) {
+    const today = new Date().toISOString().split('T')[0];
+    let md = `# ${projectName} — Estado Atual\n\n`;
+    md += `> Última atualização: ${today}\n\n`;
+    md += `## Status: ${status}\n\n`;
+
+    md += `## O que já foi definido\n`;
+    if (definedItems.length === 0) {
+        md += `- [x] Inicialização no AI Second Brain com governança ativa.\n`;
+    } else {
+        definedItems.forEach(item => {
+            md += `- [x] ${item}\n`;
+        });
+    }
+    md += `\n`;
+
+    md += `## Próximos Passos\n`;
+    if (nextSteps.length === 0) {
+        md += `1. Definir os próximos passos do projeto.\n`;
+    } else {
+        nextSteps.forEach((step, idx) => {
+            md += `${idx + 1}. ${step}\n`;
+        });
+    }
+    md += `\n`;
+
+    return md;
+}
+
+async function saveCurrentStateChanges(newMd, successMsg = '💾 Estado Atual atualizado no disco!') {
+    if (!currentProjectData) return;
+    try {
+        const res = await fetch('/api/file/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                path: `projects/${currentProjectData.name}/CURRENT_STATE.md`,
+                content: newMd
+            })
+        });
+        if (!res.ok) throw new Error('Falha ao salvar no disco.');
+
+        currentProjectData.currentStateMd = newMd;
+        renderProjectOverviewTab();
+        showSecondBrainToast(successMsg);
+    } catch (err) {
+        alert('Erro ao atualizar: ' + err.message);
+    }
+}
+
+async function updateCurrentStateStatus(newStatus) {
+    if (!currentProjectData) return;
+    const { definedItems, nextSteps } = parseCurrentStateSections(currentProjectData.currentStateMd);
+    const newMd = buildCurrentStateMarkdown(currentProjectData.name, newStatus, definedItems, nextSteps);
+    currentProjectData.status = newStatus;
+    const badgeStatus = document.getElementById('pwStatusBadge');
+    if (badgeStatus) badgeStatus.textContent = newStatus;
+    await saveCurrentStateChanges(newMd, `🟢 Status alterado para: ${newStatus}`);
+}
+
+async function addNewNextStep() {
+    const input = document.getElementById('pwNewStepInput');
+    const val = (input?.value || '').trim();
+    if (!val || !currentProjectData) return;
+
+    const { status, definedItems, nextSteps } = parseCurrentStateSections(currentProjectData.currentStateMd);
+    nextSteps.push(val);
+    const newMd = buildCurrentStateMarkdown(currentProjectData.name, status, definedItems, nextSteps);
+    await saveCurrentStateChanges(newMd, '🎯 Novo próximo passo adicionado ao Roadmap!');
+}
+
+async function completeNextStep(index) {
+    if (!currentProjectData) return;
+    const { status, definedItems, nextSteps } = parseCurrentStateSections(currentProjectData.currentStateMd);
+    if (index >= 0 && index < nextSteps.length) {
+        const item = nextSteps.splice(index, 1)[0];
+        definedItems.push(item);
+        const newMd = buildCurrentStateMarkdown(currentProjectData.name, status, definedItems, nextSteps);
+        await saveCurrentStateChanges(newMd, '🎉 Passo concluído e movido para "O que já foi definido"!');
+    }
+}
+
+async function deleteNextStep(index) {
+    if (!currentProjectData) return;
+    const { status, definedItems, nextSteps } = parseCurrentStateSections(currentProjectData.currentStateMd);
+    if (index >= 0 && index < nextSteps.length) {
+        nextSteps.splice(index, 1);
+        const newMd = buildCurrentStateMarkdown(currentProjectData.name, status, definedItems, nextSteps);
+        await saveCurrentStateChanges(newMd, '🗑️ Próximo passo removido.');
+    }
+}
+
+async function demoteDefinedItem(index) {
+    if (!currentProjectData) return;
+    const { status, definedItems, nextSteps } = parseCurrentStateSections(currentProjectData.currentStateMd);
+    if (index >= 0 && index < definedItems.length) {
+        const item = definedItems.splice(index, 1)[0];
+        nextSteps.push(item);
+        const newMd = buildCurrentStateMarkdown(currentProjectData.name, status, definedItems, nextSteps);
+        await saveCurrentStateChanges(newMd, '↩️ Item retornado para Próximos Passos.');
+    }
+}
+
+async function deleteDefinedItem(index) {
+    if (!currentProjectData) return;
+    const { status, definedItems, nextSteps } = parseCurrentStateSections(currentProjectData.currentStateMd);
+    if (index >= 0 && index < definedItems.length) {
+        definedItems.splice(index, 1);
+        const newMd = buildCurrentStateMarkdown(currentProjectData.name, status, definedItems, nextSteps);
+        await saveCurrentStateChanges(newMd, '🗑️ Item definido removido.');
+    }
+}
+
+async function addNewDefinedItem() {
+    const input = document.getElementById('pwNewDefinedInput');
+    const val = (input?.value || '').trim();
+    if (!val || !currentProjectData) return;
+
+    const { status, definedItems, nextSteps } = parseCurrentStateSections(currentProjectData.currentStateMd);
+    definedItems.push(val);
+    const newMd = buildCurrentStateMarkdown(currentProjectData.name, status, definedItems, nextSteps);
+    await saveCurrentStateChanges(newMd, '✓ Marco adicionado aos itens definidos!');
+}
+
+function showSecondBrainToast(message) {
+    let toast = document.getElementById('sbGlobalToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'sbGlobalToast';
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(17, 17, 27, 0.95);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            border-radius: 10px;
+            padding: 12px 18px;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(99, 102, 241, 0.25);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            transform: translateY(12px);
+            pointer-events: none;
+        `;
+        document.body.appendChild(toast);
+    }
+
+    toast.innerHTML = message;
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateY(0)';
+
+    clearTimeout(toast._timeout);
+    toast._timeout = setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(12px)';
+    }, 2800);
+}
+
+function renderProjectOverviewTab() {
+    const el = document.getElementById('pwOverviewContent');
+    if (!el || !currentProjectData) return;
+
+    const d = currentProjectData;
+
+    // Extrai a descrição da Visão Geral (removendo markdown cru repetitivo)
+    let visionText = 'Projeto conectado e governado pelo AI Second Brain.';
+    const overviewMatch = (d.projectMd || '').match(/##\s+Visão Geral\s*\n+([^#]+)/i);
+    if (overviewMatch && overviewMatch[1]) {
+        visionText = overviewMatch[1].trim();
+    }
+
+    // Extrai dados do CURRENT_STATE.md
+    const { status: currentStatusText, definedItems, nextSteps } = parseCurrentStateSections(d.currentStateMd);
+
+    const statusOptions = [
+        { label: '🟢 Planejamento', val: '🟢 Em Planejamento / Ativo' },
+        { label: '🚀 Desenvolvimento', val: '🚀 Em Desenvolvimento Ativo' },
+        { label: '🟡 Testes', val: '🟡 Em Testes / Homologação' },
+        { label: '✅ Concluído', val: '✅ Em Produção / Concluído' },
+        { label: '⏸️ Pausado', val: '⏸️ Pausado' }
+    ];
+
+    el.innerHTML = `
+        <div class="pw-metrics-row">
+            <div class="pw-metric-card">
+                <div class="pw-metric-icon">📊</div>
+                <div>
+                    <div class="pw-metric-val">${d.totalProjectFiles}</div>
+                    <div class="pw-metric-lbl">Arquivos no Projeto</div>
+                </div>
+            </div>
+            <div class="pw-metric-card">
+                <div class="pw-metric-icon">💾</div>
+                <div>
+                    <div class="pw-metric-val">${d.memorySizeKb} KB</div>
+                    <div class="pw-metric-lbl">Tamanho da Governança</div>
+                </div>
+            </div>
+            <div class="pw-metric-card">
+                <div class="pw-metric-icon">⚖️</div>
+                <div>
+                    <div class="pw-metric-val">${d.decisionsCount}</div>
+                    <div class="pw-metric-lbl">Decisões Registradas</div>
+                </div>
+            </div>
+            <div class="pw-metric-card">
+                <div class="pw-metric-icon">🧮</div>
+                <div>
+                    <div class="pw-metric-val">${d.sessionsCount}</div>
+                    <div class="pw-metric-lbl">Sessões de Memória</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pw-overview-grid">
+            <!-- Card 1: Visão Geral & Contratos -->
+            <div class="pw-card">
+                <div class="pw-card-header">
+                    <span class="pw-card-title">📄 Visão Geral & Contratos</span>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn-edit-glow" onclick="toggleOverviewQuickEdit(!isOverviewEditing)">
+                            ${isOverviewEditing ? '✕ Cancelar' : '⚡ Edição Rápida'}
+                        </button>
+                        <button class="btn-edit-glow" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15);" onclick="editProjectMd()">
+                            📝 Editor Markdown
+                        </button>
+                    </div>
+                </div>
+
+                ${isOverviewEditing ? `
+                    <!-- Modo de Edição Rápida da Visão Geral -->
+                    <div class="pw-edit-form-wrap">
+                        <div class="pw-form-group">
+                            <label class="pw-form-label">Objetivo / Missão do Projeto</label>
+                            <textarea id="pwEditVision" class="pw-form-textarea" rows="4" placeholder="Descreva os objetivos principais deste projeto...">${visionText}</textarea>
+                        </div>
+
+                        <div class="pw-form-row">
+                            <div class="pw-form-group">
+                                <label class="pw-form-label">Stack Tecnológica</label>
+                                <input id="pwEditStack" class="pw-form-input" placeholder="Ex: Node.js, React, Python..." value="${d.stack || ''}">
+                            </div>
+                            <div class="pw-form-group">
+                                <label class="pw-form-label">Status Operacional</label>
+                                <select id="pwEditStatus" class="pw-form-select">
+                                    ${statusOptions.map(opt => `
+                                        <option value="${opt.val}" ${currentStatusText.includes(opt.label.split(' ')[1]) ? 'selected' : ''}>${opt.val}</option>
+                                    `).join('')}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="pw-form-actions">
+                            <button class="btn btn-primary" onclick="saveOverviewQuickEdit()">
+                                💾 Salvar no PROJECT.md
+                            </button>
+                            <button class="btn btn-secondary" onclick="toggleOverviewQuickEdit(false)">
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                ` : `
+                    <!-- Box da Visão Geral / Missão do Sistema -->
+                    <div class="pw-vision-box">
+                        <div class="pw-vision-title">Objetivo do Projeto</div>
+                        <div class="pw-vision-text">${visionText}</div>
+                    </div>
+
+                    <!-- Grid de Especificações Rápidas -->
+                    <div class="pw-specs-grid">
+                        <div class="pw-spec-item">
+                            <span class="pw-spec-label">Stack Tecnológica</span>
+                            <span class="pw-spec-value" style="color:#34d399;">${d.stack}</span>
+                        </div>
+                        <div class="pw-spec-item">
+                            <span class="pw-spec-label">Tipo de Integração</span>
+                            <span class="pw-spec-value" style="color:#818cf8;">${d.isJunction ? 'Brownfield (Externo)' : 'Greenfield (Nativo)'}</span>
+                        </div>
+                        <div class="pw-spec-item">
+                            <span class="pw-spec-label">Status Operacional</span>
+                            <span class="pw-spec-value" style="color:#38bdf8;">${currentStatusText}</span>
+                        </div>
+                        <div class="pw-spec-item">
+                            <span class="pw-spec-label">Repositório Físico</span>
+                            <span class="pw-spec-value" style="font-family:var(--font-mono); font-size:11px; color:#cbd5e1;" title="${d.realPath}">
+                                ${d.realPath.length > 25 ? '...' + d.realPath.slice(-22) : d.realPath}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Contratos e Documentos de Governança Dinâmicos -->
+                    <div style="margin-top: 14px;">
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 6px;">
+                            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-tertiary); letter-spacing: 0.05em;">
+                                Contratos de Governança (${(d.governanceFiles || []).length})
+                            </span>
+                            <span style="font-size: 10px; color: var(--text-tertiary);">Verificados no disco</span>
+                        </div>
+                        <div class="pw-gov-artifacts">
+                            ${(d.governanceFiles || []).length === 0 ? `
+                                <div style="font-size: 12px; color: var(--text-tertiary); font-style: italic; padding: 6px 0;">
+                                    Nenhum contrato de governança detectado na pasta deste projeto.
+                                </div>
+                            ` : (d.governanceFiles || []).map(file => `
+                                <div class="pw-gov-chip">
+                                    <div class="pw-gov-chip-left">
+                                        <span class="pw-gov-chip-title">${file.icon} ${file.name}</span>
+                                        <span class="pw-gov-chip-sub">(${file.title})</span>
+                                        <span class="pw-gov-chip-badge">${file.sizeKb} KB</span>
+                                    </div>
+                                    <div class="pw-gov-chip-actions">
+                                        <button type="button" class="btn-gov" onclick="navigateTo('${file.path}')">👁️ Ver</button>
+                                        <button type="button" class="btn-gov primary" onclick="openFileEditor('${file.path}', null, () => openProjectWorkspace('${d.name}', 'overview'))">✏️ Editar</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        ${(d.missingContracts || []).length > 0 ? `
+                            <div style="margin-top: 12px; display:flex; flex-direction:column; gap:6px;">
+                                <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-tertiary); letter-spacing: 0.05em;">
+                                    Contratos Recomendados Disponíveis
+                                </span>
+                                ${d.missingContracts.map(mc => `
+                                    <div class="pw-gov-chip-missing">
+                                        <div class="pw-gov-chip-left">
+                                            <span class="pw-gov-chip-title" style="color:var(--text-secondary);">${mc.icon} ${mc.name}</span>
+                                            <span class="pw-gov-chip-sub">(${mc.title})</span>
+                                            <span class="pw-gov-chip-badge" style="color:#94a3b8;">Não criado</span>
+                                        </div>
+                                        <div class="pw-gov-chip-actions">
+                                            <button type="button" class="btn-gov create" onclick="initializeContract('${mc.name}')">
+                                                + Inicializar ${mc.name}
+                                            </button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `}
+            </div>
+
+            <!-- Card 2: Estado Atual & Roadmap Ativo -->
+            <div class="pw-card">
+                <div class="pw-card-header">
+                    <span class="pw-card-title">💾 Estado Atual & Roadmap Ativo</span>
+                    <button class="btn-edit-glow" onclick="editCurrentStateMd()">
+                        📝 Editor Markdown Completo
+                    </button>
+                </div>
+
+                <!-- Status Atual com seletor interativo -->
+                <div style="background: rgba(56, 189, 248, 0.06); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <div class="status-indicator green" style="width:10px; height:10px;"></div>
+                        <div style="font-size:10px; text-transform:uppercase; color:var(--text-tertiary); font-weight:700;">Status do Ciclo: <span style="color:#e0f2fe; font-size:12px;">${currentStatusText}</span></div>
+                    </div>
+                    <!-- Seletor Rápido de Status -->
+                    <div class="pw-status-pills">
+                        ${statusOptions.map(opt => `
+                            <button type="button" class="pw-status-pill ${currentStatusText.includes(opt.label.split(' ')[1]) ? 'active' : ''}" onclick="updateCurrentStateStatus('${opt.val}')">
+                                ${opt.label}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- O que já foi definido (Checklist Interativo) -->
+                <div>
+                    <div style="display:flex; align-items:center; justify-content:space-between;">
+                        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--accent-tertiary); letter-spacing: 0.05em;">
+                            ✓ O que já foi definido (${definedItems.length})
+                        </span>
+                        <span style="font-size:10px; color:var(--text-tertiary);">Clique no ✓ para retornar ao roadmap</span>
+                    </div>
+                    <div class="pw-roadmap-list">
+                        ${definedItems.map((item, idx) => `
+                            <div class="pw-roadmap-item">
+                                <button type="button" class="pw-roadmap-check interactive" title="Clique para mover de volta para Próximos Passos" onclick="demoteDefinedItem(${idx})">✓</button>
+                                <span style="color:#e2e8f0; flex:1;">${item}</span>
+                                <button type="button" class="pw-item-del-btn" title="Excluir este item" onclick="deleteDefinedItem(${idx})">✕</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="pw-add-row" style="margin-top: 8px;">
+                        <input type="text" id="pwNewDefinedInput" class="pw-inline-input" placeholder="+ Adicionar marco concluído..." onkeydown="if(event.key==='Enter') addNewDefinedItem()">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="addNewDefinedItem()">Adicionar</button>
+                    </div>
+                </div>
+
+                <!-- Próximos Passos (Roadmap Interativo) -->
+                <div style="margin-top: 18px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between;">
+                        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #f59e0b; letter-spacing: 0.05em;">
+                            🎯 Próximos Passos (${nextSteps.length})
+                        </span>
+                        <span style="font-size:10px; color:var(--text-tertiary);">Ações imediatas</span>
+                    </div>
+                    <div class="pw-roadmap-list">
+                        ${nextSteps.length === 0 ? `
+                            <div style="font-size:12px; color:var(--text-tertiary); font-style:italic; padding:8px 0;">Nenhum próximo passo pendente. Parabéns! Adicione novos abaixo.</div>
+                        ` : nextSteps.map((step, idx) => `
+                            <div class="pw-roadmap-item" style="border-left: 2px solid #f59e0b;">
+                                <span class="pw-roadmap-step">${idx + 1}</span>
+                                <span style="color:#f8fafc; font-weight: 500; flex:1;">${step}</span>
+                                <button type="button" class="btn-step-done" title="Concluir passo (move para 'O que já foi definido')" onclick="completeNextStep(${idx})">✓ Concluir</button>
+                                <button type="button" class="pw-item-del-btn" title="Excluir passo" onclick="deleteNextStep(${idx})">✕</button>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- Input interativo para adicionar novo passo -->
+                    <div class="pw-add-row">
+                        <input type="text" id="pwNewStepInput" class="pw-inline-input" placeholder="Digite uma nova meta / próximo passo e pressione Enter..." onkeydown="if(event.key==='Enter') addNewNextStep()">
+                        <button type="button" class="btn btn-primary btn-sm" onclick="addNewNextStep()">+ Adicionar Passo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function editProjectMd() {
+    if (!currentProjectData) return;
+    openFileEditor(`projects/${currentProjectData.name}/PROJECT.md`, currentProjectData.projectMd, onProjectMdSaved);
+}
+
+function editCurrentStateMd() {
+    if (!currentProjectData) return;
+    openFileEditor(`projects/${currentProjectData.name}/CURRENT_STATE.md`, currentProjectData.currentStateMd, onCurrentStateSaved);
+}
+
+function editArchMd() {
+    if (!currentProjectData) return;
+    openFileEditor(`projects/${currentProjectData.name}/ARCHITECTURE.md`, currentProjectData.archMd, onArchMdSaved);
+}
+
+function onProjectMdSaved(newContent) {
+    if (currentProjectData) {
+        currentProjectData.projectMd = newContent;
+        // Atualiza stack e status se alterados
+        const stackMatch = newContent.match(/-\s+\*\*Stack[^*]*\*\*:\s*([^\r\n]+)/i);
+        if (stackMatch) currentProjectData.stack = stackMatch[1].trim();
+        const statusMatch = newContent.match(/-\s+\*\*Status\*\*:\s*([^\r\n]+)/i);
+        if (statusMatch) currentProjectData.status = statusMatch[1].trim();
+
+        const badgeStack = document.getElementById('pwStackBadge');
+        if (badgeStack) badgeStack.textContent = currentProjectData.stack;
+        const badgeStatus = document.getElementById('pwStatusBadge');
+        if (badgeStatus) badgeStatus.textContent = currentProjectData.status;
+
+        renderProjectOverviewTab();
+    }
+}
+
+function onCurrentStateSaved(newContent) {
+    if (currentProjectData) {
+        currentProjectData.currentStateMd = newContent;
+        renderProjectOverviewTab();
+    }
+}
+
+function onArchMdSaved(newContent) {
+    if (currentProjectData) {
+        currentProjectData.archMd = newContent;
+        currentProjectData.hasArchitecture = true;
+        renderProjectOverviewTab();
+    }
+}
+
+async function initializeContract(contractName) {
+    if (!currentProjectData) return;
+    const safeName = currentProjectData.name;
+    const today = new Date().toISOString().split('T')[0];
+    let template = '';
+
+    if (contractName === 'ARCHITECTURE.md') {
+        template = `# ${safeName} — Arquitetura da Solução\n\n> Visão arquitetural, padrões e design do sistema.\n> Inicializado em: ${today}\n\n## 1. Visão Geral da Arquitetura\nDescreva a estrutura, camadas e componentes principais da solução.\n\n## 2. Stack Tecnológica\n- **Linguagem / Framework**: ${currentProjectData.stack || 'Não especificada'}\n\n## 3. Padrões & Princípios Adotados\n- Código idiomático e desacoplado.\n- Se utilizar IA: aplicar o AI Decision Gate (\`.agents/rules/01-ai-decision.md\`).\n\n## 4. Estrutura de Diretórios\n\`\`\`\nsrc/\n  api/\n  services/\n\`\`\`\n`;
+    } else {
+        template = `# ${safeName} — ${contractName.replace(/\.md$/i, '')}\n\n> Documento de governança criado em: ${today}\n\n## Conteúdo\n`;
+    }
+
+    try {
+        const res = await fetch('/api/file/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                path: `projects/${safeName}/${contractName}`,
+                content: template
+            })
+        });
+        if (!res.ok) throw new Error('Falha ao criar o arquivo no disco.');
+
+        showSecondBrainToast(`✨ ${contractName} inicializado com sucesso no disco!`);
+        // Recarrega os dados reais atualizados do projeto
+        await openProjectWorkspace(safeName, 'overview');
+        // Abre imediatamente o editor para permitir personalização
+        openFileEditor(`projects/${safeName}/${contractName}`, template, () => openProjectWorkspace(safeName, 'overview'));
+    } catch (err) {
+        alert('Erro ao criar contrato: ' + err.message);
+    }
+}
+
+function renderProjectMemoryTab() {
+    const el = document.getElementById('pwMemoryContent');
+    if (!el || !currentProjectData) return;
+
+    const d = currentProjectData;
+
+    el.innerHTML = `
+        <div class="pw-metrics-row">
+            <div class="pw-metric-card">
+                <div class="pw-metric-icon">🧮</div>
+                <div>
+                    <div class="pw-metric-val">${d.memorySizeKb} KB</div>
+                    <div class="pw-metric-lbl">Memória & Governança Total</div>
+                </div>
+            </div>
+            <div class="pw-metric-card">
+                <div class="pw-metric-icon">⏱️</div>
+                <div>
+                    <div class="pw-metric-val">${d.sessionsCount}</div>
+                    <div class="pw-metric-lbl">Sessões Ativas em MEMORY/</div>
+                </div>
+            </div>
+            <div class="pw-metric-card">
+                <div class="pw-metric-icon">📦</div>
+                <div>
+                    <div class="pw-metric-val">${d.archivedCount}</div>
+                    <div class="pw-metric-lbl">Sessões Arquivadas (.archive)</div>
+                </div>
+            </div>
+            <div class="pw-metric-card">
+                <div class="pw-metric-icon">⚖️</div>
+                <div>
+                    <div class="pw-metric-val">${d.decisionsCount}</div>
+                    <div class="pw-metric-lbl">Decisões Arquiteturais</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pw-card" style="margin-bottom: 20px;">
+            <div class="pw-card-header">
+                <span class="pw-card-title">🧹 Otimização & Limpeza de Memória</span>
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 12px; font-size: 13px;">
+                À medida que você trabalha com as IAs (LLMs), o histórico de sessões anteriores cresce. Para economizar tokens de contexto sem perder nada, você pode arquivar sessões antigas com 1 clique.
+            </p>
+            <div class="pw-action-box">
+                <div class="pw-action-info">
+                    <h4>Arquivar Sessões Antigas com Segurança</h4>
+                    <p>Move as sessões de <code>MEMORY/sessions/</code> para <code>MEMORY/.archive/</code> com timestamp e registra no <code>CURRENT_STATE.md</code>.</p>
+                </div>
+                <button class="btn btn-secondary" onclick="clearProjectMemory()" id="btnClearMemoryBtn" ${d.sessionsCount === 0 ? 'disabled' : ''}>
+                    🧹 Arquivar ${d.sessionsCount} Sessões
+                </button>
+            </div>
+        </div>
+
+        <div class="pw-overview-grid">
+            <div class="pw-card">
+                <div class="pw-card-header">
+                    <span class="pw-card-title">🕒 Histórico de Sessões Recentes</span>
+                </div>
+                ${d.sessions && d.sessions.length > 0 ? `
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        ${d.sessions.map(s => `
+                            <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:rgba(255,255,255,0.03); border-radius:6px; font-size:12px;">
+                                <span style="font-family:var(--font-mono); color:#c4b5fd;">📄 ${s.name}</span>
+                                <span style="color:var(--text-tertiary);">${(s.size / 1024).toFixed(1)} KB</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : `
+                    <div style="color:var(--text-tertiary); font-size:13px; padding:12px 0;">
+                        Nenhuma sessão de trabalho registrada ainda em <code>MEMORY/sessions/</code>.
+                    </div>
+                `}
+            </div>
+
+            <div class="pw-card">
+                <div class="pw-card-header">
+                    <span class="pw-card-title">⚖️ Decisões Registradas (DECISIONS/)</span>
+                </div>
+                ${d.decisions && d.decisions.length > 0 ? `
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        ${d.decisions.map(dec => `
+                            <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:rgba(255,255,255,0.03); border-radius:6px; font-size:12px;">
+                                <span style="font-family:var(--font-mono); color:#34d399;">⚖️ ${dec.name}</span>
+                                <span style="color:var(--text-tertiary);">${(dec.size / 1024).toFixed(1)} KB</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : `
+                    <div style="color:var(--text-tertiary); font-size:13px; padding:12px 0;">
+                        Nenhuma decisão registrada ainda em <code>DECISIONS/</code>. Use o template de Decisões para adicionar.
+                    </div>
+                `}
+            </div>
+        </div>
+    `;
+}
+
+function renderProjectGraphTab() {
+    const canvas = document.getElementById('projectGraphCanvas');
+    const tooltip = document.getElementById('projectGraphTooltip');
+    if (!canvas || !currentProjectData) return;
+
+    if (!projectGraph) {
+        projectGraph = new BrainGraph(canvas, tooltip);
+
+        const btnZoomIn = document.getElementById('btnPwZoomIn');
+        const btnZoomOut = document.getElementById('btnPwZoomOut');
+        const btnReset = document.getElementById('btnPwResetView');
+
+        if (btnZoomIn) btnZoomIn.onclick = () => projectGraph && projectGraph.zoomIn();
+        if (btnZoomOut) btnZoomOut.onclick = () => projectGraph && projectGraph.zoomOut();
+        if (btnReset) btnReset.onclick = () => projectGraph && projectGraph.resetView();
+
+        projectGraph.onCameraChange = (state) => {
+            const zEl = document.getElementById('pwHudZoomPill');
+            if (zEl) zEl.textContent = `🔍 ${state.zoomPercent}%`;
+        };
+
+        projectGraph.onNodeDblClick = (node) => {
+            if (node && node.path) navigateTo(node.path);
+        };
+    }
+
+    // Monta a constelação radial do projeto
+    const projectName = currentProjectData.name;
+    const allFiles = (window.VAULT && window.VAULT.data && window.VAULT.data.files) || [];
+
+    // Nós locais do projeto
+    const localFiles = allFiles.filter(f => f.path.startsWith(`projects/${projectName}/`));
+
+    // Regras e conhecimentos aplicáveis do framework
+    const frameworkNodes = allFiles.filter(f => {
+        return f.category === 'rules' || 
+               f.category === 'skills' || 
+               (f.category === 'knowledge' && (f.path.includes('aijev') || f.path.includes('model')));
+    });
+
+    const nodes = [
+        {
+            id: `proj_${projectName}`,
+            label: projectName,
+            group: 'projects',
+            size: 32,
+            icon: '🚀',
+            path: `projects/${projectName}/PROJECT.md`
+        }
+    ];
+
+    const edges = [];
+
+    // Adiciona arquivos locais
+    localFiles.forEach(f => {
+        nodes.push({
+            id: f.id,
+            label: f.name || f.title,
+            group: 'projects',
+            size: 14,
+            icon: f.icon || '📄',
+            path: f.path
+        });
+        edges.push({ from: `proj_${projectName}`, to: f.id });
+    });
+
+    // Adiciona satélites de governança do framework
+    frameworkNodes.slice(0, 10).forEach(f => {
+        nodes.push({
+            id: `fw_${f.id}`,
+            label: f.title,
+            group: f.category,
+            size: 11,
+            icon: f.icon || '⚙️',
+            path: f.path
+        });
+        edges.push({ from: `proj_${projectName}`, to: `fw_${f.id}` });
+    });
+
+    const colors = (window.VAULT && window.VAULT.data && window.VAULT.data.groupColors) || {};
+    projectGraph.loadData(nodes, edges, colors);
+    projectGraph.start();
+
+    const countEl = document.getElementById('pwGraphNodeCount');
+    if (countEl) countEl.textContent = nodes.length;
+
+    setTimeout(() => {
+        if (projectGraph) {
+            projectGraph._setupCanvas();
+            projectGraph.resetView();
+        }
+    }, 150);
+}
+
+async function renderProjectBackupTab() {
+    const el = document.getElementById('pwBackupContent');
+    if (!el || !currentProjectData) return;
+
+    el.innerHTML = `
+        <div class="pw-card" style="margin-bottom: 20px;">
+            <div class="pw-card-header">
+                <span class="pw-card-title">📦 Gerar & Exportar Dossiê de Governança</span>
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 13px;">
+                Exporte todo o conhecimento, decisões, arquitetura e estado atual do projeto em formatos padronizados para backup ou compartilhamento com outras IAs.
+            </p>
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <button class="btn btn-primary" onclick="downloadProjectBackup('markdown')">
+                    📥 Baixar Dossiê Consolidado (.md)
+                </button>
+                <button class="btn btn-secondary" onclick="downloadProjectBackup('json')">
+                    📦 Baixar Pacote Completo (.json)
+                </button>
+            </div>
+        </div>
+
+        <div class="pw-card">
+            <div class="pw-card-header">
+                <span class="pw-card-title">📄 Pré-visualização do Dossiê Consolidado</span>
+                <span style="font-size:12px; color:var(--text-tertiary);" id="pwBackupStatus">Gerando dados...</span>
+            </div>
+            <div id="pwBackupPreview" style="max-height: 400px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 16px; border-radius: 8px; font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); white-space: pre-wrap;">
+                Carregando prévia do dossiê...
+            </div>
+        </div>
+    `;
+
+    try {
+        const res = await fetch(`/api/projects/${encodeURIComponent(currentProjectData.name)}/backup`, { method: 'POST' });
+        const backupData = await res.json();
+        const previewEl = document.getElementById('pwBackupPreview');
+        const statusEl = document.getElementById('pwBackupStatus');
+
+        if (statusEl) statusEl.textContent = `${Object.keys(backupData.files || {}).length} arquivos de governança empacotados`;
+        if (previewEl) {
+            previewEl.textContent = backupData.consolidatedMarkdown || JSON.stringify(backupData, null, 2);
+        }
+    } catch (err) {
+        const previewEl = document.getElementById('pwBackupPreview');
+        if (previewEl) previewEl.textContent = 'Erro ao gerar pré-visualização: ' + err.message;
+    }
+}
+
+function renderProjectSettingsTab() {
+    const el = document.getElementById('pwSettingsContent');
+    if (!el || !currentProjectData) return;
+
+    const d = currentProjectData;
+
+    el.innerHTML = `
+        <div class="pw-card" style="margin-bottom: 20px;">
+            <div class="pw-card-header">
+                <span class="pw-card-title">⚙️ Propriedades do Repositório</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:12px; font-size:13px;">
+                <div>
+                    <span style="color:var(--text-tertiary);">Nome do Projeto:</span>
+                    <strong style="color:#fff; margin-left:8px;">${d.name}</strong>
+                </div>
+                <div>
+                    <span style="color:var(--text-tertiary);">Tipo de Integração:</span>
+                    <span style="margin-left:8px;" class="pw-badge">${d.isJunction ? 'Brownfield 🔗 (Junção NTFS)' : 'Greenfield 🚀 (Pasta Nativa)'}</span>
+                </div>
+                <div>
+                    <span style="color:var(--text-tertiary);">Caminho Original:</span>
+                    <code style="margin-left:8px; color:#c4b5fd;">${d.realPath}</code>
+                </div>
+                <div>
+                    <span style="color:var(--text-tertiary);">Stack Declarada:</span>
+                    <span style="margin-left:8px; color:#34d399;">${d.stack}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="pw-card pw-danger-card">
+            <div class="pw-card-header">
+                <span class="pw-card-title">⚠️ Zona de Gerenciamento & Desvinculação</span>
+            </div>
+            <p style="color: #fca5a5; font-size: 13px; margin-bottom: 16px;">
+                ${d.isJunction 
+                    ? 'Este projeto está conectado via Junção NTFS. Desvincular irá apenas desconectar o projeto do AI Second Brain. <strong>Nenhum arquivo ou linha de código da sua pasta original será apagado.</strong>' 
+                    : 'Este projeto foi criado na pasta local do Segundo Cérebro. Desvincular irá movê-lo com segurança para a lixeira (.trash/).'}
+            </p>
+            <div class="pw-action-box" style="border-color: rgba(239, 68, 68, 0.3);">
+                <div class="pw-action-info">
+                    <h4 style="color:#fca5a5;">Desvincular '${d.name}' do Segundo Cérebro</h4>
+                    <p style="color:var(--text-secondary);">Remove a junção e o monitoramento em tempo real. Seus arquivos em <code>${d.realPath}</code> permanecem intactos.</p>
+                </div>
+                <button class="btn-danger-outline" onclick="unlinkProject()">
+                    🔗 Desfazer Vínculo do Projeto
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+// ── Project Action Handlers ───────────────────────
+function copyProjectPath() {
+    if (!currentProjectData || !currentProjectData.realPath) return;
+    navigator.clipboard.writeText(currentProjectData.realPath).then(() => {
+        const btn = document.getElementById('btnPwCopyPath');
+        if (btn) {
+            const original = btn.textContent;
+            btn.textContent = '✓ Copiado!';
+            setTimeout(() => btn.textContent = original, 2000);
+        }
+    }).catch(() => {
+        alert('Caminho: ' + currentProjectData.realPath);
+    });
+}
+
+async function clearProjectMemory() {
+    if (!currentProject) return;
+    const conf = confirm(`Deseja arquivar as sessões de memória do projeto '${currentProject}'?\n\nTodas as sessões serão salvas com segurança em MEMORY/.archive/ com carimbo de data/hora.`);
+    if (!conf) return;
+
+    const btn = document.getElementById('btnClearMemoryBtn');
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Arquivando...';
+    }
+
+    try {
+        const res = await fetch(`/api/projects/${encodeURIComponent(currentProject)}/clear-memory`, { method: 'POST' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erro ao arquivar sessões.');
+
+        alert(`✓ Sucesso! ${data.movedCount} sessões foram arquivadas em .archive/.`);
+        // Recarrega detalhes do projeto
+        await openProjectWorkspace(currentProject, 'memory');
+    } catch (err) {
+        alert('Erro ao arquivar memória: ' + err.message);
+        if (btn) btn.disabled = false;
+    }
+}
+
+async function downloadProjectBackup(type = 'markdown') {
+    if (!currentProject) return;
+    try {
+        const res = await fetch(`/api/projects/${encodeURIComponent(currentProject)}/backup`, { method: 'POST' });
+        const data = await res.json();
+
+        let blob, filename;
+        if (type === 'markdown') {
+            blob = new Blob([data.consolidatedMarkdown || ''], { type: 'text/markdown;charset=utf-8' });
+            filename = `dossie_governanca_${currentProject}.md`;
+        } else {
+            blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json;charset=utf-8' });
+            filename = `backup_governanca_${currentProject}.json`;
+        }
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    } catch (err) {
+        alert('Erro ao baixar backup: ' + err.message);
+    }
+}
+
+async function unlinkProject() {
+    if (!currentProject) return;
+    const confirmName = prompt(`Para confirmar a desvinculação, digite o nome do projeto '${currentProject}':`);
+    if (confirmName !== currentProject) {
+        if (confirmName !== null) alert('Nome digitado incorreto. Operação cancelada.');
+        return;
+    }
+
+    try {
+        const res = await fetch(`/api/projects/${encodeURIComponent(currentProject)}/unlink`, { method: 'POST' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erro ao desvincular projeto.');
+
+        alert(data.message || 'Projeto desvinculado com sucesso.');
+        showDashboard();
+        if (window.VAULT) {
+            await window.VAULT.refresh();
+            refreshApp();
+        }
+    } catch (err) {
+        alert('Erro ao desvincular: ' + err.message);
+    }
+}
+
+// ═══════════════════════════════════════════════════
+// LIVE MARKDOWN EDITOR CONTROLLER
+// ═══════════════════════════════════════════════════
+let activeEditingPath = null;
+let onEditorSavedCallback = null;
+let currentEditorTab = 'write';
+
+async function openFileEditor(filePath, initialContent = null, onSaved = null) {
+    activeEditingPath = filePath;
+    onEditorSavedCallback = onSaved;
+    currentEditorTab = 'write';
+
+    const modal = document.getElementById('fileEditorModal');
+    const pathEl = document.getElementById('editorFilePath');
+    const titleEl = document.getElementById('editorModalTitle');
+    const textarea = document.getElementById('editorTextarea');
+    const statusText = document.getElementById('editorStatusText');
+    const btnSave = document.getElementById('btnSaveFile');
+
+    if (!modal || !textarea) return;
+
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    const filename = filePath.split('/').pop();
+    if (titleEl) titleEl.textContent = `Editando: ${filename}`;
+    if (pathEl) pathEl.textContent = filePath;
+    if (statusText) statusText.innerHTML = '<span class="status-dot snapshot"></span> Carregando conteúdo...';
+    if (btnSave) {
+        btnSave.disabled = false;
+        btnSave.innerHTML = '<span>💾 Salvar no Disco</span>';
+    }
+
+    switchEditorTab('write');
+
+    if (initialContent !== null && initialContent !== undefined) {
+        textarea.value = initialContent;
+        if (statusText) statusText.innerHTML = '<span class="status-dot" style="background:#10b981"></span> Pronto para editar';
+        setTimeout(() => textarea.focus(), 100);
+    } else {
+        try {
+            const res = await fetch(`/api/file?path=${encodeURIComponent(filePath)}`);
+            if (!res.ok) throw new Error('Não foi possível ler o arquivo.');
+            const text = await res.text();
+            textarea.value = text;
+            if (statusText) statusText.innerHTML = '<span class="status-dot" style="background:#10b981"></span> Pronto para editar';
+            setTimeout(() => textarea.focus(), 100);
+        } catch (err) {
+            textarea.value = `# ${filename}\n\n`;
+            if (statusText) statusText.innerHTML = `<span class="status-dot" style="background:#f59e0b"></span> Arquivo novo ou vazio. Pronto para criar.`;
+        }
+    }
+
+    // Configura atalhos no textarea: Ctrl+S para salvar e Tab para indentação
+    textarea.onkeydown = (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault();
+            saveFileContent();
+            return;
+        }
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            textarea.value = textarea.value.substring(0, start) + '  ' + textarea.value.substring(end);
+            textarea.selectionStart = textarea.selectionEnd = start + 2;
+        }
+    };
+}
+
+function switchEditorTab(tab) {
+    currentEditorTab = tab;
+    const btnWrite = document.getElementById('btnEditorTabWrite');
+    const btnPrev = document.getElementById('btnEditorTabPreview');
+    const textarea = document.getElementById('editorTextarea');
+    const preview = document.getElementById('editorPreviewPane');
+    const toolbar = document.getElementById('editorToolbar');
+
+    if (btnWrite) btnWrite.classList.toggle('active', tab === 'write');
+    if (btnPrev) btnPrev.classList.toggle('active', tab === 'preview');
+
+    if (tab === 'write') {
+        if (textarea) textarea.style.display = 'block';
+        if (preview) preview.style.display = 'none';
+        if (toolbar) toolbar.style.display = 'flex';
+        textarea?.focus();
+    } else {
+        if (textarea) textarea.style.display = 'none';
+        if (preview) {
+            preview.style.display = 'block';
+            const val = textarea ? textarea.value : '';
+            preview.innerHTML = window.VAULT && window.VAULT.renderMarkdown 
+                ? window.VAULT.renderMarkdown(val, activeEditingPath) 
+                : `<pre>${val}</pre>`;
+        }
+        if (toolbar) toolbar.style.display = 'none';
+    }
+}
+
+function insertEditorSyntax(type) {
+    const textarea = document.getElementById('editorTextarea');
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const sel = textarea.value.substring(start, end);
+    let insert = '';
+    let cursorOffset = 0;
+
+    switch (type) {
+        case 'h2':
+            insert = `\n## ${sel || 'Título'}\n`;
+            cursorOffset = insert.length;
+            break;
+        case 'h3':
+            insert = `\n### ${sel || 'Subtítulo'}\n`;
+            cursorOffset = insert.length;
+            break;
+        case 'bold':
+            insert = `**${sel || 'texto em negrito'}**`;
+            cursorOffset = insert.length;
+            break;
+        case 'italic':
+            insert = `*${sel || 'texto em itálico'}*`;
+            cursorOffset = insert.length;
+            break;
+        case 'bullet':
+            insert = `\n- ${sel || 'Item da lista'}`;
+            cursorOffset = insert.length;
+            break;
+        case 'task':
+            insert = `\n- [ ] ${sel || 'Nova tarefa'}`;
+            cursorOffset = insert.length;
+            break;
+        case 'code':
+            insert = sel ? `\`${sel}\`` : `\n\`\`\`javascript\n// seu código aqui\n\`\`\`\n`;
+            cursorOffset = insert.length;
+            break;
+        case 'quote':
+            insert = `\n> ${sel || 'Citação ou nota de governança'}\n`;
+            cursorOffset = insert.length;
+            break;
+    }
+
+    textarea.value = textarea.value.substring(0, start) + insert + textarea.value.substring(end);
+    textarea.selectionStart = textarea.selectionEnd = start + cursorOffset;
+    textarea.focus();
+}
+
+async function saveFileContent() {
+    if (!activeEditingPath) return;
+
+    const textarea = document.getElementById('editorTextarea');
+    const btnSave = document.getElementById('btnSaveFile');
+    const statusText = document.getElementById('editorStatusText');
+    const content = textarea ? textarea.value : '';
+
+    if (btnSave) {
+        btnSave.disabled = true;
+        btnSave.innerHTML = '<span class="status-dot snapshot"></span> Salvando no disco...';
+    }
+
+    try {
+        const res = await fetch('/api/file/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                path: activeEditingPath,
+                content: content
+            })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erro ao salvar arquivo.');
+
+        if (statusText) {
+            statusText.innerHTML = `<span class="status-dot" style="background:#10b981"></span> ✓ Salvo no disco às ${new Date().toLocaleTimeString('pt-BR')}`;
+        }
+
+        if (btnSave) {
+            btnSave.innerHTML = '<span>✓ Salvo!</span>';
+            setTimeout(() => {
+                btnSave.disabled = false;
+                btnSave.innerHTML = '<span>💾 Salvar no Disco</span>';
+            }, 1200);
+        }
+
+        // Executa callback se houver
+        if (typeof onEditorSavedCallback === 'function') {
+            onEditorSavedCallback(content);
+        }
+
+        // Notifica o Vault para atualizar arquivos locais se necessário
+        if (window.VAULT && window.VAULT.data && window.VAULT.data.files) {
+            const targetFile = window.VAULT.data.files.find(f => f.path === activeEditingPath);
+            if (targetFile) targetFile.content = content;
+        }
+
+    } catch (err) {
+        alert('Erro ao salvar no disco: ' + err.message);
+        if (btnSave) {
+            btnSave.disabled = false;
+            btnSave.innerHTML = '<span>💾 Salvar no Disco</span>';
+        }
+        if (statusText) {
+            statusText.innerHTML = `<span class="status-dot" style="background:#ef4444"></span> Erro ao salvar: ${err.message}`;
+        }
+    }
+}
+
+function closeFileEditor() {
+    const modal = document.getElementById('fileEditorModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+function handleEditorBackdropClick(e) {
+    if (e.target && e.target.id === 'fileEditorModal') {
+        closeFileEditor();
+    }
+}
+
+
 

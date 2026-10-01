@@ -1,5 +1,5 @@
 window.VAULT_SNAPSHOT = {
-  "timestamp": 1790806916142,
+  "timestamp": 1790824169839,
   "files": [
     {
       "id": "_agents_rules_00-core_md",
@@ -69,7 +69,7 @@ window.VAULT_SNAPSHOT = {
       "category": "skills",
       "icon": "🚦",
       "size": 2416,
-      "mtime": 1790519806078.2473,
+      "mtime": 1790821108534.5215,
       "outgoingLinks": [],
       "content": "---\nname: ai-decision-gate\ndescription: >-\n  Avalia tarefas que envolvem decisão ou classificação e determina se devem usar\n  regras determinísticas, AIJev/Jev ou um modelo generativo (LLM). Use quando o\n  usuário pedir para implementar uma funcionalidade que pode envolver IA, ou quando\n  precisar decidir qual abordagem de IA utilizar para uma tarefa específica.\n---\n\n# AI Decision Gate\n\n## Fluxo de Avaliação\n\nQuando uma tarefa chegar que pode envolver IA, siga este processo:\n\n### Passo 1: A tarefa é determinística?\n\n**Pergunte**: \"O resultado pode ser calculado/derivado de regras fixas?\"\n\n- **SIM** → Use código/regras. **Pare aqui.**\n- **NÃO** → Continue para Passo 2.\n\n### Passo 2: É decisão ou classificação?\n\n**Pergunte**: \"A tarefa envolve categorizar, priorizar ou escolher entre alternativas?\"\n\n- **SIM** → Avalie AIJev (Passo 3).\n- **NÃO** → Continue para Passo 4.\n\n### Passo 3: Avaliar AIJev\n\nVerifique se AIJev é adequado:\n\n| Critério | AIJev é adequado? |\n|----------|-------------------|\n| Entrada pode ser estruturada? | Sim → ✅ |\n| Saída é tipada/categórica? | Sim → ✅ |\n| Precisa de rastreabilidade? | Sim → ✅ |\n| Latência crítica? | Sim → ✅ |\n| Precisa de texto livre? | Sim → ❌ Use LLM |\n| É puramente criativo? | Sim → ❌ Use LLM |\n\nSe AIJev for adequado:\n1. Modele a decisão como `DecisionRequest`.\n2. Implemente com `IDecisionProvider`.\n3. Configure fallback para `RulesDecisionProvider`.\n4. Registre a decisão para auditoria.\n\n### Passo 4: Precisa gerar conteúdo?\n\n**Pergunte**: \"Precisa criar texto, explicação, ou conteúdo?\"\n\n- **SIM** → Use LLM com:\n  - Prompt estruturado\n  - Temperatura adequada\n  - Validação do output\n  - Fallback definido\n- **NÃO** → Execute ação diretamente.\n\n### Passo 5: Registrar decisão\n\nDocumente em `DECISIONS/` qual abordagem foi escolhida e por quê.\n\n## Resumo Visual\n\n```\nTAREFA\n  │\n  ├─ Determinística? ──── SIM ──→ CÓDIGO\n  │\n  ├─ Decisão? ──── SIM ──→ AIJEV\n  │                              │\n  │                         Precisa gerar?\n  │                              │\n  │                         SIM ──→ LLM\n  │\n  └─ Geração? ──── SIM ──→ LLM\n                              │\n                          VALIDAÇÃO\n                              │\n                           RESULTADO\n```\n"
     },
@@ -298,10 +298,10 @@ window.VAULT_SNAPSHOT = {
       "title": "Estado Atual do AI Second Brain",
       "category": "memory",
       "icon": "💾",
-      "size": 1347,
-      "mtime": 1790609817138.4517,
+      "size": 2098,
+      "mtime": 1790810144761.4985,
       "outgoingLinks": [],
-      "content": "# Estado Atual do AI Second Brain\n\n> Última atualização: 2026-09-28\n\n## Status do Framework: 🟢 Pronto & Agnóstico\n\nO AI Second Brain está estruturado como uma plataforma universal de desenvolvimento com IA, livre de acoplamento a projetos específicos ou stacks pré-determinadas.\n\n## Estrutura do Workspace\n\n| Diretório | Papel | Estado |\n|---|---|---|\n| `.agents/rules/` | Regras universais de governança (IA, Segurança, Docs) | ✅ Agnósticas |\n| `.agents/skills/` | Workflows reutilizáveis para Antigravity | ✅ 8 skills ativas |\n| `knowledge/` | Base de conhecimento em IA, Arquitetura e Segurança | ✅ 100% universal |\n| `projects/` | Projetos conectados pelo desenvolvedor | 🟢 Limpo (pronto para receber) |\n| `memory/` | Memória de continuidade entre sessões | ✅ Operacional |\n| `templates/` | Modelos para novos projetos, specs e ADRs | ✅ Disponíveis |\n\n## Sessão Mais Recente\n- **Data**: 2026-09-28\n- **O que foi feito**: \n  - Desacoplamento completo do Segundo Cérebro: remoção de projetos específicos e regras presas a stacks (.NET, SQL Server).\n  - Transformação da solução em um framework universal aplicável a qualquer linguagem ou tecnologia.\n  - Saneamento da pasta `projects/` para receber novos projetos sob demanda do usuário.\n  - Fortalecimento da regra de \"Zero Fabricação de Contexto\".\n"
+      "content": "# Estado Atual do AI Second Brain\n\n> Última atualização: 2026-09-30\n\n## Status do Framework: 🟢 Operacional & UX/UI Avançado\n\nO AI Second Brain está estruturado como uma plataforma universal de governança e desenvolvimento com IA, livre de acoplamento a projetos específicos e equipada com um portal web moderno.\n\n## Estrutura do Workspace\n\n| Diretório | Papel | Estado |\n|---|---|---|\n| `.agents/rules/` | Regras universais de governança (IA, Segurança, Docs) | ✅ Agnósticas |\n| `.agents/skills/` | Workflows reutilizáveis para Antigravity | ✅ 8 skills ativas |\n| `knowledge/` | Base de conhecimento em IA, Arquitetura e Segurança | ✅ 100% universal |\n| `projects/` | Projetos conectados pelo desenvolvedor | 🟢 Suporta Greenfield & Brownfield |\n| `memory/` | Memória de continuidade entre sessões | ✅ Operacional |\n| `templates/` | Modelos para novos projetos, specs e ADRs | ✅ Disponíveis |\n| `docs/brain-ui/` | Portal web interativo de visualização e governança | 🚀 UX/UI com Project Workspace & Grafo 3D |\n\n## Sessão Mais Recente\n- **Data**: 2026-09-30\n- **O que foi feito**: \n  - **Quickstart Studio (Modal de 3 Minutos)**: Onboarding guiado no portal web para criar projetos do zero ou vincular pastas existentes via junções NTFS sem terminal.\n  - **Sidebar \"Dois Mundos\"**: Reorganização visual clara separando \"MEUS PROJETOS\" no topo e \"CÉREBRO & GOVERNANÇA\" abaixo com divisor neon.\n  - **Project Workspace (Página Dedicada do Projeto)**: Hub com 5 abas (Visão Geral, Memória & Saúde, Constelação Neural 3D, Backup & Exportação de Dossiê, Gerenciamento & Desvinculação Segura).\n  - **Constelação Neural 3D (Three.js)**: Grafo orbital onde o projeto é o Sol Central conectado a seus arquivos locais e satélites de governança.\n  - **Grafo Global com Clusters Galácticos**: Projetos agrupados em constelações interligadas por regras comuns.\n  - **APIs de Ciclo de Vida**: Endpoints backend para diagnóstico de memória, arquivamento seguro em `.archive/`, exportação de backup (.md e .json) e desvinculação não destrutiva.\n"
     },
     {
       "id": "memory_lessons-learned_md",
@@ -322,10 +322,10 @@ window.VAULT_SNAPSHOT = {
       "title": "Alfredo_teste — Estado Atual",
       "category": "projects",
       "icon": "💾",
-      "size": 187,
-      "mtime": 1790621882745.2295,
+      "size": 316,
+      "mtime": 1790824105213.2732,
       "outgoingLinks": [],
-      "content": "# Alfredo_teste — Estado Atual\n\n> Última atualização: 2026-09-28\n\n## Status: 🟢 Ativo / Vinculado ao AI Second Brain\n- Repositório conectado e pronto para desenvolvimento com IA.\n"
+      "content": "# Alfredo_teste — Estado Atual\n\n> Última atualização: 2026-10-01\n\n## Status: 🚀 Em Desenvolvimento Ativo\n\n## O que já foi definido\n- [x] Inicialização no AI Second Brain com governança ativa.\n- [x] Implementar módulo de autenticação JWT\n\n## Próximos Passos\n1. Definir os próximos passos do projeto.\n\n"
     },
     {
       "id": "projects_Alfredo_teste_PROJECT_md",
@@ -334,12 +334,12 @@ window.VAULT_SNAPSHOT = {
       "title": "Alfredo_teste",
       "category": "projects",
       "icon": "📄",
-      "size": 326,
-      "mtime": 1790621882745.2295,
+      "size": 327,
+      "mtime": 1790824169403.3708,
       "outgoingLinks": [
         "current_state.md"
       ],
-      "content": "# Alfredo_teste\n\n## Visão Geral\nProjeto externo vinculado ao AI Second Brain.\n\n## Informações Gerais\n- **Tipo**: Brownfield / Repositório Externo\n- **Localização Original**: `C:\\Projetos\\temp2`\n- **Status**: 🟢 Ativo / Em Desenvolvimento\n\n## Links & Documentação\n- Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)\n"
+      "content": "# Alfredo_teste\n\n## Visão Geral\nProjeto externo vinculado ao AI Second Brain. \n\n## Informações Gerais\n- **Tipo**: Brownfield / Repositório Externo\n- **Localização Original**: `C:\\Projetos\\temp2`\n- **Status**: 🟢 Ativo / Em Desenvolvimento\n\n## Links & Documentação\n- Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)\n"
     },
     {
       "id": "projects_README_md",
@@ -608,7 +608,7 @@ window.VAULT_SNAPSHOT = {
               "title": "Alfredo_teste",
               "icon": "📄",
               "path": "projects/Alfredo_teste/PROJECT.md",
-              "size": 326
+              "size": 327
             },
             {
               "id": "projects_Alfredo_teste_CURRENT_STATE_md",
@@ -616,7 +616,7 @@ window.VAULT_SNAPSHOT = {
               "title": "Alfredo_teste — Estado Atual",
               "icon": "💾",
               "path": "projects/Alfredo_teste/CURRENT_STATE.md",
-              "size": 187
+              "size": 316
             }
           ]
         },
@@ -731,7 +731,7 @@ window.VAULT_SNAPSHOT = {
           "label": "Estado Atual do AI Second Brain",
           "icon": "💾",
           "path": "memory/current-state.md",
-          "size": 1347
+          "size": 2098
         },
         {
           "id": "memory_lessons-learned_md",
@@ -911,6 +911,22 @@ window.VAULT_SNAPSHOT = {
       "size": 16,
       "icon": "📖",
       "path": "docs"
+    },
+    {
+      "id": "hub_proj_Alfredo_teste",
+      "label": "Alfredo_teste",
+      "group": "projects",
+      "size": 22,
+      "icon": "🚀",
+      "path": "projects/Alfredo_teste/PROJECT.md"
+    },
+    {
+      "id": "hub_proj_teste_alfredo_22",
+      "label": "teste_alfredo_22",
+      "group": "projects",
+      "size": 22,
+      "icon": "🚀",
+      "path": "projects/teste_alfredo_22/PROJECT.md"
     },
     {
       "id": "_agents_rules_00-core_md",
@@ -1108,7 +1124,7 @@ window.VAULT_SNAPSHOT = {
       "id": "memory_current-state_md",
       "label": "Estado Atual do AI Second Brain",
       "group": "memory",
-      "size": 9,
+      "size": 12,
       "icon": "💾",
       "path": "memory/current-state.md"
     },
@@ -1247,6 +1263,14 @@ window.VAULT_SNAPSHOT = {
       "to": "hub-docs"
     },
     {
+      "from": "hub-projects",
+      "to": "hub_proj_Alfredo_teste"
+    },
+    {
+      "from": "hub-projects",
+      "to": "hub_proj_teste_alfredo_22"
+    },
+    {
       "from": "hub-rules",
       "to": "_agents_rules_00-core_md"
     },
@@ -1351,11 +1375,11 @@ window.VAULT_SNAPSHOT = {
       "to": "memory_lessons-learned_md"
     },
     {
-      "from": "hub-projects",
+      "from": "hub_proj_Alfredo_teste",
       "to": "projects_Alfredo_teste_CURRENT_STATE_md"
     },
     {
-      "from": "hub-projects",
+      "from": "hub_proj_Alfredo_teste",
       "to": "projects_Alfredo_teste_PROJECT_md"
     },
     {
@@ -1363,15 +1387,15 @@ window.VAULT_SNAPSHOT = {
       "to": "projects_README_md"
     },
     {
-      "from": "hub-projects",
+      "from": "hub_proj_teste_alfredo_22",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
-      "from": "hub-projects",
+      "from": "hub_proj_teste_alfredo_22",
       "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
     },
     {
-      "from": "hub-projects",
+      "from": "hub_proj_teste_alfredo_22",
       "to": "projects_teste_alfredo_22_PROJECT_md"
     },
     {
@@ -1845,6 +1869,26 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "templates_project_md",
       "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "hub_proj_Alfredo_teste",
+      "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
+      "from": "hub_proj_Alfredo_teste",
+      "to": "_agents_rules_03-security_md"
+    },
+    {
+      "from": "hub_proj_teste_alfredo_22",
+      "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
+      "from": "hub_proj_teste_alfredo_22",
+      "to": "_agents_rules_03-security_md"
+    },
+    {
+      "from": "hub_proj_Alfredo_teste",
+      "to": "hub_proj_teste_alfredo_22"
     }
   ],
   "groupColors": {
@@ -1909,7 +1953,7 @@ window.VAULT_SNAPSHOT = {
     "memoryCount": 2,
     "templatesCount": 4,
     "docsCount": 3,
-    "totalNodes": 47,
-    "totalEdges": 159
+    "totalNodes": 49,
+    "totalEdges": 166
   }
 };

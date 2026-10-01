@@ -364,6 +364,399 @@ Projeto externo vinculado ao AI Second Brain.
         return;
     }
 
+    // API: Detalhes e Diagnóstico de Memória de um Projeto Específico
+    if (pathname.startsWith('/api/projects/') && pathname.endsWith('/details') && req.method === 'GET') {
+        try {
+            const parts = pathname.split('/');
+            const projectName = decodeURIComponent(parts[3] || '');
+            const projectDir = path.join(ROOT_DIR, 'projects', projectName);
+
+            if (!fs.existsSync(projectDir)) {
+                res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: `Projeto '${projectName}' não encontrado.` }));
+                return;
+            }
+
+            let isJunction = false;
+            let realPath = projectDir;
+            try {
+                const lstat = fs.lstatSync(projectDir);
+                if (lstat.isSymbolicLink()) {
+                    isJunction = true;
+                    realPath = fs.readlinkSync(projectDir);
+                }
+            } catch (e) {}
+
+            // Lê arquivos principais de governança e outros contratos dinamicamente
+            const projectMdPath = path.join(projectDir, 'PROJECT.md');
+            const currentStateMdPath = path.join(projectDir, 'CURRENT_STATE.md');
+            const archMdPath = path.join(projectDir, 'ARCHITECTURE.md');
+
+            const hasProjectMd = fs.existsSync(projectMdPath);
+            const hasCurrentState = fs.existsSync(currentStateMdPath);
+            const hasArchitecture = fs.existsSync(archMdPath);
+
+            const projectMd = hasProjectMd ? fs.readFileSync(projectMdPath, 'utf-8') : '';
+            const currentStateMd = hasCurrentState ? fs.readFileSync(currentStateMdPath, 'utf-8') : '';
+            const archMd = hasArchitecture ? fs.readFileSync(archMdPath, 'utf-8') : '';
+
+            // Contratos de Governança Dinâmicos
+            const KNOWN_CONTRACTS = {
+                'PROJECT.md': { title: 'Visão Geral & Requisitos', icon: '📄' },
+                'CURRENT_STATE.md': { title: 'Estado Atual & Roadmap', icon: '💾' },
+                'ARCHITECTURE.md': { title: 'Padrões & Design', icon: '🏗️' }
+            };
+
+            const governanceFiles = [];
+            let totalGovBytes = 0;
+
+            // 1. Adiciona contratos padrão que REALMENTE existem no disco
+            for (const [filename, meta] of Object.entries(KNOWN_CONTRACTS)) {
+                const fullP = path.join(projectDir, filename);
+                if (fs.existsSync(fullP)) {
+                    try {
+                        const stat = fs.statSync(fullP);
+                        totalGovBytes += stat.size;
+                        governanceFiles.push({
+                            name: filename,
+                            title: meta.title,
+                            icon: meta.icon,
+                            sizeKb: (stat.size / 1024).toFixed(1),
+                            mtime: stat.mtime,
+                            path: `projects/${projectName}/${filename}`,
+                            exists: true
+                        });
+                    } catch (e) {}
+                }
+            }
+
+            // 2. Lê qualquer outro arquivo Markdown no diretório raiz do projeto
+            try {
+                const rootEntries = fs.readdirSync(projectDir);
+                for (const entry of rootEntries) {
+                    if (entry.endsWith('.md') && !KNOWN_CONTRACTS[entry]) {
+                        const fullP = path.join(projectDir, entry);
+                        try {
+                            const stat = fs.statSync(fullP);
+                            totalGovBytes += stat.size;
+                            governanceFiles.push({
+                                name: entry,
+                                title: entry.replace(/\.md$/i, ''),
+                                icon: '📋',
+                                sizeKb: (stat.size / 1024).toFixed(1),
+                                mtime: stat.mtime,
+                                path: `projects/${projectName}/${entry}`,
+                                exists: true
+                            });
+                        } catch (e) {}
+                    }
+                }
+            } catch (e) {}
+
+            // 3. Identifica contratos recomendados que AINDA NÃO EXISTEM
+            const missingContracts = [];
+            for (const [filename, meta] of Object.entries(KNOWN_CONTRACTS)) {
+                const fullP = path.join(projectDir, filename);
+                if (!fs.existsSync(fullP)) {
+                    missingContracts.push({
+                        name: filename,
+                        title: meta.title,
+                        icon: meta.icon,
+                        path: `projects/${projectName}/${filename}`,
+                        exists: false
+                    });
+                }
+            }
+
+            // Decisões
+            const decisionsDir = path.join(projectDir, 'DECISIONS');
+            const decisions = [];
+            if (fs.existsSync(decisionsDir)) {
+                try {
+                    const decFiles = fs.readdirSync(decisionsDir);
+                    for (const df of decFiles) {
+                        if (df.endsWith('.md')) {
+                            const p = path.join(decisionsDir, df);
+                            const stat = fs.statSync(p);
+                            decisions.push({ name: df, size: stat.size, mtime: stat.mtime });
+                        }
+                    }
+                } catch (e) {}
+            }
+
+            // Memória / Sessões
+            const memoryDir = path.join(projectDir, 'MEMORY', 'sessions');
+            const sessions = [];
+            if (fs.existsSync(memoryDir)) {
+                try {
+                    const sessFiles = fs.readdirSync(memoryDir);
+                    for (const sf of sessFiles) {
+                        if (sf.endsWith('.md')) {
+                            const p = path.join(memoryDir, sf);
+                            const stat = fs.statSync(p);
+                            sessions.push({ name: sf, size: stat.size, mtime: stat.mtime });
+                        }
+                    }
+                } catch (e) {}
+            }
+
+            // Arquivos arquivados
+            const archiveDir = path.join(projectDir, 'MEMORY', '.archive');
+            let archivedCount = 0;
+            if (fs.existsSync(archiveDir)) {
+                try {
+                    archivedCount = fs.readdirSync(archiveDir).length;
+                } catch (e) {}
+            }
+
+            // Soma tamanho das decisões e sessões ao total de governança
+            decisions.forEach(d => totalGovBytes += d.size);
+            sessions.forEach(s => totalGovBytes += s.size);
+
+            // Contagem rápida de arquivos do projeto real
+            let totalProjectFiles = 0;
+            try {
+                const countFiles = (dir, depth = 0) => {
+                    if (depth > 4) return;
+                    const items = fs.readdirSync(dir, { withFileTypes: true });
+                    for (const item of items) {
+                        if (item.name.startsWith('.') || item.name === 'node_modules' || item.name === 'bin' || item.name === 'obj') continue;
+                        if (item.isDirectory()) {
+                            countFiles(path.join(dir, item.name), depth + 1);
+                        } else {
+                            totalProjectFiles++;
+                        }
+                    }
+                };
+                countFiles(projectDir);
+            } catch (e) {}
+
+            // Extração de metadados do PROJECT.md
+            let stack = 'Não especificada';
+            let status = 'Ativo';
+            let description = 'Projeto no AI Second Brain';
+
+            const stackMatch = projectMd.match(/-\s+\*\*Stack[^*]*\*\*:\s*([^\r\n]+)/i);
+            if (stackMatch) stack = stackMatch[1].trim();
+
+            const statusMatch = projectMd.match(/-\s+\*\*Status\*\*:\s*([^\r\n]+)/i);
+            if (statusMatch) status = statusMatch[1].trim();
+
+            const overviewMatch = projectMd.match(/##\s+Visão Geral\s*\n+([^\n#]+)/i);
+            if (overviewMatch) description = overviewMatch[1].trim();
+
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({
+                name: projectName,
+                isJunction,
+                realPath,
+                stack,
+                status,
+                description,
+                totalProjectFiles,
+                memorySizeKb: (totalGovBytes / 1024).toFixed(1),
+                decisionsCount: decisions.length,
+                sessionsCount: sessions.length,
+                archivedCount,
+                hasProjectMd,
+                hasCurrentState,
+                hasArchitecture,
+                governanceFiles,
+                missingContracts,
+                decisions,
+                sessions,
+                projectMd,
+                currentStateMd,
+                archMd
+            }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ error: err.message }));
+        }
+        return;
+    }
+
+    // API: Limpar / Arquivar Memória de Sessões do Projeto
+    if (pathname.startsWith('/api/projects/') && pathname.endsWith('/clear-memory') && req.method === 'POST') {
+        try {
+            const parts = pathname.split('/');
+            const projectName = decodeURIComponent(parts[3] || '');
+            const projectDir = path.join(ROOT_DIR, 'projects', projectName);
+
+            if (!fs.existsSync(projectDir)) {
+                res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: `Projeto '${projectName}' não encontrado.` }));
+                return;
+            }
+
+            const sessionsDir = path.join(projectDir, 'MEMORY', 'sessions');
+            const archiveBase = path.join(projectDir, 'MEMORY', '.archive');
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const archiveDest = path.join(archiveBase, `sessions_${timestamp}`);
+
+            let movedCount = 0;
+            if (fs.existsSync(sessionsDir)) {
+                fs.mkdirSync(archiveDest, { recursive: true });
+                const files = fs.readdirSync(sessionsDir);
+                for (const f of files) {
+                    if (f.endsWith('.md')) {
+                        fs.renameSync(path.join(sessionsDir, f), path.join(archiveDest, f));
+                        movedCount++;
+                    }
+                }
+            }
+
+            // Anota a limpeza no CURRENT_STATE.md sem perder dados críticos
+            const currentStateMdPath = path.join(projectDir, 'CURRENT_STATE.md');
+            if (fs.existsSync(currentStateMdPath)) {
+                let currentContent = fs.readFileSync(currentStateMdPath, 'utf-8');
+                const logEntry = `\n\n> 🧹 *Memória de sessões arquivada em ${new Date().toLocaleString('pt-BR')} (${movedCount} sessões movidas para .archive/)*\n`;
+                currentContent += logEntry;
+                fs.writeFileSync(currentStateMdPath, currentContent, 'utf-8');
+            }
+
+            // Atualiza snapshot
+            delete require.cache[require.resolve('./scripts/scan-vault')];
+            const { scanVault } = require('./scripts/scan-vault');
+            const vault = scanVault(ROOT_DIR);
+            const snapshotPath = path.join(UI_DIR, 'vault-data.js');
+            fs.writeFileSync(snapshotPath, `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+
+            broadcastEvent('vault-updated', { project: projectName, type: 'clear-memory', time: Date.now() });
+
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({
+                success: true,
+                movedCount,
+                archivePath: archiveDest,
+                message: `${movedCount} sessões arquivadas com segurança.`
+            }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ error: err.message }));
+        }
+        return;
+    }
+
+    // API: Gerar Dossiê de Backup do Projeto
+    if (pathname.startsWith('/api/projects/') && pathname.endsWith('/backup') && req.method === 'POST') {
+        try {
+            const parts = pathname.split('/');
+            const projectName = decodeURIComponent(parts[3] || '');
+            const projectDir = path.join(ROOT_DIR, 'projects', projectName);
+
+            if (!fs.existsSync(projectDir)) {
+                res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: `Projeto '${projectName}' não encontrado.` }));
+                return;
+            }
+
+            const backupData = {
+                project: projectName,
+                timestamp: new Date().toISOString(),
+                exportedAt: new Date().toLocaleString('pt-BR'),
+                files: {}
+            };
+
+            const collectFiles = (dir, relBase = '') => {
+                if (!fs.existsSync(dir)) return;
+                const items = fs.readdirSync(dir, { withFileTypes: true });
+                for (const item of items) {
+                    const full = path.join(dir, item.name);
+                    const rel = relBase ? `${relBase}/${item.name}` : item.name;
+                    if (item.isDirectory()) {
+                        if (item.name !== 'node_modules' && item.name !== '.git' && item.name !== 'bin' && item.name !== 'obj') {
+                            collectFiles(full, rel);
+                        }
+                    } else if (item.name.endsWith('.md') || item.name.endsWith('.json')) {
+                        try {
+                            backupData.files[rel] = fs.readFileSync(full, 'utf-8');
+                        } catch (e) {}
+                    }
+                }
+            };
+
+            collectFiles(projectDir);
+
+            // Gera também uma versão consolidada em Markdown do dossiê completo
+            let consolidatedMarkdown = `# DOSSIÊ DE GOVERNANÇA: ${projectName.toUpperCase()}\n`;
+            consolidatedMarkdown += `> Exportado automaticamente pelo AI Second Brain em ${backupData.exportedAt}\n\n`;
+
+            for (const [filename, content] of Object.entries(backupData.files)) {
+                consolidatedMarkdown += `\n---\n## 📄 Arquivo: \`${filename}\`\n\n${content}\n`;
+            }
+
+            backupData.consolidatedMarkdown = consolidatedMarkdown;
+
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify(backupData));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ error: err.message }));
+        }
+        return;
+    }
+
+    // API: Desvincular ou Excluir Projeto do Segundo Cérebro
+    if (pathname.startsWith('/api/projects/') && pathname.endsWith('/unlink') && req.method === 'POST') {
+        try {
+            const parts = pathname.split('/');
+            const projectName = decodeURIComponent(parts[3] || '');
+            const projectDir = path.join(ROOT_DIR, 'projects', projectName);
+
+            if (!fs.existsSync(projectDir)) {
+                res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: `Projeto '${projectName}' não encontrado.` }));
+                return;
+            }
+
+            let wasJunction = false;
+            try {
+                const lstat = fs.lstatSync(projectDir);
+                if (lstat.isSymbolicLink()) {
+                    wasJunction = true;
+                    // No Windows, fs.unlinkSync remove a junção NTFS SEM remover o diretório original!
+                    fs.unlinkSync(projectDir);
+                } else {
+                    // Projeto local (greenfield): move para pasta de lixeira de segurança
+                    const trashDir = path.join(ROOT_DIR, 'projects', '.trash');
+                    fs.mkdirSync(trashDir, { recursive: true });
+                    const trashDest = path.join(trashDir, `${projectName}_${Date.now()}`);
+                    fs.renameSync(projectDir, trashDest);
+                }
+            } catch (unlinkErr) {
+                // Fallback para rmdir se unlink falhar na junção
+                try {
+                    fs.rmdirSync(projectDir);
+                } catch (rmErr) {
+                    throw new Error(`Falha ao desvincular projeto: ${unlinkErr.message}`);
+                }
+            }
+
+            // Atualiza snapshot
+            delete require.cache[require.resolve('./scripts/scan-vault')];
+            const { scanVault } = require('./scripts/scan-vault');
+            const vault = scanVault(ROOT_DIR);
+            const snapshotPath = path.join(UI_DIR, 'vault-data.js');
+            fs.writeFileSync(snapshotPath, `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+
+            broadcastEvent('vault-updated', { project: projectName, type: 'unlink-project', time: Date.now() });
+
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({
+                success: true,
+                wasJunction,
+                message: wasJunction 
+                    ? `Vínculo com '${projectName}' desfeito com sucesso! Seus arquivos originais foram mantidos intactos.`
+                    : `Projeto '${projectName}' desvinculado e arquivado com sucesso.`
+            }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ error: err.message }));
+        }
+        return;
+    }
+
     // API: Dynamic Vault Scan
     if (pathname === '/api/vault') {
         try {
@@ -396,7 +789,7 @@ Projeto externo vinculado ao AI Second Brain.
     }
 
     // API: Fetch single raw file content
-    if (pathname === '/api/file') {
+    if (pathname === '/api/file' && req.method === 'GET') {
         const filePathParam = parsedUrl.searchParams.get('path');
         if (!filePathParam) {
             res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -422,6 +815,54 @@ Projeto externo vinculado ao AI Second Brain.
         return;
     }
 
+    // API: Salvar conteúdo de arquivo Markdown diretamente no disco
+    if ((pathname === '/api/file' || pathname === '/api/file/save') && req.method === 'POST') {
+        try {
+            const body = await readJsonBody(req);
+            const relPath = (body.path || '').trim();
+            const content = body.content !== undefined ? body.content : '';
+
+            if (!relPath) {
+                res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: 'Caminho do arquivo é obrigatório.' }));
+                return;
+            }
+
+            const safePath = path.resolve(ROOT_DIR, relPath);
+            if (!safePath.startsWith(ROOT_DIR)) {
+                res.writeHead(403, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: 'Acesso negado: fora do diretório do Segundo Cérebro.' }));
+                return;
+            }
+
+            // Garante que o diretório pai existe
+            fs.mkdirSync(path.dirname(safePath), { recursive: true });
+            fs.writeFileSync(safePath, content, 'utf-8');
+
+            // Atualiza snapshot do Vault
+            delete require.cache[require.resolve('./scripts/scan-vault')];
+            const { scanVault } = require('./scripts/scan-vault');
+            const vault = scanVault(ROOT_DIR);
+            const snapshotPath = path.join(UI_DIR, 'vault-data.js');
+            fs.writeFileSync(snapshotPath, `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+
+            broadcastEvent('vault-updated', { file: relPath, type: 'file-saved', time: Date.now() });
+
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({
+                success: true,
+                path: relPath,
+                message: 'Arquivo salvo com sucesso no disco!',
+                size: Buffer.byteLength(content, 'utf-8'),
+                mtime: Date.now()
+            }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ error: err.message }));
+        }
+        return;
+    }
+
     // Static Files: docs/brain-ui
     let relativeFile = pathname === '/' ? '/index.html' : pathname;
     let filePath = path.join(UI_DIR, relativeFile);
@@ -436,7 +877,12 @@ Projeto externo vinculado ao AI Second Brain.
     if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
         const ext = path.extname(filePath).toLowerCase();
         const mime = MIME_TYPES[ext] || 'application/octet-stream';
-        res.writeHead(200, { 'Content-Type': mime });
+        res.writeHead(200, {
+            'Content-Type': mime,
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        });
         fs.createReadStream(filePath).pipe(res);
     } else {
         res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
