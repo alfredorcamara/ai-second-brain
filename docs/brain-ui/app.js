@@ -578,6 +578,11 @@ function navigateTo(path) {
         return;
     }
 
+    if (path === 'solution-docs') {
+        showSolutionDocs();
+        return;
+    }
+
     // 1. Fetch from Dynamic Vault
     if (window.VAULT) {
         const file = window.VAULT.getFile(path);
@@ -597,6 +602,7 @@ function showDashboard() {
     document.getElementById('graphView')?.classList.remove('active');
     document.getElementById('docView')?.classList.remove('active');
     document.getElementById('projectWorkspaceView')?.classList.remove('active');
+    document.getElementById('solutionDocsView')?.classList.remove('active');
     document.getElementById('viewToggle')?.classList.remove('active');
     updateBreadcrumbs([{ label: '🧠 Visão Geral', path: 'dashboard' }]);
 }
@@ -608,6 +614,7 @@ function showView(view) {
         document.getElementById('graphView')?.classList.add('active');
         document.getElementById('docView')?.classList.remove('active');
         document.getElementById('projectWorkspaceView')?.classList.remove('active');
+        document.getElementById('solutionDocsView')?.classList.remove('active');
         document.getElementById('viewToggle')?.classList.add('active');
         updateBreadcrumbs([
             { label: '🧠 Visão Geral', path: 'dashboard' },
@@ -621,12 +628,105 @@ function showView(view) {
     }
 }
 
+function showSolutionDocs() {
+    currentView = 'docs';
+    document.getElementById('dashboardOverlay')?.classList.remove('active');
+    document.getElementById('graphView')?.classList.remove('active');
+    document.getElementById('docView')?.classList.remove('active');
+    document.getElementById('projectWorkspaceView')?.classList.remove('active');
+    document.getElementById('viewToggle')?.classList.remove('active');
+
+    const sdocs = document.getElementById('solutionDocsView');
+    if (sdocs) {
+        sdocs.classList.add('active');
+        sdocs.scrollTop = 0;
+    }
+    const bodyScroll = document.getElementById('sdocBodyScroll');
+    if (bodyScroll) {
+        bodyScroll.scrollTop = 0;
+    }
+
+    // Update active state in sidebar
+    document.querySelectorAll('.nav-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.path === 'solution-docs');
+    });
+
+    updateBreadcrumbs([
+        { label: '🧠 Visão Geral', path: 'dashboard' },
+        { label: '📘 Documentação da Solução', path: 'solution-docs' }
+    ]);
+
+    // Setup scroll spy for TOC highlighting
+    setupDocScrollSpy();
+}
+
+let _docScrollSpyInitialized = false;
+function setupDocScrollSpy() {
+    if (_docScrollSpyInitialized) return;
+    const bodyScroll = document.getElementById('sdocBodyScroll');
+    const sdocs = document.getElementById('solutionDocsView');
+    const scrollTarget = (sdocs && sdocs.scrollHeight > sdocs.clientHeight) ? sdocs : bodyScroll;
+    if (!scrollTarget) return;
+
+    _docScrollSpyInitialized = true;
+    scrollTarget.addEventListener('scroll', () => {
+        const chapters = document.querySelectorAll('.sdoc-chapter');
+        const tocLinks = document.querySelectorAll('.sdoc-toc-link');
+        if (!chapters.length || !tocLinks.length) return;
+
+        let currentCapId = '';
+        chapters.forEach(ch => {
+            const rect = ch.getBoundingClientRect();
+            if (rect.top <= 200 && rect.bottom >= 80) {
+                currentCapId = ch.id;
+            }
+        });
+
+        if (currentCapId) {
+            tocLinks.forEach(link => {
+                link.classList.toggle('active', link.getAttribute('href') === `#${currentCapId}`);
+            });
+        }
+    }, { passive: true });
+}
+
+function scrollToDocCap(capId, event) {
+    if (event) event.preventDefault();
+    const target = document.getElementById(capId);
+    if (!target) return;
+
+    // Highlight active link in TOC
+    document.querySelectorAll('.sdoc-toc-link').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href === `#${capId}`) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+
+    // Smooth scroll inside sdocBodyScroll, solutionDocsView or document
+    const bodyScroll = document.getElementById('sdocBodyScroll');
+    const sdocs = document.getElementById('solutionDocsView');
+    
+    if (bodyScroll && bodyScroll.scrollHeight > bodyScroll.clientHeight) {
+        const topPos = target.offsetTop - bodyScroll.offsetTop - 16;
+        bodyScroll.scrollTo({ top: Math.max(0, topPos), behavior: 'smooth' });
+    } else if (sdocs && sdocs.scrollHeight > sdocs.clientHeight) {
+        const topPos = target.offsetTop - sdocs.offsetTop - 16;
+        sdocs.scrollTo({ top: Math.max(0, topPos), behavior: 'smooth' });
+    } else {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
 function showDynamicDocument(file) {
     currentView = 'doc';
     document.getElementById('dashboardOverlay')?.classList.remove('active');
     document.getElementById('graphView')?.classList.remove('active');
     document.getElementById('docView')?.classList.add('active');
     document.getElementById('projectWorkspaceView')?.classList.remove('active');
+    document.getElementById('solutionDocsView')?.classList.remove('active');
     document.getElementById('viewToggle')?.classList.remove('active');
 
     const container = document.getElementById('docContainer');
@@ -668,10 +768,12 @@ function showDynamicDocument(file) {
 
 function showGenericPage(path) {
     currentView = 'doc';
-    document.getElementById('dashboardOverlay').classList.remove('active');
-    document.getElementById('graphView').classList.remove('active');
-    document.getElementById('docView').classList.add('active');
-    document.getElementById('viewToggle').classList.remove('active');
+    document.getElementById('dashboardOverlay')?.classList.remove('active');
+    document.getElementById('graphView')?.classList.remove('active');
+    document.getElementById('docView')?.classList.add('active');
+    document.getElementById('projectWorkspaceView')?.classList.remove('active');
+    document.getElementById('solutionDocsView')?.classList.remove('active');
+    document.getElementById('viewToggle')?.classList.remove('active');
 
     const parts = path.split('/');
     const name = parts[parts.length - 1];
@@ -1428,6 +1530,7 @@ async function openProjectWorkspace(projectName, defaultTab = 'overview') {
     document.getElementById('dashboardOverlay')?.classList.remove('active');
     document.getElementById('graphView')?.classList.remove('active');
     document.getElementById('docView')?.classList.remove('active');
+    document.getElementById('solutionDocsView')?.classList.remove('active');
     document.getElementById('viewToggle')?.classList.remove('active');
 
     const pwView = document.getElementById('projectWorkspaceView');

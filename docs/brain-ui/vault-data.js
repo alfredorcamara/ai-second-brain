@@ -1,5 +1,5 @@
 window.VAULT_SNAPSHOT = {
-  "timestamp": 1791009444540,
+  "timestamp": 1791010844253,
   "files": [
     {
       "id": "_agents_rules_00-core_md",
@@ -242,6 +242,18 @@ window.VAULT_SNAPSHOT = {
       "mtime": 1790974461750.9412,
       "outgoingLinks": [],
       "content": "# Research Lab — Laboratório de Conhecimento Autônomo\n\n> **Subsistema de Pesquisa Inteligente e Catalogação Contínua do AI Second Brain**  \n> Documento de Referência Arquitetural e Operacional\n\n---\n\n## 1. Visão Geral\n\nO **Research Lab** é um subsistema do AI Second Brain que permite a cada projeto criar **Laboratórios de Pesquisa Temática**.\n\nEm vez de buscas genéricas ou conversas efêmeras, o Research Lab opera de maneira autônoma e contextualizada:\n1. O desenvolvedor define livremente um tema ou dúvida tecnológica para o seu projeto.\n2. A IA (Groq Cloud) lê os contratos existentes do projeto (`PROJECT.md`, `ARCHITECTURE.md`) e refina o briefing, garantindo que a pesquisa atenda às restrições e objetivos reais daquele projeto.\n3. O tema é decomposto em sub-tópicos com taxonomia clara.\n4. O motor cataloga todo o conhecimento em arquivos `.md` organizados e versionados no disco sob a pasta do projeto.\n5. Os arquivos gerados alimentam a Constelação Neural 3D do projeto e a memória de longo prazo.\n\n---\n\n## 2. As Duas Camadas de Conhecimento\n\nCada laboratório de pesquisa separa os aprendizados em duas camadas complementares:\n\n```\nprojects/<nome-do-projeto>/RESEARCH/<slug-da-pesquisa>/\n├── _meta.json                # Metadados, status e histórico de definições (Prompt Vivo)\n├── OVERVIEW.md               # Panorama executivo e mapa neural dos tópicos\n├── knowledge/                # CAMADA 1: CONHECIMENTO TEÓRICO E CONCEITUAL\n│   ├── regras_fundamentais.md\n│   ├── estado_da_arte.md\n│   └── analise_comparativa.md\n└── actionable/               # CAMADA 2: ESPECIFICAÇÕES APLICÁVEIS AO PROJETO\n    ├── arquitetura_proposta.md\n    ├── schema_sugerido.md\n    └── regras_de_negocio.md\n```\n\n- **Camada 1 (`knowledge/`)**: O \"quê\" e o \"porquê\". Princípios, estado da arte, referências de mercado, fundamentos conceituais.\n- **Camada 2 (`actionable/`)**: O \"como aplicar no projeto\". Especificações técnicas, pseudocódigo, decisões de schema e regras adaptadas à stack real do projeto.\n\n---\n\n## 3. O Conceito de \"Prompt Vivo\"\n\nA definição de uma pesquisa não é estática. No AI Second Brain, adotamos o conceito de **Prompt Vivo**:\n- O desenvolvedor pode reescrever a intenção ou ajustar o foco a qualquer momento.\n- A IA pode sugerir melhorias no texto (\"✨ Melhorar com IA\") levando em conta o estado atual da governança.\n- Cada nova versão da definição é registrada em `definitionHistory` dentro de `_meta.json`.\n- Pesquisas futuras ou re-execuções comparam o histórico para identificar contradições, novidades ou complementações necessárias, sem perder o histórico anterior.\n\n---\n\n## 4. Arquitetura Técnica & Stack\n\n- **Motor de Inferência**: [Groq Cloud](https://groq.com)\n  - **Modelo padrão**: `openai/gpt-oss-120b` (128k de contexto, inferência de alta velocidade)\n  - **Configuração**: Chave gerenciada em `.env` (`GROQ_API_KEY`) com fallback seguro\n- **Zero Dependências**: Cliente nativo implementado em `scripts/groq-client.js` usando os módulos padrão do Node.js (`https`, `fs`, `path`).\n- **Sanitização de Saída**: Tratamento defensivo de fences markdown (` ```json `) e extração de estruturas válidas.\n\n---\n\n## 5. Endpoints da API REST (`server.js`)\n\n| Método | Rota | Descrição |\n|---|---|---|\n| `GET` | `/api/ai/status` | Retorna o status de configuração do Groq (ativo/inativo, modelo e máscara da chave) |\n| `POST` | `/api/ai/refine-prompt` | Refina uma intenção bruta do usuário usando o contexto de `PROJECT.md` e `ARCHITECTURE.md` |\n| `POST` | `/api/ai/decompose` | Decompõe o tema em lista de sub-tópicos com categoria (`knowledge` ou `actionable`) |\n| `GET` | `/api/projects/:name/research` | Lista todos os laboratórios de pesquisa criados para o projeto indicado |\n| `POST` | `/api/projects/:name/research` | Cria a estrutura física no disco para um novo laboratório (`_meta.json`, `OVERVIEW.md`, pastas) |\n| `POST` | `/api/projects/:name/research/:slug/definition` | Atualiza a definição do laboratório com histórico versionado (Prompt Vivo) |\n| `POST` | `/api/projects/:name/research/:slug/run` | Dispara o motor autônomo de síntese técnica e gravação dos arquivos `.md` no disco |\n| `GET` | `/api/projects/:name/research/:slug/status` | Retorna se a pesquisa autônoma está em execução no momento |\n\n---\n\n## 6. Roadmap de Implementação\n\n- [x] **Etapa 1: Backend & Motor Groq** (Concluído em 2026-10-02)\n  - Módulo nativo `scripts/groq-client.js`\n  - Endpoints REST no `server.js`\n  - Proteção de variáveis em `.env` e `.gitignore`\n  - Testes de integração validados com sucesso\n- [x] **Etapa 2: Interface Visual (Brain UI - UX/UI UAU)** (Concluído em 2026-10-02)\n  - Aba dedicada `🔬 Research Lab` no Project Workspace com contador no badge\n  - Hero Banner espacial com glassmorphism, pulso de status Groq Cloud e métricas\n  - Modal interativo de criação com botão mágico `✨ Melhorar com IA (Groq)`\n  - Split View Comparador \"Antes vs Depois\" com aceitação/edição em 1 clique\n  - Prévia de decomposição temática com chips luminosos (`knowledge` vs `actionable`)\n  - Cards 3D de laboratórios com caixa do Prompt Vivo, contadores e ações rápidas\n  - Modal de Prompt Vivo com linha do tempo de versões anteriores (`definitionHistory`)\n  - Integração nativa com Windows Explorer para abrir pastas de pesquisa físicas\n  - Correção de layout eliminando qualquer sobreposição do título com o badge `🟢 Ativo`\n- [x] **Etapa 3: Motor de Execução Autônoma e Síntese de Conhecimento** (Concluído em 2026-10-02)\n  - Motor de pesquisa autônoma implementado em `scripts/research-engine.js`\n  - Síntese de artigos técnicos aprofundados com arquitetura, exemplos práticos de código, schemas de banco e trade-offs\n  - Taxonomia em duas camadas: gravação física em `knowledge/` e `actionable/`\n  - Resiliência com auto-retry e detecção de TPM limit na API da Groq Cloud\n  - Resumabilidade inteligente: arquivos pré-existentes são preservados sem retrabalho\n  - Consolidação automática em `OVERVIEW.md` com links relativos navegáveis\n  - Integração com a Constelação Neural 3D (`scripts/scan-vault.js`) com ícones específicos para cada camada de pesquisa\n\n"
+    },
+    {
+      "id": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "path": "docs/SOLUCAO_AI_SECOND_BRAIN.md",
+      "name": "SOLUCAO_AI_SECOND_BRAIN.md",
+      "title": "AI Second Brain — Documentação Oficial da Solução",
+      "category": "docs",
+      "icon": "📝",
+      "size": 8981,
+      "mtime": 1791010395970.4348,
+      "outgoingLinks": [],
+      "content": "# AI Second Brain — Documentação Oficial da Solução\n## O Sistema Operacional de Governança, Memória Persistente e Pesquisa Autônoma para Desenvolvimento com IA\n\n> **Autor / Criador:** Alfredo AI OS  \n> **Arquitetura:** Hub Central de Conhecimento & Repositórios Satélites  \n> **Status:** 🟢 Operacional & UX/UI Avançado  \n> **Versão:** 2.0 (Com Research Lab Autônomo e Constelação Neural 3D)\n\n---\n\n## 📑 Sumário\n\n1. [Visão Geral & O Problema Real](#1-visão-geral--o-problema-real)\n2. [Arquitetura da Solução & Camadas do Cérebro](#2-arquitetura-da-solução--camadas-do-cérebro)\n3. [Governança & Roteamento de IA (AIJev First)](#3-governança--roteamento-de-ia-aijev-first)\n4. [O Laboratório de Pesquisa Autônomo (Research Lab)](#4-o-laboratório-de-pesquisa-autônomo-research-lab)\n5. [Ciclo de Vida de um Projeto na Prática (Hands-on)](#5-ciclo-de-vida-de-um-projeto-na-prática-hands-on)\n6. [Constelação Neural 3D & Recursos Visuais](#6-constelação-neural-3d--recursos-visuais)\n7. [Checklists de Governança & FAQ Técnico](#7-checklists-de-governança--faq-técnico)\n\n---\n\n## 1. Visão Geral & O Problema Real\n\n### O Dilema do Desenvolvimento com IA: \"Vibe Coding\" vs. Engenharia de Longo Prazo\n\nO avanço de agentes de inteligência artificial (Google Antigravity, Cursor, Claude Code, Windsurf) permitiu que desenvolvedores escrevessem milhares de linhas de código em minutos. No entanto, surgiu uma armadilha silenciosa: o **vibe coding** (programar no improviso a partir de chats soltos).\n\nSem uma arquitetura estruturada, projetos mantidos por IA sofrem de três males crônicos:\n\n1. **Amnésia e Perda de Contexto**: Cada nova janela de contexto ou sessão reinicia a mente do agente. Ele esquece por que certa biblioteca foi escolhida, quais bugs já foram corrigidos e quais decisões de arquitetura foram tomadas na semana anterior.\n2. **\"Context Drift\" e Degradação de Código**: Sem regras absolutas de governança, a IA tende a reinventar a roda a cada interação, gerando classes duplicadas, violando padrões de design e introduzindo regressões silenciosas.\n3. **Desperdício e Latência Excessiva**: Desenvolvedores despreparados tendem a enviar qualquer tarefa para modelos generativos pesados, pagando em latência e dinheiro por algo que um algoritmo determinístico resolveria em 0 milissegundos.\n\n### A Solução: AI Second Brain (Alfredo AI OS)\n\nO **AI Second Brain** foi concebido como um **Hub Central de Conhecimento e Governança** agnóstico à linguagem ou framework. Ele atua como o cérebro permanente do desenvolvedor e de seus agentes, desacoplando o conhecimento, as decisões e as regras dos repositórios de código físicos.\n\n---\n\n## 2. Arquitetura da Solução & Camadas do Cérebro\n\nA arquitetura opera no modelo **Hub Central & Repositórios Satélites**:\n\n![Arquitetura Hub Central e Satélites](assets/diagrams/hub-satellites-architecture.svg)\n\n### As Camadas do Hub Central\n\n| Camada | Diretório | Papel e Finalidade |\n|---|---|---|\n| **Regras Inegociáveis** | `.agents/rules/` | Diretrizes estritas de desenvolvimento, segurança, roteamento de IA e documentação. |\n| **Habilidades do Agente** | `.agents/skills/` | Fluxos de trabalho reutilizáveis (gate de IA, onboarding de projetos, revisão arquitetural, persistência de memória). |\n| **Base de Conhecimento** | `knowledge/` | Padrões conceituais universais (AI Gateway, AIJev, OWASP, Arquitetura). |\n| **Memória Global** | `memory/` | Persistência entre sessões (`current-state.md` e `lessons-learned.md`). |\n| **Projetos Governados** | `projects/` | Hub de contratos de cada projeto (`PROJECT.md`, `CURRENT_STATE.md`, `ARCHITECTURE.md`, `BACKUPS/`, `RESEARCH/`). |\n| **Research Lab** | `projects/<nome>/RESEARCH/` | Síntese autônoma de documentação técnica em duas camadas. |\n| **Portal Web Interativo** | `docs/brain-ui/` | Visualizador web em tempo real com Constelação 3D, Dashboard e Live Markdown Editor. |\n\n---\n\n## 3. Governança & Roteamento de IA (AIJev First)\n\nUma das diretrizes absolutas do AI Second Brain é: **NUNCA queime tokens com LLM quando uma regra determinística ou motor de regras resolver com perfeição.**\n\n![Árvore de Roteamento de Decisão com IA](assets/diagrams/ai-decision-routing.svg)\n\n### As Três Faixas de Execução\n\n1. **Faixa A (Determinística)**: Se a tarefa não possui ambiguidade semântica (cálculos matemáticos, filtros, validação de schema, regex, scripts), use código puro.\n   - **Latência**: 0ms | **Custo**: $0 | **Confiabilidade**: 100%\n2. **Faixa B (Decisão & Classificação)**: Se a tarefa exige escolher entre alternativas finitas de negócio ou categorizar eventos, use **AIJev** ou motores de regras declarativos.\n   - **Latência**: ~1ms | **Custo**: $0 | **Auditabilidade**: Total\n3. **Faixa C (Geração & Raciocínio Aberto)**: Somente quando há necessidade explícita de gerar prosa, sintetizar documentação ou criar código inédito, aciona-se um LLM (Groq Cloud).\n   - **Validação Obrigatória**: Todo output de IA generativa passa por validação antes da aplicação.\n\n---\n\n## 4. O Laboratório de Pesquisa Autônomo (Research Lab)\n\nO **Research Lab** é o motor de aceleração técnica do AI Second Brain. Ele permite explorar temas complexos de arquitetura ou engenharia através de uma taxonomia estruturada em duas camadas:\n\n![Taxonomia de Duas Camadas do Research Lab](assets/diagrams/research-two-layers.svg)\n\n### A Taxonomia de Duas Camadas\n\n1. **📘 Camada `knowledge/` (Fundamentos & Conceitos)**:\n   - Focada no entendimento conceitual, teorias técnicas, diagramas, padrões de mercado e trade-offs.\n   - Exemplo: Fundamentos do algoritmo ELO, perfil nutricional, arquitetura orientada a eventos.\n2. **🛠️ Camada `actionable/` (Implementações Práticas & Código)**:\n   - Focada em código executável, schemas de banco de dados (SQL Server, Prisma, PostgreSQL), testes automatizados e procedimentos passo a passo.\n   - Exemplo: Implementação do cálculo ELO em TypeScript, schemas DDL, endpoints Express.\n\n### Resiliência do Motor Autônomo (Groq Cloud)\n\nO motor (`scripts/research-engine.js` + `scripts/groq-client.js`) opera com zero dependências externas:\n- **Tratamento Dinâmico de TPM (Tokens por Minuto)**: Detecta erros de rate limit, calcula a pausa exata exigida pelo servidor da Groq, adiciona +2s de margem de segurança e retenta até 3 vezes automaticamente.\n- **Cadência Estratégica**: Pausa automática de 6 segundos entre requisições para garantir estabilidade contínua na camada gratuita.\n- **Resumabilidade Inteligente**: Se uma pesquisa for interrompida, ao ser reiniciada ela detecta arquivos já gerados no disco e não gasta tokens novamente.\n- **Streaming em Tempo Real**: Envio de eventos via Server-Sent Events (SSE) para a interface com indicador visual passo a passo.\n\n---\n\n## 5. Ciclo de Vida de um Projeto na Prática (Hands-on)\n\nA governança do AI Second Brain funciona em um ciclo contínuo sem perda de memória:\n\n![Ciclo de Vida de uma Sessão de Trabalho](assets/diagrams/session-lifecycle-loop.svg)\n\n### O Ciclo em 4 Etapas:\n1. **Início da Sessão**: O agente e o desenvolvedor abrem a sessão lendo o `CURRENT_STATE.md` do projeto em questão. O contexto é retomado em segundos.\n2. **Desenvolvimento Focado**: Toda alteração de código respeita as regras em `.agents/rules/` e a arquitetura formalizada em `ARCHITECTURE.md`.\n3. **Validação & Testes**: Execução de scripts, checagem de integridade e testes de regressão.\n4. **Fechamento & Persistência**: Ao encerrar, aciona-se a skill `session-memory` que registra as decisões tomadas, tarefas concluídas e próximos passos.\n\n---\n\n## 6. Constelação Neural 3D & Recursos Visuais\n\nO portal web do AI Second Brain (`docs/brain-ui/`) oferece três modos de trabalho:\n\n1. **Dashboard & Métricas**: Visão panorâmica dos projetos conectados, status de governança e atalhos rápidos.\n2. **Constelação Neural 3D (Three.js)**: Grafo orbital espacial que mapeia projetos como estrelas centrais e seus arquivos, regras e laboratórios de pesquisa como satélites gravitando ao redor.\n3. **Project Workspace**: Painel dedicado de cada projeto com 5 abas integradas:\n   - Visão Geral & Contratos\n   - 🔬 Research Lab\n   - 🧮 Diagnóstico de Memória & Saúde\n   - 🔮 Constelação 3D Dedicada\n   - 📦 Backup, Dossiê & Windows Explorer\n\n---\n\n## 7. Checklists de Governança & FAQ Técnico\n\n### Checklist de Início de Tarefa\n- [ ] Ler o `PROJECT.md` e o `CURRENT_STATE.md` do projeto relevante.\n- [ ] Verificar `.agents/rules/` para restrições técnicas.\n- [ ] Classificar a tarefa antes de agir (Determinística, Decisão ou Geração).\n\n### Checklist de Encerramento de Sessão\n- [ ] Testar as alterações implementadas.\n- [ ] Atualizar o `CURRENT_STATE.md` do projeto.\n- [ ] Atualizar a memória persistente (`memory/current-state.md`).\n- [ ] Registrar decisões arquiteturais relevantes em `DECISIONS/`.\n"
     },
     {
       "id": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
@@ -828,6 +840,12 @@ window.VAULT_SNAPSHOT = {
           "label": "Grafo Neural",
           "icon": "🔮",
           "path": "graph"
+        },
+        {
+          "id": "solution-docs",
+          "label": "Documentação da Solução",
+          "icon": "📘",
+          "path": "solution-docs"
         }
       ]
     },
@@ -1433,6 +1451,13 @@ window.VAULT_SNAPSHOT = {
           "size": 6319
         },
         {
+          "id": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+          "label": "AI Second Brain — Documentação Oficial da Solução",
+          "icon": "📝",
+          "path": "docs/SOLUCAO_AI_SECOND_BRAIN.md",
+          "size": 8981
+        },
+        {
           "id": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
           "label": "Análise Estratégica: Utilidade Real e Relevância do AI Second Brain",
           "icon": "📝",
@@ -1440,7 +1465,7 @@ window.VAULT_SNAPSHOT = {
           "size": 17528
         }
       ],
-      "badge": 7
+      "badge": 8
     },
     {
       "id": "core",
@@ -1722,6 +1747,14 @@ window.VAULT_SNAPSHOT = {
       "size": 12,
       "icon": "🔬",
       "path": "docs/RESEARCH_LAB.md"
+    },
+    {
+      "id": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "label": "AI Second Brain — Documentação Oficial da Solução",
+      "group": "docs",
+      "size": 12,
+      "icon": "📝",
+      "path": "docs/SOLUCAO_AI_SECOND_BRAIN.md"
     },
     {
       "id": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
@@ -2192,6 +2225,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "hub-docs",
       "to": "docs_RESEARCH_LAB_md"
+    },
+    {
+      "from": "hub-docs",
+      "to": "docs_SOLUCAO_AI_SECOND_BRAIN_md"
     },
     {
       "from": "hub-docs",
@@ -2728,6 +2765,46 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "docs_RESEARCH_LAB_md",
       "to": "templates_project_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "memory_current-state_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "memory_lessons-learned_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "templates_project_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "templates_session-memory_md"
     },
     {
       "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
@@ -3331,7 +3408,7 @@ window.VAULT_SNAPSHOT = {
     }
   },
   "stats": {
-    "totalFiles": 63,
+    "totalFiles": 64,
     "rulesCount": 5,
     "skillsCount": 8,
     "projectsCount": 2,
@@ -3339,8 +3416,8 @@ window.VAULT_SNAPSHOT = {
     "decisionsCount": 1,
     "memoryCount": 2,
     "templatesCount": 4,
-    "docsCount": 7,
-    "totalNodes": 75,
-    "totalEdges": 302
+    "docsCount": 8,
+    "totalNodes": 76,
+    "totalEdges": 313
   }
 };

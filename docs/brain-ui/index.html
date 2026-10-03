@@ -83,6 +83,9 @@
                     <span class="breadcrumb-item active">🧠 Visão Geral</span>
                 </div>
                 <div class="topbar-actions">
+                    <button id="btnSolutionDocsTop" class="btn-solution-docs-top" onclick="navigateTo('solution-docs')" title="Abrir Documentação Completa da Solução">
+                        <span class="btn-qs-icon">📘</span> Documentação
+                    </button>
                     <button id="btnQuickstartTop" class="btn-quickstart-top" onclick="openQuickstartWizard()" title="Criar novo projeto ou vincular repositório existente">
                         <span class="btn-qs-icon">✨</span> Conectar Projeto
                     </button>
@@ -440,6 +443,345 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Solution Documentation View (Experiência UAU) -->
+            <div id="solutionDocsView" class="solution-docs-view">
+                <div class="sdoc-container">
+                    <!-- TOC Lateral Esquerdo / Sticky Quick Jump -->
+                    <aside class="sdoc-toc">
+                        <div class="sdoc-toc-card">
+                            <div class="sdoc-toc-header">
+                                <span class="sdoc-toc-icon">📑</span>
+                                <span>Sumário da Solução</span>
+                            </div>
+                            <nav class="sdoc-toc-links" id="sdocTocNav">
+                                <a href="#cap-visao-geral" class="sdoc-toc-link active" onclick="scrollToDocCap('cap-visao-geral', event)">1. Visão Geral &amp; Problema</a>
+                                <a href="#cap-arquitetura" class="sdoc-toc-link" onclick="scrollToDocCap('cap-arquitetura', event)">2. Arquitetura da Solução</a>
+                                <a href="#cap-roteamento" class="sdoc-toc-link" onclick="scrollToDocCap('cap-roteamento', event)">3. Governança &amp; Roteamento</a>
+                                <a href="#cap-research-lab" class="sdoc-toc-link" onclick="scrollToDocCap('cap-research-lab', event)">4. Research Lab Autônomo</a>
+                                <a href="#cap-ciclo-vida" class="sdoc-toc-link" onclick="scrollToDocCap('cap-ciclo-vida', event)">5. Ciclo de Vida &amp; Hands-on</a>
+                                <a href="#cap-recursos-visuais" class="sdoc-toc-link" onclick="scrollToDocCap('cap-recursos-visuais', event)">6. Constelação Neural 3D</a>
+                                <a href="#cap-faq" class="sdoc-toc-link" onclick="scrollToDocCap('cap-faq', event)">7. Checklists &amp; FAQ</a>
+                            </nav>
+                            <div class="sdoc-toc-footer">
+                                <button class="btn btn-secondary btn-sm" onclick="showDashboard()" style="width: 100%; justify-content: center;">
+                                    🧠 Ir ao Dashboard
+                                </button>
+                                <button class="btn btn-accent btn-sm" onclick="openQuickstartWizard()" style="width: 100%; justify-content: center; margin-top: 6px;">
+                                    ✨ Conectar Projeto
+                                </button>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <!-- Corpo Principal da Documentação -->
+                    <article class="sdoc-body" id="sdocBodyScroll">
+                        <!-- Hero da Documentação -->
+                        <header class="sdoc-hero">
+                            <div class="sdoc-hero-badge">
+                                <span class="sdoc-badge-dot"></span>
+                                <span>DOCUMENTAÇÃO OFICIAL DA SOLUÇÃO • ALFREDO AI OS</span>
+                            </div>
+                            <h1 class="sdoc-hero-title">AI Second Brain</h1>
+                            <p class="sdoc-hero-subtitle">
+                                O Sistema Operacional de Governança, Memória Persistente e Pesquisa Autônoma para Desenvolvimento com Inteligência Artificial.
+                            </p>
+                            <div class="sdoc-meta-row">
+                                <span class="sdoc-meta-pill">⏱️ Leitura: ~12 minutos</span>
+                                <span class="sdoc-meta-pill">🏛️ Arquitetura: Hub Central &amp; Satélites</span>
+                                <span class="sdoc-meta-pill">🔬 Motor: Groq Cloud (120b) + SSE</span>
+                                <span class="sdoc-meta-pill">🟢 Status: 100% Operacional</span>
+                            </div>
+                        </header>
+
+                        <!-- Cap 1: Visão Geral & O Problema Real -->
+                        <section class="sdoc-chapter" id="cap-visao-geral">
+                            <div class="sdoc-chapter-num">01</div>
+                            <h2 class="sdoc-chapter-title">Visão Geral &amp; O Problema Real</h2>
+                            <p class="sdoc-lead">
+                                O maior gargalo atual do desenvolvimento com agentes de IA (Google Antigravity, Cursor, Claude Code) não é a capacidade de gerar código, mas sim a <strong>amnésia de contexto e a ausência de governança de longo prazo</strong>.
+                            </p>
+                            
+                            <div class="sdoc-callout warning">
+                                <div class="sdoc-callout-icon">⚠️</div>
+                                <div class="sdoc-callout-content">
+                                    <strong>O Risco do "Vibe Coding" sem Arquitetura:</strong>
+                                    Desenvolver apenas trocando mensagens em chats soltos funciona nos primeiros 2 dias. Após algumas semanas, gera código duplicado, regressões silenciosas, classes desordenadas e alto custo financeiro de tokens.
+                                </div>
+                            </div>
+
+                            <div class="sdoc-grid-cards">
+                                <div class="sdoc-card">
+                                    <div class="sdoc-card-icon">🧠</div>
+                                    <h3>Amnésia de Contexto</h3>
+                                    <p>Cada nova janela de contexto reinicia o modelo. Sem um cérebro externo, o agente esquece por que escolheu cada biblioteca e refaz erros passados.</p>
+                                </div>
+                                <div class="sdoc-card">
+                                    <div class="sdoc-card-icon">🌪️</div>
+                                    <h3>Context Drift</h3>
+                                    <p>Sem diretrizes de arquitetura centralizadas, a base de código degrada com padrões conflitantes a cada novo prompt.</p>
+                                </div>
+                                <div class="sdoc-card">
+                                    <div class="sdoc-card-icon">💸</div>
+                                    <h3>Desperdício de Tokens</h3>
+                                    <p>Uso abusivo de LLMs caros para resolver lógicas determinísticas que código simples ou motores de regras resolvem com latência zero.</p>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Cap 2: Arquitetura da Solução & Camadas do Cérebro -->
+                        <section class="sdoc-chapter" id="cap-arquitetura">
+                            <div class="sdoc-chapter-num">02</div>
+                            <h2 class="sdoc-chapter-title">Arquitetura da Solução &amp; Camadas do Cérebro</h2>
+                            <p>
+                                O <strong>AI Second Brain</strong> adota o padrão de <strong>Hub Central de Governança &amp; Repositórios Satélites Físicos</strong>. O cérebro central armazena regras, memória, decisões e pesquisas, enquanto os repositórios contêm o código executável dos seus produtos.
+                            </p>
+
+                            <!-- Diagrama SVG 1: Hub & Satélites -->
+                            <div class="sdoc-diagram-box">
+                                <div class="sdoc-diagram-header">
+                                    <span class="sdoc-diagram-tag">DIAGRAMA ARQUITETURAL INTERATIVO</span>
+                                    <span class="sdoc-diagram-status">● SVG Animado</span>
+                                </div>
+                                <img src="assets/diagrams/hub-satellites-architecture.svg?v=3" alt="Arquitetura Hub Central e Repositórios Satélites" class="sdoc-diagram-img" />
+                                <div class="sdoc-diagram-caption">
+                                    Figura 1: O Hub Central transmitindo contratos, regras e memória para múltiplos projetos satélites em qualquer stack.
+                                </div>
+                            </div>
+
+                            <h3 class="sdoc-subtitle">Onde Mora Cada Informação no Cérebro?</h3>
+                            <div class="sdoc-table-wrapper">
+                                <table class="sdoc-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Camada</th>
+                                            <th>Diretório</th>
+                                            <th>Finalidade Estratégica</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Regras Absolutas</strong></td>
+                                            <td><code>.agents/rules/</code></td>
+                                            <td>Restrições universais inegociáveis de IA, segurança e qualidade de código.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Skills do Agente</strong></td>
+                                            <td><code>.agents/skills/</code></td>
+                                            <td>Workflows acionáveis (onboarding de projetos, revisão arquitetural, persistência de sessão).</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Base de Conhecimento</strong></td>
+                                            <td><code>knowledge/</code></td>
+                                            <td>Padrões conceituais universais (AI Gateway, AIJev, OWASP, Arquitetura).</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Memória Global</strong></td>
+                                            <td><code>memory/</code></td>
+                                            <td>Histórico de continuidade entre sessões (<code>current-state.md</code> e <code>lessons-learned.md</code>).</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Projetos Governados</strong></td>
+                                            <td><code>projects/</code></td>
+                                            <td>Hub de contratos individuais (<code>PROJECT.md</code>, <code>CURRENT_STATE.md</code>, <code>BACKUPS/</code>, <code>RESEARCH/</code>).</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Research Lab</strong></td>
+                                            <td><code>projects/&lt;nome&gt;/RESEARCH/</code></td>
+                                            <td>Laboratório autônomo de geração de conhecimento em duas camadas.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <!-- Cap 3: Governança & Roteamento de IA -->
+                        <section class="sdoc-chapter" id="cap-roteamento">
+                            <div class="sdoc-chapter-num">03</div>
+                            <h2 class="sdoc-chapter-title">Governança &amp; Roteamento de IA (AIJev First)</h2>
+                            <p>
+                                O coração da eficiência do Alfredo AI OS é o <strong>Roteamento Inteligente de Tarefas</strong>. Antes de executar qualquer ação, o agente avalia se o problema é determinístico, de decisão ou de geração.
+                            </p>
+
+                            <!-- Diagrama SVG 2: Roteamento de IA -->
+                            <div class="sdoc-diagram-box">
+                                <div class="sdoc-diagram-header">
+                                    <span class="sdoc-diagram-tag">FLUXO DE DECISÃO DE ENGENHARIA</span>
+                                    <span class="sdoc-diagram-status">● SVG Animado</span>
+                                </div>
+                                <img src="assets/diagrams/ai-decision-routing.svg?v=2" alt="Árvore de Roteamento de Decisão com IA" class="sdoc-diagram-img" />
+                                <div class="sdoc-diagram-caption">
+                                    Figura 2: Árvore de Roteamento com priorização estrita: Código Determinístico ➔ AIJev ➔ LLM apenas quando essencial.
+                                </div>
+                            </div>
+
+                            <div class="sdoc-callout tip">
+                                <div class="sdoc-callout-icon">💡</div>
+                                <div class="sdoc-callout-content">
+                                    <strong>Regra de Ouro de Custo &amp; Latência:</strong>
+                                    Se uma tarefa pode ser resolvida por um cálculo, regex ou regra de negócio condicional, ela <strong>NUNCA</strong> deve ser enviada para um LLM. O modelo generativo só é convocado quando há real necessidade de síntese semântica ou geração de código inédito.
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Cap 4: Research Lab -->
+                        <section class="sdoc-chapter" id="cap-research-lab">
+                            <div class="sdoc-chapter-num">04</div>
+                            <h2 class="sdoc-chapter-title">O Laboratório de Pesquisa Autônomo (Research Lab)</h2>
+                            <p>
+                                O <strong>Research Lab</strong> transforma intenções brutas do desenvolvedor em pesquisas técnicas aprofundadas com dezenas de páginas de documentação, schemas de banco de dados e algoritmos prontos.
+                            </p>
+
+                            <!-- Diagrama SVG 3: Two Layers -->
+                            <div class="sdoc-diagram-box">
+                                <div class="sdoc-diagram-header">
+                                    <span class="sdoc-diagram-tag">TAXONOMIA EM DUAS CAMADAS</span>
+                                    <span class="sdoc-diagram-status">● SVG Animado</span>
+                                </div>
+                                <img src="assets/diagrams/research-two-layers.svg?v=2" alt="Taxonomia de Duas Camadas do Research Lab" class="sdoc-diagram-img" />
+                                <div class="sdoc-diagram-caption">
+                                    Figura 3: Separação automática entre Fundamentos Conceituais (knowledge) e Especificações de Código (actionable).
+                                </div>
+                            </div>
+
+                            <div class="sdoc-grid-cards">
+                                <div class="sdoc-card blue-accent">
+                                    <div class="sdoc-card-icon">📘</div>
+                                    <h3>Camada 1: Knowledge</h3>
+                                    <p>Arquivos conceituais contendo teorias de engenharia, arquitetura de sistemas, trade-offs e boas práticas de mercado.</p>
+                                </div>
+                                <div class="sdoc-card green-accent">
+                                    <div class="sdoc-card-icon">🛠️</div>
+                                    <h3>Camada 2: Actionable</h3>
+                                    <p>Especificações práticas, schemas SQL Server / Prisma, controllers TypeScript / Node.js e testes automatizados prontos para uso.</p>
+                                </div>
+                            </div>
+
+                            <h3 class="sdoc-subtitle">Resiliência contra Rate Limits (Groq Cloud)</h3>
+                            <p>
+                                O motor autônomo (<code>scripts/research-engine.js</code>) opera com zero dependências externas e possui:
+                            </p>
+                            <ul class="sdoc-list">
+                                <li><strong>Rate Limit Recovery com Parser Dinâmico</strong>: Extrai o tempo de espera do cabeçalho da Groq Cloud e aguarda com +2s de segurança antes de retentar.</li>
+                                <li><strong>Cadência Preventiva de 6s</strong>: Pausa estratégica entre arquivos gerados para evitar esgotamento do bucket de TPM.</li>
+                                <li><strong>Resumabilidade Automática</strong>: Detecta arquivos já catalogados no disco e não queima tokens redundantes ao retomar pesquisas.</li>
+                                <li><strong>Streaming em Tempo Real (SSE)</strong>: Comunicação contínua com a interface informando exatamente qual arquivo a IA está gerando.</li>
+                            </ul>
+                        </section>
+
+                        <!-- Cap 5: Ciclo de Vida de uma Sessão -->
+                        <section class="sdoc-chapter" id="cap-ciclo-vida">
+                            <div class="sdoc-chapter-num">05</div>
+                            <h2 class="sdoc-chapter-title">Ciclo de Vida de um Projeto na Prática (Hands-on)</h2>
+                            <p>
+                                O fluxo de trabalho diário com o AI Second Brain elimina a perda de contexto e torna cada minuto de desenvolvimento produtivo:
+                            </p>
+
+                            <!-- Diagrama SVG 4: Session Loop -->
+                            <div class="sdoc-diagram-box">
+                                <div class="sdoc-diagram-header">
+                                    <span class="sdoc-diagram-tag">LOOP CONTÍNUO DE DESENVOLVIMENTO</span>
+                                    <span class="sdoc-diagram-status">● SVG Animado</span>
+                                </div>
+                                <img src="assets/diagrams/session-lifecycle-loop.svg?v=2" alt="Ciclo Contínuo de Desenvolvimento com Zero Amnésia" class="sdoc-diagram-img" />
+                                <div class="sdoc-diagram-caption">
+                                    Figura 4: O ciclo em 4 etapas contínuas garantindo continuidade entre qualquer sessão.
+                                </div>
+                            </div>
+
+                            <div class="sdoc-steps-list">
+                                <div class="sdoc-step-item">
+                                    <div class="sdoc-step-badge">Etapa 1</div>
+                                    <div class="sdoc-step-text">
+                                        <h4>Início da Sessão (Leitura de Estado)</h4>
+                                        <p>O agente e o desenvolvedor abrem a sessão lendo o <code>CURRENT_STATE.md</code>. O contexto de onde o projeto parou é recuperado instantaneamente.</p>
+                                    </div>
+                                </div>
+                                <div class="sdoc-step-item">
+                                    <div class="sdoc-step-badge">Etapa 2</div>
+                                    <div class="sdoc-step-text">
+                                        <h4>Desenvolvimento Focado com IA</h4>
+                                        <p>A escrita de código e arquitetura segue rigidamente as diretrizes em <code>.agents/rules/</code> e o <code>ARCHITECTURE.md</code> do projeto.</p>
+                                    </div>
+                                </div>
+                                <div class="sdoc-step-item">
+                                    <div class="sdoc-step-badge">Etapa 3</div>
+                                    <div class="sdoc-step-text">
+                                        <h4>Testes &amp; Validação de Qualidade</h4>
+                                        <p>Execução de scripts, checagens de linters e testes de integração garantindo que não haja regressão.</p>
+                                    </div>
+                                </div>
+                                <div class="sdoc-step-item">
+                                    <div class="sdoc-step-badge">Etapa 4</div>
+                                    <div class="sdoc-step-text">
+                                        <h4>Fechamento &amp; Memória Persistente</h4>
+                                        <p>Ao encerrar, a skill <code>session-memory</code> grava o que foi feito, as decisões tomadas e os próximos passos. A próxima sessão inicia sem amnésia.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Cap 6: Constelação Neural 3D -->
+                        <section class="sdoc-chapter" id="cap-recursos-visuais">
+                            <div class="sdoc-chapter-num">06</div>
+                            <h2 class="sdoc-chapter-title">Constelação Neural 3D &amp; Recursos Visuais</h2>
+                            <p>
+                                O visualizador web (<code>docs/brain-ui/</code>) transforma o conhecimento abstrato em um universo interativo navegável:
+                            </p>
+
+                            <div class="sdoc-grid-cards">
+                                <div class="sdoc-card">
+                                    <div class="sdoc-card-icon">🔮</div>
+                                    <h3>Constelação Neural 3D (Three.js)</h3>
+                                    <p>Os projetos atuam como estrelas centrais com campo gravitacional. Regras, skills, arquivos locais e pesquisas orbitam como satélites interligados.</p>
+                                </div>
+                                <div class="sdoc-card">
+                                    <div class="sdoc-card-icon">✏️</div>
+                                    <h3>Live Markdown Editor</h3>
+                                    <p>Editor de texto completo integrado à interface com salvamento instantâneo via <code>Ctrl+S</code> direto nos arquivos do disco rígido.</p>
+                                </div>
+                                <div class="sdoc-card">
+                                    <div class="sdoc-card-icon">🌳</div>
+                                    <h3>Sidebar em Árvore Hierárquica</h3>
+                                    <p>Menu lateral colapsável com linhas guias verticais, ordenação sequencial e chevrons direcionais inspirados no Obsidian e VS Code.</p>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Cap 7: Checklists & FAQ -->
+                        <section class="sdoc-chapter" id="cap-faq">
+                            <div class="sdoc-chapter-num">07</div>
+                            <h2 class="sdoc-chapter-title">Checklists de Governança &amp; FAQ Técnico</h2>
+                            
+                            <div class="sdoc-callout info">
+                                <div class="sdoc-callout-icon">📋</div>
+                                <div class="sdoc-callout-content">
+                                    <strong>Checklist de Início de Tarefa:</strong>
+                                    <ol style="margin: 6px 0 0 16px; padding: 0;">
+                                        <li>Ler o <code>PROJECT.md</code> e o <code>CURRENT_STATE.md</code> do projeto relevante.</li>
+                                        <li>Verificar <code>.agents/rules/</code> para restrições de arquitetura e segurança.</li>
+                                        <li>Classificar a tarefa antes de agir (Determinística, Decisão ou Geração).</li>
+                                    </ol>
+                                </div>
+                            </div>
+
+                            <h3 class="sdoc-subtitle" style="margin-top: 24px;">Perguntas Frequentes (FAQ)</h3>
+                            <div class="sdoc-faq-item">
+                                <h4>Como os projetos são vinculados sem duplicar arquivos?</h4>
+                                <p>No Windows, o AI Second Brain utiliza <strong>Junções NTFS (Junctions)</strong> ou symlinks de diretório. Os arquivos permanecem nos seus repositórios originais e apenas o espelho de governança é conectado ao cérebro.</p>
+                            </div>
+                            <div class="sdoc-faq-item">
+                                <h4>O que acontece se a Groq Cloud ficar indisponível?</h4>
+                                <p>O cliente HTTP possui fallback configurado para outros modelos (ex: <code>openai/gpt-oss-20b</code>) e retentativas exponenciais com backoff. Tarefas determinísticas e decisões AIJev continuam funcionando com 100% de disponibilidade local.</p>
+                            </div>
+                            <div class="sdoc-faq-item">
+                                <h4>Onde são salvos os backups e dossiês de governança?</h4>
+                                <p>Na pasta física <code>projects/&lt;nome&gt;/BACKUPS/</code>, com exportação completa em formato Markdown (legível para humanos) e JSON estruturado (auditável por scripts).</p>
+                            </div>
+                        </section>
+                    </article>
                 </div>
             </div>
         </main>

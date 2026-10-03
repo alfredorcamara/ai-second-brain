@@ -172,6 +172,7 @@ function scanVault(rootDir = ROOT_DIR) {
         { id: 'overview', label: 'Visão Geral', icon: '🧠', startCollapsed: true, items: [
             { id: 'dashboard', label: 'Dashboard', icon: '📊', path: 'dashboard' },
             { id: 'graph', label: 'Grafo Neural', icon: '🔮', path: 'graph' },
+            { id: 'solution-docs', label: 'Documentação da Solução', icon: '📘', path: 'solution-docs' },
         ]},
         { id: 'rules', label: 'Rules', icon: '📏', startCollapsed: true, items: [] },
         { id: 'skills', label: 'Skills', icon: '⚡', startCollapsed: true, items: [] },
