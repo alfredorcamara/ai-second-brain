@@ -43,7 +43,7 @@ function getAllMarkdownFiles(dir, visited = new Set()) {
         return results;
     }
 
-    const ignoredFolders = new Set(['node_modules', '.git', 'bin', 'obj', 'dist', 'build', 'vendor', '.vs', '.vscode']);
+    const ignoredFolders = new Set(['node_modules', '.git', 'bin', 'obj', 'dist', 'build', 'vendor', '.vs', '.vscode', 'backups', '.archive']);
 
     for (const entry of entries) {
         const name = entry.name;

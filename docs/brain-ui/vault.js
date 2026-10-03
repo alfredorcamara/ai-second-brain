@@ -58,6 +58,14 @@ class VaultManager {
                 await this.refresh();
                 if (this.onVaultUpdated) this.onVaultUpdated(info);
             });
+            this.eventSource.addEventListener('research-progress', (event) => {
+                try {
+                    const info = JSON.parse(event.data);
+                    if (typeof handleResearchLiveProgress === 'function') {
+                        handleResearchLiveProgress(info);
+                    }
+                } catch (e) {}
+            });
         } catch (e) {
             console.warn('[Vault] SSE não suportado:', e);
         }

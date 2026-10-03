@@ -23,6 +23,9 @@ function getIconForFile(relPath, title, category) {
     const clean = p.startsWith('.agents/') ? p.slice('.agents/'.length) : p;
 
     if (p.includes('gemini.md') || p.includes('readme.md')) return '🧠';
+    if (p.includes('/actionable/') || p.includes('actionable')) return '🛠️';
+    if (p.includes('/research/') && p.includes('/knowledge/')) return '📘';
+    if (p.includes('/research/') || p.includes('research')) return '🔬';
     if (category === 'agents' || clean.startsWith('agents/') || clean.includes('agent')) return '🤖';
     if (p.includes('core')) return '⚙️';
     if (p.includes('ai-decision') || p.includes('decision-gate')) return '🚦';
@@ -166,27 +169,34 @@ function scanVault(rootDir = ROOT_DIR) {
 
     // Build Navigation Sections
     const sectionDefs = [
-        { id: 'overview', label: 'Visão Geral', icon: '🧠', items: [
+        { id: 'overview', label: 'Visão Geral', icon: '🧠', startCollapsed: true, items: [
             { id: 'dashboard', label: 'Dashboard', icon: '📊', path: 'dashboard' },
             { id: 'graph', label: 'Grafo Neural', icon: '🔮', path: 'graph' },
         ]},
-        { id: 'rules', label: 'Rules', icon: '📏', items: [] },
-        { id: 'skills', label: 'Skills', icon: '⚡', items: [] },
-        { id: 'agents', label: 'Agents', icon: '🤖', items: [] },
-        { id: 'projects', label: 'Projects', icon: '📁', items: [] },
-        { id: 'knowledge', label: 'Knowledge', icon: '📚', items: [] },
-        { id: 'decisions', label: 'Decisions', icon: '⚖️', items: [] },
-        { id: 'memory', label: 'Memory', icon: '🧮', items: [] },
-        { id: 'templates', label: 'Templates', icon: '📋', items: [] },
-        { id: 'docs', label: 'Docs & Guias', icon: '📖', items: [] },
-        { id: 'core', label: 'Sistema / Core', icon: '⚙️', items: [] },
+        { id: 'rules', label: 'Rules', icon: '📏', startCollapsed: true, items: [] },
+        { id: 'skills', label: 'Skills', icon: '⚡', startCollapsed: true, items: [] },
+        { id: 'agents', label: 'Agents', icon: '🤖', startCollapsed: true, items: [] },
+        { id: 'projects', label: 'Projects', icon: '📁', startCollapsed: true, items: [] },
+        { id: 'knowledge', label: 'Knowledge', icon: '📚', startCollapsed: true, items: [] },
+        { id: 'decisions', label: 'Decisions', icon: '⚖️', startCollapsed: true, items: [] },
+        { id: 'memory', label: 'Memory', icon: '🧮', startCollapsed: true, items: [] },
+        { id: 'templates', label: 'Templates', icon: '📋', startCollapsed: true, items: [] },
+        { id: 'docs', label: 'Docs & Guias', icon: '📖', startCollapsed: true, items: [] },
+        { id: 'core', label: 'Sistema / Core', icon: '⚙️', startCollapsed: true, items: [] },
     ];
 
     const sectionsMap = new Map();
     sectionDefs.forEach(s => sectionsMap.set(s.id, s));
 
-    const projectGroups = new Map();
+    const projectFilesMap = new Map();
     let projectsGuideItem = null;
+
+    function formatSlugTitle(slug) {
+        if (!slug) return '';
+        return slug
+            .replace(/-/g, ' ')
+            .replace(/\b\w/g, l => l.toUpperCase());
+    }
 
     files.forEach(f => {
         if (f.category === 'projects') {
@@ -195,51 +205,17 @@ function scanVault(rootDir = ROOT_DIR) {
                 // Arquivo na raiz de projects/ (ex: projects/README.md)
                 projectsGuideItem = {
                     id: f.id,
-                    label: '📖 Guia de Projetos',
+                    label: 'Guia de Projetos',
                     icon: '📖',
                     path: f.path,
                     size: f.size
                 };
             } else {
                 const projName = parts[1];
-                if (!projectGroups.has(projName)) {
-                    projectGroups.set(projName, {
-                        id: `proj_${projName}`,
-                        label: projName,
-                        icon: '🚀',
-                        isGroup: true,
-                        path: `projects/${projName}/PROJECT.md`,
-                        children: []
-                    });
+                if (!projectFilesMap.has(projName)) {
+                    projectFilesMap.set(projName, []);
                 }
-
-                const group = projectGroups.get(projName);
-                let childLabel = f.name;
-                let childIcon = f.icon;
-
-                if (f.name.toLowerCase() === 'project.md') {
-                    childLabel = 'PROJECT.md (Visão Geral)';
-                    childIcon = '📄';
-                    group.path = f.path; // Ponto de entrada principal
-                } else if (f.name.toLowerCase() === 'current_state.md') {
-                    childLabel = 'CURRENT_STATE.md (Estado Atual)';
-                    childIcon = '💾';
-                } else if (f.name.toLowerCase() === 'architecture.md') {
-                    childLabel = 'ARCHITECTURE.md (Arquitetura)';
-                    childIcon = '🏗️';
-                } else {
-                    const subRel = parts.slice(2).join('/');
-                    childLabel = subRel;
-                }
-
-                group.children.push({
-                    id: f.id,
-                    label: childLabel,
-                    title: f.title,
-                    icon: childIcon,
-                    path: f.path,
-                    size: f.size
-                });
+                projectFilesMap.get(projName).push(f);
             }
         } else {
             const sec = sectionsMap.get(f.category) || sectionsMap.get('core');
@@ -253,6 +229,215 @@ function scanVault(rootDir = ROOT_DIR) {
         }
     });
 
+    const projectGroups = new Map();
+
+    for (const [projName, pFiles] of projectFilesMap.entries()) {
+        const rootFiles = [];
+        const backupFiles = [];
+        const researchFilesMap = new Map(); // slug -> []
+        const otherFoldersMap = new Map(); // folderName -> []
+
+        let mainProjectPath = `projects/${projName}/PROJECT.md`;
+
+        pFiles.forEach(f => {
+            const parts = f.path.split('/');
+            // parts: ['projects', projName, ...]
+            if (parts.length === 3) {
+                // Arquivo direto na raiz do projeto
+                let label = f.name;
+                let icon = f.icon;
+                if (f.name.toLowerCase() === 'project.md') {
+                    label = 'PROJECT.md (Visão Geral)';
+                    icon = '📄';
+                    mainProjectPath = f.path;
+                } else if (f.name.toLowerCase() === 'current_state.md') {
+                    label = 'CURRENT_STATE.md (Estado Atual)';
+                    icon = '💾';
+                } else if (f.name.toLowerCase() === 'architecture.md') {
+                    label = 'ARCHITECTURE.md (Arquitetura)';
+                    icon = '🏗️';
+                }
+                rootFiles.push({
+                    id: f.id,
+                    label: label,
+                    title: f.title,
+                    icon: icon,
+                    path: f.path,
+                    size: f.size
+                });
+            } else if (parts[2].toUpperCase() === 'BACKUPS') {
+                backupFiles.push(f);
+            } else if (parts[2].toUpperCase() === 'RESEARCH') {
+                const slug = parts[3] || 'geral';
+                if (!researchFilesMap.has(slug)) {
+                    researchFilesMap.set(slug, []);
+                }
+                researchFilesMap.get(slug).push(f);
+            } else {
+                const folder = parts[2];
+                if (!otherFoldersMap.has(folder)) {
+                    otherFoldersMap.set(folder, []);
+                }
+                otherFoldersMap.get(folder).push(f);
+            }
+        });
+
+        // Ordena arquivos de governança na raiz
+        rootFiles.sort((a, b) => {
+            const priority = (p) => {
+                const pLower = p.toLowerCase();
+                if (pLower.endsWith('project.md')) return 1;
+                if (pLower.endsWith('current_state.md')) return 2;
+                if (pLower.endsWith('architecture.md')) return 3;
+                return 10;
+            };
+            return priority(a.path) - priority(b.path) || a.label.localeCompare(b.label);
+        });
+
+        const children = [...rootFiles];
+
+        // 1. Subpasta de BACKUPS
+        if (backupFiles.length > 0) {
+            children.push({
+                id: `sub_${projName}_backups`,
+                label: 'BACKUPS',
+                icon: '📦',
+                isGroup: true,
+                isSubfolder: true,
+                startCollapsed: true,
+                childrenCount: backupFiles.length,
+                children: backupFiles.map(f => ({
+                    id: f.id,
+                    label: f.name,
+                    title: f.title,
+                    icon: '📄',
+                    path: f.path,
+                    size: f.size
+                }))
+            });
+        }
+
+        // 2. Subpastas de RESEARCH (Laboratório de Pesquisa)
+        if (researchFilesMap.size > 0) {
+            const researchFolders = [];
+            let totalResearchFiles = 0;
+
+            for (const [slug, rFiles] of researchFilesMap.entries()) {
+                totalResearchFiles += rFiles.length;
+                const overviewFile = rFiles.find(f => f.name.toLowerCase() === 'overview.md');
+                let researchTitle = formatSlugTitle(slug);
+                if (overviewFile && overviewFile.title && !overviewFile.title.includes('Laboratório')) {
+                    researchTitle = overviewFile.title.replace(/^[\p{Emoji}\p{Extended_Pictographic}\s]+/u, '').trim();
+                    if (!researchTitle) researchTitle = formatSlugTitle(slug);
+                }
+
+                // Ordena os arquivos da pesquisa: OVERVIEW.md primeiro, depois por número (01, 02, ...), depois path
+                rFiles.sort((a, b) => {
+                    if (a.name.toLowerCase() === 'overview.md') return -1;
+                    if (b.name.toLowerCase() === 'overview.md') return 1;
+                    const numA = (a.name.match(/^(\d+)/) || [])[1];
+                    const numB = (b.name.match(/^(\d+)/) || [])[1];
+                    if (numA && numB) {
+                        return parseInt(numA, 10) - parseInt(numB, 10);
+                    }
+                    if (numA && !numB) return -1;
+                    if (!numA && numB) return 1;
+                    return a.path.localeCompare(b.path);
+                });
+
+                const formattedFiles = rFiles.map(f => {
+                    let label = f.title || f.name;
+                    let icon = f.icon;
+                    if (f.name.toLowerCase() === 'overview.md') {
+                        label = 'OVERVIEW.md (Visão Geral)';
+                        icon = '📄';
+                    } else if (f.path.includes('/actionable/')) {
+                        icon = '🛠️';
+                        const numMatch = f.name.match(/^(\d+)-(.*)\.md$/i);
+                        if (numMatch) label = `${numMatch[1]} - ${f.title}`;
+                    } else if (f.path.includes('/knowledge/')) {
+                        icon = '📘';
+                        const numMatch = f.name.match(/^(\d+)-(.*)\.md$/i);
+                        if (numMatch) label = `${numMatch[1]} - ${f.title}`;
+                    }
+
+                    return {
+                        id: f.id,
+                        label: label,
+                        title: `${f.title} (${f.path})`,
+                        icon: icon,
+                        path: f.path,
+                        size: f.size
+                    };
+                });
+
+                researchFolders.push({
+                    id: `sub_${projName}_res_${slug.replace(/[^a-zA-Z0-9_-]/g, '_')}`,
+                    label: researchTitle,
+                    icon: '🔬',
+                    isGroup: true,
+                    isSubfolder: true,
+                    startCollapsed: true,
+                    path: overviewFile ? overviewFile.path : rFiles[0].path,
+                    childrenCount: formattedFiles.length,
+                    children: formattedFiles
+                });
+            }
+
+            // Agrupa todas as pesquisas sob a pasta RESEARCH
+            children.push({
+                id: `sub_${projName}_research_root`,
+                label: 'RESEARCH',
+                icon: '🔬',
+                isGroup: true,
+                isSubfolder: true,
+                isResearchRoot: true,
+                projectName: projName,
+                startCollapsed: true,
+                childrenCount: totalResearchFiles,
+                children: researchFolders
+            });
+        }
+
+        // 3. Outras subpastas genéricas (ex: DECISIONS, MEMORY, docs, etc.)
+        for (const [folderName, oFiles] of otherFoldersMap.entries()) {
+            let icon = '📁';
+            if (folderName.toUpperCase() === 'DECISIONS') icon = '⚖️';
+            if (folderName.toUpperCase() === 'MEMORY') icon = '💾';
+
+            children.push({
+                id: `sub_${projName}_${folderName.replace(/[^a-zA-Z0-9_-]/g, '_')}`,
+                label: folderName,
+                icon: icon,
+                isGroup: true,
+                isSubfolder: true,
+                startCollapsed: true,
+                childrenCount: oFiles.length,
+                children: oFiles.map(f => ({
+                    id: f.id,
+                    label: f.name,
+                    title: f.title,
+                    icon: f.icon || '📄',
+                    path: f.path,
+                    size: f.size
+                }))
+            });
+        }
+
+        projectGroups.set(projName, {
+            id: `proj_${projName}`,
+            label: projName,
+            icon: '🚀',
+            isGroup: true,
+            isProject: true,
+            startCollapsed: true,
+            path: mainProjectPath,
+            totalFilesCount: pFiles.length,
+            childrenCount: pFiles.length,
+            children: children
+        });
+    }
+
     // Configura a seção de Projetos estruturada em árvore
     const projectsSec = sectionsMap.get('projects');
     if (projectsSec) {
@@ -262,16 +447,6 @@ function scanVault(rootDir = ROOT_DIR) {
         }
         const sortedGroups = Array.from(projectGroups.values()).sort((a, b) => a.label.localeCompare(b.label));
         sortedGroups.forEach(g => {
-            g.children.sort((a, b) => {
-                const priority = (p) => {
-                    const pLower = p.toLowerCase();
-                    if (pLower.endsWith('project.md')) return 1;
-                    if (pLower.endsWith('current_state.md')) return 2;
-                    if (pLower.endsWith('architecture.md')) return 3;
-                    return 10;
-                };
-                return priority(a.path) - priority(b.path) || a.label.localeCompare(b.label);
-            });
             projectsSec.items.push(g);
         });
         // O badge mostra o número REAL de projetos, não de arquivos

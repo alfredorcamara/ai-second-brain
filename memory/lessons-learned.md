@@ -21,3 +21,14 @@ ou probabilidades.
 **Aprendizado**: LLM é caro, lento e não-determinístico. Use apenas quando
 realmente precisa de geração de texto ou raciocínio aberto.
 **Ação**: Sempre pergunte "isso pode ser feito sem IA?" antes de usar LLM.
+
+### Lição 4: Catálogos de modelos de IA são efêmeros
+**Contexto**: Ao configurar o Groq para o Research Lab, modelos consagrados como `llama-3.3-70b-versatile` já estavam descontinuados/deprecados no provedor.
+**Aprendizado**: Provedores de nuvem (especialmente inferência rápida como Groq) alteram IDs e disponibilidade de modelos com frequência. Consultar a API de modelos (`GET /openai/v1/models`) em tempo de diagnóstico ou adotar modelos com alta janela de contexto (ex: `openai/gpt-oss-120b`) previne erros `404 model_decommissioned`.
+**Ação**: Sempre incluir verificação de status e permitir parametrização do modelo via `.env` (`GROQ_MODEL`).
+
+### Lição 5: Parsing defensivo de JSON gerado por LLMs
+**Contexto**: A decomposição de tópicos exige retorno estritamente em JSON estruturado, mas LLMs frequentemente adicionam blocos ` ```json ... ``` ` ou texto introdutório.
+**Aprendizado**: Clientes HTTP nativos devem sanitizar markdown fences e extrair blocos `{...}` ou `[...]` antes do `JSON.parse`.
+**Ação**: Implementar regex de desempacotamento de markdown fence e fallback antes de falhar a requisição.
+

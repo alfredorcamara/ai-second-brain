@@ -28,3 +28,10 @@
 - **Data**: 2026-09-27
 - **Descrição**: Toda documentação vive no repositório, versionada com Git,
   em formato Markdown.
+
+## ADR-G005: Research Lab Engine com Groq Cloud & Prompt Vivo
+- **Status**: Aceita
+- **Data**: 2026-10-02
+- **Descrição**: O Research Lab é adotado como subsistema do AI Second Brain para pesquisa autônoma e catalogação de conhecimento de projetos em Markdown. A inferência de refinamento de briefing e decomposição de temas utiliza o Groq Cloud via módulo HTTP nativo sem dependências npm (`scripts/groq-client.js`). O conceito de "Prompt Vivo" é estabelecido: o usuário pode refinar e alterar a intenção a qualquer momento, mantendo versionamento em `_meta.json` (`definitionHistory`) para permitir re-pesquisa incremental.
+- **Detalhes**: Ver `docs/RESEARCH_LAB.md` e artefatos de decisão do Research Lab.
+

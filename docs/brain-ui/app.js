@@ -37,6 +37,157 @@ function showToast(message, type = 'info', duration = 4000) {
     }, duration);
 }
 
+// ── Universal Brain Dialog System (Confirmations & Prompts) ────
+let _brainConfirmResolver = null;
+
+/**
+ * Diálogo Universal de Alta Fidelidade para Confirmações e Respostas do Usuário
+ */
+function showBrainConfirm(options = {}) {
+    return new Promise((resolve) => {
+        _brainConfirmResolver = resolve;
+
+        const modal = document.getElementById('brainConfirmModal');
+        if (!modal) {
+            const ok = window.confirm(options.message ? options.message.replace(/<[^>]*>?/gm, '') : (options.title || 'Confirmar?'));
+            resolve(ok);
+            return;
+        }
+
+        const card = modal.querySelector('.brain-dialog-card');
+        const iconEl = document.getElementById('brainConfirmIcon');
+        const badgeEl = document.getElementById('brainConfirmBadge');
+        const titleEl = document.getElementById('brainConfirmTitle');
+        const messageEl = document.getElementById('brainConfirmMessage');
+        const inputWrap = document.getElementById('brainConfirmInputWrap');
+        const inputEl = document.getElementById('brainConfirmInput');
+        const cancelBtn = document.getElementById('brainConfirmCancelBtn');
+        const okBtn = document.getElementById('brainConfirmOkBtn');
+
+        const isDanger = options.danger !== false;
+        const withInput = !!options.withInput;
+
+        if (card) {
+            card.className = `brain-dialog-card ${isDanger ? 'dialog-danger' : 'dialog-primary'}`;
+        }
+
+        if (iconEl) {
+            iconEl.textContent = options.icon || (withInput ? '💬' : (isDanger ? '🗑️' : '❓'));
+        }
+
+        if (badgeEl) {
+            badgeEl.textContent = options.badge || (withInput ? 'ENTRADA REQUERIDA' : (isDanger ? '⚠️ EXCLUSÃO PERMANENTE' : 'CONFIRMAÇÃO'));
+        }
+
+        if (titleEl) {
+            titleEl.textContent = options.title || 'Confirmar Ação';
+        }
+
+        if (messageEl) {
+            messageEl.innerHTML = options.message || 'Tem certeza que deseja prosseguir com esta ação?';
+        }
+
+        if (cancelBtn) {
+            cancelBtn.textContent = options.cancelText || 'Cancelar';
+            cancelBtn.style.display = options.singleButton ? 'none' : 'inline-flex';
+        }
+
+        if (okBtn) {
+            okBtn.textContent = options.confirmText || (isDanger ? 'Excluir' : 'Confirmar');
+            okBtn.className = `btn btn-dialog ${isDanger ? 'btn-danger-glow' : 'btn-primary-glow'}`;
+        }
+
+        if (inputWrap && inputEl) {
+            if (withInput) {
+                inputWrap.style.display = 'block';
+                inputEl.value = options.defaultValue || '';
+                inputEl.placeholder = options.inputPlaceholder || 'Digite sua resposta...';
+                setTimeout(() => {
+                    inputEl.focus();
+                    if (inputEl.value) inputEl.select();
+                }, 100);
+            } else {
+                inputWrap.style.display = 'none';
+                inputEl.value = '';
+            }
+        }
+
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                document.removeEventListener('keydown', handleKeyDown);
+                resolveBrainConfirm(withInput ? null : false);
+            } else if (e.key === 'Enter' && (!inputWrap || inputWrap.style.display === 'none' || document.activeElement === inputEl)) {
+                e.preventDefault();
+                document.removeEventListener('keydown', handleKeyDown);
+                onBrainConfirmOkClicked();
+            }
+        };
+        modal._keyHandler = handleKeyDown;
+        document.addEventListener('keydown', handleKeyDown);
+    });
+}
+
+function onBrainConfirmOkClicked() {
+    const inputWrap = document.getElementById('brainConfirmInputWrap');
+    const inputEl = document.getElementById('brainConfirmInput');
+    if (inputWrap && inputWrap.style.display !== 'none' && inputEl) {
+        resolveBrainConfirm(inputEl.value.trim());
+    } else {
+        resolveBrainConfirm(true);
+    }
+}
+
+function resolveBrainConfirm(result) {
+    const modal = document.getElementById('brainConfirmModal');
+    if (modal) {
+        if (modal._keyHandler) {
+            document.removeEventListener('keydown', modal._keyHandler);
+            modal._keyHandler = null;
+        }
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    if (_brainConfirmResolver) {
+        const r = _brainConfirmResolver;
+        _brainConfirmResolver = null;
+        r(result);
+    }
+}
+
+function handleBrainConfirmBackdropClick(e) {
+    if (e.target && e.target.id === 'brainConfirmModal') {
+        const inputWrap = document.getElementById('brainConfirmInputWrap');
+        const withInput = inputWrap && inputWrap.style.display !== 'none';
+        resolveBrainConfirm(withInput ? null : false);
+    }
+}
+
+function showBrainAlert(options = {}) {
+    return showBrainConfirm({
+        title: options.title || 'Aviso do Sistema',
+        message: options.message || '',
+        badge: options.badge || 'INFORMAÇÃO',
+        icon: options.icon || (options.type === 'error' ? '⚠️' : 'ℹ️'),
+        confirmText: options.okText || 'Entendido',
+        danger: options.type === 'error',
+        singleButton: true
+    });
+}
+
+// Substitui alert nativo do navegador por Toast elegante e não-intrusivo
+window.alert = function(msg) {
+    if (typeof showToast === 'function') {
+        const text = String(msg || '');
+        const isError = /erro|falha|error|failed|incorreto|obrigat|atenção|não encontrad/i.test(text);
+        showToast(text, isError ? 'error' : 'info', 4500);
+    } else {
+        console.warn('[SecondBrain Alert]', msg);
+    }
+};
+
 // ── Initialize ────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
     // 1. Initialize Dynamic Vault (Live Server -> Folder -> Snapshot)
@@ -59,45 +210,78 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // ── Sidebar ───────────────────────────────────────
-function renderNavItem(item) {
+function isAnyChildActive(item, activePath) {
+    if (!item || !item.children || !activePath) return false;
+    return item.children.some(c => {
+        if (c.path === activePath) return true;
+        if (c.isGroup && c.children) return isAnyChildActive(c, activePath);
+        return false;
+    });
+}
+
+function renderNavItem(item, depth = 0) {
     if (item.isGroup && Array.isArray(item.children) && item.children.length > 0) {
-        const isChildActive = currentPath && item.children.some(c => c.path === currentPath);
+        const isChildActive = currentPath && isAnyChildActive(item, currentPath);
+        const isTopProject = item.isProject || depth === 0;
+        const count = item.childrenCount !== undefined ? item.childrenCount : item.children.length;
+        const isCollapsed = (item.startCollapsed !== undefined ? item.startCollapsed : true) && !isChildActive;
+
+        // Ação ao clicar no título da pasta/grupo
+        let titleAction = '';
+        if (isTopProject) {
+            titleAction = `onclick="event.stopPropagation(); openProjectWorkspace('${escapeHtml(item.label)}', 'overview')" title="Abrir Workspace de ${escapeHtml(item.label)}"`;
+        } else if (item.isSubfolder) {
+            titleAction = `onclick="toggleTreeGroup('${item.id}', event)" title="Expandir/Recolher ${escapeHtml(item.title || item.label)}"`;
+        } else if (item.path) {
+            titleAction = `onclick="event.stopPropagation(); navigateTo('${escapeHtml(item.path)}')" title="${escapeHtml(item.title || item.label)}"`;
+        } else {
+            titleAction = `onclick="toggleTreeGroup('${item.id}', event)" title="${escapeHtml(item.title || item.label)}"`;
+        }
+
+        let displayLabel = item.label || '';
+        if (item.icon && displayLabel.startsWith(item.icon)) {
+            displayLabel = displayLabel.slice(item.icon.length).trim();
+        }
+
         return `
-            <div class="nav-tree-group ${isChildActive ? 'has-active' : ''}" id="tree-group-${item.id}">
-                <div class="nav-tree-header" onclick="toggleTreeGroup('${item.id}', event)">
-                    <svg class="tree-chevron" id="chevron-${item.id}" viewBox="0 0 16 16" fill="currentColor">
+            <div class="nav-tree-group tree-level-${depth} ${isChildActive ? 'has-active' : ''}" id="tree-group-${item.id}">
+                <div class="nav-tree-header ${depth > 0 ? 'subfolder-header' : ''}" onclick="toggleTreeGroup('${item.id}', event)">
+                    <svg class="tree-chevron ${isCollapsed ? 'collapsed' : ''}" id="chevron-${item.id}" viewBox="0 0 16 16" fill="currentColor">
                         <path d="M5.7 13.7l5-5a1 1 0 000-1.4l-5-5a1 1 0 00-1.4 1.4L8.58 8l-4.3 4.3a1 1 0 001.42 1.4z"/>
                     </svg>
-                    <span class="nav-item-icon">${item.icon || '🚀'}</span>
-                    <span class="nav-item-label tree-folder-title" onclick="event.stopPropagation(); openProjectWorkspace('${item.label}', 'overview')" title="Abrir Workspace de ${item.label}">
-                        ${item.label}
+                    <span class="nav-item-icon">${item.icon || (depth > 0 ? '📁' : '🚀')}</span>
+                    <span class="nav-item-label tree-folder-title" ${titleAction}>
+                        ${escapeHtml(displayLabel)}
                     </span>
-                    <div class="nav-project-actions">
-                        <button class="nav-act-btn" onclick="event.stopPropagation(); openProjectWorkspace('${item.label}', 'graph')" title="Constelação Neural">🔮</button>
-                        <button class="nav-act-btn" onclick="event.stopPropagation(); openProjectWorkspace('${item.label}', 'settings')" title="Gerenciar Projeto">⚙️</button>
-                    </div>
-                    <span class="nav-item-badge count" title="${item.children.length} arquivos">${item.children.length}</span>
-                </div>
-                <div class="nav-tree-children" id="tree-children-${item.id}">
-                    ${item.children.map(child => `
-                        <div class="nav-item nav-tree-child ${currentPath === child.path ? 'active' : ''}" data-path="${child.path}" onclick="navigateTo('${child.path}')" title="${child.title || child.label}">
-                            <span class="nav-item-icon">${child.icon || '📄'}</span>
-                            <span class="nav-item-label">${child.label}</span>
+                    ${isTopProject ? `
+                        <div class="nav-project-actions">
+                            <button class="nav-act-btn" onclick="event.stopPropagation(); openProjectWorkspace('${escapeHtml(item.label)}', 'graph')" title="Constelação Neural">🔮</button>
+                            <button class="nav-act-btn" onclick="event.stopPropagation(); openProjectWorkspace('${escapeHtml(item.label)}', 'settings')" title="Gerenciar Projeto">⚙️</button>
                         </div>
-                    `).join('')}
+                    ` : ''}
+                    <span class="nav-item-badge count" title="${count} arquivos">${count}</span>
+                </div>
+                <div class="nav-tree-children ${isCollapsed ? 'collapsed' : ''}" id="tree-children-${item.id}">
+                    ${item.children.map(child => renderNavItem(child, depth + 1)).join('')}
                 </div>
             </div>
         `;
     }
 
+    let leafLabel = item.label || item.title || item.name || '';
+    if (item.icon && leafLabel.startsWith(item.icon)) {
+        leafLabel = leafLabel.slice(item.icon.length).trim();
+    }
+
     return `
-        <div class="nav-item ${currentPath === item.path ? 'active' : ''}" data-path="${item.path}" onclick="navigateTo('${item.path}')">
+        <div class="nav-item nav-tree-child ${currentPath === item.path ? 'active' : ''}" data-path="${item.path}" onclick="navigateTo('${item.path}')" title="${escapeHtml(item.title || item.label)}">
             <span class="nav-item-icon">${item.icon || '📄'}</span>
-            <span class="nav-item-label">${item.label || item.title || item.name}</span>
+            <span class="nav-item-label">${escapeHtml(leafLabel)}</span>
             ${item.status ? `<span class="nav-item-badge count" style="width:8px;height:8px;padding:0;border-radius:50;background:var(--${item.status === 'yellow' ? 'warning' : 'danger'})"></span>` : ''}
         </div>
     `;
 }
+
 
 function buildSidebar() {
     const nav = document.getElementById('sidebarNav');
@@ -146,18 +330,22 @@ function buildSidebar() {
 
     // ── MUNDO 2: CÉREBRO / FRAMEWORK (Secundário) ─────
     for (const section of frameworkSections) {
+        if (!section.items || section.items.length === 0) continue;
         const badgeCount = section.badge !== undefined ? section.badge : section.items.length;
+        const isChildActive = currentPath && isAnyChildActive(section, currentPath);
+        const isCollapsed = (section.startCollapsed !== undefined ? section.startCollapsed : true) && !isChildActive;
         html += `
-            <div class="nav-section" data-section="${section.id}">
-                <div class="nav-section-header" onclick="toggleSection('${section.id}')">
-                    <svg class="chevron" viewBox="0 0 16 16" fill="currentColor">
+            <div class="nav-section nav-tree-group ${isChildActive ? 'has-active' : ''}" data-section="${section.id}" id="tree-group-sec_${section.id}">
+                <div class="nav-section-header nav-tree-header" onclick="toggleSection('${section.id}')">
+                    <svg class="tree-chevron ${isCollapsed ? 'collapsed' : ''}" id="chevron-sec_${section.id}" viewBox="0 0 16 16" fill="currentColor">
                         <path d="M5.7 13.7l5-5a1 1 0 000-1.4l-5-5a1 1 0 00-1.4 1.4L8.58 8l-4.3 4.3a1 1 0 001.42 1.4z"/>
                     </svg>
-                    <span>${section.icon} ${section.label}</span>
+                    <span class="nav-item-icon">${section.icon}</span>
+                    <span class="nav-item-label tree-folder-title">${escapeHtml(section.label)}</span>
                     ${badgeCount !== undefined ? `<span class="nav-item-badge count">${badgeCount}</span>` : ''}
                 </div>
-                <div class="nav-section-items" id="section-${section.id}">
-                    ${section.items.map(item => renderNavItem(item)).join('')}
+                <div class="nav-section-items nav-tree-children ${isCollapsed ? 'collapsed' : ''}" id="section-${section.id}">
+                    ${section.items.map(item => renderNavItem(item, 1)).join('')}
                 </div>
             </div>
         `;
@@ -327,15 +515,13 @@ function renderDashboardProjects() {
 function toggleSection(sectionId) {
     const items = document.getElementById(`section-${sectionId}`);
     if (!items) return;
-    const chevron = items.previousElementSibling ? items.previousElementSibling.querySelector('.chevron') : null;
+    const chevron = document.getElementById(`chevron-sec_${sectionId}`) || (items.previousElementSibling ? items.previousElementSibling.querySelector('.tree-chevron, .chevron') : null);
 
     if (items.classList.contains('collapsed')) {
         items.classList.remove('collapsed');
-        items.style.maxHeight = 'none';
         if (chevron) chevron.classList.remove('collapsed');
     } else {
         items.classList.add('collapsed');
-        items.style.maxHeight = '0';
         if (chevron) chevron.classList.add('collapsed');
     }
 }
@@ -364,11 +550,11 @@ function navigateTo(path) {
         el.classList.toggle('active', el.dataset.path === path);
     });
 
-    // Auto-expand parent tree group if navigating to a nested item
+    // Auto-expand all parent tree groups recursively if navigating to a nested item
     const activeItem = document.querySelector(`.nav-item[data-path="${path}"]`);
     if (activeItem) {
-        const parentGroup = activeItem.closest('.nav-tree-group');
-        if (parentGroup) {
+        let parentGroup = activeItem.closest('.nav-tree-group');
+        while (parentGroup) {
             parentGroup.classList.add('has-active');
             const children = parentGroup.querySelector('.nav-tree-children');
             const chevron = parentGroup.querySelector('.tree-chevron');
@@ -376,8 +562,10 @@ function navigateTo(path) {
                 children.classList.remove('collapsed');
                 if (chevron) chevron.classList.remove('collapsed');
             }
+            parentGroup = parentGroup.parentElement ? parentGroup.parentElement.closest('.nav-tree-group') : null;
         }
     }
+
 
     // Special paths
     if (path === 'dashboard') {
@@ -1283,7 +1471,20 @@ async function openProjectWorkspace(projectName, defaultTab = 'overview') {
             openDocBtn.onclick = () => navigateTo(`projects/${projectName}/PROJECT.md`);
         }
 
+        // Atualiza contador de pesquisas no badge da aba
+        fetch(`/api/projects/${encodeURIComponent(projectName)}/research`)
+            .then(r => r.json())
+            .then(data => {
+                const badge = document.getElementById('pwResearchTabBadge');
+                if (badge && data && data.researches) {
+                    badge.textContent = data.researches.length;
+                    badge.style.display = data.researches.length > 0 ? 'inline-block' : 'none';
+                }
+            })
+            .catch(() => {});
+
         switchProjectTab(defaultTab);
+
     } catch (err) {
         console.error('Erro ao carregar projeto:', err);
         if (pathEl) pathEl.textContent = 'Erro ao conectar ao projeto.';
@@ -1315,6 +1516,7 @@ function switchProjectTab(tabId) {
 
     const targetPaneMap = {
         'overview': 'pwPaneOverview',
+        'research': 'pwPaneResearch',
         'memory': 'pwPaneMemory',
         'graph': 'pwPaneGraph',
         'backup': 'pwPaneBackup',
@@ -1328,6 +1530,7 @@ function switchProjectTab(tabId) {
 
     const tabLabels = {
         'overview': 'Visão Geral',
+        'research': '🔬 Research Lab',
         'memory': 'Memória & Saúde',
         'graph': 'Constelação Neural',
         'backup': 'Backup & Exportação',
@@ -1343,11 +1546,13 @@ function switchProjectTab(tabId) {
     if (!currentProjectData) return;
 
     if (tabId === 'overview') renderProjectOverviewTab();
+    if (tabId === 'research') renderProjectResearchTab();
     if (tabId === 'memory') renderProjectMemoryTab();
     if (tabId === 'graph') renderProjectGraphTab();
     if (tabId === 'backup') renderProjectBackupTab();
     if (tabId === 'settings') renderProjectSettingsTab();
 }
+
 
 let isOverviewEditing = false;
 
@@ -1535,6 +1740,18 @@ async function deleteNextStep(index) {
     if (!currentProjectData) return;
     const { status, definedItems, nextSteps } = parseCurrentStateSections(currentProjectData.currentStateMd);
     if (index >= 0 && index < nextSteps.length) {
+        const stepText = nextSteps[index];
+        const ok = await showBrainConfirm({
+            title: 'Excluir Próximo Passo',
+            badge: '🎯 ROADMAP &middot; EXCLUSÃO',
+            icon: '🗑️',
+            message: `Tem certeza que deseja remover este próximo passo do roadmap?<br><br><em>"${escapeHtml(stepText)}"</em>`,
+            confirmText: 'Excluir Passo',
+            cancelText: 'Cancelar',
+            danger: true
+        });
+        if (!ok) return;
+
         nextSteps.splice(index, 1);
         const newMd = buildCurrentStateMarkdown(currentProjectData.name, status, definedItems, nextSteps);
         await saveCurrentStateChanges(newMd, '🗑️ Próximo passo removido.');
@@ -1556,6 +1773,18 @@ async function deleteDefinedItem(index) {
     if (!currentProjectData) return;
     const { status, definedItems, nextSteps } = parseCurrentStateSections(currentProjectData.currentStateMd);
     if (index >= 0 && index < definedItems.length) {
+        const itemText = definedItems[index];
+        const ok = await showBrainConfirm({
+            title: 'Excluir Item Definido',
+            badge: '✓ CHECKLIST &middot; EXCLUSÃO',
+            icon: '🗑️',
+            message: `Tem certeza que deseja remover este item concluído?<br><br><em>"${escapeHtml(itemText)}"</em>`,
+            confirmText: 'Excluir Item',
+            cancelText: 'Cancelar',
+            danger: true
+        });
+        if (!ok) return;
+
         definedItems.splice(index, 1);
         const newMd = buildCurrentStateMarkdown(currentProjectData.name, status, definedItems, nextSteps);
         await saveCurrentStateChanges(newMd, '🗑️ Item definido removido.');
@@ -2374,7 +2603,15 @@ function copyProjectPath() {
 
 async function clearProjectMemory() {
     if (!currentProject) return;
-    const conf = confirm(`Deseja arquivar as sessões de memória do projeto '${currentProject}'?\n\nTodas as sessões serão salvas com segurança em MEMORY/.archive/ com carimbo de data/hora.`);
+    const conf = await showBrainConfirm({
+        title: 'Arquivar Memórias do Projeto',
+        badge: '📦 SESSÕES DE MEMÓRIA',
+        icon: '📦',
+        message: `Deseja arquivar as sessões de memória do projeto <strong>'${escapeHtml(currentProject)}'</strong>?<br><br>Todas as sessões serão salvas com segurança em <code>MEMORY/.archive/</code> com carimbo de data/hora.`,
+        confirmText: 'Sim, Arquivar Sessões',
+        cancelText: 'Cancelar',
+        danger: false
+    });
     if (!conf) return;
 
     const btn = document.getElementById('btnClearMemoryBtn');
@@ -2388,11 +2625,11 @@ async function clearProjectMemory() {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Erro ao arquivar sessões.');
 
-        alert(`✓ Sucesso! ${data.movedCount} sessões foram arquivadas em .archive/.`);
+        showToast(`✓ Sucesso! ${data.movedCount} sessões foram arquivadas em .archive/.`, 'success', 4000);
         // Recarrega detalhes do projeto
         await openProjectWorkspace(currentProject, 'memory');
     } catch (err) {
-        alert('Erro ao arquivar memória: ' + err.message);
+        showToast('Erro ao arquivar memória: ' + err.message, 'error', 5000);
         if (btn) btn.disabled = false;
     }
 }
@@ -2475,15 +2712,37 @@ async function copyToClipboard(text) {
         await navigator.clipboard.writeText(text);
         showToast('✓ Caminho copiado para a área de transferência!', 'success', 3000);
     } catch (err) {
-        prompt('Copie o caminho:', text);
+        await showBrainConfirm({
+            title: 'Copiar Caminho',
+            badge: 'ÁREA DE TRANSFERÊNCIA',
+            icon: '📋',
+            message: 'Não foi possível copiar automaticamente. Selecione e copie o caminho abaixo:',
+            withInput: true,
+            defaultValue: text,
+            confirmText: 'Concluído',
+            singleButton: true,
+            danger: false
+        });
     }
 }
 
 async function unlinkProject() {
     if (!currentProject) return;
-    const confirmName = prompt(`Para confirmar a desvinculação, digite o nome do projeto '${currentProject}':`);
+    const confirmName = await showBrainConfirm({
+        title: 'Desvincular Projeto',
+        badge: '⚠️ AÇÃO CRÍTICA &middot; DESVINCULAR',
+        icon: '⚠️',
+        message: `Esta ação desvinculará o projeto <strong>${escapeHtml(currentProject)}</strong> deste cérebro. Seus arquivos locais no disco permanecerão intactos.<br><br>Para confirmar, digite exatamente o nome do projeto (<strong>${escapeHtml(currentProject)}</strong>) abaixo:`,
+        confirmText: 'Confirmar Desvinculação',
+        cancelText: 'Cancelar',
+        danger: true,
+        withInput: true,
+        inputPlaceholder: `Digite "${currentProject}" para confirmar`
+    });
+    if (!confirmName) return; // cancelado
+
     if (confirmName !== currentProject) {
-        if (confirmName !== null) alert('Nome digitado incorreto. Operação cancelada.');
+        showToast('Nome digitado não confere. Desvinculação cancelada.', 'error', 4000);
         return;
     }
 
@@ -2492,14 +2751,14 @@ async function unlinkProject() {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Erro ao desvincular projeto.');
 
-        alert(data.message || 'Projeto desvinculado com sucesso.');
+        showToast(data.message || 'Projeto desvinculado com sucesso.', 'success', 4000);
         showDashboard();
         if (window.VAULT) {
             await window.VAULT.refresh();
             refreshApp();
         }
     } catch (err) {
-        alert('Erro ao desvincular: ' + err.message);
+        showToast('Erro ao desvincular: ' + err.message, 'error', 5000);
     }
 }
 
@@ -2727,6 +2986,1541 @@ function handleEditorBackdropClick(e) {
         closeFileEditor();
     }
 }
+
+/* ═══════════════════════════════════════════════════
+   RESEARCH LAB — CONTROLLERS & IA INTERACTIONS
+   ═══════════════════════════════════════════════════ */
+
+function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+let currentResearchesList = [];
+let activeResearchSlug = null;
+let lastRefinedPromptText = '';
+
+
+/**
+ * Renderiza a aba principal do Research Lab
+ */
+async function renderProjectResearchTab() {
+    const container = document.getElementById('pwResearchContent');
+    if (!container || !currentProject) return;
+
+    container.innerHTML = `
+        <div style="text-align:center; padding: 40px 20px; color: var(--text-tertiary);">
+            <div class="ai-sparkles" style="font-size:32px; margin-bottom:12px; display:inline-block;">🔬</div>
+            <div>Carregando laboratório de conhecimento e inteligência...</div>
+        </div>
+    `;
+
+    try {
+        // Busca pesquisas e status da IA em paralelo
+        const [researchRes, aiStatusRes] = await Promise.all([
+            fetch(`/api/projects/${encodeURIComponent(currentProject)}/research`),
+            fetch('/api/ai/status')
+        ]);
+
+        const researchData = researchRes.ok ? await researchRes.json() : { researches: [] };
+        const aiStatus = aiStatusRes.ok ? await aiStatusRes.json() : { ready: false, model: 'openai/gpt-oss-120b' };
+
+        currentResearchesList = researchData.researches || [];
+
+        // Atualiza pílula da aba
+        const tabBadge = document.getElementById('pwResearchTabBadge');
+        if (tabBadge) {
+            tabBadge.textContent = currentResearchesList.length;
+            tabBadge.style.display = currentResearchesList.length > 0 ? 'inline-block' : 'none';
+        }
+
+        // Calcula métricas
+        let totalKnowledge = 0;
+        let totalActionable = 0;
+        currentResearchesList.forEach(r => {
+            totalKnowledge += (r.knowledgeFiles || []).length;
+            totalActionable += (r.actionableFiles || []).length;
+        });
+
+        // Monta o Hero Banner
+        const aiBadgeHtml = aiStatus.ready
+            ? `<span class="rl-ai-status-pill"><span class="pulse-dot"></span> Groq Cloud Conectado (${aiStatus.model})</span>`
+            : `<span class="rl-ai-status-pill" style="border-color:rgba(245,158,11,0.3); color:#fcd34d;"><span class="pulse-dot" style="background:#f59e0b; box-shadow:0 0 8px #f59e0b;"></span> Chave Groq Ausente (.env)</span>`;
+
+        let html = `
+            <!-- Hero Banner do Research Lab -->
+            <div class="rl-hero-banner">
+                <div class="rl-hero-content">
+                    <div class="rl-hero-text">
+                        <div class="rl-hero-badge-row">
+                            <span class="rl-hero-badge">🔬 LABORATÓRIO DE CONHECIMENTO</span>
+                            ${aiBadgeHtml}
+                        </div>
+                        <h2 class="rl-hero-title">
+                            <span>Laboratório de Pesquisa Autônoma</span>
+                        </h2>
+                        <p class="rl-hero-desc">
+                            Pesquise temas profundos, consulte a IA (Groq Cloud) para refinar briefings com o contexto real de <strong>${escapeHtml(currentProject)}</strong>, decomponha em subtópicos e catalogue tudo em arquivos <code>.md</code> de conhecimento e ação.
+                        </p>
+                    </div>
+                    <button class="btn-new-research-glow" onclick="openResearchModal()">
+                        <span class="ai-sparkles">✨</span>
+                        <span>Nova Pesquisa no Lab</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Métricas Rápidas -->
+            <div class="rl-metrics-row">
+                <div class="rl-metric-card">
+                    <div class="rl-metric-icon">🔬</div>
+                    <div>
+                        <div class="rl-metric-val">${currentResearchesList.length}</div>
+                        <div class="rl-metric-lbl">Pesquisas Ativas</div>
+                    </div>
+                </div>
+                <div class="rl-metric-card">
+                    <div class="rl-metric-icon">📘</div>
+                    <div>
+                        <div class="rl-metric-val">${totalKnowledge}</div>
+                        <div class="rl-metric-lbl">Docs em knowledge/</div>
+                    </div>
+                </div>
+                <div class="rl-metric-card">
+                    <div class="rl-metric-icon">🛠️</div>
+                    <div>
+                        <div class="rl-metric-val">${totalActionable}</div>
+                        <div class="rl-metric-lbl">Specs em actionable/</div>
+                    </div>
+                </div>
+                <div class="rl-metric-card">
+                    <div class="rl-metric-icon">⚡</div>
+                    <div>
+                        <div class="rl-metric-val">~1.5s</div>
+                        <div class="rl-metric-lbl">Latência de Inferência (Groq)</div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Renderiza lista de pesquisas ou empty state
+        if (currentResearchesList.length === 0) {
+            html += `
+                <div class="rl-empty-state">
+                    <div class="rl-empty-orb">🔬</div>
+                    <h3 class="rl-empty-title">Nenhum laboratório criado para este projeto ainda</h3>
+                    <p class="rl-empty-desc">
+                        Crie pesquisas autônomas para mapear tecnologias, arquiteturas, padrões de projeto ou regras de negócio complexas. A IA gerará a documentação estruturada diretamente no disco.
+                    </p>
+
+                    <div class="rl-quick-prompts-title">💡 Ideias rápidas para começar agora</div>
+                    <div class="rl-quick-prompts-grid">
+                        <button type="button" class="rl-quick-prompt-btn" onclick="startQuickResearch('Arquitetura de Microsserviços e Event-Driven com Filas', 'Quero mapear os melhores padrões para mensageria resiliente, filas RabbitMQ/Kafka, idempotência e dead-letter queues adaptadas para nossa stack.')">
+                            ⚡ Arquitetura Event-Driven & Filas
+                        </button>
+                        <button type="button" class="rl-quick-prompt-btn" onclick="startQuickResearch('Segurança, JWT com Refresh Tokens e OAuth2', 'Pesquise sobre as melhores práticas de autenticação segura, rotação de chaves JWT, prevenção de replay attacks e proteção contra vazamento.')">
+                            🛡️ Autenticação Segura & Tokens
+                        </button>
+                        <button type="button" class="rl-quick-prompt-btn" onclick="startQuickResearch('Estratégias de Caching Distribuído e Resiliência', 'Quero entender padrões de caching distribuído (Cache-Aside, Write-Through), estratégias de invalidação, controle de concorrência e Redis.')">
+                            🚀 Caching Distribuído & Redis
+                        </button>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="openResearchModal()" style="padding: 12px 24px; font-weight:700;">
+                        ✨ Criar Primeira Pesquisa com IA
+                    </button>
+                </div>
+            `;
+        } else {
+            html += `
+                <div class="rl-grid">
+                    ${currentResearchesList.map(r => renderResearchCardHtml(r)).join('')}
+                </div>
+            `;
+        }
+
+        container.innerHTML = html;
+
+    } catch (err) {
+        console.error('Erro ao renderizar aba de pesquisa:', err);
+        container.innerHTML = `
+            <div class="pw-card" style="border-color: var(--danger);">
+                <h3 style="color:var(--danger)">Erro ao carregar o Research Lab</h3>
+                <p>${escapeHtml(err.message)}</p>
+                <button class="btn btn-secondary" onclick="renderProjectResearchTab()">Tentar Novamente</button>
+            </div>
+        `;
+    }
+}
+
+/**
+ * Renderiza o HTML de um Card de Pesquisa individual
+ */
+function renderResearchCardHtml(r) {
+    const meta = r.meta || {};
+    const topic = r.topic || meta.topic || r.slug;
+    const definition = r.definition || meta.definition || 'Sem definição cadastrada.';
+    const history = meta.definitionHistory || [];
+    const versionNum = history.length > 0 ? history.length : 1;
+    const knowledgeCount = (r.knowledgeFiles || []).length;
+    const actionableCount = (r.actionableFiles || []).length;
+
+    return `
+        <div class="rl-card" id="card-research-${escapeHtml(r.slug)}">
+            <div>
+                <div class="rl-card-top">
+                    <div class="rl-card-title-wrap">
+                        <div class="rl-card-icon">🔬</div>
+                        <div class="rl-card-title-text">
+                            <h3 class="rl-card-title">${escapeHtml(topic)}</h3>
+                            <span class="rl-card-slug">projects/${escapeHtml(currentProject)}/RESEARCH/${escapeHtml(r.slug)}</span>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+                        <span class="rl-card-status-badge ${r.status === 'completed' ? 'completed' : ''}">${r.status === 'completed' ? '✓ Concluído' : '🟢 Ativo'}</span>
+                        <button class="btn-rl-del" title="Excluir este laboratório de pesquisa e seus arquivos" onclick="confirmDeleteResearchLab('${escapeHtml(r.slug)}', '${escapeHtml(topic).replace(/'/g, "\\'")}')">🗑️</button>
+                    </div>
+                </div>
+
+
+                <!-- Prompt Vivo Box -->
+                <div class="rl-card-prompt-box">
+                    <div class="rl-card-prompt-header">
+                        <span class="rl-prompt-vivo-tag">
+                            <span>✨ Prompt Vivo</span>
+                            <span class="rl-version-pill">v${versionNum}</span>
+                        </span>
+                        <button class="btn-rl-action" style="padding: 2px 7px; font-size:10px;" onclick="openPromptVivoModal('${escapeHtml(r.slug)}')">
+                            ✏️ Ajustar
+                        </button>
+                    </div>
+                    <div class="rl-card-prompt-text" title="${escapeHtml(definition)}">
+                        ${escapeHtml(definition)}
+                    </div>
+                </div>
+
+                <!-- Camadas de Arquivos -->
+                <div class="rl-card-layers">
+                    <div class="rl-layer-chip knowledge">
+                        <span class="rl-layer-chip-icon">📘</span>
+                        <div>
+                            <div class="rl-layer-chip-count">${knowledgeCount}</div>
+                            <div class="rl-layer-chip-label">knowledge/</div>
+                        </div>
+                    </div>
+                    <div class="rl-layer-chip actionable">
+                        <span class="rl-layer-chip-icon">🛠️</span>
+                        <div>
+                            <div class="rl-layer-chip-count">${actionableCount}</div>
+                            <div class="rl-layer-chip-label">actionable/</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ações do Card -->
+            <div class="rl-card-actions">
+                <button class="btn-rl-action primary" onclick="startResearchExecution('${escapeHtml(r.slug)}')">
+                    <span>${r.status === 'completed' ? '🔄' : '▶️'}</span> ${r.status === 'completed' ? 'Recalcular / Atualizar' : 'Pesquisar Agora'}
+                </button>
+                <button class="btn-rl-action" onclick="switchProjectTab('graph')" title="Visualizar este laboratório orbitando o projeto na Constelação 3D">
+                    <span>🔮</span> Grafo 3D
+                </button>
+                <button class="btn-rl-action" onclick="openDecomposeModal('${escapeHtml(r.slug)}')">
+                    <span>🧩</span> Subtópicos & Arquivos
+                </button>
+                <button class="btn-rl-action" onclick="openOverviewDoc('${escapeHtml(r.slug)}')">
+                    <span>📄</span> OVERVIEW.md
+                </button>
+                <button class="btn-rl-action" onclick="openResearchFolderInExplorer('${escapeHtml(r.slug)}')">
+                    <span>📂</span> Abrir Pasta
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+async function startResearchExecution(slug) {
+    if (!currentProject || !slug) return;
+    const research = (currentResearchesList || []).find(r => r.slug === slug);
+    const topic = research ? (research.topic || research.meta?.topic || slug) : slug;
+    await startLiveResearchFromModal(slug, topic);
+}
+
+
+
+/**
+ * Atalho rápido do empty state
+ */
+function startQuickResearch(topic, definition) {
+    openResearchModal();
+    const topicInput = document.getElementById('rlTopicInput');
+    const defInput = document.getElementById('rlDefinitionInput');
+    if (topicInput) topicInput.value = topic;
+    if (defInput) defInput.value = definition;
+}
+
+/**
+ * Abre o modal de criação de pesquisa
+ */
+function openResearchModal() {
+    const modal = document.getElementById('researchModal');
+    if (!modal) return;
+
+    // Reseta form
+    document.getElementById('rlCreateForm')?.reset();
+    document.getElementById('rlRefineSplitView').style.display = 'none';
+    document.getElementById('rlDecomposeResults').style.display = 'none';
+    document.getElementById('rlDecomposeResults').innerHTML = '';
+
+    const sub = document.getElementById('researchModalSub');
+    if (sub) {
+        sub.innerHTML = `A IA contextualizará sua pesquisa com os contratos e arquitetura de <strong>${escapeHtml(currentProject)}</strong>.`;
+    }
+
+    const statusEl = document.getElementById('rlModalStatus');
+    if (statusEl) {
+        statusEl.innerHTML = `<span class="status-dot snapshot"></span> Pronto para criar laboratório`;
+    }
+
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('rlTopicInput')?.focus(), 100);
+}
+
+function closeResearchModal() {
+    const modal = document.getElementById('researchModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+function handleResearchBackdropClick(e) {
+    if (e.target && e.target.id === 'researchModal') {
+        closeResearchModal();
+    }
+}
+
+function applyTopicPreset(topicText) {
+    const input = document.getElementById('rlTopicInput');
+    if (input) {
+        input.value = topicText;
+        document.getElementById('rlDefinitionInput')?.focus();
+    }
+}
+
+/**
+ * Aciona o refinamento de prompt com IA (Groq Cloud)
+ */
+async function triggerAiRefinePrompt() {
+    const topic = (document.getElementById('rlTopicInput')?.value || '').trim();
+    const rawPrompt = (document.getElementById('rlDefinitionInput')?.value || '').trim();
+    const btn = document.getElementById('btnAiRefine');
+    const statusEl = document.getElementById('rlModalStatus');
+
+    if (!rawPrompt) {
+        alert('Por favor, digite uma ideia ou intenção inicial no campo abaixo antes de pedir ajuda à IA.');
+        document.getElementById('rlDefinitionInput')?.focus();
+        return;
+    }
+
+    if (btn) {
+        btn.classList.add('loading');
+        btn.querySelector('.ai-btn-text').textContent = 'Consultando Groq Cloud...';
+        btn.querySelector('.ai-spinner').style.display = 'inline-block';
+    }
+
+    if (statusEl) {
+        statusEl.innerHTML = `<span class="pulse-dot"></span> Groq Cloud analisando contexto de ${escapeHtml(currentProject)}...`;
+    }
+
+    try {
+        const res = await fetch('/api/ai/refine-prompt', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                prompt: rawPrompt,
+                projectName: currentProject,
+                topic: topic
+            })
+        });
+
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || 'Falha ao consultar a API de IA.');
+        }
+
+        const data = await res.json();
+        lastRefinedPromptText = data.refinedPrompt || '';
+
+        // Exibe no Split View
+        document.getElementById('rlOriginalText').textContent = rawPrompt;
+        document.getElementById('rlRefinedText').textContent = lastRefinedPromptText;
+        document.getElementById('rlRefineSplitView').style.display = 'block';
+
+        if (statusEl) {
+            statusEl.innerHTML = `<span class="status-dot" style="background:#10b981"></span> Sugestão da IA pronta em ${data.inferenceMs || 1500}ms!`;
+        }
+
+        showSecondBrainToast('✨ Briefing enriquecido pela IA com base nos contratos do projeto!');
+
+    } catch (err) {
+        alert('Erro ao refinar com IA: ' + err.message);
+        if (statusEl) {
+            statusEl.innerHTML = `<span class="status-dot" style="background:#ef4444"></span> Erro: ${escapeHtml(err.message)}`;
+        }
+    } finally {
+        if (btn) {
+            btn.classList.remove('loading');
+            btn.querySelector('.ai-btn-text').textContent = 'Melhorar com IA (Groq)';
+            btn.querySelector('.ai-spinner').style.display = 'none';
+        }
+    }
+}
+
+function acceptRefinedPrompt() {
+    if (!lastRefinedPromptText) return;
+    const defInput = document.getElementById('rlDefinitionInput');
+    if (defInput) defInput.value = lastRefinedPromptText;
+    document.getElementById('rlRefineSplitView').style.display = 'none';
+    showSecondBrainToast('✓ Sugestão da IA aplicada com sucesso ao Prompt Vivo!');
+}
+
+function acceptAndEditRefinedPrompt() {
+    acceptRefinedPrompt();
+    document.getElementById('rlDefinitionInput')?.focus();
+}
+
+function dismissRefinedPrompt() {
+    document.getElementById('rlRefineSplitView').style.display = 'none';
+}
+
+/**
+ * Pré-visualiza a decomposição de tópicos com IA antes de criar
+ */
+async function triggerPreviewDecompose() {
+    const topic = (document.getElementById('rlTopicInput')?.value || '').trim();
+    const definition = (document.getElementById('rlDefinitionInput')?.value || '').trim();
+    const resultsContainer = document.getElementById('rlDecomposeResults');
+    const btn = document.getElementById('btnPreviewDecompose');
+
+    if (!topic || !definition) {
+        alert('Preencha o tema e a intenção da pesquisa antes de visualizar a decomposição.');
+        return;
+    }
+
+    if (btn) {
+        btn.disabled = true;
+        btn.querySelector('span:first-child').textContent = 'Decompondo com IA...';
+        btn.querySelector('.ai-spinner').style.display = 'inline-block';
+    }
+
+    try {
+        const res = await fetch('/api/ai/decompose', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ topic, definition })
+        });
+
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || 'Erro na decomposição.');
+        }
+
+        const data = await res.json();
+        const subtopics = data.subtopics || [];
+
+        if (subtopics.length === 0) {
+            resultsContainer.innerHTML = `<div style="color:var(--text-tertiary); font-size:12px;">Nenhum subtópico gerado.</div>`;
+        } else {
+            resultsContainer.innerHTML = `
+                <div class="rl-subtopic-list">
+                    ${subtopics.map(st => `
+                        <div class="rl-subtopic-item">
+                            <div class="rl-subtopic-top">
+                                <span class="rl-subtopic-name">${escapeHtml(st.title || st.name)}</span>
+                                <span class="rl-subtopic-layer-badge ${st.layer === 'actionable' ? 'actionable' : 'knowledge'}">
+                                    ${st.layer === 'actionable' ? '🛠️ Actionable' : '📘 Knowledge'}
+                                </span>
+                            </div>
+                            <div class="rl-subtopic-desc">${escapeHtml(st.description || st.goal || '')}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        resultsContainer.style.display = 'block';
+        showSecondBrainToast(`🔮 ${subtopics.length} subtópicos mapeados em duas camadas!`);
+
+    } catch (err) {
+        alert('Erro ao decompor tópicos: ' + err.message);
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.querySelector('span:first-child').textContent = '🔮 Pré-visualizar Subtópicos';
+            btn.querySelector('.ai-spinner').style.display = 'none';
+        }
+    }
+}
+
+/**
+ * Cria o laboratório físico no disco
+ */
+async function submitCreateResearch(e) {
+    e.preventDefault();
+    const topic = (document.getElementById('rlTopicInput')?.value || '').trim();
+    const definition = (document.getElementById('rlDefinitionInput')?.value || '').trim();
+    const btnSubmit = document.getElementById('btnSubmitResearch');
+    const statusEl = document.getElementById('rlModalStatus');
+
+    if (!topic || !definition) {
+        alert('Preencha todos os campos obrigatórios.');
+        return;
+    }
+
+    if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.querySelector('.btn-spinner').style.display = 'inline-block';
+        btnSubmit.querySelector('span:last-child').textContent = 'Criando no Disco...';
+    }
+
+    if (statusEl) {
+        statusEl.innerHTML = `<span class="pulse-dot"></span> Gravando pastas e contratos físicos no disco...`;
+    }
+
+    try {
+        const res = await fetch(`/api/projects/${encodeURIComponent(currentProject)}/research`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ topic, definition })
+        });
+
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || 'Falha ao criar laboratório.');
+        }
+
+        const data = await res.json();
+        closeResearchModal();
+        showSecondBrainToast(`🚀 Laboratório "${escapeHtml(topic)}" criado com sucesso no disco!`);
+
+        // Recarrega a aba
+        await renderProjectResearchTab();
+
+    } catch (err) {
+        alert('Erro ao criar pesquisa: ' + err.message);
+        if (statusEl) {
+            statusEl.innerHTML = `<span class="status-dot" style="background:#ef4444"></span> Erro: ${escapeHtml(err.message)}`;
+        }
+    } finally {
+        if (btnSubmit) {
+            btnSubmit.disabled = false;
+            btnSubmit.querySelector('.btn-spinner').style.display = 'none';
+            btnSubmit.querySelector('span:last-child').textContent = '🚀 Inicializar Laboratório';
+        }
+    }
+}
+
+/**
+ * Abre o modal de Prompt Vivo para ajustar briefing e ver histórico
+ */
+function openPromptVivoModal(slug) {
+    activeResearchSlug = slug;
+    const modal = document.getElementById('promptVivoModal');
+    if (!modal) return;
+
+    const research = currentResearchesList.find(r => r.slug === slug);
+    if (!research) {
+        alert('Pesquisa não encontrada.');
+        return;
+    }
+
+    const meta = research.meta || {};
+    const topic = research.topic || meta.topic || slug;
+    const currentDef = research.definition || meta.definition || '';
+    const history = meta.definitionHistory || [];
+
+    const titleEl = document.getElementById('pvModalTitle');
+    if (titleEl) titleEl.textContent = `Evolução: ${topic}`;
+
+    const textarea = document.getElementById('pvTextarea');
+    if (textarea) textarea.value = currentDef;
+
+    // Renderiza a timeline de histórico
+    const timelineList = document.getElementById('pvTimelineList');
+    if (timelineList) {
+        if (history.length === 0) {
+            timelineList.innerHTML = `
+                <div style="font-size:12px; color:var(--text-tertiary);">
+                    Esta pesquisa ainda está na versão inicial (v1).
+                </div>
+            `;
+        } else {
+            timelineList.innerHTML = history.slice().reverse().map(h => `
+                <div class="pv-timeline-item">
+                    <div class="pv-timeline-top">
+                        <span class="pv-timeline-ver">Versão ${h.version || 1}</span>
+                        <span class="pv-timeline-date">${h.timestamp ? new Date(h.timestamp).toLocaleString('pt-BR') : 'Data não informada'}</span>
+                    </div>
+                    <div class="pv-timeline-text">${escapeHtml(h.definition || '')}</div>
+                </div>
+            `).join('');
+        }
+    }
+
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closePromptVivoModal() {
+    const modal = document.getElementById('promptVivoModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+function handlePromptVivoBackdropClick(e) {
+    if (e.target && e.target.id === 'promptVivoModal') {
+        closePromptVivoModal();
+    }
+}
+
+/**
+ * Refina a definição atual no modal de Prompt Vivo com IA
+ */
+async function triggerPvAiRefine() {
+    const textarea = document.getElementById('pvTextarea');
+    const promptText = (textarea?.value || '').trim();
+    const btn = document.getElementById('btnPvAiRefine');
+    const statusEl = document.getElementById('pvModalStatus');
+
+    if (!promptText) return;
+
+    if (btn) {
+        btn.classList.add('loading');
+        btn.querySelector('span:nth-child(2)').textContent = 'Refinando...';
+        btn.querySelector('.ai-spinner').style.display = 'inline-block';
+    }
+
+    try {
+        const res = await fetch('/api/ai/refine-prompt', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                prompt: promptText,
+                projectName: currentProject,
+                topic: activeResearchSlug
+            })
+        });
+
+        if (!res.ok) throw new Error('Falha ao refinar com IA.');
+        const data = await res.json();
+
+        if (textarea && data.refinedPrompt) {
+            textarea.value = data.refinedPrompt;
+            showSecondBrainToast('✨ Definição refinada pela IA com sucesso!');
+        }
+    } catch (err) {
+        alert('Erro ao refinar com IA: ' + err.message);
+    } finally {
+        if (btn) {
+            btn.classList.remove('loading');
+            btn.querySelector('span:nth-child(2)').textContent = 'Refinar com IA';
+            btn.querySelector('.ai-spinner').style.display = 'none';
+        }
+    }
+}
+
+/**
+ * Salva a nova versão da definição (Prompt Vivo)
+ */
+async function submitPromptVivoUpdate(e) {
+    e.preventDefault();
+    if (!activeResearchSlug || !currentProject) return;
+
+    const newDef = (document.getElementById('pvTextarea')?.value || '').trim();
+    const btn = document.getElementById('btnSubmitPv');
+    const statusEl = document.getElementById('pvModalStatus');
+
+    if (!newDef) {
+        alert('A definição não pode ficar vazia.');
+        return;
+    }
+
+    if (btn) {
+        btn.disabled = true;
+        btn.querySelector('.btn-spinner').style.display = 'inline-block';
+    }
+
+    try {
+        const res = await fetch(`/api/projects/${encodeURIComponent(currentProject)}/research/${encodeURIComponent(activeResearchSlug)}/definition`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ definition: newDef })
+        });
+
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || 'Falha ao atualizar definição.');
+        }
+
+        const data = await res.json();
+        closePromptVivoModal();
+        showSecondBrainToast(`✨ Prompt Vivo atualizado para versão ${data.version || ''}!`);
+
+        // Recarrega a aba
+        await renderProjectResearchTab();
+
+    } catch (err) {
+        alert('Erro ao salvar nova versão: ' + err.message);
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.querySelector('.btn-spinner').style.display = 'none';
+        }
+    }
+}
+
+/**
+ * Abre o catálogo de subtópicos e documentos de uma pesquisa
+ */
+async function openDecomposeModal(slug) {
+    const modal = document.getElementById('decomposeModal');
+    if (!modal || !currentProject) return;
+
+    activeResearchSlug = slug;
+    const research = currentResearchesList.find(r => r.slug === slug);
+    if (!research) {
+        alert('Pesquisa não encontrada.');
+        return;
+    }
+
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    // Se estiver em execução ao vivo ativa para esta mesma pesquisa, preserva a tela de live progress
+    if (isResearchRunningLive && activeLiveSlug === slug) {
+        return;
+    }
+
+    renderDecomposeModalContent(research);
+}
+
+function formatTitleFromFilename(fn) {
+    if (!fn) return '';
+    return fn.replace(/^\d+-/, '')
+             .replace(/\.md$/, '')
+             .replace(/-/g, ' ')
+             .replace(/\b\w/g, l => l.toUpperCase());
+}
+
+/**
+ * Renderiza o conteúdo do modal de subtópicos e arquivos da pesquisa
+ */
+function renderDecomposeModalContent(research) {
+    const titleEl = document.getElementById('decModalTitle');
+    const subEl = document.getElementById('decModalSub');
+    const contentEl = document.getElementById('decModalContent');
+    if (!contentEl) return;
+
+    const meta = research.meta || {};
+    const slug = research.slug;
+    const topic = research.topic || meta.topic || slug;
+    const definition = research.definition || meta.definition || '';
+
+    if (titleEl) titleEl.textContent = `Subtópicos & Arquivos: ${topic}`;
+
+    // Verifica se já existem arquivos gerados no disco ou em meta
+    const generated = meta.generatedFiles || [];
+    const knowledgeFiles = research.knowledgeFiles || [];
+    const actionableFiles = research.actionableFiles || [];
+    const hasFiles = generated.length > 0 || knowledgeFiles.length > 0 || actionableFiles.length > 0;
+
+    if (hasFiles) {
+        // Monta a lista completa a partir dos arquivos reais
+        let allItems = [];
+
+        if (generated.length > 0) {
+            allItems = generated.map(g => ({
+                title: g.title,
+                description: g.description,
+                layer: g.layer,
+                path: g.path, // e.g. "knowledge/01-..."
+                file: g.file || (g.path ? g.path.split('/').pop() : '')
+            }));
+        } else {
+            // Fallback: se meta não tiver generatedFiles mas as pastas tiverem arquivos no disco
+            knowledgeFiles.forEach(kf => {
+                allItems.push({
+                    title: formatTitleFromFilename(kf),
+                    description: 'Documento conceitual em knowledge/',
+                    layer: 'knowledge',
+                    path: `knowledge/${kf}`,
+                    file: kf
+                });
+            });
+            actionableFiles.forEach(af => {
+                allItems.push({
+                    title: formatTitleFromFilename(af),
+                    description: 'Especificação técnica em actionable/',
+                    layer: 'actionable',
+                    path: `actionable/${af}`,
+                    file: af
+                });
+            });
+        }
+
+        if (subEl) {
+            subEl.innerHTML = `<strong>${allItems.length} documentos catalogados</strong> no disco em <code>knowledge/</code> e <code>actionable/</code>. Clique no nome do arquivo para ler e editar.`;
+        }
+
+        contentEl.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; padding: 4px 2px; flex-wrap:wrap; gap:8px;">
+                <div style="font-size:12px; color:var(--text-secondary);">
+                    Local físico: <code style="font-size:11px; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px; font-family:var(--font-mono);">projects/${escapeHtml(currentProject)}/RESEARCH/${escapeHtml(slug)}/</code>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <button class="btn-rl-action" onclick="openResearchFolderInExplorer('${escapeHtml(slug)}')">
+                        <span>📂</span> Abrir Pasta no Explorer
+                    </button>
+                    <button class="btn-rl-action btn-rl-action-danger" onclick="confirmDeleteAllResearchFiles('${escapeHtml(slug)}', '${escapeHtml(topic).replace(/'/g, "\\'")}')" title="Excluir todos os arquivos gerados desta pesquisa">
+                        <span>🗑️</span> Excluir Todos os Arquivos
+                    </button>
+                </div>
+            </div>
+
+            <div class="rl-subtopic-list">
+                ${allItems.map(item => {
+                    const fullRelPath = `projects/${currentProject}/RESEARCH/${slug}/${item.path}`;
+                    const layerTooltip = item.layer === 'actionable'
+                        ? '🛠️ Actionable — Especificação prática e código adaptado à stack'
+                        : '📘 Knowledge — Conhecimento teórico e conceitual';
+                    return `
+                        <div class="rl-subtopic-item live-doc-card">
+                            <div class="rl-subtopic-top">
+                                <div style="display:flex; align-items:flex-start; gap:10px; min-width:0; flex:1;">
+                                    <span class="rl-layer-icon-tip" title="${layerTooltip}">
+                                        ${item.layer === 'actionable' ? '🛠️' : '📘'}
+                                    </span>
+                                    <div style="min-width:0; flex:1;">
+                                        <a class="rl-subtopic-link" onclick="openFileEditor('${escapeHtml(fullRelPath)}'); closeDecomposeModal();" title="Clique para ler ou editar este documento">
+                                            ${escapeHtml(item.title)}
+                                        </a>
+                                        <div style="font-family:var(--font-mono); font-size:10px; color:var(--text-tertiary); margin-top:2px;">${escapeHtml(item.file)}</div>
+                                    </div>
+                                </div>
+                                <button class="btn-subtopic-del" onclick="confirmDeleteResearchFile('${escapeHtml(slug)}', '${escapeHtml(item.path)}', '${escapeHtml(item.title).replace(/'/g, "\\'")}')" title="Excluir arquivo do disco">
+                                    🗑️
+                                </button>
+                            </div>
+
+                            <div class="rl-subtopic-desc" style="margin-top:6px;">${escapeHtml(item.description || 'Documento catalogado pela pesquisa autônoma.')}</div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+        return;
+    }
+
+    // Se NÃO tiver arquivos gerados ainda: exibe os subtópicos salvos no meta
+    const subtopics = meta.subtopics || [];
+
+    if (subtopics.length > 0) {
+        if (subEl) {
+            subEl.innerHTML = `Planejamento de <strong>${subtopics.length} subtópicos</strong> cadastrados. Clique em <em>Pesquisar Agora</em> para que a IA sintetize e gere os arquivos físicos.`;
+        }
+
+        contentEl.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+                <div style="font-size:12px; color:var(--text-secondary);">
+                    Local físico: <code style="font-size:11px; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px; font-family:var(--font-mono);">projects/${escapeHtml(currentProject)}/RESEARCH/${escapeHtml(slug)}/</code>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <button class="btn-rl-action" onclick="openResearchFolderInExplorer('${escapeHtml(slug)}')">
+                        <span>📂</span> Abrir Pasta no Explorer
+                    </button>
+                    <button class="btn-decompose-preview" onclick="forceReDecompose('${escapeHtml(slug)}', '${escapeHtml(topic).replace(/'/g, "\\'")}', '${escapeHtml(definition).replace(/'/g, "\\'")}')" title="Pede à IA para gerar uma nova divisão temática de subtópicos">
+                        <span>🔄 Re-decompor com IA</span>
+                    </button>
+                    <button class="btn-rl-action primary" onclick="startLiveResearchFromModal('${escapeHtml(slug)}', '${escapeHtml(topic).replace(/'/g, "\\'")}')" title="Executar pesquisa e gerar arquivos físicos no disco com acompanhamento ao vivo">
+                        <span>▶️</span> Pesquisar Agora
+                    </button>
+                </div>
+            </div>
+            <div class="rl-subtopic-list">
+                ${subtopics.map(st => {
+                    const layerTooltip = st.layer === 'actionable'
+                        ? '🛠️ Actionable — Especificação prática e código adaptado à stack'
+                        : '📘 Knowledge — Conhecimento teórico e conceitual';
+                    return `
+                        <div class="rl-subtopic-item">
+                            <div class="rl-subtopic-top">
+                                <div style="display:flex; align-items:flex-start; gap:10px; min-width:0; flex:1;">
+                                    <span class="rl-layer-icon-tip" title="${layerTooltip}">
+                                        ${st.layer === 'actionable' ? '🛠️' : '📘'}
+                                    </span>
+                                    <div style="min-width:0; flex:1;">
+                                        <div class="rl-subtopic-name" style="color:#ffffff; font-weight:700; font-size:13.5px;">${escapeHtml(st.title || st.name)}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="rl-subtopic-desc" style="margin-top:6px;">${escapeHtml(st.description || st.goal || '')}</div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+        return;
+    }
+
+    // Caso não tenha nem arquivos e nem subtopics no meta: aciona a IA
+    forceReDecompose(slug, topic, definition);
+}
+
+// ═══════════════════════════════════════════════════
+// RESEARCH LAB — SÍNTESE EM TEMPO REAL & PROGRESSO AO VIVO
+// ═══════════════════════════════════════════════════
+
+let isResearchRunningLive = false;
+let activeLiveSlug = null;
+
+/**
+ * Inicia a execução da pesquisa em modo ao vivo mantendo o modal aberto com animação
+ */
+async function startLiveResearchFromModal(slug, topic) {
+    const proj = currentProject || (currentProjectData && currentProjectData.name);
+    if (!proj || !slug) return;
+
+    const modal = document.getElementById('decomposeModal');
+    if (!modal) return;
+
+    activeResearchSlug = slug;
+    activeLiveSlug = slug;
+    isResearchRunningLive = true;
+
+    // Garante que o modal está visível
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    // Obtém o objeto da pesquisa
+    const research = (currentResearchesList || []).find(r => r.slug === slug) || { slug, topic };
+    const meta = research.meta || {};
+    const effectiveTopic = topic || research.topic || meta.topic || slug;
+    const subtopics = meta.subtopics || [];
+
+    const titleEl = document.getElementById('decModalTitle');
+    const subEl = document.getElementById('decModalSub');
+    const contentEl = document.getElementById('decModalContent');
+
+    if (titleEl) titleEl.textContent = `Síntese em Tempo Real: ${effectiveTopic}`;
+    if (subEl) subEl.innerHTML = `O motor neural está sintetizando e catalogando os documentos no disco. Acompanhe o progresso de cada tópico ao vivo.`;
+
+    // Renderiza a interface de execução ao vivo com o painel de progresso e os cards
+    let subtopicsHtml = '';
+    if (subtopics.length > 0) {
+        subtopicsHtml = subtopics.map((st, i) => {
+            const index = i + 1;
+            const layerTooltip = st.layer === 'actionable'
+                ? '🛠️ Actionable — Especificação prática e código adaptado à stack'
+                : '📘 Knowledge — Conhecimento teórico e conceitual';
+            return `
+                <div id="rl-live-card-${index}" class="rl-subtopic-item live-pending" data-index="${index}">
+                    <div class="rl-subtopic-top">
+                        <div style="display:flex; align-items:flex-start; gap:10px; min-width:0; flex:1;">
+                            <span class="rl-layer-icon-tip" title="${layerTooltip}">
+                                ${st.layer === 'actionable' ? '🛠️' : '📘'}
+                            </span>
+                            <div style="min-width:0; flex:1;">
+                                <div id="rl-live-card-title-${index}" class="rl-live-card-title" style="color:#ffffff; font-weight:700; font-size:13.5px;">${escapeHtml(st.title || st.name)}</div>
+                                <div id="rl-live-card-file-${index}" style="font-family:var(--font-mono); font-size:10px; color:var(--text-tertiary); margin-top:2px;">
+                                    ${st.layer === 'actionable' ? 'actionable/' : 'knowledge/'}...
+                                </div>
+                            </div>
+                        </div>
+                        <span id="rl-live-badge-${index}" class="rl-live-badge pending">⏳ Na Fila</span>
+                    </div>
+                    <div class="rl-subtopic-desc" style="margin-top:6px;">${escapeHtml(st.description || st.goal || '')}</div>
+                </div>
+            `;
+        }).join('');
+    } else {
+        subtopicsHtml = `
+            <div id="rl-live-loading-subtopics" style="text-align:center; padding:30px 20px; color:var(--text-tertiary);">
+                <div class="rl-live-spinner" style="width:24px; height:24px; margin-bottom:10px;"></div>
+                <div>Aguardando mapeamento de subtópicos pela IA...</div>
+            </div>
+        `;
+    }
+
+    contentEl.innerHTML = `
+        <div class="rl-live-progress-container">
+            <div class="rl-live-progress-top">
+                <div class="rl-live-engine-tag">
+                    <span class="rl-live-dot-pulse"></span>
+                    <span>Groq Cloud &middot; Síntese Autônoma em Tempo Real</span>
+                </div>
+                <div id="rlLiveCounter" class="rl-live-counter">0 / ${subtopics.length || '?'} concluídos (0%)</div>
+            </div>
+            <div id="rlLiveStatusHeadline" class="rl-live-headline">
+                <span class="rl-live-spinner"></span>
+                <span id="rlLiveStatusText">Inicializando motor de pesquisa com IA...</span>
+            </div>
+            <div id="rlLiveStatusSub" class="rl-live-sub">
+                Conectando ao modelo neural e preparando a síntese no disco...
+            </div>
+            <div class="rl-live-bar-track">
+                <div id="rlLiveBarFill" class="rl-live-bar-fill" style="width: 0%;"></div>
+            </div>
+            <div id="rlLiveCompletedActions" style="display:none; margin-top:14px;"></div>
+        </div>
+
+        <div id="rlLiveListContainer" class="rl-subtopic-list">
+            ${subtopicsHtml}
+        </div>
+    `;
+
+    // Dispara a chamada ao servidor
+    try {
+        const res = await fetch(`/api/projects/${encodeURIComponent(proj)}/research/${encodeURIComponent(slug)}/run`, {
+            method: 'POST'
+        });
+
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || 'Falha ao iniciar motor de pesquisa.');
+        }
+
+        const data = await res.json();
+        console.log('✅ Pesquisa concluída com sucesso:', data);
+        finalizeLiveResearch(slug, effectiveTopic, data);
+
+    } catch (err) {
+        console.error('❌ Erro na execução da pesquisa:', err);
+        const headline = document.getElementById('rlLiveStatusHeadline');
+        const sub = document.getElementById('rlLiveStatusSub');
+        if (headline) {
+            headline.innerHTML = `⚠️ <span style="color:#ef4444;">Erro na execução</span>`;
+        }
+        if (sub) {
+            sub.innerHTML = `${escapeHtml(err.message)} <br><button class="btn-rl-action" style="margin-top:8px;" onclick="startLiveResearchFromModal('${escapeHtml(slug)}', '${escapeHtml(effectiveTopic).replace(/'/g, "\\'")}')">🔄 Tentar Novamente</button>`;
+        }
+        showToast('Erro ao executar pesquisa: ' + err.message, 'error', 6000);
+    } finally {
+        isResearchRunningLive = false;
+    }
+}
+
+/**
+ * Handler invocado via SSE em tempo real a cada evento do motor de pesquisa
+ */
+function handleResearchLiveProgress(info) {
+    if (!info) return;
+    console.log('⚡ [Live Research SSE]:', info);
+
+    const headlineText = document.getElementById('rlLiveStatusText');
+    const headline = document.getElementById('rlLiveStatusHeadline');
+    const sub = document.getElementById('rlLiveStatusSub');
+    const bar = document.getElementById('rlLiveBarFill');
+    const counter = document.getElementById('rlLiveCounter');
+
+    if (info.step === 'decomposing') {
+        if (headlineText) headlineText.textContent = 'Mapeando árvore de subtópicos com IA...';
+        if (sub) sub.textContent = 'Consultando o modelo neural Groq Cloud para taxonomia de conhecimento...';
+    }
+
+    if (info.step === 'decomposed' && Array.isArray(info.subtopics)) {
+        const listContainer = document.getElementById('rlLiveListContainer');
+        if (listContainer) {
+            listContainer.innerHTML = info.subtopics.map((st, i) => {
+                const index = i + 1;
+                const layerTooltip = st.layer === 'actionable'
+                    ? '🛠️ Actionable — Especificação prática e código adaptado à stack'
+                    : '📘 Knowledge — Conhecimento teórico e conceitual';
+                return `
+                    <div id="rl-live-card-${index}" class="rl-subtopic-item live-pending" data-index="${index}">
+                        <div class="rl-subtopic-top">
+                            <div style="display:flex; align-items:flex-start; gap:10px; min-width:0; flex:1;">
+                                <span class="rl-layer-icon-tip" title="${layerTooltip}">
+                                    ${st.layer === 'actionable' ? '🛠️' : '📘'}
+                                </span>
+                                <div style="min-width:0; flex:1;">
+                                    <div id="rl-live-card-title-${index}" class="rl-live-card-title" style="color:#ffffff; font-weight:700; font-size:13.5px;">${escapeHtml(st.title || st.name)}</div>
+                                    <div id="rl-live-card-file-${index}" style="font-family:var(--font-mono); font-size:10px; color:var(--text-tertiary); margin-top:2px;">
+                                        ${st.layer === 'actionable' ? 'actionable/' : 'knowledge/'}...
+                                    </div>
+                                </div>
+                            </div>
+                            <span id="rl-live-badge-${index}" class="rl-live-badge pending">⏳ Na Fila</span>
+                        </div>
+                        <div class="rl-subtopic-desc" style="margin-top:6px;">${escapeHtml(st.description || st.goal || '')}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+        if (counter) counter.textContent = `0 / ${info.total} concluídos (0%)`;
+    }
+
+    if (info.step === 'synthesizing') {
+        const curr = info.current || 1;
+        const total = info.total || 8;
+        const pct = Math.max(3, Math.round(((curr - 1) / total) * 100));
+
+        if (headline) {
+            headline.innerHTML = `<span class="rl-live-spinner"></span> <span>Sintetizando [${curr}/${total}]: ${escapeHtml(info.subtopic || '')}</span>`;
+        }
+        if (sub) {
+            sub.textContent = `Pesquisando fundamentos, boas práticas e gerando documentação técnica em ${info.layer || 'knowledge'}/...`;
+        }
+        if (bar) bar.style.width = pct + '%';
+        if (counter) counter.textContent = `${curr - 1} / ${total} concluídos (${pct}%)`;
+
+        // Atualiza o card específico
+        const card = document.getElementById(`rl-live-card-${curr}`);
+        if (card) {
+            card.classList.remove('live-pending');
+            card.classList.remove('live-completed');
+            card.classList.add('live-active');
+
+            const badge = document.getElementById(`rl-live-badge-${curr}`);
+            if (badge) {
+                badge.className = 'rl-live-badge active';
+                badge.innerHTML = `<span class="rl-live-spinner"></span> Sintetizando com IA...`;
+            }
+            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }
+
+    if (info.step === 'file-generated') {
+        const curr = info.current || 1;
+        const total = info.total || 8;
+        const pct = Math.round((curr / total) * 100);
+
+        if (headline) {
+            headline.innerHTML = `<span>✓ [${curr}/${total}] Arquivo gerado: ${escapeHtml(info.file || '')}</span>`;
+        }
+        if (sub) {
+            sub.textContent = `Gravação física realizada com sucesso no disco em ${escapeHtml(info.path || '')}.`;
+        }
+        if (bar) bar.style.width = pct + '%';
+        if (counter) counter.textContent = `${curr} / ${total} concluídos (${pct}%)`;
+
+        // Atualiza o card para completed
+        const card = document.getElementById(`rl-live-card-${curr}`);
+        if (card) {
+            card.classList.remove('live-pending');
+            card.classList.remove('live-active');
+            card.classList.add('live-completed');
+
+            const badge = document.getElementById(`rl-live-badge-${curr}`);
+            if (badge) {
+                badge.className = 'rl-live-badge completed';
+                badge.innerHTML = `✅ Gerado ${info.reused ? '(Reaproveitado)' : ''}`;
+            }
+
+            const fileEl = document.getElementById(`rl-live-card-file-${curr}`);
+            if (fileEl && info.path) {
+                fileEl.style.color = '#34d399';
+                fileEl.textContent = info.path;
+            }
+
+            const titleEl = document.getElementById(`rl-live-card-title-${curr}`);
+            if (titleEl && info.path) {
+                const fullRelPath = `projects/${currentProject}/RESEARCH/${info.slug || activeLiveSlug}/${info.path}`;
+                titleEl.innerHTML = `<a class="rl-subtopic-link" onclick="openFileEditor('${escapeHtml(fullRelPath)}'); closeDecomposeModal();" title="Clique para ler ou editar este documento">${escapeHtml(info.subtopic || '')}</a>`;
+            }
+        }
+    }
+
+    if (info.step === 'completed') {
+        finalizeLiveResearch(info.slug || activeLiveSlug, info.topic, info);
+    }
+}
+window.handleResearchLiveProgress = handleResearchLiveProgress;
+
+/**
+ * Finaliza visualmente a pesquisa em tempo real com estado comemorativo e ações rápidas
+ */
+async function finalizeLiveResearch(slug, topic, data) {
+    const headline = document.getElementById('rlLiveStatusHeadline');
+    const sub = document.getElementById('rlLiveStatusSub');
+    const bar = document.getElementById('rlLiveBarFill');
+    const counter = document.getElementById('rlLiveCounter');
+    const actionsBox = document.getElementById('rlLiveCompletedActions');
+
+    if (headline) {
+        headline.innerHTML = `🎉 <span>Síntese Concluída com Sucesso!</span>`;
+    }
+    if (sub) {
+        const count = data?.generatedCount || data?.total || 8;
+        sub.innerHTML = `Todos os <strong>${count} documentos</strong> foram sintetizados e gravados no disco em <code>knowledge/</code> e <code>actionable/</code>.`;
+    }
+    if (bar) {
+        bar.style.width = '100%';
+        bar.classList.add('completed-glow');
+    }
+    if (counter) {
+        counter.textContent = `100% Concluído`;
+    }
+
+    if (actionsBox) {
+        actionsBox.style.display = 'flex';
+        actionsBox.style.gap = '10px';
+        actionsBox.style.flexWrap = 'wrap';
+        actionsBox.style.alignItems = 'center';
+        actionsBox.innerHTML = `
+            <button class="btn-rl-action" onclick="openResearchFolderInExplorer('${escapeHtml(slug)}')">
+                <span>📂</span> Abrir Pasta no Explorer
+            </button>
+            <button class="btn-rl-action" onclick="openOverviewDoc('${escapeHtml(slug)}'); closeDecomposeModal();">
+                <span>📄</span> Ver OVERVIEW.md
+            </button>
+            <button class="btn-rl-action primary" onclick="refreshAndRenderDecomposeModal('${escapeHtml(slug)}')">
+                <span>✓</span> Ver Catálogo Completo &amp; Gerenciar
+            </button>
+        `;
+    }
+
+    showSecondBrainToast(`🎉 Pesquisa concluída! Arquivos salvos e prontos para navegação.`);
+
+    // Recarrega lista e atualiza aba no background
+    const proj = currentProject || (currentProjectData && currentProjectData.name);
+    if (proj) {
+        try {
+            const rRes = await fetch(`/api/projects/${encodeURIComponent(proj)}/research`);
+            if (rRes.ok) {
+                const rData = await rRes.json();
+                currentResearchesList = rData.researches || [];
+                renderProjectResearchTab();
+            }
+        } catch(e) {}
+    }
+}
+
+async function refreshAndRenderDecomposeModal(slug) {
+    const proj = currentProject || (currentProjectData && currentProjectData.name);
+    if (!proj) return;
+    try {
+        const rRes = await fetch(`/api/projects/${encodeURIComponent(proj)}/research`);
+        if (rRes.ok) {
+            const rData = await rRes.json();
+            currentResearchesList = rData.researches || [];
+            const updated = currentResearchesList.find(r => r.slug === slug);
+            if (updated) {
+                renderDecomposeModalContent(updated);
+            }
+        }
+    } catch(e) {}
+}
+
+let currentProposedSubtopics = null;
+
+
+/**
+ * Consulta a IA para gerar novos subtópicos sob demanda
+ */
+async function forceReDecompose(slug, topic, definition) {
+    const subEl = document.getElementById('decModalSub');
+    const contentEl = document.getElementById('decModalContent');
+    if (!contentEl) return;
+
+    if (subEl) subEl.textContent = 'Mapeando nova proposta de subtópicos com o modelo Groq Cloud...';
+
+    contentEl.innerHTML = `
+        <div style="text-align:center; padding: 40px 20px; color: var(--text-tertiary);">
+            <div class="ai-sparkles" style="font-size:32px; margin-bottom:12px; display:inline-block;">🔮</div>
+            <div>Consultando IA para mapear subtópicos estruturados...</div>
+        </div>
+    `;
+
+    try {
+        const res = await fetch('/api/ai/decompose', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ topic, definition })
+        });
+
+        if (!res.ok) throw new Error('Não foi possível decompor este tema.');
+        const data = await res.json();
+        const subtopics = data.subtopics || [];
+        currentProposedSubtopics = subtopics;
+
+        if (subEl) {
+            subEl.innerHTML = `✨ A IA sugeriu <strong>${subtopics.length} novos subtópicos</strong>. Clique em <em>Aplicar Proposta</em> para salvar no contrato da pesquisa.`;
+        }
+
+        contentEl.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+                <div style="font-size:12px; color:var(--text-secondary);">
+                    Local físico: <code style="font-size:11px; background:rgba(255,255,255,0.06); padding:2px 6px; border-radius:4px; font-family:var(--font-mono);">projects/${escapeHtml(currentProject)}/RESEARCH/${escapeHtml(slug)}/</code>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <button class="btn-rl-action" onclick="openResearchFolderInExplorer('${escapeHtml(slug)}')">
+                        <span>📂</span> Abrir Pasta no Explorer
+                    </button>
+                    <button class="btn-decompose-preview" onclick="cancelProposedSubtopics('${escapeHtml(slug)}')" title="Descarta esta proposta e volta ao plano anterior">
+                        <span>↩️</span> Manter Anterior
+                    </button>
+                    <button class="btn-decompose-preview" onclick="forceReDecompose('${escapeHtml(slug)}', '${escapeHtml(topic).replace(/'/g, "\\'")}', '${escapeHtml(definition).replace(/'/g, "\\'")}')" title="Pede para a IA gerar uma proposta diferente">
+                        <span>🔄</span> Gerar Nova Proposta
+                    </button>
+                    <button class="btn-rl-action primary" onclick="applyProposedSubtopics('${escapeHtml(slug)}', '${escapeHtml(topic).replace(/'/g, "\\'")}')" title="Salva esta nova estrutura de subtópicos no contrato da pesquisa">
+                        <span>✅</span> Aplicar Proposta
+                    </button>
+                </div>
+            </div>
+            <div class="rl-subtopic-list">
+                ${subtopics.map(st => {
+                    const layerTooltip = st.layer === 'actionable'
+                        ? '🛠️ Actionable — Especificação prática e código adaptado à stack'
+                        : '📘 Knowledge — Conhecimento teórico e conceitual';
+                    return `
+                        <div class="rl-subtopic-item">
+                            <div class="rl-subtopic-top">
+                                <div style="display:flex; align-items:flex-start; gap:10px; min-width:0; flex:1;">
+                                    <span class="rl-layer-icon-tip" title="${layerTooltip}">
+                                        ${st.layer === 'actionable' ? '🛠️' : '📘'}
+                                    </span>
+                                    <div style="min-width:0; flex:1;">
+                                        <div class="rl-subtopic-name" style="color:#ffffff; font-weight:700; font-size:13.5px;">${escapeHtml(st.title || st.name)}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="rl-subtopic-desc" style="margin-top:6px;">${escapeHtml(st.description || st.goal || '')}</div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+    } catch (err) {
+        contentEl.innerHTML = `
+            <div style="color:var(--danger); padding:16px;">
+                Erro ao decompor tópicos: ${escapeHtml(err.message)}
+            </div>
+        `;
+    }
+}
+
+/**
+ * Aplica os subtópicos propostos pela IA salvando-os no _meta.json do projeto
+ */
+async function applyProposedSubtopics(slug, topic) {
+    if (!currentProposedSubtopics || currentProposedSubtopics.length === 0) return;
+    const proj = currentProject || (currentProjectData && currentProjectData.name);
+    try {
+        const res = await fetch(`/api/projects/${encodeURIComponent(proj)}/research/${encodeURIComponent(slug)}/subtopics`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ subtopics: currentProposedSubtopics })
+        });
+        if (!res.ok) throw new Error('Falha ao salvar novos subtópicos.');
+        
+        showSecondBrainToast('✅ Nova estrutura de subtópicos salva no contrato da pesquisa!');
+
+        // Atualiza a lista em memória
+        const rRes = await fetch(`/api/projects/${encodeURIComponent(proj)}/research`);
+        if (rRes.ok) {
+            const data = await rRes.json();
+            currentResearchesList = data.researches || [];
+            const updated = currentResearchesList.find(r => r.slug === slug);
+            if (updated) {
+                renderDecomposeModalContent(updated);
+            }
+        }
+    } catch (err) {
+        showToast('Erro ao aplicar proposta: ' + err.message, 'error', 4000);
+    }
+}
+
+/**
+ * Descarta a proposta gerada e recarrega os subtópicos salvos no contrato
+ */
+async function cancelProposedSubtopics(slug) {
+    const proj = currentProject || (currentProjectData && currentProjectData.name);
+    const updated = (currentResearchesList || []).find(r => r.slug === slug);
+    if (updated) {
+        renderDecomposeModalContent(updated);
+        showToast('↩️ Proposta descartada. Plano anterior preservado.', 'info', 3000);
+    } else {
+        closeDecomposeModal();
+    }
+}
+
+/**
+ * Exclui um documento individual da pesquisa
+ */
+async function confirmDeleteResearchFile(slug, relPath, title) {
+    const ok = await showBrainConfirm({
+        title: 'Excluir Documento',
+        badge: '🗑️ EXCLUSÃO PERMANENTE',
+        icon: '🗑️',
+        message: `Tem certeza que deseja excluir o documento <strong>"${escapeHtml(title)}"</strong>?<br><br><span style="color:var(--text-tertiary); font-size:12px; font-family:var(--font-mono);">${escapeHtml(relPath)}</span><br><br>Esta ação removerá o arquivo físico do disco e atualizará o índice <code>OVERVIEW.md</code>.`,
+        confirmText: 'Excluir Documento',
+        cancelText: 'Cancelar',
+        danger: true
+    });
+    if (!ok) return;
+
+    try {
+        const res = await fetch(`/api/projects/${encodeURIComponent(currentProject)}/research/${encodeURIComponent(slug)}/file/delete`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ relPath })
+        });
+
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || 'Erro ao excluir arquivo.');
+        }
+
+        showSecondBrainToast(`🗑️ Documento "${title}" excluído do disco com sucesso!`);
+
+        // Recarrega pesquisas do projeto para sincronizar tudo
+        const researchRes = await fetch(`/api/projects/${encodeURIComponent(currentProject)}/research`);
+        if (researchRes.ok) {
+            const data = await researchRes.json();
+            currentResearchesList = data.researches || [];
+            const updated = currentResearchesList.find(r => r.slug === slug);
+            if (updated) {
+                renderDecomposeModalContent(updated);
+            } else {
+                closeDecomposeModal();
+            }
+            // Atualiza contadores no card
+            renderProjectResearchTab();
+        }
+    } catch (err) {
+        showToast('Erro ao excluir: ' + err.message, 'error', 5000);
+    }
+}
+
+/**
+ * Exclui permanentemente um laboratório de pesquisa e todos os seus arquivos
+ */
+async function confirmDeleteResearchLab(slug, topic) {
+    const ok = await showBrainConfirm({
+        title: 'Excluir Laboratório de Pesquisa',
+        badge: '⚠️ ATENÇÃO &middot; EXCLUSÃO TOTAL',
+        icon: '⚠️',
+        message: `Tem certeza que deseja excluir permanentemente o laboratório <strong>"${escapeHtml(topic)}"</strong>?<br><br>Todos os arquivos em <code>knowledge/</code> e <code>actionable/</code> desta pesquisa serão apagados do disco.`,
+        confirmText: 'Excluir Laboratório e Arquivos',
+        cancelText: 'Cancelar',
+        danger: true
+    });
+    if (!ok) return;
+
+    try {
+        const res = await fetch(`/api/projects/${encodeURIComponent(currentProject)}/research/${encodeURIComponent(slug)}/delete`, {
+            method: 'POST'
+        });
+
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || 'Erro ao excluir pesquisa.');
+        }
+
+        showSecondBrainToast(`🗑️ Laboratório "${topic}" excluído com sucesso!`);
+        await renderProjectResearchTab();
+    } catch (err) {
+        showToast('Erro ao excluir laboratório: ' + err.message, 'error', 5000);
+    }
+}
+
+function closeDecomposeModal() {
+    const modal = document.getElementById('decomposeModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+function handleDecomposeBackdropClick(e) {
+    if (e.target && e.target.id === 'decomposeModal') {
+        closeDecomposeModal();
+    }
+}
+
+/**
+ * Abre o arquivo OVERVIEW.md da pesquisa no editor/visualizador do Brain UI
+ */
+function openOverviewDoc(slug) {
+    const path = `projects/${currentProject}/RESEARCH/${slug}/OVERVIEW.md`;
+    if (typeof navigateTo === 'function') {
+        navigateTo(path);
+    } else {
+        openFileEditor(path);
+    }
+}
+
+/**
+ * Abre a pasta da pesquisa no Windows Explorer
+ */
+async function openResearchFolderInExplorer(slug) {
+    const proj = currentProject || (currentProjectData && currentProjectData.name);
+    if (!proj) {
+        showToast('Projeto não selecionado.', 'error');
+        return;
+    }
+    const folderPath = `projects/${proj}/RESEARCH/${slug}`;
+    await openSystemFolder(folderPath);
+}
+
+/**
+ * Exclui todos os arquivos gerados de uma pesquisa após confirmação explícita do usuário
+ */
+async function confirmDeleteAllResearchFiles(slug, topic) {
+    const ok = await showBrainConfirm({
+        title: 'Excluir Todos os Arquivos',
+        badge: '⚠️ EXCLUSÃO EM MASSA',
+        icon: '🗑️',
+        message: `Tem certeza que deseja excluir <strong>TODOS os arquivos</strong> do laboratório <strong>"${escapeHtml(topic)}"</strong>?<br><br>Todos os documentos gerados em <code>knowledge/</code> e <code>actionable/</code> serão permanentemente excluídos do disco.<br><br><em>A definição, prompt vivo e histórico de versões serão preservados.</em>`,
+        confirmText: 'Excluir Todos os Arquivos',
+        cancelText: 'Cancelar',
+        danger: true
+    });
+    if (!ok) return;
+
+    try {
+        const proj = currentProject || (currentProjectData && currentProjectData.name);
+        const res = await fetch(`/api/projects/${encodeURIComponent(proj)}/research/${encodeURIComponent(slug)}/clear-files`, {
+            method: 'POST'
+        });
+
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || 'Erro ao excluir arquivos.');
+        }
+
+        const data = await res.json();
+        showSecondBrainToast(`🗑️ Todos os arquivos da pesquisa "${topic}" foram excluídos do disco!`);
+
+        // Recarrega pesquisas do projeto para sincronizar tudo
+        const researchRes = await fetch(`/api/projects/${encodeURIComponent(proj)}/research`);
+        if (researchRes.ok) {
+            const rData = await researchRes.json();
+            currentResearchesList = rData.researches || [];
+            const updated = currentResearchesList.find(r => r.slug === slug);
+            if (updated) {
+                renderDecomposeModalContent(updated);
+            } else {
+                closeDecomposeModal();
+            }
+            // Atualiza contadores no card
+            renderProjectResearchTab();
+        }
+    } catch (err) {
+        showToast('Erro ao excluir arquivos: ' + err.message, 'error', 5000);
+    }
+}
+
 
 
 
