@@ -410,6 +410,103 @@ function buildStats() {
     setMetric('metricMemory', s.memoryCount || 2);
 }
 
+// ── Criador Interativo de ADR (Architecture Decision Record) ─
+async function createNewDecisionRecord(projectName) {
+    const projName = projectName || (currentProjectData ? currentProjectData.name : currentProject);
+    if (!projName) return;
+
+    const today = new Date().toISOString().split('T')[0];
+    const defaultTemplate = `# ADR-001: Escolha da Stack e Padrões Iniciais de Arquitetura
+
+> **Projeto**: ${projName}  
+> **Data**: ${today}  
+> **Status**: Aceita (Decidido)  
+
+## Contexto
+O projeto necessita de uma fundação tecnológica clara, modular e alinhada com as diretrizes do ecossistema AI Second Brain.
+Precisamos garantir que qualquer agente de Inteligência Artificial ou desenvolvedor conheça os motivos das escolhas técnicas sem desconstruir o código legado.
+
+## Decisão
+Foi decidido adotar a stack e os padrões documentados em \`PROJECT.md\` e \`ARCHITECTURE.md\`.
+Quaisquer decisões futuras que alterem bibliotecas essenciais, conexões de banco de dados ou provedores de IA devem ser registradas em novos ADRs numerados nesta mesma pasta.
+
+## Consequências
+- **Positivas**: Padronização técnica, contratos vivos respeitados por agentes de IA e previsibilidade do roadmap.
+- **Trade-offs / Riscos**: Exige manutenção disciplinada do arquivo \`CURRENT_STATE.md\` e documentação de novos ADRs a cada grande mudança.
+
+## Alternativas Consideradas
+- **Desenvolvimento sem contratos**: Rejeitado por gerar alucinações em agentes de IA e perda de memória de arquitetura entre sessões.
+`;
+
+    // Abre o editor markdown direto para salvar
+    openFileEditor(`projects/${projName}/DECISIONS/001-stack-inicial.md`, defaultTemplate, async () => {
+        showSecondBrainToast('⚖️ Decisão arquitetural registrada com sucesso no disco!');
+        if (currentView === 'project-workspace') {
+            await openProjectWorkspace(projName, 'overview');
+        } else {
+            renderDashboardProjects();
+        }
+    });
+}
+window.createNewDecisionRecord = createNewDecisionRecord;
+
+// ── Explainer de Governança do Projeto ────────────
+function showGovernanceExplainer(folderName, govPercent, hasProjectMd, hasCurrentState, hasArchitecture, hasDecisions) {
+    const contracts = [
+        { name: 'PROJECT.md', desc: 'Identidade, visão do produto, proposta de valor e stack técnica.', ok: hasProjectMd, weight: 25 },
+        { name: 'CURRENT_STATE.md', desc: 'Status atual do desenvolvimento, backlog e próximos passos imediatos.', ok: hasCurrentState, weight: 25 },
+        { name: 'ARCHITECTURE.md', desc: 'Desenho de arquitetura, contratos técnicos e fluxos do sistema.', ok: hasArchitecture, weight: 25 },
+        { name: 'DECISIONS/ (ADRs)', desc: 'Registro formal de decisões técnicas tomadas (ex.: escolha de libs, banco, arquitetura).', ok: hasDecisions, weight: 25 }
+    ];
+
+    const listHtml = contracts.map(c => `
+        <div style="display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; margin-bottom: 8px; border-radius: 8px; background: ${c.ok ? 'rgba(16, 185, 129, 0.08)' : 'rgba(245, 158, 11, 0.08)'}; border: 1px solid ${c.ok ? 'rgba(16, 185, 129, 0.2)' : 'rgba(245, 158, 11, 0.25)'};">
+            <span style="font-size: 16px; line-height: 1;">${c.ok ? '✅' : '⚠️'}</span>
+            <div style="flex: 1;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                    <strong style="color: ${c.ok ? '#34d399' : '#fbbf24'}; font-size: 13px; font-family: var(--font-mono, monospace);">${c.name}</strong>
+                    <span style="font-size: 11px; font-weight: 700; color: ${c.ok ? '#10b981' : 'var(--text-tertiary)'};">+${c.weight}% (${c.ok ? 'Ativo' : 'Pendente'})</span>
+                </div>
+                <p style="margin: 0; font-size: 12px; color: var(--text-secondary); line-height: 1.4;">${c.desc}</p>
+            </div>
+        </div>
+    `).join('');
+
+    const message = `
+        <div style="text-align: left; font-size: 13px; line-height: 1.5;">
+            <p style="margin-top: 0; color: var(--text-secondary);">
+                A <strong>Governança de Arquitetura</strong> representa o nível de conformidade e clareza estrutural do projeto.
+                Ela garante que agentes de Inteligência Artificial e desenvolvedores operem com <strong>contexto exato</strong>, sem alucinações e sem retrabalho.
+            </p>
+            <div style="margin: 14px 0 8px 0; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-tertiary);">
+                Composição do Score (${govPercent}% Conforme):
+            </div>
+            ${listHtml}
+            ${!hasDecisions ? `
+                <div style="margin-top: 14px; text-align: center;">
+                    <button type="button" class="btn" onclick="resolveBrainConfirm(true); createNewDecisionRecord('${folderName}');" style="padding: 10px 20px; font-size: 12px; font-weight: 700; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; border-radius: 8px; color: #fff; cursor: pointer; box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4); display: inline-flex; align-items: center; gap: 8px;">
+                        <span>➕</span> Registrar Decisão Inicial (ADR-001) para 100%
+                    </button>
+                </div>
+            ` : ''}
+            <p style="margin-bottom: 0; margin-top: 12px; font-size: 12px; color: var(--text-tertiary); background: rgba(255, 255, 255, 0.04); padding: 8px 12px; border-radius: 6px;">
+                💡 <em>Dica: As decisões são salvas em <code>projects/${folderName}/DECISIONS/</code> como Architecture Decision Records (ADRs).</em>
+            </p>
+        </div>
+    `;
+
+    showBrainConfirm({
+        title: `Governança de ${folderName}`,
+        badge: 'GOVERNANÇA & CONTRATOS VIVOS',
+        icon: '🛡️',
+        danger: false,
+        singleButton: true,
+        confirmText: 'Entendido',
+        message: message
+    });
+}
+window.showGovernanceExplainer = showGovernanceExplainer;
+
 // ── Dynamic Projects Dashboard Rendering ──────────
 function renderDashboardProjects() {
     const slot = document.getElementById('dynamicProjectsSlot');
@@ -471,25 +568,25 @@ function renderDashboardProjects() {
         const title = proj.title || folderName;
         
         let statusBadge = 'Ativo';
-        let statusClass = 'planning';
+        let statusClass = 'active';
         let statusColor = 'green';
 
         const contentLower = (proj.content || '').toLowerCase();
         if (contentLower.includes('em planejamento') || contentLower.includes('planejamento')) {
-            statusBadge = 'Em planejamento';
+            statusBadge = 'Planejamento';
             statusClass = 'planning';
             statusColor = 'yellow';
         } else if (contentLower.includes('em conceituação') || contentLower.includes('conceituação') || contentLower.includes('ideia')) {
-            statusBadge = 'Em conceituação';
+            statusBadge = 'Conceituação';
             statusClass = 'concept';
             statusColor = 'red';
         } else if (contentLower.includes('produção') || contentLower.includes('em produção')) {
-            statusBadge = 'Em produção';
-            statusClass = 'success';
+            statusBadge = 'Produção';
+            statusClass = 'active';
             statusColor = 'green';
         }
 
-        let desc = 'Projeto governado pelo AI Second Brain';
+        let desc = 'Projeto arquitetado e governado pelos contratos do AI Second Brain.';
         const overviewMatch = (proj.content || '').match(/##\s+Visão Geral\s*\n+([^\n#]+)/i);
         if (overviewMatch && overviewMatch[1]) {
             desc = overviewMatch[1].trim();
@@ -499,30 +596,145 @@ function renderDashboardProjects() {
         const stackMatch = (proj.content || '').match(/-\s+\*\*Stack[^*]*\*\*:\s*([^\r\n]+)/i);
         if (stackMatch && stackMatch[1]) stack = stackMatch[1].trim();
 
+        // Stack icon
+        let stackIcon = '💻';
+        const stackLower = stack.toLowerCase();
+        if (stackLower.includes('node') || stackLower.includes('type') || stackLower.includes('ts') || stackLower.includes('js') || stackLower.includes('script')) {
+            stackIcon = '⚡';
+        } else if (stackLower.includes('python') || stackLower.includes('fastapi') || stackLower.includes('django') || stackLower.includes('flask')) {
+            stackIcon = '🐍';
+        } else if (stackLower.includes('react') || stackLower.includes('next') || stackLower.includes('vue') || stackLower.includes('angular')) {
+            stackIcon = '⚛️';
+        } else if (stackLower.includes('go') || stackLower.includes('golang')) {
+            stackIcon = '🐹';
+        } else if (stackLower.includes('rust')) {
+            stackIcon = '🦀';
+        } else if (stackLower.includes('c#') || stackLower.includes('.net') || stackLower.includes('csharp')) {
+            stackIcon = '🎯';
+        } else if (stackLower.includes('java') || stackLower.includes('kotlin')) {
+            stackIcon = '☕';
+        }
+
+        // Estatísticas do projeto
+        const projPrefix = `projects/${folderName}/`;
+        const projFiles = files.filter(f => f.path.startsWith(projPrefix));
+        const totalDocs = projFiles.length;
+
+        // Labs de Pesquisa
+        const researchFiles = projFiles.filter(f => f.path.toLowerCase().includes('/research/'));
+        const researchSlugs = new Set();
+        researchFiles.forEach(f => {
+            const sub = f.path.substring((projPrefix + 'RESEARCH/').length);
+            const labPart = sub.split('/')[0];
+            if (labPart) researchSlugs.add(labPart.replace(/\.md$/i, ''));
+        });
+        const totalLabs = researchSlugs.size;
+
+        // Contratos de Governança
+        const hasProjectMd = projFiles.some(f => f.path.toLowerCase().endsWith('/project.md'));
+        const hasCurrentState = projFiles.some(f => f.path.toLowerCase().endsWith('/current_state.md'));
+        const hasArchitecture = projFiles.some(f => f.path.toLowerCase().endsWith('/architecture.md'));
+        const decisionFiles = projFiles.filter(f => f.path.toLowerCase().includes('/decisions/') && f.path.toLowerCase().endsWith('.md') && !f.path.toLowerCase().endsWith('readme.md'));
+        const hasDecisions = decisionFiles.length > 0 || projFiles.some(f => f.path.toLowerCase().includes('/decisions/'));
+
+        const contractsFound = (hasProjectMd ? 1 : 0) + (hasCurrentState ? 1 : 0) + (hasArchitecture ? 1 : 0) + (hasDecisions ? 1 : 0);
+        const govPercent = Math.round((contractsFound / 4) * 100);
+
+        let govBarColor = 'linear-gradient(90deg, #6366f1, #10b981)';
+        if (govPercent < 50) {
+            govBarColor = 'linear-gradient(90deg, #f59e0b, #ef4444)';
+        } else if (govPercent < 75) {
+            govBarColor = 'linear-gradient(90deg, #6366f1, #06b6d4)';
+        }
+
         html += `
-            <div class="dash-card status-card" onclick="openProjectWorkspace('${folderName}')" style="cursor: pointer;">
-                <div class="status-indicator ${statusColor}"></div>
-                <div class="card-content">
-                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
-                        <h3 style="margin:0;">${title}</h3>
-                        <span class="status-badge" style="font-size:10px; padding:1px 6px;">${stack}</span>
+            <div class="dash-card proj-dashboard-card" onclick="openProjectWorkspace('${folderName}')">
+                <div>
+                    <!-- Header (Apenas o nome do projeto e status, sem avatar) -->
+                    <div class="proj-card-header">
+                        <div class="proj-card-main-info">
+                            <div class="proj-card-title-row">
+                                <h3 class="proj-card-title" title="${escapeHtml(title)}">${escapeHtml(title)}</h3>
+                                <span class="proj-status-chip ${statusClass}">
+                                    <span class="proj-pulse-dot ${statusColor}"></span>
+                                    ${statusBadge}
+                                </span>
+                            </div>
+                            <div class="proj-card-sub-row">
+                                <span class="proj-card-path">projects/${folderName}/</span>
+                                <span class="proj-stack-chip" title="Stack de Tecnologia">
+                                    <span>${stackIcon}</span> ${escapeHtml(stack)}
+                                </span>
+                            </div>
+                        </div>
                     </div>
-                    <p style="margin-bottom:8px;">${desc}</p>
-                    <span class="status-badge ${statusClass}">${statusBadge}</span>
-                    
-                    <div class="dash-card-actions">
-                        <button class="btn-dash-act primary" onclick="event.stopPropagation(); openProjectWorkspace('${folderName}', 'overview')">
-                            🚀 Abrir Workspace
-                        </button>
-                        <button class="btn-dash-act" onclick="event.stopPropagation(); openProjectWorkspace('${folderName}', 'graph')">
-                            🔮 Grafo Neural
-                        </button>
-                        <button class="btn-dash-act" onclick="event.stopPropagation(); openProjectWorkspace('${folderName}', 'settings')">
-                            ⚙️ Gerenciar
-                        </button>
+
+                    <!-- Descrição -->
+                    <p class="proj-card-desc" style="margin-top: 12px;" title="${escapeHtml(desc)}">
+                        ${escapeHtml(desc)}
+                    </p>
+                </div>
+
+                <!-- Barra de Governança com Explicação e Breakdown dos 4 Contratos -->
+                <div class="proj-gov-container" onclick="event.stopPropagation(); showGovernanceExplainer('${folderName}', ${govPercent}, ${hasProjectMd}, ${hasCurrentState}, ${hasArchitecture}, ${hasDecisions})" style="cursor: pointer;" title="Clique para ver o detalhamento do cálculo de governança">
+                    <div class="proj-gov-header">
+                        <span class="proj-gov-label">
+                            <span>🛡️</span> Governança de Arquitetura
+                            <span class="proj-gov-info-btn" title="O que significa este percentual?">ℹ️</span>
+                        </span>
+                        <span class="proj-gov-val">${govPercent}% Conforme</span>
+                    </div>
+                    <div class="proj-gov-track">
+                        <div class="proj-gov-fill" style="width: ${govPercent}%; background: ${govBarColor};"></div>
+                    </div>
+                    <!-- Pílulas dos 4 Contratos (+25% cada) -->
+                    <div class="proj-gov-pills">
+                        <span class="gov-pill ${hasProjectMd ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${hasProjectMd ? `navigateTo('projects/${folderName}/PROJECT.md')` : `initializeContract('PROJECT.md')`}" title="${hasProjectMd ? '✓ PROJECT.md ativo (Clique para visualizar)' : '⚠️ Clique para inicializar PROJECT.md'}">
+                            ${hasProjectMd ? '✓' : '⚠️'} PROJECT
+                        </span>
+                        <span class="gov-pill ${hasCurrentState ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${hasCurrentState ? `navigateTo('projects/${folderName}/CURRENT_STATE.md')` : `initializeContract('CURRENT_STATE.md')`}" title="${hasCurrentState ? '✓ CURRENT_STATE.md ativo (Clique para visualizar)' : '⚠️ Clique para inicializar CURRENT_STATE.md'}">
+                            ${hasCurrentState ? '✓' : '⚠️'} STATE
+                        </span>
+                        <span class="gov-pill ${hasArchitecture ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${hasArchitecture ? `navigateTo('projects/${folderName}/ARCHITECTURE.md')` : `initializeContract('ARCHITECTURE.md')`}" title="${hasArchitecture ? '✓ ARCHITECTURE.md ativo (Clique para visualizar)' : '⚠️ Clique para inicializar ARCHITECTURE.md'}">
+                            ${hasArchitecture ? '✓' : '⚠️'} ARCH
+                        </span>
+                        <span class="gov-pill ${hasDecisions ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${hasDecisions ? `openProjectWorkspace('${folderName}', 'overview')` : `createNewDecisionRecord('${folderName}')`}" title="${hasDecisions ? '✓ Decisões registradas (Clique para ver no Workspace)' : '⚠️ Clique para registrar a primeira decisão (ADR-001) e bater 100%!'}">
+                            ${hasDecisions ? '✓' : '➕'} DECISIONS
+                        </span>
                     </div>
                 </div>
-                <div class="card-icon">${proj.icon || '🚀'}</div>
+
+                <!-- Quick Stats Strip -->
+                <div class="proj-quick-stats">
+                    <div class="pqs-chip" title="Documentos e especificações indexados">
+                        <span>📄</span> <strong>${totalDocs}</strong> docs
+                    </div>
+                    <div class="pqs-chip" title="Pesquisas e Experimentos de IA">
+                        <span>🔬</span> <strong>${totalLabs}</strong> ${totalLabs === 1 ? 'lab' : 'labs'}
+                    </div>
+                    <div class="pqs-chip" title="Contratos vivos (PROJECT, CURRENT_STATE, ARCHITECTURE, DECISIONS)">
+                        <span>🛡️</span> <strong>${contractsFound}/4</strong> contratos
+                    </div>
+                </div>
+
+                <!-- Ações Rápidas -->
+                <div class="dash-card-actions" style="margin-top: 2px;">
+                    <button class="btn-dash-act primary" onclick="event.stopPropagation(); openProjectWorkspace('${folderName}', 'overview')" title="Abrir Dashboard Completo">
+                        🚀 Workspace
+                    </button>
+                    <button class="btn-dash-act neural-act" onclick="event.stopPropagation(); openProjectWorkspace('${folderName}', 'graph')" title="Explorar Grafo Neural 3D">
+                        🔮 Grafo 3D
+                    </button>
+                    ${totalLabs > 0 ? `
+                        <button class="btn-dash-act lab-act" onclick="event.stopPropagation(); openProjectWorkspace('${folderName}', 'research')" title="Ver Experimentos de Pesquisa">
+                            🔬 Labs (${totalLabs})
+                        </button>
+                    ` : `
+                        <button class="btn-dash-act" onclick="event.stopPropagation(); openProjectWorkspace('${folderName}', 'settings')" title="Configurar Projeto">
+                            ⚙️ Gerenciar
+                        </button>
+                    `}
+                </div>
             </div>
         `;
     });
@@ -2632,6 +2844,46 @@ function renderProjectOverviewTab() {
                                 `).join('')}
                             </div>
                         ` : ''}
+
+                        <!-- Seção de Decisões Arquiteturais (ADRs) -->
+                        <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.06);">
+                            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 8px;">
+                                <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-tertiary); letter-spacing: 0.05em;">
+                                    Decisões Arquiteturais / ADRs (${(d.decisions || []).length})
+                                </span>
+                                <button type="button" class="btn-gov create" onclick="createNewDecisionRecord('${d.name}')" style="font-size: 10px; padding: 3px 8px;">
+                                    + Nova Decisão (ADR)
+                                </button>
+                            </div>
+                            <div class="pw-gov-artifacts">
+                                ${(d.decisions || []).length === 0 ? `
+                                    <div class="pw-gov-chip-missing">
+                                        <div class="pw-gov-chip-left">
+                                            <span class="pw-gov-chip-title" style="color:var(--text-secondary);">⚖️ Nenhuma decisão registrada</span>
+                                            <span class="pw-gov-chip-sub">projects/${d.name}/DECISIONS/</span>
+                                            <span class="pw-gov-chip-badge" style="color:#fbbf24;">Pendente (+25%)</span>
+                                        </div>
+                                        <div class="pw-gov-chip-actions">
+                                            <button type="button" class="btn-gov create" onclick="createNewDecisionRecord('${d.name}')">
+                                                + Registrar Decisão (ADR-001)
+                                            </button>
+                                        </div>
+                                    </div>
+                                ` : (d.decisions || []).map(dec => `
+                                    <div class="pw-gov-chip">
+                                        <div class="pw-gov-chip-left">
+                                            <span class="pw-gov-chip-title">⚖️ ${dec.name}</span>
+                                            <span class="pw-gov-chip-sub">(Decisão Arquitetural)</span>
+                                            <span class="pw-gov-chip-badge">${(dec.size / 1024).toFixed(1)} KB</span>
+                                        </div>
+                                        <div class="pw-gov-chip-actions">
+                                            <button type="button" class="btn-gov" onclick="navigateTo('projects/${d.name}/DECISIONS/${dec.name}')">👁️ Ver</button>
+                                            <button type="button" class="btn-gov primary" onclick="openFileEditor('projects/${d.name}/DECISIONS/${dec.name}', null, () => openProjectWorkspace('${d.name}', 'overview'))">✏️ Editar</button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
                     </div>
                 `}
             </div>

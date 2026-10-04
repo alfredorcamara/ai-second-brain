@@ -1,5 +1,5 @@
 window.VAULT_SNAPSHOT = {
-  "timestamp": 1791126052363,
+  "timestamp": 1791131276705,
   "files": [
     {
       "id": "_agents_rules_00-core_md",
@@ -412,6 +412,18 @@ window.VAULT_SNAPSHOT = {
       "mtime": 1790869396417.0103,
       "outgoingLinks": [],
       "content": "# Alfredo_teste — Estado Atual\n\n> Última atualização: 2026-10-01\n\n## Status: 🟡 Em Testes / Homologação\n\n## O que já foi definido\n- [x] Inicialização no AI Second Brain com governança ativa.\n- [x] Implementar módulo de autenticação JWT\n\n## Próximos Passos\n1. Definir os próximos passos do projeto.\n\n"
+    },
+    {
+      "id": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md",
+      "path": "projects/Alfredo_teste/DECISIONS/001-stack-inicial.md",
+      "name": "001-stack-inicial.md",
+      "title": "ADR-001: Escolha da Stack e Padrões Iniciais de Arquitetura",
+      "category": "projects",
+      "icon": "⚖️",
+      "size": 1189,
+      "mtime": 1791131276166.3738,
+      "outgoingLinks": [],
+      "content": "# ADR-001: Escolha da Stack e Padrões Iniciais de Arquitetura\n\n> **Projeto**: Alfredo_teste  \n> **Data**: 2026-10-04  \n> **Status**: Aceita (Decidido)  \n\n## Contexto\nO projeto necessita de uma fundação tecnológica clara, modular e alinhada com as diretrizes do ecossistema AI Second Brain.\nPrecisamos garantir que qualquer agente de Inteligência Artificial ou desenvolvedor conheça os motivos das escolhas técnicas sem desconstruir o código legado.\n\n## Decisão\nFoi decidido adotar a stack e os padrões documentados em `PROJECT.md` e `ARCHITECTURE.md`.\nQuaisquer decisões futuras que alterem bibliotecas essenciais, conexões de banco de dados ou provedores de IA devem ser registradas em novos ADRs numerados nesta mesma pasta.\n\n## Consequências\n- **Positivas**: Padronização técnica, contratos vivos respeitados por agentes de IA e previsibilidade do roadmap.\n- **Trade-offs / Riscos**: Exige manutenção disciplinada do arquivo `CURRENT_STATE.md` e documentação de novos ADRs a cada grande mudança.\n\n## Alternativas Consideradas\n- **Desenvolvimento sem contratos**: Rejeitado por gerar alucinações em agentes de IA e perda de memória de arquitetura entre sessões.\n"
     },
     {
       "id": "projects_Alfredo_teste_PROJECT_md",
@@ -1265,8 +1277,8 @@ window.VAULT_SNAPSHOT = {
           "isProject": true,
           "startCollapsed": true,
           "path": "projects/Alfredo_teste/PROJECT.md",
-          "totalFilesCount": 17,
-          "childrenCount": 17,
+          "totalFilesCount": 18,
+          "childrenCount": 18,
           "children": [
             {
               "id": "projects_Alfredo_teste_PROJECT_md",
@@ -1437,6 +1449,25 @@ window.VAULT_SNAPSHOT = {
                       "size": 12910
                     }
                   ]
+                }
+              ]
+            },
+            {
+              "id": "sub_Alfredo_teste_DECISIONS",
+              "label": "DECISIONS",
+              "icon": "⚖️",
+              "isGroup": true,
+              "isSubfolder": true,
+              "startCollapsed": true,
+              "childrenCount": 1,
+              "children": [
+                {
+                  "id": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md",
+                  "label": "001-stack-inicial.md",
+                  "title": "ADR-001: Escolha da Stack e Padrões Iniciais de Arquitetura",
+                  "icon": "⚖️",
+                  "path": "projects/Alfredo_teste/DECISIONS/001-stack-inicial.md",
+                  "size": 1189
                 }
               ]
             }
@@ -2360,6 +2391,14 @@ window.VAULT_SNAPSHOT = {
       "path": "projects/Alfredo_teste/CURRENT_STATE.md"
     },
     {
+      "id": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md",
+      "label": "ADR-001: Escolha da Stack e Padrões Iniciais de Arquitetura",
+      "group": "projects",
+      "size": 9,
+      "icon": "⚖️",
+      "path": "projects/Alfredo_teste/DECISIONS/001-stack-inicial.md"
+    },
+    {
       "id": "projects_Alfredo_teste_PROJECT_md",
       "label": "Alfredo_teste",
       "group": "projects",
@@ -2959,6 +2998,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "hub_proj_Alfredo_teste",
+      "to": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md"
+    },
+    {
+      "from": "hub_proj_Alfredo_teste",
       "to": "projects_Alfredo_teste_PROJECT_md"
     },
     {
@@ -3383,6 +3426,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
+      "to": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md"
+    },
+    {
+      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
     },
     {
@@ -3771,6 +3818,34 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
+      "to": "templates_project_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md",
       "to": "templates_project_md"
     },
     {
@@ -4439,7 +4514,7 @@ window.VAULT_SNAPSHOT = {
     }
   },
   "stats": {
-    "totalFiles": 86,
+    "totalFiles": 87,
     "rulesCount": 5,
     "skillsCount": 8,
     "projectsCount": 2,
@@ -4448,7 +4523,7 @@ window.VAULT_SNAPSHOT = {
     "memoryCount": 2,
     "templatesCount": 4,
     "docsCount": 8,
-    "totalNodes": 98,
-    "totalEdges": 402
+    "totalNodes": 99,
+    "totalEdges": 411
   }
 };
