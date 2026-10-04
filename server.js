@@ -1182,11 +1182,21 @@ Projeto externo vinculado ao AI Second Brain.
                         let actionableFiles = [];
                         try {
                             const kDir = path.join(researchPath, 'knowledge');
-                            if (fs.existsSync(kDir)) knowledgeFiles = fs.readdirSync(kDir).filter(f => f.endsWith('.md'));
+                            if (fs.existsSync(kDir)) {
+                                knowledgeFiles = fs.readdirSync(kDir).filter(f => f.endsWith('.md'));
+                                for (const kf of knowledgeFiles) {
+                                    try { totalSize += fs.statSync(path.join(kDir, kf)).size; } catch (e) {}
+                                }
+                            }
                         } catch (e) {}
                         try {
                             const aDir = path.join(researchPath, 'actionable');
-                            if (fs.existsSync(aDir)) actionableFiles = fs.readdirSync(aDir).filter(f => f.endsWith('.md'));
+                            if (fs.existsSync(aDir)) {
+                                actionableFiles = fs.readdirSync(aDir).filter(f => f.endsWith('.md'));
+                                for (const af of actionableFiles) {
+                                    try { totalSize += fs.statSync(path.join(aDir, af)).size; } catch (e) {}
+                                }
+                            }
                         } catch (e) {}
 
                         researches.push({

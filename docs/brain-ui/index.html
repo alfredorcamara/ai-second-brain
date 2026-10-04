@@ -1015,17 +1015,17 @@
             <!-- Header -->
             <div class="editor-header">
                 <div class="editor-title-wrap">
-                    <span class="editor-badge">✏️ EDITOR INTEGRADO</span>
-                    <h2 id="editorModalTitle" class="editor-title">Editar Arquivo</h2>
+                    <span class="editor-badge" id="editorBadgeText">👁️ PRÉ-VISUALIZAÇÃO</span>
+                    <h2 id="editorModalTitle" class="editor-title">Visualizar Arquivo</h2>
                     <code id="editorFilePath" class="editor-file-path">caminho/do/arquivo.md</code>
                 </div>
                 <div class="editor-header-actions">
                     <div class="editor-tab-toggle">
-                        <button type="button" class="editor-tab-btn active" id="btnEditorTabWrite" onclick="switchEditorTab('write')">
-                            ✏️ Escrever
-                        </button>
-                        <button type="button" class="editor-tab-btn" id="btnEditorTabPreview" onclick="switchEditorTab('preview')">
+                        <button type="button" class="editor-tab-btn active" id="btnEditorTabPreview" onclick="switchEditorTab('preview')">
                             👁️ Pré-visualizar
+                        </button>
+                        <button type="button" class="editor-tab-btn" id="btnEditorTabWrite" onclick="switchEditorTab('write')">
+                            ✏️ Escrever
                         </button>
                     </div>
                     <button class="editor-close-btn" onclick="closeFileEditor()" aria-label="Fechar editor">✕</button>
@@ -1033,7 +1033,7 @@
             </div>
 
             <!-- Toolbar rápida -->
-            <div class="editor-toolbar" id="editorToolbar">
+            <div class="editor-toolbar" id="editorToolbar" style="display: none;">
                 <button type="button" class="ed-tool-btn" onclick="insertEditorSyntax('h2')" title="Subtítulo">H2</button>
                 <button type="button" class="ed-tool-btn" onclick="insertEditorSyntax('h3')" title="Seção">H3</button>
                 <button type="button" class="ed-tool-btn" onclick="insertEditorSyntax('bold')" title="Negrito"><strong>B</strong></button>
@@ -1048,8 +1048,8 @@
 
             <!-- Body (Write & Preview) -->
             <div class="editor-body">
-                <textarea id="editorTextarea" class="editor-textarea" spellcheck="false" placeholder="Digite seu conteúdo em Markdown aqui..."></textarea>
-                <div id="editorPreviewPane" class="editor-preview-pane doc-markdown-body" style="display: none;"></div>
+                <textarea id="editorTextarea" class="editor-textarea" spellcheck="false" placeholder="Digite seu conteúdo em Markdown aqui..." style="display: none;"></textarea>
+                <div id="editorPreviewPane" class="editor-preview-pane doc-markdown-body" style="display: block;"></div>
             </div>
 
             <!-- Footer -->

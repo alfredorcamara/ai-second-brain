@@ -2911,16 +2911,17 @@ async function unlinkProject() {
 // ═══════════════════════════════════════════════════
 let activeEditingPath = null;
 let onEditorSavedCallback = null;
-let currentEditorTab = 'write';
+let currentEditorTab = 'preview';
 
-async function openFileEditor(filePath, initialContent = null, onSaved = null) {
+async function openFileEditor(filePath, initialContent = null, onSaved = null, defaultTab = 'preview') {
     activeEditingPath = filePath;
     onEditorSavedCallback = onSaved;
-    currentEditorTab = 'write';
+    currentEditorTab = defaultTab;
 
     const modal = document.getElementById('fileEditorModal');
     const pathEl = document.getElementById('editorFilePath');
     const titleEl = document.getElementById('editorModalTitle');
+    const badgeEl = document.getElementById('editorBadgeText');
     const textarea = document.getElementById('editorTextarea');
     const statusText = document.getElementById('editorStatusText');
     const btnSave = document.getElementById('btnSaveFile');
@@ -2931,7 +2932,8 @@ async function openFileEditor(filePath, initialContent = null, onSaved = null) {
     document.body.style.overflow = 'hidden';
 
     const filename = filePath.split('/').pop();
-    if (titleEl) titleEl.textContent = `Editando: ${filename}`;
+    if (titleEl) titleEl.textContent = defaultTab === 'write' ? `Editando: ${filename}` : `Visualizando: ${filename}`;
+    if (badgeEl) badgeEl.textContent = defaultTab === 'write' ? '✏️ EDITOR INTEGRADO' : '👁️ PRÉ-VISUALIZAÇÃO';
     if (pathEl) pathEl.textContent = filePath;
     if (statusText) statusText.innerHTML = '<span class="status-dot snapshot"></span> Carregando conteúdo...';
     if (btnSave) {
@@ -2939,22 +2941,19 @@ async function openFileEditor(filePath, initialContent = null, onSaved = null) {
         btnSave.innerHTML = '<span>💾 Salvar no Disco</span>';
     }
 
-    switchEditorTab('write');
-
     if (initialContent !== null && initialContent !== undefined) {
         textarea.value = initialContent;
-        if (statusText) statusText.innerHTML = '<span class="status-dot" style="background:#10b981"></span> Pronto para editar';
-        setTimeout(() => textarea.focus(), 100);
+        switchEditorTab(defaultTab);
     } else {
         try {
             const res = await fetch(`/api/file?path=${encodeURIComponent(filePath)}`);
             if (!res.ok) throw new Error('Não foi possível ler o arquivo.');
             const text = await res.text();
             textarea.value = text;
-            if (statusText) statusText.innerHTML = '<span class="status-dot" style="background:#10b981"></span> Pronto para editar';
-            setTimeout(() => textarea.focus(), 100);
+            switchEditorTab(defaultTab);
         } catch (err) {
             textarea.value = `# ${filename}\n\n`;
+            switchEditorTab('write');
             if (statusText) statusText.innerHTML = `<span class="status-dot" style="background:#f59e0b"></span> Arquivo novo ou vazio. Pronto para criar.`;
         }
     }
@@ -2983,6 +2982,10 @@ function switchEditorTab(tab) {
     const textarea = document.getElementById('editorTextarea');
     const preview = document.getElementById('editorPreviewPane');
     const toolbar = document.getElementById('editorToolbar');
+    const statusText = document.getElementById('editorStatusText');
+    const titleEl = document.getElementById('editorModalTitle');
+    const badgeEl = document.getElementById('editorBadgeText');
+    const filename = (activeEditingPath || '').split('/').pop();
 
     if (btnWrite) btnWrite.classList.toggle('active', tab === 'write');
     if (btnPrev) btnPrev.classList.toggle('active', tab === 'preview');
@@ -2991,11 +2994,15 @@ function switchEditorTab(tab) {
         if (textarea) textarea.style.display = 'block';
         if (preview) preview.style.display = 'none';
         if (toolbar) toolbar.style.display = 'flex';
+        if (badgeEl) badgeEl.textContent = '✏️ EDITOR INTEGRADO';
+        if (titleEl && filename) titleEl.textContent = `Editando: ${filename}`;
+        if (statusText) statusText.innerHTML = '<span class="status-dot" style="background:#10b981"></span> Modo de Edição (Ctrl+S para salvar)';
         textarea?.focus();
     } else {
         if (textarea) textarea.style.display = 'none';
         if (preview) {
             preview.style.display = 'block';
+            preview.scrollTop = 0;
             const val = textarea ? textarea.value : '';
             const html = window.VAULT && window.VAULT.renderMarkdown 
                 ? window.VAULT.renderMarkdown(val, activeEditingPath) 
@@ -3003,6 +3010,9 @@ function switchEditorTab(tab) {
             preview.innerHTML = `<div class="doc-preview-inner">${html}</div>`;
         }
         if (toolbar) toolbar.style.display = 'none';
+        if (badgeEl) badgeEl.textContent = '👁️ PRÉ-VISUALIZAÇÃO';
+        if (titleEl && filename) titleEl.textContent = `Visualizando: ${filename}`;
+        if (statusText) statusText.innerHTML = '<span class="status-dot" style="background:#10b981"></span> Modo de Pré-visualização (clique em "Escrever" para editar)';
     }
 }
 
@@ -3303,7 +3313,7 @@ async function renderProjectResearchTab() {
 }
 
 /**
- * Renderiza o HTML de um Card de Pesquisa individual
+ * Renderiza o HTML de um Card de Pesquisa individual com as 5 melhorias visuais
  */
 function renderResearchCardHtml(r) {
     const meta = r.meta || {};
@@ -3313,9 +3323,14 @@ function renderResearchCardHtml(r) {
     const versionNum = history.length > 0 ? history.length : 1;
     const knowledgeCount = (r.knowledgeFiles || []).length;
     const actionableCount = (r.actionableFiles || []).length;
+    const totalDocs = knowledgeCount + actionableCount + (r.hasOverview ? 1 : 0);
+    const sizeFormatted = r.totalSizeKb && parseFloat(r.totalSizeKb) > 0 ? `${r.totalSizeKb} KB` : '0 KB';
 
     return `
         <div class="rl-card" id="card-research-${escapeHtml(r.slug)}">
+            <!-- Melhoria 3: Barra Neon de Progresso Vivo (Shimmer) -->
+            <div class="rl-card-shimmer-bar" id="shimmer-research-${escapeHtml(r.slug)}"></div>
+
             <div>
                 <div class="rl-card-top">
                     <div class="rl-card-title-wrap">
@@ -3326,7 +3341,8 @@ function renderResearchCardHtml(r) {
                         </div>
                     </div>
                     <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-                        <span class="rl-card-status-badge ${r.status === 'completed' ? 'completed' : ''}">${r.status === 'completed' ? '✓ Concluído' : '🟢 Ativo'}</span>
+                        <span class="rl-card-status-badge ${r.status === 'completed' ? 'completed' : ''}" id="status-badge-${escapeHtml(r.slug)}">${r.status === 'completed' ? '✓ Concluído' : '🟢 Ativo'}</span>
+                        <!-- Melhoria 5: Lixeira discreta com hover seguro e alerta -->
                         <button class="btn-rl-del" title="Excluir este laboratório de pesquisa e seus arquivos" onclick="confirmDeleteResearchLab('${escapeHtml(r.slug)}', '${escapeHtml(topic).replace(/'/g, "\\'")}')">🗑️</button>
                     </div>
                 </div>
@@ -3364,9 +3380,21 @@ function renderResearchCardHtml(r) {
                         </div>
                     </div>
                 </div>
+
+                <!-- Melhoria 2: Badge de Volume Total & Métricas Consolidadas -->
+                <div class="rl-card-metrics-strip">
+                    <span class="rl-metric-pill" title="Total de documentos técnicos gerados no disco">
+                        <span class="rl-pill-dot ${totalDocs > 0 ? 'green' : ''}"></span>
+                        <strong>${totalDocs}</strong> ${totalDocs === 1 ? 'arquivo gerado' : 'arquivos gerados'}
+                    </span>
+                    <span class="rl-metric-pill" title="Tamanho total em disco">
+                        💾 <strong>${sizeFormatted}</strong>
+                    </span>
+                    ${r.status === 'completed' ? `<span class="rl-metric-pill success" title="Todos os arquivos foram compilados e estão prontos no disco">✨ 100% Indexado</span>` : ''}
+                </div>
             </div>
 
-            <!-- Ações do Card (Grid Harmônico e Proporcional) -->
+            <!-- Ações do Card (Grid Harmônico e Proporcional com Melhoria 1: Acentos Temáticos) -->
             <div class="rl-card-actions">
                 <button class="btn-rl-action primary" onclick="startResearchExecution('${escapeHtml(r.slug)}')">
                     <span>${r.status === 'completed' ? '🔄' : '▶️'}</span> ${r.status === 'completed' ? 'Recalcular / Atualizar' : 'Pesquisar Agora'}
@@ -3374,7 +3402,12 @@ function renderResearchCardHtml(r) {
                 <button class="btn-rl-action btn-rl-subtopics" onclick="openDecomposeModal('${escapeHtml(r.slug)}')" title="Ver estrutura detalhada de subtópicos e arquivos">
                     <span>🧩</span> Subtópicos & Arquivos
                 </button>
-                <button class="btn-rl-action btn-rl-overview" onclick="openOverviewDoc('${escapeHtml(r.slug)}')" title="Abrir documento mestre OVERVIEW.md">
+                <!-- Melhoria 4: Mini Preview ao passar o mouse em OVERVIEW.md -->
+                <button class="btn-rl-action btn-rl-overview" 
+                        onclick="openOverviewDoc('${escapeHtml(r.slug)}')" 
+                        onmouseenter="showOverviewPreview(event, '${escapeHtml(r.slug)}', '${escapeHtml(topic).replace(/'/g, "\\'")}', '${escapeHtml(definition).replace(/'/g, "\\'")}', ${knowledgeCount}, ${actionableCount}, '${sizeFormatted}')"
+                        onmouseleave="hideOverviewPreview()"
+                        title="Abrir documento mestre OVERVIEW.md">
                     <span>📄</span> OVERVIEW.md
                 </button>
                 <button class="btn-rl-action btn-rl-graph" onclick="switchProjectTab('graph')" title="Visualizar este laboratório orbitando o projeto no Grafo Neural 3D">
@@ -3388,10 +3421,80 @@ function renderResearchCardHtml(r) {
     `;
 }
 
+// ── Melhoria 4: Popover de Prévia Rápida do OVERVIEW.md ────────
+let overviewPreviewTimeout = null;
+
+function showOverviewPreview(e, slug, topic, definition, knowledgeCount, actionableCount, sizeFormatted) {
+    clearTimeout(overviewPreviewTimeout);
+    let popover = document.getElementById('rlOverviewPreviewPopover');
+    if (!popover) {
+        popover = document.createElement('div');
+        popover.id = 'rlOverviewPreviewPopover';
+        popover.className = 'rl-overview-preview-popover';
+        document.body.appendChild(popover);
+    }
+
+    const shortDef = (definition && definition !== 'Sem definição cadastrada.')
+        ? (definition.length > 130 ? definition.substring(0, 130) + '...' : definition)
+        : 'Visão executiva e mapa neural consolidado dos tópicos deste laboratório.';
+
+    popover.innerHTML = `
+        <div class="rl-opp-header">
+            <span class="rl-opp-badge">📄 OVERVIEW.md</span>
+            <span class="rl-opp-topic">${escapeHtml(topic)}</span>
+        </div>
+        <div class="rl-opp-body">${escapeHtml(shortDef)}</div>
+        <div class="rl-opp-footer">
+            <span>📘 <strong>${knowledgeCount}</strong> knowledge</span>
+            <span class="rl-opp-dot">•</span>
+            <span>🛠️ <strong>${actionableCount}</strong> actionable</span>
+            <span class="rl-opp-dot">•</span>
+            <span>💾 <strong>${sizeFormatted}</strong></span>
+        </div>
+        <div class="rl-opp-hint">👆 Clique para abrir no Editor Markdown</div>
+    `;
+
+    const target = e.currentTarget || e.target;
+    const rect = target.getBoundingClientRect();
+    popover.style.display = 'block';
+
+    const popWidth = 280;
+    let left = rect.left + (rect.width / 2) - (popWidth / 2);
+    if (left < 10) left = 10;
+    if (left + popWidth > window.innerWidth - 10) left = window.innerWidth - popWidth - 10;
+
+    let top = rect.top - popover.offsetHeight - 8;
+    if (top < 10) {
+        top = rect.bottom + 8;
+    }
+
+    popover.style.left = `${left}px`;
+    popover.style.top = `${top}px`;
+}
+
+function hideOverviewPreview() {
+    overviewPreviewTimeout = setTimeout(() => {
+        const popover = document.getElementById('rlOverviewPreviewPopover');
+        if (popover) popover.style.display = 'none';
+    }, 150);
+}
+
 async function startResearchExecution(slug) {
     if (!currentProject || !slug) return;
     const research = (currentResearchesList || []).find(r => r.slug === slug);
     const topic = research ? (research.topic || research.meta?.topic || slug) : slug;
+    
+    // Melhoria 3: Ativa estado gerando no card de fundo
+    const card = document.getElementById(`card-research-${slug}`);
+    if (card) {
+        card.classList.add('is-generating');
+        const badge = document.getElementById(`status-badge-${slug}`);
+        if (badge) {
+            badge.className = 'rl-card-status-badge generating';
+            badge.innerHTML = `<span class="rl-pulse-dot"></span> ⚡ Sintetizando...`;
+        }
+    }
+    
     await startLiveResearchFromModal(slug, topic);
 }
 
