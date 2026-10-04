@@ -904,6 +904,457 @@ body {
     font-weight: 600;
 }
 
+/* ── Floating Graph Search Box ────────────────────── */
+.graph-search-box {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(17, 17, 24, 0.82);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    z-index: 16;
+    transition: all var(--transition-fast);
+    width: 290px;
+}
+
+.graph-search-box:focus-within {
+    border-color: rgba(99, 102, 241, 0.65);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.35), 0 8px 32px rgba(0, 0, 0, 0.55);
+    width: 330px;
+}
+
+.graph-search-icon {
+    font-size: 13px;
+    opacity: 0.7;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+.graph-search-input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    font-size: 12.5px;
+    font-family: inherit;
+}
+
+.graph-search-input::placeholder {
+    color: #64748b;
+}
+
+.graph-search-clear {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    border: none;
+    color: #cbd5e1;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+}
+
+.graph-search-clear:hover {
+    background: rgba(239, 68, 68, 0.7);
+    color: #ffffff;
+    transform: scale(1.15);
+}
+
+.graph-search-badge {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #818cf8;
+    background: rgba(99, 102, 241, 0.18);
+    border: 1px solid rgba(99, 102, 241, 0.35);
+    padding: 2px 7px;
+    border-radius: 12px;
+    white-space: nowrap;
+    user-select: none;
+}
+
+/* ── Fullscreen Mode for Neural Graphs ────────────── */
+#graphView:fullscreen,
+#graphView.is-fullscreen,
+.pw-graph-wrapper:fullscreen,
+.pw-graph-wrapper.is-fullscreen {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    z-index: 999999 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #08080d !important;
+    border: none !important;
+}
+
+#graphView:fullscreen canvas,
+#graphView.is-fullscreen canvas,
+.pw-graph-wrapper:fullscreen canvas,
+.pw-graph-wrapper.is-fullscreen canvas {
+    width: 100vw !important;
+    height: 100vh !important;
+    display: block !important;
+}
+
+.graph-btn.fullscreen-active .icon-expand {
+    display: none !important;
+}
+
+.graph-btn.fullscreen-active .icon-compress {
+    display: block !important;
+}
+
+@media (max-width: 768px) {
+    .graph-search-box {
+        width: 200px;
+        right: 14px;
+        top: 14px;
+    }
+    .graph-search-box:focus-within {
+        width: 220px;
+    }
+    .graph-legend {
+        display: none;
+    }
+}
+
+/* ── Floating Dynamic Category Filter & Color Panel ──────── */
+.graph-cat-panel-wrap {
+    position: absolute;
+    top: 66px;
+    right: 20px;
+    z-index: 18;
+    user-select: none;
+}
+
+.graph-cat-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(17, 17, 24, 0.85);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    color: #e2e8f0;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.graph-cat-trigger:hover {
+    border-color: rgba(99, 102, 241, 0.6);
+    background: rgba(24, 24, 36, 0.95);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.25);
+}
+
+.graph-cat-trigger.is-filtering {
+    border-color: #38bdf8;
+    background: rgba(14, 165, 233, 0.15);
+    color: #38bdf8;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.3);
+}
+
+.cat-trigger-icon {
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.cat-trigger-label {
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cat-trigger-badge {
+    font-size: 10px;
+    font-weight: 800;
+    color: #a78bfa;
+    background: rgba(139, 92, 246, 0.2);
+    border: 1px solid rgba(139, 92, 246, 0.35);
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-family: var(--font-mono, monospace);
+}
+
+.graph-cat-trigger.is-filtering .cat-trigger-badge {
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.2);
+    border-color: rgba(56, 189, 248, 0.4);
+}
+
+.cat-trigger-arrow {
+    font-size: 10px;
+    color: #94a3b8;
+    transition: transform 0.2s ease;
+}
+
+.graph-cat-panel-wrap.open .cat-trigger-arrow {
+    transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+.graph-cat-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 290px;
+    max-height: 420px;
+    display: flex;
+    flex-direction: column;
+    background: rgba(13, 15, 26, 0.94);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 1px rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+    animation: catDropdownFade 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes catDropdownFade {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.cat-dropdown-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cat-header-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #f1f5f9;
+    letter-spacing: 0.3px;
+}
+
+.cat-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cat-header-btn {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: #94a3b8;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 3px 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: inherit;
+}
+
+.cat-header-btn:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.cat-header-btn.close {
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.cat-header-btn.close:hover {
+    background: rgba(239, 68, 68, 0.4);
+    color: #ffffff;
+    border-color: rgba(239, 68, 68, 0.6);
+}
+
+.cat-dropdown-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-height: 330px;
+}
+
+.cat-dropdown-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.cat-dropdown-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+}
+
+/* Category Item in List */
+.cat-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: 1px solid transparent;
+}
+
+.cat-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.cat-item.is-active {
+    background: rgba(139, 92, 246, 0.2);
+    border-color: rgba(139, 92, 246, 0.55);
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.25);
+}
+
+.cat-item-left {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+    flex: 1;
+}
+
+/* Custom Color Input Swatch */
+.cat-item-color-box {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.cat-color-input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    border: none;
+    z-index: 2;
+}
+
+.cat-color-swatch {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.45);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    pointer-events: none;
+}
+
+.cat-item-color-box:hover .cat-color-swatch {
+    transform: scale(1.3);
+    border-color: #ffffff;
+}
+
+.cat-item-main {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    flex: 1;
+}
+
+.cat-item-icon {
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.cat-item-name {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #e2e8f0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cat-item.is-active .cat-item-name {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.cat-item-count {
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-family: var(--font-mono, monospace);
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+}
+
+.cat-item:hover .cat-item-count {
+    color: #cbd5e1;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.cat-item.is-active .cat-item-count {
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.18);
+}
+
+@media (max-width: 768px) {
+    .graph-cat-panel-wrap {
+        top: 60px;
+        right: 14px;
+    }
+    .graph-cat-dropdown {
+        width: 250px;
+    }
+}
+
 /* ── Document View ────────────────────────────────── */
 .doc-view {
     flex: 1;

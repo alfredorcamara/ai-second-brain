@@ -853,7 +853,195 @@ function updateBreadcrumbs(items) {
     }).join('');
 }
 
-// ── Graph ─────────────────────────────────────────
+// ── Dynamic Graph Category & Color Customization Panel ─────────
+function setupGraphCategoryPanel(opts) {
+    const wrap = document.getElementById(opts.wrapId);
+    const trigger = document.getElementById(opts.triggerId);
+    const triggerLabel = document.getElementById(opts.triggerLabelId);
+    const triggerBadge = document.getElementById(opts.triggerBadgeId);
+    const dropdown = document.getElementById(opts.dropdownId);
+    const list = document.getElementById(opts.listId);
+    const resetBtn = document.getElementById(opts.resetBtnId);
+    const closeBtn = document.getElementById(opts.closeBtnId);
+    const searchInput = document.getElementById(opts.searchInputId);
+    const searchBadge = document.getElementById(opts.searchBadgeId);
+    const countEl = document.getElementById(opts.nodeCountElId);
+    const getGraph = opts.getGraphInstance;
+
+    if (!wrap || !trigger || !dropdown || !list) return;
+
+    const g = (typeof getGraph === 'function') ? getGraph() : getGraph;
+    if (!g || typeof g.getDynamicCategories !== 'function') return;
+
+    const { totalDocs, categories } = g.getDynamicCategories();
+
+    // Toggle dropdown
+    trigger.onclick = (e) => {
+        e.stopPropagation();
+        const isOpen = dropdown.style.display !== 'none';
+        dropdown.style.display = isOpen ? 'none' : 'flex';
+        wrap.classList.toggle('open', !isOpen);
+    };
+
+    if (closeBtn) {
+        closeBtn.onclick = (e) => {
+            e.stopPropagation();
+            dropdown.style.display = 'none';
+            wrap.classList.remove('open');
+        };
+    }
+
+    // Fechar ao clicar fora
+    if (!wrap._docClickHandler) {
+        wrap._docClickHandler = (e) => {
+            if (!wrap.contains(e.target)) {
+                dropdown.style.display = 'none';
+                wrap.classList.remove('open');
+            }
+        };
+        document.addEventListener('click', wrap._docClickHandler);
+    }
+
+    // Botão Resetar Cores
+    if (resetBtn) {
+        resetBtn.onclick = (e) => {
+            e.stopPropagation();
+            try {
+                if (window.resetToDefaultColors) {
+                    window.resetToDefaultColors();
+                } else {
+                    localStorage.removeItem('ai_second_brain_graph_colors');
+                }
+                const palette = window.HIERARCHY_PALETTE || {};
+                categories.forEach(cat => {
+                    const defaultFill = (palette[cat.key] && palette[cat.key].fill) || '#8b5cf6';
+                    g.updateGroupColor(cat.key, defaultFill);
+                    cat.color = defaultFill;
+                });
+                renderList();
+                showToast('🎨 Cores restauradas para o padrão original!', 'success', 2500);
+            } catch (err) {}
+        };
+    }
+
+    function renderList() {
+        const activeKey = g.currentCategory || 'all';
+
+        // Atualiza trigger
+        if (activeKey !== 'all') {
+            const activeCat = categories.find(c => c.key === activeKey);
+            trigger.classList.add('is-filtering');
+            if (triggerLabel) triggerLabel.textContent = activeCat ? `${activeCat.icon} ${activeCat.label}` : 'Filtrado';
+            if (triggerBadge) triggerBadge.textContent = activeCat ? activeCat.docCount : 0;
+        } else {
+            trigger.classList.remove('is-filtering');
+            if (triggerLabel) triggerLabel.textContent = 'Camadas';
+            if (triggerBadge) triggerBadge.textContent = categories.length;
+        }
+
+        // Gera HTML
+        let html = `
+            <div class="cat-item ${activeKey === 'all' ? 'is-active' : ''}" data-key="all">
+                <div class="cat-item-left">
+                    <span class="cat-item-icon">🌌</span>
+                    <span class="cat-item-name">Todos os Documentos</span>
+                </div>
+                <span class="cat-item-count">${totalDocs}</span>
+            </div>
+        `;
+
+        categories.forEach(cat => {
+            const isActive = activeKey === cat.key;
+            const curColor = (g.groupColors && g.groupColors[cat.key] && g.groupColors[cat.key].fill) || cat.color;
+
+            html += `
+                <div class="cat-item ${isActive ? 'is-active' : ''}" data-key="${cat.key}">
+                    <div class="cat-item-left">
+                        <div class="cat-item-color-box" title="Clique para trocar a cor desta camada">
+                            <input type="color" class="cat-color-input" value="${curColor}" data-group="${cat.key}">
+                            <span class="cat-color-swatch" style="background-color: ${curColor}; box-shadow: 0 0 8px ${curColor}55;"></span>
+                        </div>
+                        <span class="cat-item-icon">${cat.icon}</span>
+                        <span class="cat-item-name">${cat.label}</span>
+                    </div>
+                    <span class="cat-item-count">${cat.docCount}</span>
+                </div>
+            `;
+        });
+
+        list.innerHTML = html;
+
+        // Binds de hover e clique para filtrar
+        list.querySelectorAll('.cat-item').forEach(itemEl => {
+            const key = itemEl.getAttribute('data-key');
+
+            itemEl.onmouseenter = () => {
+                if (key !== 'all') g.highlightCategory(key);
+            };
+            itemEl.onmouseleave = () => {
+                g.clearCategoryHighlight();
+            };
+
+            itemEl.onclick = (e) => {
+                if (e.target.closest('.cat-item-color-box')) return;
+
+                const nextKey = (g.currentCategory === key || key === 'all') ? null : key;
+                const filterRes = g.setCategoryFilter(nextKey);
+
+                renderList();
+
+                if (filterRes.isFiltering) {
+                    if (searchBadge) {
+                        searchBadge.textContent = `${filterRes.matchedCount} de ${filterRes.totalCount}`;
+                        searchBadge.style.display = 'inline-block';
+                    }
+                    if (countEl) countEl.textContent = `${filterRes.matchedCount} de ${filterRes.totalCount}`;
+                } else {
+                    if (searchBadge && (!searchInput || !searchInput.value.trim())) {
+                        searchBadge.style.display = 'none';
+                    }
+                    if (countEl) countEl.textContent = `${filterRes.totalCount}`;
+                }
+            };
+        });
+
+        // Binds do seletor de cor interativo
+        list.querySelectorAll('.cat-color-input').forEach(colorInput => {
+            const groupKey = colorInput.getAttribute('data-group');
+            const swatch = colorInput.nextElementSibling;
+
+            const handleColorChange = (e) => {
+                e.stopPropagation();
+                const newHex = colorInput.value;
+                if (swatch) {
+                    swatch.style.backgroundColor = newHex;
+                    swatch.style.boxShadow = `0 0 8px ${newHex}55`;
+                }
+
+                const cat = categories.find(c => c.key === groupKey);
+                if (cat) cat.color = newHex;
+                if (window.HIERARCHY_PALETTE && window.HIERARCHY_PALETTE[groupKey]) {
+                    window.HIERARCHY_PALETTE[groupKey].fill = newHex;
+                    window.HIERARCHY_PALETTE[groupKey].stroke = newHex;
+                }
+
+                g.updateGroupColor(groupKey, newHex);
+
+                try {
+                    const saved = JSON.parse(localStorage.getItem('ai_second_brain_graph_colors') || '{}');
+                    saved[groupKey] = newHex;
+                    localStorage.setItem('ai_second_brain_graph_colors', JSON.stringify(saved));
+                } catch (err) {}
+            };
+
+            colorInput.oninput = handleColorChange;
+            colorInput.onchange = handleColorChange;
+        });
+    }
+
+    renderList();
+}
+
 function initGraph() {
     const canvas = document.getElementById('graphCanvas');
     const tooltip = document.getElementById('graphTooltip');
@@ -861,11 +1049,40 @@ function initGraph() {
 
     graph = new BrainGraph(canvas, tooltip);
 
-    const nodes = (window.VAULT && window.VAULT.data && window.VAULT.data.graphNodes) || [];
-    const edges = (window.VAULT && window.VAULT.data && window.VAULT.data.graphEdges) || [];
-    const colors = (window.VAULT && window.VAULT.data && window.VAULT.data.groupColors) || {};
+    let nodes = (window.VAULT && window.VAULT.data && window.VAULT.data.graphNodes) || [];
+    let edges = (window.VAULT && window.VAULT.data && window.VAULT.data.graphEdges) || [];
+    let colors = (window.VAULT && window.VAULT.data && window.VAULT.data.groupColors) || {};
+
+    const allFiles = (window.VAULT && window.VAULT.data && window.VAULT.data.files) || [];
+    if (typeof window.buildHierarchyGraph === 'function' && allFiles.length > 0) {
+        const hg = window.buildHierarchyGraph(allFiles, {
+            rootId: 'brain',
+            rootLabel: 'AI Second Brain',
+            rootIcon: '🧠',
+            fileLabel: 'title'
+        });
+        nodes = hg.nodes;
+        edges = hg.edges;
+        colors = hg.colors;
+    }
 
     graph.loadData(nodes, edges, colors);
+
+    // Inicializa painel dinâmico de categorias e cores
+    setupGraphCategoryPanel({
+        wrapId: 'graphCatPanelWrap',
+        triggerId: 'graphCatTrigger',
+        triggerLabelId: 'graphCatTriggerLabel',
+        triggerBadgeId: 'graphCatTriggerBadge',
+        dropdownId: 'graphCatDropdown',
+        listId: 'graphCatList',
+        resetBtnId: 'btnGraphResetColors',
+        closeBtnId: 'btnGraphCloseCat',
+        searchInputId: 'graphSearchInput',
+        searchBadgeId: 'graphSearchBadge',
+        nodeCountElId: 'hudNodeCount',
+        getGraphInstance: () => graph
+    });
 
     // Update HUD Node Count
     const nodeCountEl = document.getElementById('hudNodeCount');
@@ -873,15 +1090,33 @@ function initGraph() {
         nodeCountEl.textContent = nodes.length;
     }
 
+    // Auto-órbita ativada por padrão
+    const orbitBtn = document.getElementById('btnAutoOrbit');
+    if (orbitBtn) orbitBtn.classList.add('active');
+    const rotEl = document.getElementById('hudRotationPill');
+    if (rotEl) {
+        rotEl.textContent = '🪐 Em Órbita';
+        rotEl.style.color = '#38bdf8';
+    }
+
     // Camera update callback for HUD
     graph.onCameraChange = (state) => {
         const zoomEl = document.getElementById('hudZoomPill');
-        const rotEl = document.getElementById('hudRotationPill');
-        const orbitBtn = document.getElementById('btnAutoOrbit');
+        const rEl = document.getElementById('hudRotationPill');
+        const oBtn = document.getElementById('btnAutoOrbit');
 
         if (zoomEl) zoomEl.textContent = `🔍 ${state.zoomPercent}%`;
-        if (rotEl) rotEl.textContent = `🌍 3D Planeta`;
-        if (orbitBtn) orbitBtn.classList.toggle('active', state.autoOrbit);
+        const isOrbit = Boolean(state.autoRotate || state.autoOrbit);
+        if (rEl) {
+            if (isOrbit) {
+                rEl.textContent = '🪐 Em Órbita';
+                rEl.style.color = '#38bdf8';
+            } else {
+                rEl.textContent = '🌍 3D Planeta';
+                rEl.style.color = '';
+            }
+        }
+        if (oBtn) oBtn.classList.toggle('active', isOrbit);
     };
 
     // Single click: highlight
@@ -897,9 +1132,13 @@ function initGraph() {
         }
     };
 
-    // Double click: open document
+    // Double click: open document or focus folder
     graph.onNodeDblClick = (node) => {
         if (!node) return;
+        if (node.isFolder) {
+            graph.focusNode(node);
+            return;
+        }
         if (node.path) {
             navigateTo(node.path);
         } else if (node.id) {
@@ -910,16 +1149,148 @@ function initGraph() {
     graph.start();
 }
 
+// ── Graph Fullscreen Helpers ───────────────────────
+function setupFullscreenButton(btnId, containerEl, getGraphInstance) {
+    const btn = document.getElementById(btnId);
+    if (!btn || !containerEl) return;
+
+    btn.onclick = () => {
+        const isFs = document.fullscreenElement === containerEl || containerEl.classList.contains('is-fullscreen');
+        if (isFs) {
+            if (document.fullscreenElement) {
+                document.exitFullscreen().catch(() => {});
+            }
+            containerEl.classList.remove('is-fullscreen');
+            btn.classList.remove('fullscreen-active');
+        } else {
+            if (containerEl.requestFullscreen) {
+                containerEl.requestFullscreen().catch(() => {
+                    containerEl.classList.add('is-fullscreen');
+                    btn.classList.add('fullscreen-active');
+                });
+            } else {
+                containerEl.classList.add('is-fullscreen');
+                btn.classList.add('fullscreen-active');
+            }
+        }
+        setTimeout(() => {
+            const g = (typeof getGraphInstance === 'function') ? getGraphInstance() : getGraphInstance;
+            if (g && typeof g.resize === 'function') g.resize();
+        }, 100);
+    };
+}
+
+// Escuta mudanças de fullscreen para sincronizar ícones e redimensionar Three.js
+document.addEventListener('fullscreenchange', () => {
+    const fsEl = document.fullscreenElement;
+    const globalView = document.getElementById('graphView');
+    const pwWrap = document.querySelector('.pw-graph-wrapper');
+    const btnFs = document.getElementById('btnFullscreen');
+    const btnPwFs = document.getElementById('btnPwFullscreen');
+
+    if (btnFs) btnFs.classList.toggle('fullscreen-active', fsEl === globalView);
+    if (btnPwFs) btnPwFs.classList.toggle('fullscreen-active', fsEl === pwWrap);
+
+    setTimeout(() => {
+        if (graph && typeof graph.resize === 'function') graph.resize();
+        if (projectGraph && typeof projectGraph.resize === 'function') projectGraph.resize();
+    }, 80);
+});
+
+// ── Graph Real-time Document Search Helper ────────
+function setupGraphSearch(inputId, clearBtnId, badgeId, countElId, getGraphInstance) {
+    const input = document.getElementById(inputId);
+    const clearBtn = document.getElementById(clearBtnId);
+    const badge = document.getElementById(badgeId);
+    const countEl = document.getElementById(countElId);
+
+    if (!input) return;
+
+    const performFilter = () => {
+        const g = (typeof getGraphInstance === 'function') ? getGraphInstance() : getGraphInstance;
+        if (!g || typeof g.filterNodes !== 'function') return;
+
+        const val = input.value || '';
+        const hasText = val.trim().length > 0;
+
+        if (clearBtn) clearBtn.style.display = hasText ? 'flex' : 'none';
+
+        const res = g.filterNodes(val);
+
+        if (res.isFiltering) {
+            if (badge) {
+                badge.textContent = `${res.matchedCount} encontrado${res.matchedCount === 1 ? '' : 's'}`;
+                badge.style.display = 'inline-block';
+            }
+            if (countEl) {
+                countEl.textContent = `${res.matchedCount} de ${res.totalCount}`;
+            }
+        } else {
+            if (badge) badge.style.display = 'none';
+            if (countEl) {
+                countEl.textContent = `${res.totalCount}`;
+            }
+        }
+    };
+
+    input.addEventListener('input', performFilter);
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            input.value = '';
+            performFilter();
+            input.blur();
+        }
+    });
+
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            input.value = '';
+            performFilter();
+            input.focus();
+        });
+    }
+}
+
 function refreshApp() {
     buildSidebar();
     buildStats();
     renderDashboardProjects();
 
     if (graph) {
-        const nodes = (window.VAULT && window.VAULT.data && window.VAULT.data.graphNodes) || [];
-        const edges = (window.VAULT && window.VAULT.data && window.VAULT.data.graphEdges) || [];
-        const colors = (window.VAULT && window.VAULT.data && window.VAULT.data.groupColors) || {};
+        let nodes = (window.VAULT && window.VAULT.data && window.VAULT.data.graphNodes) || [];
+        let edges = (window.VAULT && window.VAULT.data && window.VAULT.data.graphEdges) || [];
+        let colors = (window.VAULT && window.VAULT.data && window.VAULT.data.groupColors) || {};
+
+        const allFiles = (window.VAULT && window.VAULT.data && window.VAULT.data.files) || [];
+        if (typeof window.buildHierarchyGraph === 'function' && allFiles.length > 0) {
+            const hg = window.buildHierarchyGraph(allFiles, {
+                rootId: 'brain',
+                rootLabel: 'AI Second Brain',
+                rootIcon: '🧠',
+                fileLabel: 'title'
+            });
+            nodes = hg.nodes;
+            edges = hg.edges;
+            colors = hg.colors;
+        }
+
         graph.loadData(nodes, edges, colors);
+
+        setupGraphCategoryPanel({
+            wrapId: 'graphCatPanelWrap',
+            triggerId: 'graphCatTrigger',
+            triggerLabelId: 'graphCatTriggerLabel',
+            triggerBadgeId: 'graphCatTriggerBadge',
+            dropdownId: 'graphCatDropdown',
+            listId: 'graphCatList',
+            resetBtnId: 'btnGraphResetColors',
+            closeBtnId: 'btnGraphCloseCat',
+            searchInputId: 'graphSearchInput',
+            searchBadgeId: 'graphSearchBadge',
+            nodeCountElId: 'hudNodeCount',
+            getGraphInstance: () => graph
+        });
 
         const nodeCountEl = document.getElementById('hudNodeCount');
         if (nodeCountEl) nodeCountEl.textContent = nodes.length;
@@ -1099,6 +1470,12 @@ function setupEventListeners() {
     if (btnShake) btnShake.addEventListener('click', () => graph && graph.reheat(1.0));
     if (btnResetView) btnResetView.addEventListener('click', () => graph && graph.resetView());
 
+    // Fullscreen do Grafo Global
+    setupFullscreenButton('btnFullscreen', document.getElementById('graphView'), () => graph);
+
+    // Pesquisa de documentos em tempo real no Grafo Global
+    setupGraphSearch('graphSearchInput', 'btnGraphSearchClear', 'graphSearchBadge', 'hudNodeCount', () => graph);
+
     // Icon Toggle
     const toggleIcons = document.getElementById('toggleIcons');
     if (toggleIcons) {
@@ -1127,6 +1504,16 @@ function setupEventListeners() {
                 const dropdown = document.getElementById('searchResultsDropdown');
                 if (dropdown) dropdown.style.display = 'none';
             }
+            return;
+        }
+
+        // Nunca interceptar teclas enquanto o usuário digita em qualquer campo editável
+        // (pesquisa do grafo, editor Markdown, formulários) ou compõe acentos (dead keys / IME)
+        const ae = document.activeElement;
+        const isEditable = ae && (
+            ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.tagName === 'SELECT' || ae.isContentEditable
+        );
+        if (isEditable || e.isComposing || e.key === 'Dead' || e.keyCode === 229) {
             return;
         }
 
@@ -2427,12 +2814,21 @@ function renderProjectGraphTab() {
             };
         }
 
+        // Fullscreen do Grafo do Projeto
+        setupFullscreenButton('btnPwFullscreen', document.querySelector('.pw-graph-wrapper'), () => projectGraph);
+
+        // Pesquisa de documentos em tempo real no Grafo do Projeto
+        setupGraphSearch('pwGraphSearchInput', 'btnPwGraphSearchClear', 'pwGraphSearchBadge', 'pwGraphNodeCount', () => projectGraph);
+
         projectGraph.onCameraChange = (state) => {
             const zEl = document.getElementById('pwHudZoomPill');
             if (zEl) zEl.textContent = `🔍 ${state.zoomPercent}%`;
             const rEl = document.getElementById('pwHudRotationPill');
+            const oBtn = document.getElementById('btnPwAutoOrbit');
+            const isOrbit = Boolean(state.autoRotate || state.autoOrbit);
+
             if (rEl) {
-                if (state.autoRotate) {
+                if (isOrbit) {
                     rEl.textContent = '🪐 Em Órbita';
                     rEl.style.color = '#38bdf8';
                 } else {
@@ -2440,70 +2836,85 @@ function renderProjectGraphTab() {
                     rEl.style.color = '';
                 }
             }
+            if (oBtn) oBtn.classList.toggle('active', isOrbit);
         };
 
         projectGraph.onNodeDblClick = (node) => {
-            if (node && node.path) navigateTo(node.path);
+            if (!node) return;
+            if (node.isFolder) {
+                projectGraph.focusNode(node);
+                return;
+            }
+            if (node.path) navigateTo(node.path);
         };
     }
 
-    // Monta o grafo orbital 3D do projeto
+    // Monta o grafo orbital 3D hierárquico estritamente com os documentos locais do projeto
     const projectName = currentProjectData.name;
     const allFiles = (window.VAULT && window.VAULT.data && window.VAULT.data.files) || [];
 
-    // Nós locais do projeto
+    // Nós estritamente locais do projeto (arquivos dentro de projects/<projectName>/)
     const localFiles = allFiles.filter(f => f.path.startsWith(`projects/${projectName}/`));
 
-    // Regras e conhecimentos aplicáveis do framework
-    const frameworkNodes = allFiles.filter(f => {
-        return f.category === 'rules' || 
-               f.category === 'skills' || 
-               (f.category === 'knowledge' && (f.path.includes('aijev') || f.path.includes('model')));
-    });
+    let nodes = [];
+    let edges = [];
+    let colors = {};
 
-    const nodes = [
-        {
-            id: `proj_${projectName}`,
-            label: projectName,
-            group: 'projects',
-            size: 32,
-            icon: '🚀',
-            path: `projects/${projectName}/PROJECT.md`,
-            isCentral: true
-        }
-    ];
-
-    const edges = [];
-
-    // Adiciona arquivos locais
-    localFiles.forEach(f => {
-        nodes.push({
-            id: f.id,
-            label: f.name || f.title,
-            group: 'projects',
-            size: 14,
-            icon: f.icon || '📄',
-            path: f.path
+    if (typeof window.buildHierarchyGraph === 'function' && localFiles.length > 0) {
+        const hg = window.buildHierarchyGraph(localFiles, {
+            rootId: `proj_${projectName}`,
+            rootLabel: projectName,
+            rootIcon: '🚀',
+            rootPrefix: `projects/${projectName}/`,
+            fileLabel: 'name'
         });
-        edges.push({ from: `proj_${projectName}`, to: f.id });
-    });
-
-    // Adiciona satélites de governança do framework
-    frameworkNodes.slice(0, 10).forEach(f => {
-        nodes.push({
-            id: `fw_${f.id}`,
-            label: f.title,
-            group: f.category,
-            size: 11,
-            icon: f.icon || '⚙️',
-            path: f.path
+        nodes = hg.nodes;
+        edges = hg.edges;
+        colors = hg.colors;
+    } else {
+        nodes = [
+            {
+                id: `proj_${projectName}`,
+                label: projectName,
+                group: 'projects',
+                size: 32,
+                icon: '🚀',
+                path: `projects/${projectName}/PROJECT.md`,
+                isCentral: true
+            }
+        ];
+        localFiles.forEach(f => {
+            nodes.push({
+                id: f.id,
+                label: f.name || f.title,
+                group: 'projects',
+                size: 14,
+                icon: f.icon || '📄',
+                path: f.path
+            });
+            edges.push({ from: `proj_${projectName}`, to: f.id });
         });
-        edges.push({ from: `proj_${projectName}`, to: `fw_${f.id}` });
-    });
+        colors = (window.VAULT && window.VAULT.data && window.VAULT.data.groupColors) || {};
+    }
 
-    const colors = (window.VAULT && window.VAULT.data && window.VAULT.data.groupColors) || {};
     projectGraph.loadData(nodes, edges, colors);
     projectGraph.start();
+
+    // Inicializa painel dinâmico de categorias e cores no Grafo do Projeto
+    setupGraphCategoryPanel({
+        wrapId: 'pwGraphCatPanelWrap',
+        triggerId: 'pwGraphCatTrigger',
+        triggerLabelId: 'pwGraphCatTriggerLabel',
+        triggerBadgeId: 'pwGraphCatTriggerBadge',
+        dropdownId: 'pwGraphCatDropdown',
+        listId: 'pwGraphCatList',
+        resetBtnId: 'btnPwGraphResetColors',
+        closeBtnId: 'btnPwGraphCloseCat',
+        searchInputId: 'pwGraphSearchInput',
+        searchBadgeId: 'pwGraphSearchBadge',
+        nodeCountElId: 'pwGraphNodeCount',
+        getGraphInstance: () => projectGraph
+    });
 
     // Sincroniza estado inicial dos botões e do toggle de ícones
     const toggleIcons = document.getElementById('togglePwIcons');
@@ -2512,8 +2923,21 @@ function renderProjectGraphTab() {
     }
     const btnAutoOrbit = document.getElementById('btnPwAutoOrbit');
     if (btnAutoOrbit && projectGraph) {
-        btnAutoOrbit.classList.toggle('active', projectGraph.controls.autoRotate);
+        btnAutoOrbit.classList.add('active');
     }
+    const rEl = document.getElementById('pwHudRotationPill');
+    if (rEl) {
+        rEl.textContent = '🪐 Em Órbita';
+        rEl.style.color = '#38bdf8';
+    }
+
+    // Reseta o campo de pesquisa do projeto ao abrir
+    const searchInput = document.getElementById('pwGraphSearchInput');
+    const searchClear = document.getElementById('btnPwGraphSearchClear');
+    const searchBadge = document.getElementById('pwGraphSearchBadge');
+    if (searchInput) searchInput.value = '';
+    if (searchClear) searchClear.style.display = 'none';
+    if (searchBadge) searchBadge.style.display = 'none';
 
     const countEl = document.getElementById('pwGraphNodeCount');
     if (countEl) countEl.textContent = nodes.length;

@@ -118,9 +118,17 @@
                     <span class="hud-divider"></span>
                     <span class="hud-pill-item" id="hudZoomPill">🔍 100%</span>
                     <span class="hud-divider"></span>
-                    <span class="hud-pill-item" id="hudRotationPill">🌍 3D Planeta</span>
+                    <span class="hud-pill-item" id="hudRotationPill">🪐 Em Órbita</span>
                     <span class="hud-divider"></span>
                     <span class="hud-pill-item" id="hudSelectedNode" style="color: #c4b5fd;">⚡ Duplo-clique para abrir</span>
+                </div>
+
+                <!-- Floating Graph Search Box -->
+                <div class="graph-search-box" id="graphSearchBox">
+                    <span class="graph-search-icon">🔍</span>
+                    <input type="text" id="graphSearchInput" class="graph-search-input" placeholder="Pesquisar documento no grafo..." autocomplete="off" spellcheck="false">
+                    <button id="btnGraphSearchClear" class="graph-search-clear" title="Limpar pesquisa (Esc)" style="display: none;">✕</button>
+                    <span class="graph-search-badge" id="graphSearchBadge" style="display: none;">0</span>
                 </div>
 
                 <!-- Floating HUD Controls Toolbar -->
@@ -149,7 +157,7 @@
                             <path d="M21 3v5h-5"></path>
                         </svg>
                     </button>
-                    <button id="btnAutoOrbit" class="graph-btn" title="Auto-Órbita do Planeta (🪐)">
+                    <button id="btnAutoOrbit" class="graph-btn active" title="Auto-Órbita do Planeta (🪐)">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="4"></circle>
                             <path d="M4.93 4.93c4.24-4.24 11.14-4.24 15.38 0 4.24 4.24 4.24 11.14 0 15.38-4.24 4.24-11.14 4.24-15.38 0"></path>
@@ -167,6 +175,14 @@
                             <circle cx="12" cy="12" r="3"></circle>
                         </svg>
                     </button>
+                    <button id="btnFullscreen" class="graph-btn" title="Tela Cheia (⛶)">
+                        <svg class="icon-expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                        </svg>
+                        <svg class="icon-compress" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                            <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>
+                        </svg>
+                    </button>
                     <div class="graph-btn-sep"></div>
                     <label class="icon-toggle" title="Mostrar ícones nos nós">
                         <input type="checkbox" id="toggleIcons">
@@ -181,9 +197,33 @@
                     <div class="hint-item"><kbd>Mover Câmera</kbd> Botão direito / Pan</div>
                     <div class="hint-item"><kbd>Scroll</kbd> Zoom 3D</div>
                     <div class="hint-item"><kbd>Arrastar Nó</kbd> Arrasta nós interligados (física elástica)</div>
-                    <div class="hint-item"><kbd>Clique</kbd> Selecionar e destacar nó</div>
+                    <div class="hint-item"><kbd>Clique</kbd> Selecionar e destacar rota da pasta</div>
                     <div class="hint-item"><kbd>Duplo-Clique</kbd> Abrir documento/projeto</div>
                     <div class="hint-item"><kbd>I</kbd> Alternar ícones nos nós</div>
+                </div>
+
+                <!-- Floating Dynamic Category Filter & Color Customization Panel -->
+                <div class="graph-cat-panel-wrap" id="graphCatPanelWrap">
+                    <button class="graph-cat-trigger" id="graphCatTrigger" type="button" title="Filtrar por camadas e configurar cores">
+                        <span class="cat-trigger-icon">🪐</span>
+                        <span class="cat-trigger-label" id="graphCatTriggerLabel">Camadas</span>
+                        <span class="cat-trigger-badge" id="graphCatTriggerBadge">0</span>
+                        <span class="cat-trigger-arrow">▾</span>
+                    </button>
+                    <div class="graph-cat-dropdown" id="graphCatDropdown" style="display: none;">
+                        <div class="cat-dropdown-header">
+                            <div class="cat-header-title">
+                                <span>🪐</span> Camadas & Cores
+                            </div>
+                            <div class="cat-header-actions">
+                                <button class="cat-header-btn" id="btnGraphResetColors" type="button" title="Restaurar paleta original de cores">↺ Padrão</button>
+                                <button class="cat-header-btn close" id="btnGraphCloseCat" type="button" title="Fechar painel">✕</button>
+                            </div>
+                        </div>
+                        <div class="cat-dropdown-list" id="graphCatList">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -278,9 +318,17 @@
                                 <span class="hud-divider"></span>
                                 <span class="hud-pill-item" id="pwHudZoomPill">🔍 100%</span>
                                 <span class="hud-divider"></span>
-                                <span class="hud-pill-item" id="pwHudRotationPill">🌍 3D Planeta</span>
+                                <span class="hud-pill-item" id="pwHudRotationPill">🪐 Em Órbita</span>
                                 <span class="hud-divider"></span>
                                 <span class="hud-pill-item" style="color:#38bdf8;">✨ Sol Central: Projeto</span>
+                            </div>
+
+                            <!-- Floating Project Graph Search Box -->
+                            <div class="graph-search-box" id="pwGraphSearchBox">
+                                <span class="graph-search-icon">🔍</span>
+                                <input type="text" id="pwGraphSearchInput" class="graph-search-input" placeholder="Pesquisar documento no projeto..." autocomplete="off" spellcheck="false">
+                                <button id="btnPwGraphSearchClear" class="graph-search-clear" title="Limpar pesquisa (Esc)" style="display: none;">✕</button>
+                                <span class="graph-search-badge" id="pwGraphSearchBadge" style="display: none;">0</span>
                             </div>
 
                             <!-- Floating HUD Controls Toolbar (Paridade com Grafo Neural Padrão) -->
@@ -309,7 +357,7 @@
                                         <path d="M21 3v5h-5"></path>
                                     </svg>
                                 </button>
-                                <button id="btnPwAutoOrbit" class="graph-btn" title="Auto-Órbita do Planeta (🪐)">
+                                <button id="btnPwAutoOrbit" class="graph-btn active" title="Auto-Órbita do Planeta (🪐)">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <circle cx="12" cy="12" r="4"></circle>
                                         <path d="M4.93 4.93c4.24-4.24 11.14-4.24 15.38 0 4.24 4.24 4.24 11.14 0 15.38-4.24 4.24-11.14 4.24-15.38 0"></path>
@@ -327,6 +375,14 @@
                                         <circle cx="12" cy="12" r="3"></circle>
                                     </svg>
                                 </button>
+                                <button id="btnPwFullscreen" class="graph-btn" title="Tela Cheia (⛶)">
+                                    <svg class="icon-expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                                    </svg>
+                                    <svg class="icon-compress" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                                        <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>
+                                    </svg>
+                                </button>
                                 <div class="graph-btn-sep"></div>
                                 <label class="icon-toggle" title="Mostrar ícones nos nós">
                                     <input type="checkbox" id="togglePwIcons">
@@ -341,6 +397,31 @@
                                 <div class="hint-item"><kbd>Puxar Nó</kbd> Arrastar esfera 3D</div>
                                 <div class="hint-item"><kbd>Zoom</kbd> Scroll roda do mouse</div>
                                 <div class="hint-item"><kbd>Mover</kbd> Shift + Arrastar</div>
+                                <div class="hint-item"><kbd>Clique</kbd> Destacar rota pasta / arquivo</div>
+                            </div>
+
+                            <!-- Floating Dynamic Category Filter & Color Customization Panel (Project Graph) -->
+                            <div class="graph-cat-panel-wrap" id="pwGraphCatPanelWrap">
+                                <button class="graph-cat-trigger" id="pwGraphCatTrigger" type="button" title="Filtrar por camadas e configurar cores">
+                                    <span class="cat-trigger-icon">🪐</span>
+                                    <span class="cat-trigger-label" id="pwGraphCatTriggerLabel">Camadas</span>
+                                    <span class="cat-trigger-badge" id="pwGraphCatTriggerBadge">0</span>
+                                    <span class="cat-trigger-arrow">▾</span>
+                                </button>
+                                <div class="graph-cat-dropdown" id="pwGraphCatDropdown" style="display: none;">
+                                    <div class="cat-dropdown-header">
+                                        <div class="cat-header-title">
+                                            <span>🪐</span> Camadas & Cores
+                                        </div>
+                                        <div class="cat-header-actions">
+                                            <button class="cat-header-btn" id="btnPwGraphResetColors" type="button" title="Restaurar paleta original de cores">↺ Padrão</button>
+                                            <button class="cat-header-btn close" id="btnPwGraphCloseCat" type="button" title="Fechar painel">✕</button>
+                                        </div>
+                                    </div>
+                                    <div class="cat-dropdown-list" id="pwGraphCatList">
+                                        <!-- Populated dynamically via JS -->
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1296,6 +1377,7 @@
     <script src="marked.min.js"></script>
     <script src="vault-data.js"></script>
     <script src="vault.js"></script>
+    <script src="graph-hierarchy.js"></script>
     <script src="graph.js"></script>
     <script src="app.js"></script>
 </body>

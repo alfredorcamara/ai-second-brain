@@ -1,5 +1,10 @@
+// ═══════════════════════════════════════════════════
+// AI SECOND BRAIN — Dynamic Vault Snapshot
+// Auto-generated: 2026-10-04T13:00:38.142Z
+// ═══════════════════════════════════════════════════
+
 window.VAULT_SNAPSHOT = {
-  "timestamp": 1791116137438,
+  "timestamp": 1791118838142,
   "files": [
     {
       "id": "_agents_rules_00-core_md",
@@ -680,18 +685,6 @@ window.VAULT_SNAPSHOT = {
       "content": "# teste_alfredo_22\n\n## Visão Geral\nteste_alfredo_22 de teste\n\n## Informações Gerais\n- **Tipo**: Greenfield / Projeto Novo\n- **Stack Inicial**: Node.js / TypeScript\n- **Status**: 🟢 Em Planejamento / Ativo\n- **Data de Criação**: 2026-09-30\n\n## Links & Governança\n- Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)\n- Arquitetura: [ARCHITECTURE.md](ARCHITECTURE.md)\n- Decisões Técnicas: `DECISIONS/`\n- Memória de Sessões: `MEMORY/sessions/`\n"
     },
     {
-      "id": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_01-banana-nutricional_md",
-      "path": "projects/teste_alfredo_22/RESEARCH/bolo-de-banana/knowledge/01-banana-nutricional.md",
-      "name": "01-banana-nutricional.md",
-      "title": "Perfil Nutricional da Banana",
-      "category": "projects",
-      "icon": "📘",
-      "size": 9311,
-      "mtime": 1791007191800.1177,
-      "outgoingLinks": [],
-      "content": "---\ntopic: \"Bolo de Banana\"\nsubtopic: \"Perfil nutricional da banana\"\nlayer: \"knowledge\"\ncreated: \"2026-10-03T05:59:51.797Z\"\nmodel: \"openai/gpt-oss-120b\"\n---\n\n# Perfil Nutricional da Banana  \n\n**Resumo executivo** – A banana fresca (Musa × paradisiaca) fornece ~89 kcal/100 g, predominando carboidratos (23 g) com 2,6 g de fibra dietética e um conjunto rico de micronutrientes (potássio, vitamina B6, vitamina C, magnésio). Esses atributos impactam diretamente a formulação, textura e valor calórico do *Bolo de Banana*.\n\n---  \n\n## 1. Fundamentos Conceituais  \n\n| Conceito | Definição prática | Relevância para alimentos |\n|----------|-------------------|---------------------------|\n| **Caloria** | Unidade de energia (kcal) liberada na oxidação dos macronutrientes. | Determina o aporte energético do bolo. |\n| **Carboidrato total** | Soma de açúcares simples + amido + fibra. | Fonte de fermentação (amido) e doçura (açúcares). |\n| **Fibra dietética** | Polímeros de carboidrato não digeríveis pelo intestino delgado. | Contribui para a retenção de umidade e estrutura do bolo. |\n| **Micronutrientes** | Vitaminas e minerais essenciais em quantidades < 100 mg. | Influenciam a cor, sabor, e propriedades funcionais (ex.: potássio regula a atividade da levedura). |\n| **Índice Glicêmico (IG)** | Velocidade de elevação da glicemia após ingestão. | Bananas maduras têm IG ~ 51 – 62, afetando a resposta glicêmica do consumidor. |\n\n> **Estado da arte** – Bancos de dados como USDA FoodData Central, TACO (Brasil) e a literatura de nutrição (FAO/WHO) são referência padrão para valores de composição de alimentos. Estudos recentes (2022‑2024) confirmam a variabilidade de micronutrientes conforme a variedade, maturação e origem geográfica da fruta.  \n\n---  \n\n## 2. Dados Nutricionais da Banana Fresca  \n\n### 2.1 Por 100 g (valor médio)  \n\n| Nutriente | Quantidade | %VD* (base 2000 kcal) |\n|-----------|------------|-----------------------|\n| Energia | **89 kcal** | 4 % |\n| Carboidratos totais | **22,8 g** | 8 % |\n| • Açúcares (frutose, glicose, sacarose) | 12,2 g | — |\n| • Amido | 5,5 g | — |\n| • Fibra dietética | **2,6 g** | 10 % |\n| Proteína | 1,1 g | 2 % |\n| Gordura total | 0,3 g | < 1 % |\n| • Saturada | 0,1 g | — |\n| Potássio (K) | **358 mg** | 10 % |\n| Magnésio (Mg) | 27 mg | 7 % |\n| Vitamina B6 (Piridoxina) | 0,37 mg | 28 % |\n| Vitamina C | 8,7 mg | 10 % |\n| Folato (B9) | 20 µg | 5 % |\n| Ferro (Fe) | 0,26 mg | 2 % |\n| Sódio (Na) | 1 mg | < 1 % |\n\n\\*%VD – Valor Diário recomendado (FAO/WHO).  \n\n### 2.2 Por unidade média (≈ 118 g)  \n\n| Nutriente | Quantidade |\n|-----------|------------|\n| Energia | 105 kcal |\n| Carboidratos | 27 g |\n| Fibra | 3,1 g |\n| Potássio | 423 mg |\n| Vitamina B6 | 0,44 mg |\n\n---  \n\n## 3. Comparativo com Outras Frutas (por 100 g)\n\n| Fruta | Energia (kcal) | Carboidratos (g) | Fibra (g) | Potássio (mg) | Vitamina C (mg) |\n|-------|----------------|------------------|-----------|----------------|-----------------|\n| **Banana** | 89 | 22,8 | 2,6 | 358 | 8,7 |\n| Maçã (com casca) | 52 | 13,8 | 2,4 | 107 | 4,6 |\n| Laranja | 47 | 11,8 | 2,2 | 181 | 53,2 |\n| Morango | 33 | 7,7 | 2,0 | 153 | 58,8 |\n| Manga | 60 | 15,0 | 1,6 | 168 | 36,4 |\n\n*Banana destaca‑se em potássio e vitamina B6, sendo a segunda maior fonte de energia entre as listadas.*\n\n---  \n\n## 4. Micronutrientes em Destaque  \n\n| Micronutriente | Função principal | Impacto no Bolo de Banana |\n|----------------|------------------|---------------------------|\n| **Potássio** | Regulação osmótica, contração muscular. | Contribui para a retenção de água, resultando em massa mais úmida. |\n| **Vitamina B6** | Cofator em metabolismo de aminoácidos e glicogênio. | Pode melhorar a atividade enzimática da levedura/bicarbonato, favorecendo aeração. |\n| **Vitamina C** | Antioxidante, síntese de colágeno. | Atua como agente redutor, retardando oxidação da massa e prolongando a vida útil. |\n| **Magnésio** | Cofator de enzimas de síntese de ATP. | Auxilia na estabilidade da estrutura proteica (glúten) e na fermentação. |\n| **Folato** | Síntese de nucleotídeos. | Relevante apenas em dietas específicas; impacto mínimo na panificação. |\n\n---  \n\n## 5. Trade‑offs e Armadilhas a Evitar  \n\n| Risco / Armadilha | Causa | Consequência no Bolo | Mitigação |\n|-------------------|-------|----------------------|-----------|\n| **Excesso de açúcar natural** | Banana muito madura (alto teor de frutose). | Doçura excessiva → necessidade de reduzir açúcar adicionado, risco de caramelização precoce. | Usar bananas “verde‑amarelas” ou medir a doçura com refratômetro. |\n| **Alta carga de potássio** | Quantidade elevada de banana. | Pode interferir na ação do fermento químico (bicarbonato) reduzindo o pH. | Balancear com bicarbonato de sódio + ácido cítrico ou reduzir a quantidade de banana > 150 g/porção. |\n| **Oxidação e escurecimento** | Enzima polifenoloxidase (PPO). | Massa escura → percepção visual negativa. | Aplicar ácido ascórbico (0,5 % da massa) ou usar banana ligeiramente verde. |\n| **Variabilidade de umidade** | Bananas de diferentes tamanhos ou procedência. | Massa muito úmida → textura densa; muito seca → bolo seco. | Padronizar a massa de banana (ex.: 100 g de polpa por 200 g de farinha). |\n| **Alérgenos ocultos** | Resíduos de pesticidas ou contaminantes. | Risco de reações adversas. | Fonte certificada (orgânica) e lavagem adequada. |\n\n---  \n\n## 6. Como Aplicar Neste Projeto  \n\n### 6.1 Diretrizes de Formulação  \n\n| Ingrediente | Quantidade recomendada (por 200 g de farinha) | Racional |\n|-------------|-----------------------------------------------|----------|\n| Banana amassada (polpa) | **100 g** (≈ 1 banana média) | Fornece 89 kcal, 2,6 g fibra, 358 mg K – garante umidade e doçura natural. |\n| Açúcar granulado | 30 g (reduzir 15 g se banana muito madura) | Compensa a variação de frutose. |\n| Bicarbonato de sódio | 2 g + 1 g de ácido cítrico (ou vinagre) | Neutraliza o efeito tampão do potássio, controla pH. |\n| Óleo vegetal | 30 g | Complementa a gordura da banana (0,3 g) para textura macia. |\n| Ovos | 1 unidade (≈ 50 g) | Fonte de proteína e emulsificação. |\n| Sal | 1 g | Realça sabor e controla fermentação. |\n\n### 6.2 Exemplo de Schema JSON para Rótulo Nutricional  \n\n```json\n{\n  \"product\": \"Bolo de Banana\",\n  \"servingSize\": \"100 g\",\n  \"nutrition\": {\n    \"energy_kcal\": 150,\n    \"carbohydrates_g\": 28,\n    \"sugars_g\": 12,\n    \"fiber_g\": 2.5,\n    \"protein_g\": 3,\n    \"fat_g\": 5,\n    \"saturatedFat_g\": 1,\n    \"potassium_mg\": 200,\n    \"vitaminB6_mg\": 0.2,\n    \"vitaminC_mg\": 5\n  },\n  \"ingredients\": [\n    \"farinha de trigo 200 g\",\n    \"banana amassada 100 g\",\n    \"açúcar 30 g\",\n    \"óleo vegetal 30 g\",\n    \"ovo 1 unidade\",\n    \"bicarbonato de sódio 2 g\",\n    \"ácido cítrico 1 g\",\n    \"sal 1 g\"\n  ]\n}\n```\n\n### 6.3 Código TypeScript – Cálculo da Contribuição Nutricional da Banana  \n\n```ts\ntype Nutrient = { kcal: number; carbs: number; fiber: number; potassium: number };\n\nconst BANANA_PER_100G: Nutrient = {\n  kcal: 89,\n  carbs: 22.8,\n  fiber: 2.6,\n  potassium: 358,\n};\n\nfunction contribution(\n  grams: number,\n  nutrient: Nutrient\n): Nutrient {\n  const factor = grams / 100;\n  return {\n    kcal: +(nutrient.kcal * factor).toFixed(1),\n    carbs: +(nutrient.carbs * factor).toFixed(1),\n    fiber: +(nutrient.fiber * factor).toFixed(1),\n    potassium: +(nutrient.potassium * factor).toFixed(0),\n  };\n}\n\n// Ex.: 100 g de banana na receita\nconst banana = contribution(100, BANANA_PER_100G);\nconsole.log('Aporte da banana (por 100 g):', banana);\n```\n\n*Resultado esperado:*  \n```\nAporte da banana (por 100 g): { kcal: 89, carbs: 22.8, fiber: 2.6, potassium: 358 }\n```\n\n### 6.4 Checklist de Integração  \n\n- [ ] Medir a banana em **gramas de polpa** (excluir casca).  \n- [ ] Verificar maturação (escala 5‑7 de 1‑10) e ajustar açúcar.  \n- [ ] Aplicar 0,5 % de ácido ascórbico se o tempo de preparo > 30 min.  \n- [ ] Registrar a contribuição nutricional no JSON de metadata (`/src/metadata/banana-nutrition.json`).  \n- [ ] Atualizar o cálculo de rótulo automático (script `npm run nutrition`).  \n\n---  \n\n## 7. Referências  \n\n1. **USDA FoodData Central** – *Banana, raw, all varieties*. https://fdc.nal.usda.gov/ (acessado em 2026‑10‑02).  \n2. **TACO – Tabela Brasileira de Composição de Alimentos**, 4ª edição, IBGE, 2023.  \n3. FAO/WHO. *Dietary Guidelines for the Brazilian Population*, 2024.  \n4. Oliveira, R. et al. “Impact of Fruit Maturity on the Functional Properties of Banana‑Based Baked Goods.” *Journal of Food Engineering*, vol. 219, 2023, p. 111‑119.  \n5. Santos, M. “Potassium Interaction with Leavening Agents in Quick Breads.” *Food Chemistry*, 2022, 380, 132‑140.  \n\n---  \n\n*Documento preparado para o laboratório de conhecimento “Bolo de Banana” – projeto **teste_alfredo_22**.*\n\n---\n> 🧠 Documento gerado autonomamente pelo **Research Lab — AI Second Brain**.  \n> Contexto: `teste_alfredo_22` &middot; Data: 03/10/2026\n"
-    },
-    {
       "id": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_02-adocantes-baixa-caloria_md",
       "path": "projects/teste_alfredo_22/RESEARCH/bolo-de-banana/knowledge/02-adocantes-baixa-caloria.md",
       "name": "02-adocantes-baixa-caloria.md",
@@ -782,10 +775,9 @@ window.VAULT_SNAPSHOT = {
       "title": "🔬 Bolo de Banana",
       "category": "projects",
       "icon": "🔬",
-      "size": 2039,
-      "mtime": 1791099858572.4385,
+      "size": 1966,
+      "mtime": 1791117097535.2097,
       "outgoingLinks": [
-        "knowledge/01-banana-nutricional.md",
         "knowledge/02-adocantes-baixa-caloria.md",
         "knowledge/03-farinhas-alternativas.md",
         "knowledge/04-reducao-gordura-bolo.md",
@@ -794,7 +786,7 @@ window.VAULT_SNAPSHOT = {
         "knowledge/07-tecnicas-assamento.md",
         "knowledge/08-avaliacao-sensorial.md"
       ],
-      "content": "# 🔬 Bolo de Banana\n\n> **Laboratório de Conhecimento Concluído**  \n> Projeto: **teste_alfredo_22** &middot; Última atualização: 04/10/2026\n\n## Briefing da Pesquisa (Prompt Vivo)\n\nQuero fazer um bolo de banana de baixa caloria\n\n## Status: 🟢 Pesquisa Concluída & Catalogada\n\n---\n\n## 📘 Camada 1: Conhecimento Teórico & Conceitual (`knowledge/`)\n\n- [**Perfil nutricional da banana**](knowledge/01-banana-nutricional.md)\n  *Analisar calorias, carboidratos, fibras e micronutrientes da banana fresca.*\n- [**Adoçantes de baixa caloria para confeitaria**](knowledge/02-adocantes-baixa-caloria.md)\n  *Estudar tipos (stévia, eritritol, sucralose) e como usá‑los em bolos.*\n- [**Farinhas alternativas de baixo teor calórico**](knowledge/03-farinhas-alternativas.md)\n  *Comparar farinha de aveia, amêndoa, coco e outras quanto a calorias e propriedades de panificação.*\n- [**Redução de gorduras na massa de bolo**](knowledge/04-reducao-gordura-bolo.md)\n  *Explorar substitutos como purê de maçã, iogurte grego sem gordura e óleo de coco em menor quantidade.*\n- [**Formulação da receita: equilíbrio de umidade e textura**](knowledge/05-formula-receita.md)\n  *Como combinar banana, adoçante e farinha para obter massa leve e úmida sem excesso calórico.*\n- [**Cálculo de porções e valor calórico por fatia**](knowledge/06-calculo-porcoes.md)\n  *Métodos para dividir o bolo e estimar calorias individuais.*\n- [**Técnicas de assamento que preservam nutrientes**](knowledge/07-tecnicas-assamento.md)\n  *Temperatura, tempo e uso de formas que minimizam perda de vitaminas e reduzem necessidade de gordura extra.*\n- [**Avaliação sensorial e ajustes finais**](knowledge/08-avaliacao-sensorial.md)\n  *Testes de sabor, textura e aparência para otimizar a aceitação do bolo de baixa caloria.*\n\n## 🛠️ Camada 2: Especificações Práticas & Código (`actionable/`)\n\n*Nenhuma especificação prática catalogada.*\n\n---\n\n*Todos os arquivos acima estão conectados ao Grafo Neural 3D do projeto no AI Second Brain.*\n"
+      "content": "# 🔬 Bolo de Banana\n\n> **Laboratório de Conhecimento Concluído**  \n> Projeto: **teste_alfredo_22** &middot; Última atualização: 04/10/2026\n\n## Briefing da Pesquisa (Prompt Vivo)\n\nQuero fazer um bolo de banana de baixa caloria\n\n## Status: 🟢 Pesquisa Concluída & Catalogada\n\n---\n\n## 📘 Camada 1: Conhecimento Teórico & Conceitual (`knowledge/`)\n\n  *Analisar calorias, carboidratos, fibras e micronutrientes da banana fresca.*\n- [**Adoçantes de baixa caloria para confeitaria**](knowledge/02-adocantes-baixa-caloria.md)\n  *Estudar tipos (stévia, eritritol, sucralose) e como usá‑los em bolos.*\n- [**Farinhas alternativas de baixo teor calórico**](knowledge/03-farinhas-alternativas.md)\n  *Comparar farinha de aveia, amêndoa, coco e outras quanto a calorias e propriedades de panificação.*\n- [**Redução de gorduras na massa de bolo**](knowledge/04-reducao-gordura-bolo.md)\n  *Explorar substitutos como purê de maçã, iogurte grego sem gordura e óleo de coco em menor quantidade.*\n- [**Formulação da receita: equilíbrio de umidade e textura**](knowledge/05-formula-receita.md)\n  *Como combinar banana, adoçante e farinha para obter massa leve e úmida sem excesso calórico.*\n- [**Cálculo de porções e valor calórico por fatia**](knowledge/06-calculo-porcoes.md)\n  *Métodos para dividir o bolo e estimar calorias individuais.*\n- [**Técnicas de assamento que preservam nutrientes**](knowledge/07-tecnicas-assamento.md)\n  *Temperatura, tempo e uso de formas que minimizam perda de vitaminas e reduzem necessidade de gordura extra.*\n- [**Avaliação sensorial e ajustes finais**](knowledge/08-avaliacao-sensorial.md)\n  *Testes de sabor, textura e aparência para otimizar a aceitação do bolo de baixa caloria.*\n\n## 🛠️ Camada 2: Especificações Práticas & Código (`actionable/`)\n\n*Nenhuma especificação prática catalogada.*\n\n---\n\n*Todos os arquivos acima estão conectados ao Grafo Neural 3D do projeto no AI Second Brain.*\n"
     },
     {
       "id": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_actionable_02-elo-implementation-node-ts_md",
@@ -1463,8 +1455,8 @@ window.VAULT_SNAPSHOT = {
           "isProject": true,
           "startCollapsed": true,
           "path": "projects/teste_alfredo_22/PROJECT.md",
-          "totalFilesCount": 33,
-          "childrenCount": 33,
+          "totalFilesCount": 32,
+          "childrenCount": 32,
           "children": [
             {
               "id": "projects_teste_alfredo_22_PROJECT_md",
@@ -1518,7 +1510,7 @@ window.VAULT_SNAPSHOT = {
               "isResearchRoot": true,
               "projectName": "teste_alfredo_22",
               "startCollapsed": true,
-              "childrenCount": 29,
+              "childrenCount": 28,
               "children": [
                 {
                   "id": "sub_teste_alfredo_22_res_bolo-de-banana",
@@ -1528,7 +1520,7 @@ window.VAULT_SNAPSHOT = {
                   "isSubfolder": true,
                   "startCollapsed": true,
                   "path": "projects/teste_alfredo_22/RESEARCH/bolo-de-banana/OVERVIEW.md",
-                  "childrenCount": 9,
+                  "childrenCount": 8,
                   "children": [
                     {
                       "id": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_OVERVIEW_md",
@@ -1536,15 +1528,7 @@ window.VAULT_SNAPSHOT = {
                       "title": "🔬 Bolo de Banana (projects/teste_alfredo_22/RESEARCH/bolo-de-banana/OVERVIEW.md)",
                       "icon": "📄",
                       "path": "projects/teste_alfredo_22/RESEARCH/bolo-de-banana/OVERVIEW.md",
-                      "size": 2039
-                    },
-                    {
-                      "id": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_01-banana-nutricional_md",
-                      "label": "01 - Perfil Nutricional da Banana",
-                      "title": "Perfil Nutricional da Banana (projects/teste_alfredo_22/RESEARCH/bolo-de-banana/knowledge/01-banana-nutricional.md)",
-                      "icon": "📘",
-                      "path": "projects/teste_alfredo_22/RESEARCH/bolo-de-banana/knowledge/01-banana-nutricional.md",
-                      "size": 9311
+                      "size": 1966
                     },
                     {
                       "id": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_02-adocantes-baixa-caloria_md",
@@ -2533,14 +2517,6 @@ window.VAULT_SNAPSHOT = {
       "path": "projects/teste_alfredo_22/PROJECT.md"
     },
     {
-      "id": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_01-banana-nutricional_md",
-      "label": "Perfil Nutricional da Banana",
-      "group": "projects",
-      "size": 12,
-      "icon": "📘",
-      "path": "projects/teste_alfredo_22/RESEARCH/bolo-de-banana/knowledge/01-banana-nutricional.md"
-    },
-    {
       "id": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_02-adocantes-baixa-caloria_md",
       "label": "Adoçantes de Baixa Caloria para Confeitaria",
       "group": "projects",
@@ -2600,7 +2576,7 @@ window.VAULT_SNAPSHOT = {
       "id": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_OVERVIEW_md",
       "label": "🔬 Bolo de Banana",
       "group": "projects",
-      "size": 12,
+      "size": 9,
       "icon": "🔬",
       "path": "projects/teste_alfredo_22/RESEARCH/bolo-de-banana/OVERVIEW.md"
     },
@@ -3061,10 +3037,6 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "hub_proj_teste_alfredo_22",
       "to": "projects_teste_alfredo_22_PROJECT_md"
-    },
-    {
-      "from": "hub_proj_teste_alfredo_22",
-      "to": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_01-banana-nutricional_md"
     },
     {
       "from": "hub_proj_teste_alfredo_22",
@@ -4048,10 +4020,6 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
-      "to": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_01-banana-nutricional_md"
-    },
-    {
-      "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
       "to": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_02-adocantes-baixa-caloria_md"
     },
     {
@@ -4161,10 +4129,6 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_04-reducao-gordura-bolo_md",
       "to": "_agents_rules_01-ai-decision_md"
-    },
-    {
-      "from": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_OVERVIEW_md",
-      "to": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_01-banana-nutricional_md"
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_OVERVIEW_md",
@@ -4480,7 +4444,7 @@ window.VAULT_SNAPSHOT = {
     }
   },
   "stats": {
-    "totalFiles": 87,
+    "totalFiles": 86,
     "rulesCount": 5,
     "skillsCount": 8,
     "projectsCount": 2,
@@ -4489,7 +4453,7 @@ window.VAULT_SNAPSHOT = {
     "memoryCount": 2,
     "templatesCount": 4,
     "docsCount": 8,
-    "totalNodes": 99,
-    "totalEdges": 405
+    "totalNodes": 98,
+    "totalEdges": 402
   }
 };

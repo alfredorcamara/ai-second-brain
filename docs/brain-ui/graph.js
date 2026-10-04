@@ -70,6 +70,11 @@ class BrainGraph {
         // Icon Display
         this.showIcons = false;
 
+        // Filter & Category State
+        this.currentQuery = '';
+        this.currentCategory = null;
+        this.highlightedCategory = null;
+
         // Callbacks
         this.onNodeClick = null;
         this.onNodeDblClick = null;
@@ -115,7 +120,7 @@ class BrainGraph {
         this.controls.panSpeed = 0.8;
         this.controls.minDistance = 90;
         this.controls.maxDistance = 1400;
-        this.controls.autoRotate = false;
+        this.controls.autoRotate = true; // Auto-órbita ativada por padrão
         this.controls.autoRotateSpeed = 0.85;
         this.controls.target.copy(this.defaultTargetPos);
 
@@ -137,6 +142,10 @@ class BrainGraph {
         this.camera.aspect = this.width / this.height;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(this.width, this.height, false);
+    }
+
+    resize() {
+        this._setupCanvas();
     }
 
     // ── Cosmic Environment & Planetary Core ───────────
@@ -270,6 +279,12 @@ class BrainGraph {
 
         const isProjectGraph = graphNodes.some(n => n.isCentral || (n.id.startsWith('proj_') && graphNodes.length < 150));
 
+        // Modo hierárquico: nós trazem posição pré-calculada (hpos) e parentId
+        this.isHierarchy = graphNodes.some(n => n.hpos);
+        this.parentOf = new Map();
+        this.childrenOf = new Map();
+        this.pathEdges = null;
+
         // Group continental sectors on the sphere: (polar theta & azimuth phi)
         const groupSectors = {
             'core': { theta: 0, phi: 0.35, r: planetRadius * 1.05 }, // North polar crown (System / Core)
@@ -303,7 +318,10 @@ class BrainGraph {
             const isCentral = n.isCentral || n.id === 'brain' || (isProjectGraph && i === 0 && n.id.startsWith('proj_'));
             let pos3D;
 
-            if (isCentral) {
+            if (this.isHierarchy && n.hpos) {
+                // Sistema Solar Hierárquico: posição determinística calculada por graph-hierarchy.js
+                pos3D = new THREE.Vector3(n.hpos.x, n.hpos.y, n.hpos.z);
+            } else if (isCentral) {
                 // The Central Sun/Project is fixed DEAD-CENTER at (0,0,0), perfectly aligned with the rotating wireframe core and celestial rings!
                 pos3D = new THREE.Vector3(0, 0, 0);
             } else if (isProjectGraph) {
@@ -391,6 +409,17 @@ class BrainGraph {
             return nodeObj;
         });
 
+        // Mapas de hierarquia (pai → filhos) para destaque de caminho e pesquisa contextual
+        if (this.isHierarchy) {
+            for (const node of this.nodes) {
+                if (node.parentId) {
+                    this.parentOf.set(node.id, node.parentId);
+                    if (!this.childrenOf.has(node.parentId)) this.childrenOf.set(node.parentId, []);
+                    this.childrenOf.get(node.parentId).push(node.id);
+                }
+            }
+        }
+
         // 2. Perform 3D Relaxation Step so nodes don't collide
         this._relax3DNodes();
 
@@ -439,6 +468,31 @@ class BrainGraph {
     }
 
     _relax3DNodes() {
+        if (this.isHierarchy) {
+            // Relaxamento suave que preserva o raio (camada de profundidade) de cada nó
+            const nodes = this.nodes.filter(n => !n.isCentral);
+            for (const n of nodes) n._r = n.position.length();
+            for (let iter = 0; iter < 30; iter++) {
+                for (let i = 0; i < nodes.length; i++) {
+                    const na = nodes[i];
+                    const force = new THREE.Vector3();
+                    for (let j = 0; j < nodes.length; j++) {
+                        if (i === j) continue;
+                        const nb = nodes[j];
+                        const diff = new THREE.Vector3().subVectors(na.position, nb.position);
+                        const dist = diff.length() || 0.01;
+                        const minDist = (na.size + nb.size) * 1.7;
+                        if (dist < minDist) {
+                            force.add(diff.multiplyScalar(((minDist - dist) / dist) * 0.35));
+                        }
+                    }
+                    na.position.add(force);
+                    if (na._r > 0) na.position.setLength(na._r);
+                }
+            }
+            return;
+        }
+
         const iterations = 45;
         const nodes = this.nodes.filter(n => !n.isCentral && n.id !== 'brain');
 
@@ -683,10 +737,20 @@ class BrainGraph {
         const points = curve.getPoints(24);
         const geo = new THREE.BufferGeometry().setFromPoints(points);
 
+        // No modo hierárquico, a sinapse herda a cor do filho (ramo semântico)
+        let baseColor = 0x8b5cf6;
+        let baseOpacity = 0.22;
+        if (this.isHierarchy && edge.toNode && edge.toNode.colors) {
+            baseColor = parseInt(edge.toNode.colors.stroke.replace('#', '0x'), 16);
+            baseOpacity = edge.toNode.isFolder ? 0.55 : 0.32;
+        }
+        edge.baseColor = baseColor;
+        edge.baseOpacity = baseOpacity;
+
         const mat = new THREE.LineBasicMaterial({
-            color: 0x8b5cf6,
+            color: baseColor,
             transparent: true,
-            opacity: 0.22,
+            opacity: baseOpacity,
             blending: THREE.AdditiveBlending
         });
 
@@ -840,6 +904,10 @@ class BrainGraph {
         }
     }
 
+    _getInteractiveMeshes() {
+        return this.interactiveMeshes.filter(m => m.visible !== false);
+    }
+
     // ── Interaction & Events ──────────────────────────
     _setupEvents() {
         window.addEventListener('resize', () => {
@@ -873,9 +941,9 @@ class BrainGraph {
                 return;
             }
 
-            // 2. Raycast to detect hovered node
+            // 2. Raycast to detect hovered node (apenas meshes visíveis)
             this.raycaster.setFromCamera(this.mouse, this.camera);
-            const intersects = this.raycaster.intersectObjects(this.interactiveMeshes);
+            const intersects = this.raycaster.intersectObjects(this._getInteractiveMeshes());
 
             if (intersects.length > 0) {
                 const topMesh = intersects[0].object;
@@ -905,7 +973,7 @@ class BrainGraph {
             // Check if user clicked on a 3D node to drag it
             if (e.button === 0) {
                 this.raycaster.setFromCamera(this.mouse, this.camera);
-                const intersects = this.raycaster.intersectObjects(this.interactiveMeshes);
+                const intersects = this.raycaster.intersectObjects(this._getInteractiveMeshes());
 
                 if (intersects.length > 0) {
                     const topMesh = intersects[0].object;
@@ -945,7 +1013,7 @@ class BrainGraph {
             const py = e.clientY - rect.top;
 
             this.raycaster.setFromCamera(this.mouse, this.camera);
-            const intersects = this.raycaster.intersectObjects(this.interactiveMeshes);
+            const intersects = this.raycaster.intersectObjects(this._getInteractiveMeshes());
 
             if (intersects.length > 0) {
                 const node = intersects[0].object.userData.node;
@@ -966,7 +1034,7 @@ class BrainGraph {
         // Double click: Open / Navigate to node (or reset planet on empty background)
         this.canvas.addEventListener('dblclick', () => {
             this.raycaster.setFromCamera(this.mouse, this.camera);
-            const intersects = this.raycaster.intersectObjects(this.interactiveMeshes);
+            const intersects = this.raycaster.intersectObjects(this._getInteractiveMeshes());
 
             if (intersects.length > 0) {
                 const node = intersects[0].object.userData.node;
@@ -986,8 +1054,75 @@ class BrainGraph {
         });
     }
 
+    _getPathChain(node) {
+        const pathNodes = new Set();
+        const pathEdges = new Set();
+        if (!node) return { pathNodes, pathEdges };
+
+        // 1. Ancestrais até a raiz (Sol)
+        let cur = node.id;
+        while (cur) {
+            pathNodes.add(cur);
+            const parentId = this.parentOf ? this.parentOf.get(cur) : null;
+            if (parentId) {
+                pathEdges.add(`${parentId}->${cur}`);
+                pathEdges.add(`${cur}->${parentId}`);
+            }
+            cur = parentId;
+        }
+
+        // 2. Filhos imediatos (se for pasta)
+        if (this.childrenOf && this.childrenOf.has(node.id)) {
+            const kids = this.childrenOf.get(node.id);
+            for (const kidId of kids) {
+                pathNodes.add(kidId);
+                pathEdges.add(`${node.id}->${kidId}`);
+                pathEdges.add(`${kidId}->${node.id}`);
+            }
+        }
+
+        return { pathNodes, pathEdges };
+    }
+
     _applySpotlight(node) {
         if (!node) return;
+
+        if (this.isHierarchy) {
+            const { pathNodes, pathEdges } = this._getPathChain(node);
+
+            for (const n of this.nodes) {
+                const isSelf = n.id === node.id;
+                const inChain = pathNodes.has(n.id);
+
+                if (isSelf) {
+                    n.mesh.scale.set(1.4, 1.4, 1.4);
+                    n.mesh.material.emissiveIntensity = 1.0;
+                    if (n.glowSprite) n.glowSprite.scale.setScalar(n.size * 5.8);
+                } else if (inChain) {
+                    n.mesh.scale.set(1.2, 1.2, 1.2);
+                    n.mesh.material.emissiveIntensity = 0.85;
+                    if (n.glowSprite) n.glowSprite.scale.setScalar(n.size * 4.4);
+                } else {
+                    n.mesh.scale.set(0.85, 0.85, 0.85);
+                    n.mesh.material.emissiveIntensity = 0.12;
+                    if (n.glowSprite) n.glowSprite.scale.setScalar(n.size * 2.2);
+                }
+            }
+
+            for (const edge of this.edges) {
+                const key = `${edge.from}->${edge.to}`;
+                const inPath = pathEdges.has(key);
+                if (inPath) {
+                    edge.lineMesh.material.opacity = 0.95;
+                    edge.lineMesh.material.color.setHex(0x38bdf8); // Ilumina o caminho neural em ciano brilhante
+                } else {
+                    edge.lineMesh.material.opacity = 0.03;
+                }
+            }
+            return;
+        }
+
+        // Modo flat legado
         for (const n of this.nodes) {
             const isConn = this._isNodeConnected(node, n);
             const isSelf = n.id === node.id;
@@ -1001,7 +1136,6 @@ class BrainGraph {
                 n.mesh.material.emissiveIntensity = 0.7;
                 n.mesh.material.opacity = 1.0;
             } else {
-                // Dim non-connected nodes
                 n.mesh.scale.set(0.9, 0.9, 0.9);
                 n.mesh.material.emissiveIntensity = 0.15;
             }
@@ -1024,13 +1158,27 @@ class BrainGraph {
 
         this._applySpotlight(node);
 
-        // Tooltip
-        const connCount = this._getConnectedEdges(node).length;
+        // Tooltip semântico com hierarquia
+        const isFolder = node.isFolder;
+        const icon = node.icon || (isFolder ? '📂' : '📄');
+        const typeLabel = isFolder
+            ? (node.isCentral ? '☀️ SOL DO PROJETO' : `📂 PASTA • ${node.fileCount || node.childCount || 0} arquivos`)
+            : '📄 DOCUMENTO';
+
+        const pathHint = node.path ? `<div style="font-size: 10.5px; color: #94a3b8; font-family: monospace; margin: 4px 0 6px; word-break: break-all;">${node.path}</div>` : '';
+        const actionHint = isFolder
+            ? (node.isCentral ? '🌟 Núcleo orbital' : '⚡ Clique para destacar rota da pasta')
+            : '⚡ Duplo-clique para abrir documento';
+
         this.tooltip.innerHTML = `
-            <div class="tooltip-title">${node.label}</div>
-            <div class="tooltip-type">${node.group.toUpperCase()} • ${connCount} conexões 3D</div>
-            <div class="tooltip-hint" style="font-size: 11px; color: #a78bfa; margin-top: 5px; font-weight: 500;">
-                ⚡ Clique para selecionar • Duplo-clique para abrir
+            <div class="tooltip-title" style="display:flex; align-items:center; gap:6px;">
+                <span>${icon}</span>
+                <span>${node.label}</span>
+            </div>
+            <div class="tooltip-type" style="color: #c4b5fd;">${typeLabel}</div>
+            ${pathHint}
+            <div class="tooltip-hint" style="font-size: 11px; color: #38bdf8; margin-top: 4px; font-weight: 500;">
+                ${actionHint}
             </div>
         `;
         this._updateTooltipPos(px, py);
@@ -1042,13 +1190,12 @@ class BrainGraph {
         this.canvas.style.cursor = 'default';
         this.tooltip.classList.remove('visible');
 
-        // If a node is selected, keep its spotlight active!
         if (this.selectedNode) {
             this._applySpotlight(this.selectedNode);
             return;
         }
 
-        // Restore all nodes and edges to equilibrium
+        // Restaura todos os nós e arestas para a cor/opacidade original
         for (const n of this.nodes) {
             n.mesh.scale.set(1, 1, 1);
             n.mesh.material.emissiveIntensity = 0.45;
@@ -1059,8 +1206,8 @@ class BrainGraph {
         }
 
         for (const edge of this.edges) {
-            edge.lineMesh.material.opacity = 0.22;
-            edge.lineMesh.material.color.setHex(0x8b5cf6);
+            edge.lineMesh.material.opacity = edge.baseOpacity !== undefined ? edge.baseOpacity : 0.22;
+            edge.lineMesh.material.color.setHex(edge.baseColor !== undefined ? edge.baseColor : 0x8b5cf6);
         }
     }
 
@@ -1180,6 +1327,241 @@ class BrainGraph {
         };
     }
 
+    // ── Dynamic Category Filtering & Live Color Customization ──
+    getDynamicCategories() {
+        const catMap = new Map();
+        let totalDocs = 0;
+
+        for (const node of this.nodes) {
+            if (node.isCentral || node.id === 'brain') continue;
+            const isDoc = !node.isFolder;
+            if (isDoc) totalDocs++;
+
+            const groupKey = node.group || 'h-folder';
+            if (!catMap.has(groupKey)) {
+                let label = (window.HIERARCHY_PALETTE && window.HIERARCHY_PALETTE[groupKey] && window.HIERARCHY_PALETTE[groupKey].label);
+                if (!label) {
+                    label = groupKey.replace(/^h-dir-|^h-/, '').replace(/[-_]/g, ' ');
+                    label = label.charAt(0).toUpperCase() + label.slice(1);
+                }
+
+                const icon = (window.FOLDER_ICONS && window.FOLDER_ICONS[groupKey]) || (node.isFolder ? '📂' : '📄');
+                const fill = (this.groupColors[groupKey] && this.groupColors[groupKey].fill) || (node.colors && node.colors.fill) || '#8b5cf6';
+
+                catMap.set(groupKey, {
+                    key: groupKey,
+                    label: label,
+                    icon: icon,
+                    color: fill,
+                    docCount: 0,
+                    nodeCount: 0
+                });
+            }
+
+            const cat = catMap.get(groupKey);
+            cat.nodeCount++;
+            if (isDoc) cat.docCount++;
+        }
+
+        const categories = Array.from(catMap.values())
+            .sort((a, b) => (b.docCount - a.docCount) || a.label.localeCompare(b.label));
+
+        return { totalDocs, categories };
+    }
+
+    setCategoryFilter(categoryKey) {
+        this.currentCategory = (categoryKey === 'all' || !categoryKey) ? null : categoryKey;
+        return this._applyCombinedFilter();
+    }
+
+    filterNodes(query) {
+        this.currentQuery = (query || '').trim();
+        return this._applyCombinedFilter();
+    }
+
+    _applyCombinedFilter() {
+        const rawQ = (this.currentQuery || '').trim();
+        const q = rawQ.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const hasQuery = q.length > 0;
+        const cat = this.currentCategory;
+        const hasCat = Boolean(cat && cat !== 'all');
+
+        const satelliteNodes = this.nodes.filter(n => !n.isCentral && n.id !== 'brain');
+        const totalCount = satelliteNodes.length;
+
+        if (!hasQuery && !hasCat) {
+            for (const n of this.nodes) {
+                if (n.mesh) n.mesh.visible = true;
+            }
+            for (const e of this.edges) {
+                if (e.lineMesh) e.lineMesh.visible = true;
+            }
+            return { matchedCount: totalCount, totalCount: totalCount, isFiltering: false };
+        }
+
+        const visibleSet = new Set();
+        let matchedCount = 0;
+
+        // Sol raiz sempre visível
+        for (const n of this.nodes) {
+            if (n.isCentral || n.id === 'brain') {
+                visibleSet.add(n.id);
+            }
+        }
+
+        for (const n of this.nodes) {
+            if (n.isCentral || n.id === 'brain') continue;
+
+            // 1. Categoria (pertence à categoria ou é pasta ancestral dela)
+            let matchCat = true;
+            if (hasCat) {
+                matchCat = (n.group === cat);
+            }
+
+            // 2. Texto
+            let matchText = true;
+            if (hasQuery) {
+                const cleanLabel = (n.label || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                const cleanPath = (n.path || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                const cleanId = (n.id || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                matchText = cleanLabel.includes(q) || cleanPath.includes(q) || cleanId.includes(q);
+            }
+
+            if (matchCat && matchText) {
+                if (!n.isFolder) matchedCount++;
+                visibleSet.add(n.id);
+
+                // Mantém toda a rota hierárquica de pastas visível até o Sol
+                if (this.parentOf) {
+                    let cur = n.id;
+                    while (cur) {
+                        visibleSet.add(cur);
+                        cur = this.parentOf.get(cur);
+                    }
+                }
+            }
+        }
+
+        // Se filtrou por categoria que é pasta mas não tem subarquivos diretos
+        if (matchedCount === 0 && hasCat && visibleSet.size > 1) {
+            matchedCount = Array.from(visibleSet).filter(id => {
+                const node = this.nodeMap.get(id);
+                return node && !node.isCentral && node.id !== 'brain' && !node.isFolder;
+            }).length;
+        }
+
+        // Aplica visibilidade nos nós
+        for (const n of this.nodes) {
+            if (n.mesh) n.mesh.visible = visibleSet.has(n.id);
+        }
+
+        // Aplica visibilidade nas arestas
+        for (const e of this.edges) {
+            const fromVis = e.fromNode && e.fromNode.mesh && e.fromNode.mesh.visible;
+            const toVis = e.toNode && e.toNode.mesh && e.toNode.mesh.visible;
+            if (e.lineMesh) e.lineMesh.visible = Boolean(fromVis && toVis);
+        }
+
+        return { matchedCount: matchedCount, totalCount: totalCount, isFiltering: true };
+    }
+
+    highlightCategory(groupKey) {
+        if (!groupKey || groupKey === 'all') {
+            this.clearCategoryHighlight();
+            return;
+        }
+        this.highlightedCategory = groupKey;
+        for (const n of this.nodes) {
+            if (!n.mesh || !n.mesh.visible) continue;
+            const isMatch = n.group === groupKey;
+            if (isMatch) {
+                n.mesh.scale.set(1.32, 1.32, 1.32);
+                n.mesh.material.emissiveIntensity = 0.95;
+                if (n.glowSprite) n.glowSprite.scale.setScalar(n.size * 5.2);
+            } else {
+                n.mesh.scale.set(0.85, 0.85, 0.85);
+                n.mesh.material.emissiveIntensity = 0.12;
+                if (n.glowSprite) n.glowSprite.scale.setScalar(n.size * 2.2);
+            }
+        }
+        for (const edge of this.edges) {
+            if (!edge.lineMesh || !edge.lineMesh.visible) continue;
+            const isMatch = (edge.fromNode && edge.fromNode.group === groupKey) || (edge.toNode && edge.toNode.group === groupKey);
+            if (isMatch) {
+                edge.lineMesh.material.opacity = 0.88;
+                edge.lineMesh.material.color.setHex(0x38bdf8);
+            } else {
+                edge.lineMesh.material.opacity = 0.04;
+            }
+        }
+    }
+
+    clearCategoryHighlight() {
+        this.highlightedCategory = null;
+        if (this.hoveredNode) {
+            this._applySpotlight(this.hoveredNode);
+            return;
+        }
+        if (this.selectedNode) {
+            this._applySpotlight(this.selectedNode);
+            return;
+        }
+        for (const n of this.nodes) {
+            if (n.mesh) {
+                n.mesh.scale.set(1, 1, 1);
+                n.mesh.material.emissiveIntensity = 0.45;
+            }
+            if (n.glowSprite) {
+                const s = Math.max(7, (n.size || 10) * 0.95) * 3.8;
+                n.glowSprite.scale.set(s, s, 1);
+            }
+        }
+        for (const edge of this.edges) {
+            if (edge.lineMesh) {
+                edge.lineMesh.material.opacity = edge.baseOpacity !== undefined ? edge.baseOpacity : 0.22;
+                edge.lineMesh.material.color.setHex(edge.baseColor !== undefined ? edge.baseColor : 0x8b5cf6);
+            }
+        }
+    }
+
+    updateGroupColor(groupKey, hexColor) {
+        if (!hexColor) return;
+        const colorHex = parseInt(hexColor.replace('#', '0x'), 16);
+
+        if (!this.groupColors[groupKey]) {
+            this.groupColors[groupKey] = { fill: hexColor, stroke: hexColor, glow: hexColor };
+        } else {
+            this.groupColors[groupKey].fill = hexColor;
+            this.groupColors[groupKey].stroke = hexColor;
+        }
+
+        for (const node of this.nodes) {
+            if (node.group === groupKey) {
+                node.colors.fill = hexColor;
+                node.colors.stroke = hexColor;
+                if (node.mesh && node.mesh.material) {
+                    node.mesh.material.color.setHex(colorHex);
+                    node.mesh.material.emissive.setHex(colorHex);
+                }
+                if (node.glowSprite && node.glowSprite.material) {
+                    node.glowSprite.material.color.setHex(colorHex);
+                }
+                if (node.outerRing && node.outerRing.material) {
+                    node.outerRing.material.color.setHex(colorHex);
+                }
+            }
+        }
+
+        for (const edge of this.edges) {
+            if (edge.toNode && edge.toNode.group === groupKey) {
+                edge.baseColor = colorHex;
+                if (edge.lineMesh && edge.lineMesh.material) {
+                    edge.lineMesh.material.color.setHex(colorHex);
+                }
+            }
+        }
+    }
+
     _notifyCameraChange() {
         if (this.onCameraChange) {
             const dist = this.camera.position.distanceTo(this.controls.target);
@@ -1188,7 +1570,8 @@ class BrainGraph {
                 scale: zoomPercent / 100,
                 zoomPercent: zoomPercent,
                 rotationDeg: 0,
-                autoOrbit: this.controls.autoRotate
+                autoOrbit: this.controls.autoRotate,
+                autoRotate: this.controls.autoRotate
             });
         }
     }
@@ -1265,12 +1648,24 @@ class BrainGraph {
         }
 
         // 5. Update Synaptic Pulse Photons
+        const visibleEdges = this.edges.filter(e => e.lineMesh && e.lineMesh.visible);
         for (const p of this.particles) {
-            if (!p.edge || !p.edge.curve) continue;
+            if (!p.edge || !p.edge.curve || (p.edge.lineMesh && !p.edge.lineMesh.visible)) {
+                if (visibleEdges.length > 0) {
+                    p.edge = visibleEdges[Math.floor(Math.random() * visibleEdges.length)];
+                    p.progress = Math.random();
+                } else {
+                    p.mesh.visible = false;
+                    continue;
+                }
+            }
+            p.mesh.visible = true;
             p.progress += p.speed;
             if (p.progress >= 1.0) {
                 p.progress = 0;
-                p.edge = this.edges[Math.floor(Math.random() * this.edges.length)];
+                if (visibleEdges.length > 0) {
+                    p.edge = visibleEdges[Math.floor(Math.random() * visibleEdges.length)];
+                }
             }
             if (p.edge && p.edge.curve) {
                 const pt = p.edge.curve.getPoint(p.progress);
