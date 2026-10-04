@@ -545,6 +545,17 @@ function toggleTreeGroup(groupId, event) {
 function navigateTo(path) {
     currentPath = path;
 
+    // Se houver busca ativa no menu lateral, limpa o filtro e restaura a árvore completa canônica
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput && searchInput.value.trim() !== '') {
+        const dropdown = document.getElementById('searchResultsDropdown');
+        const clearBtn = document.getElementById('btnSidebarSearchClear');
+        searchInput.value = '';
+        if (dropdown) dropdown.style.display = 'none';
+        if (clearBtn) clearBtn.style.display = 'none';
+        buildSidebar();
+    }
+
     // Update active state in sidebar
     document.querySelectorAll('.nav-item').forEach(el => {
         el.classList.toggle('active', el.dataset.path === path);
@@ -564,6 +575,9 @@ function navigateTo(path) {
             }
             parentGroup = parentGroup.parentElement ? parentGroup.parentElement.closest('.nav-tree-group') : null;
         }
+        try {
+            activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } catch (_) {}
     }
 
 
@@ -1302,9 +1316,59 @@ function refreshApp() {
 }
 
 // ── Search & Filters ──────────────────────────────
+function clearSidebarFilter() {
+    const searchInput = document.getElementById('searchInput');
+    const dropdown = document.getElementById('searchResultsDropdown');
+    const clearBtn = document.getElementById('btnSidebarSearchClear');
+
+    if (searchInput) searchInput.value = '';
+    if (dropdown) dropdown.style.display = 'none';
+    if (clearBtn) clearBtn.style.display = 'none';
+
+    // Reconstroi completamente a barra lateral no seu formato original e estruturado
+    buildSidebar();
+
+    // Se houver um documento ativo, garante destaque e expansão das pastas ancestrais
+    if (currentPath) {
+        document.querySelectorAll('.nav-item').forEach(el => {
+            el.classList.toggle('active', el.dataset.path === currentPath);
+        });
+        const activeItem = document.querySelector(`.nav-item[data-path="${currentPath}"]`);
+        if (activeItem) {
+            let parentGroup = activeItem.closest('.nav-tree-group');
+            while (parentGroup) {
+                parentGroup.classList.add('has-active');
+                const children = parentGroup.querySelector('.nav-tree-children');
+                const chevron = parentGroup.querySelector('.tree-chevron');
+                if (children && children.classList.contains('collapsed')) {
+                    children.classList.remove('collapsed');
+                    if (chevron) chevron.classList.remove('collapsed');
+                }
+                parentGroup = parentGroup.parentElement ? parentGroup.parentElement.closest('.nav-tree-group') : null;
+            }
+        }
+    }
+}
+window.clearSidebarFilter = clearSidebarFilter;
+
+function onSearchResultClick(path) {
+    clearSidebarFilter();
+    navigateTo(path);
+}
+window.onSearchResultClick = onSearchResultClick;
+
 function setupSearch() {
     const searchInput = document.getElementById('searchInput');
     if (!searchInput) return;
+
+    const clearBtn = document.getElementById('btnSidebarSearchClear');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            clearSidebarFilter();
+            searchInput.focus();
+        });
+    }
 
     let dropdown = document.getElementById('searchResultsDropdown');
     if (!dropdown) {
@@ -1314,26 +1378,35 @@ function setupSearch() {
         searchInput.parentElement.parentElement.appendChild(dropdown);
     }
 
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            clearSidebarFilter();
+            searchInput.blur();
+        }
+    });
+
     searchInput.addEventListener('input', (e) => {
         const query = e.target.value.trim();
-        filterSidebar(query.toLowerCase());
 
         if (!query) {
-            dropdown.style.display = 'none';
+            clearSidebarFilter();
             return;
         }
 
+        if (clearBtn) clearBtn.style.display = 'flex';
+        filterSidebar(query.toLowerCase());
+
         const results = window.VAULT ? window.VAULT.search(query) : [];
         if (results.length === 0) {
-            dropdown.innerHTML = `<div style="padding: 12px; color: var(--text-tertiary); font-size: 13px;">Nenhum arquivo encontrado para "${query}"</div>`;
+            dropdown.innerHTML = `<div style="padding: 12px; color: var(--text-tertiary); font-size: 13px;">Nenhum arquivo encontrado para "${escapeHtml(query)}"</div>`;
             dropdown.style.display = 'block';
             return;
         }
 
         dropdown.innerHTML = results.map(r => `
-            <div class="search-result-item" onclick="navigateTo('${r.file.path}'); document.getElementById('searchResultsDropdown').style.display='none'; document.getElementById('searchInput').value='';">
-                <div class="search-result-title">${r.file.icon} ${r.file.title}</div>
-                <div class="search-result-path">${r.file.path}</div>
+            <div class="search-result-item" onclick="onSearchResultClick('${escapeHtml(r.file.path)}')">
+                <div class="search-result-title">${r.file.icon || '📄'} ${escapeHtml(r.file.title)}</div>
+                <div class="search-result-path">${escapeHtml(r.file.path)}</div>
                 <div class="search-result-snippet">${r.snippet}</div>
             </div>
         `).join('');
@@ -1341,70 +1414,88 @@ function setupSearch() {
     });
 
     document.addEventListener('click', (e) => {
-        if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+        if (!searchInput.contains(e.target) && !dropdown.contains(e.target) && (!clearBtn || !clearBtn.contains(e.target))) {
             dropdown.style.display = 'none';
         }
     });
 }
 
 function filterSidebar(query) {
-    const navItems = document.querySelectorAll('.nav-item');
-    const sections = document.querySelectorAll('.nav-section');
-    const treeGroups = document.querySelectorAll('.nav-tree-group');
-
     if (!query) {
-        navItems.forEach(el => el.style.display = '');
-        sections.forEach(el => el.style.display = '');
-        treeGroups.forEach(el => el.style.display = '');
+        clearSidebarFilter();
         return;
     }
 
-    sections.forEach(section => {
-        let hasVisible = false;
+    const clearBtn = document.getElementById('btnSidebarSearchClear');
+    if (clearBtn) clearBtn.style.display = 'flex';
 
-        // 1. Filtra itens simples (não-filhos de árvores)
-        section.querySelectorAll('.nav-item:not(.nav-tree-child)').forEach(item => {
-            const label = (item.querySelector('.nav-item-label')?.textContent || '').toLowerCase();
-            const match = label.includes(query);
-            item.style.display = match ? '' : 'none';
-            if (match) hasVisible = true;
-        });
+    // 1. Filtra itens folhas (arquivos navegáveis)
+    const leafItems = document.querySelectorAll('#sidebarNav .nav-item:not(.nav-tree-header)');
+    leafItems.forEach(item => {
+        const label = (item.querySelector('.nav-item-label')?.textContent || item.textContent || '').toLowerCase();
+        const match = label.includes(query);
+        item.style.display = match ? '' : 'none';
+    });
 
-        // 2. Filtra grupos de árvore (projetos)
-        section.querySelectorAll('.nav-tree-group').forEach(group => {
-            let groupHasVisible = false;
-            const headerLabel = (group.querySelector('.nav-tree-header .nav-item-label')?.textContent || '').toLowerCase();
-            const groupMatch = headerLabel.includes(query);
+    // 2. Filtra grupos em árvore de baixo para cima (maior profundidade primeiro)
+    const treeGroups = Array.from(document.querySelectorAll('#sidebarNav .nav-tree-group'));
+    treeGroups.sort((a, b) => {
+        const depthA = parseInt((a.className.match(/tree-level-(\d+)/) || [0, 0])[1], 10) || 0;
+        const depthB = parseInt((b.className.match(/tree-level-(\d+)/) || [0, 0])[1], 10) || 0;
+        return depthB - depthA;
+    });
 
-            group.querySelectorAll('.nav-tree-child').forEach(child => {
-                const childLabel = (child.querySelector('.nav-item-label')?.textContent || '').toLowerCase();
-                const match = groupMatch || childLabel.includes(query);
-                child.style.display = match ? '' : 'none';
-                if (match) groupHasVisible = true;
-            });
+    treeGroups.forEach(group => {
+        const headerLabel = (group.querySelector(':scope > .nav-tree-header .nav-item-label')?.textContent || '').toLowerCase();
+        const headerMatch = headerLabel.includes(query);
 
-            group.style.display = groupHasVisible ? '' : 'none';
-            if (groupHasVisible) {
-                hasVisible = true;
-                const childrenContainer = group.querySelector('.nav-tree-children');
-                const chevron = group.querySelector('.tree-chevron');
-                if (childrenContainer) childrenContainer.classList.remove('collapsed');
-                if (chevron) chevron.classList.remove('collapsed');
-            }
-        });
+        // Verifica se há nós filhos (arquivos ou subgrupos) visíveis
+        const hasVisibleChild = Array.from(group.querySelectorAll(':scope > .nav-tree-children > .nav-item, :scope > .nav-tree-children > .nav-tree-group'))
+            .some(el => el.style.display !== 'none');
 
-        section.style.display = hasVisible ? '' : 'none';
+        const hasVisible = headerMatch || hasVisibleChild;
+
+        if (headerMatch) {
+            // Se o nome da pasta corresponde à busca, exibe seus itens filhos
+            group.querySelectorAll('.nav-item, .nav-tree-group').forEach(el => el.style.display = '');
+        }
+
+        group.style.display = hasVisible ? '' : 'none';
 
         if (hasVisible) {
-            const itemsContainer = section.querySelector('.nav-section-items');
-            const chevron = section.querySelector('.chevron');
-            if (itemsContainer) {
-                itemsContainer.classList.remove('collapsed');
-                itemsContainer.style.maxHeight = 'none';
-            }
+            const childrenContainer = group.querySelector(':scope > .nav-tree-children');
+            const chevron = group.querySelector(':scope > .nav-tree-header .tree-chevron');
+            if (childrenContainer) childrenContainer.classList.remove('collapsed');
             if (chevron) chevron.classList.remove('collapsed');
         }
     });
+
+    // 3. Filtra seções principais de governança (.nav-section)
+    const sections = document.querySelectorAll('#sidebarNav .nav-section');
+    sections.forEach(sec => {
+        const hasVisible = Array.from(sec.querySelectorAll('.nav-item, .nav-tree-group'))
+            .some(el => el.style.display !== 'none');
+        sec.style.display = hasVisible ? '' : 'none';
+        if (hasVisible) {
+            const items = sec.querySelector('.nav-section-items');
+            const chevron = sec.querySelector('.tree-chevron, .chevron');
+            if (items) items.classList.remove('collapsed');
+            if (chevron) chevron.classList.remove('collapsed');
+        }
+    });
+
+    // 4. Cabeçalho de projetos e divisores
+    const projectsSec = document.getElementById('section-projects');
+    const projectsVisible = projectsSec && Array.from(projectsSec.querySelectorAll('.nav-tree-group, .nav-item'))
+        .some(el => el.style.display !== 'none');
+    if (projectsSec) projectsSec.style.display = projectsVisible ? '' : 'none';
+
+    const worldHeader = document.querySelector('.sidebar-world-header');
+    if (worldHeader) worldHeader.style.display = projectsVisible ? '' : 'none';
+
+    const divider = document.querySelector('.sidebar-divider');
+    const frameworkVisible = Array.from(sections).some(s => s.style.display !== 'none');
+    if (divider) divider.style.display = frameworkVisible ? '' : 'none';
 }
 
 // ── Event Listeners ───────────────────────────────
