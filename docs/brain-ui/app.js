@@ -37,6 +37,19 @@ function showToast(message, type = 'info', duration = 4000) {
     }, duration);
 }
 
+// ── Environment Detection & Online Demo Protection ─────
+function isLocalEnvironment() {
+    return window.location.hostname === 'localhost' || 
+           window.location.hostname === '127.0.0.1' || 
+           window.location.hostname === '::1';
+}
+window.isLocalEnvironment = isLocalEnvironment;
+
+function showOnlineDemoNotice(actionName = 'esta ação') {
+    showToast(`🌐 Modo Demonstração Online: Para ${actionName}, execute o projeto localmente com "npm start".`, 'warning', 6000);
+}
+window.showOnlineDemoNotice = showOnlineDemoNotice;
+
 // ── Universal Brain Dialog System (Confirmations & Prompts) ────
 let _brainConfirmResolver = null;
 
@@ -1853,6 +1866,11 @@ async function submitQuickstartNew(e) {
         return;
     }
 
+    if (!isLocalEnvironment()) {
+        showOnlineDemoNotice('criar projetos no disco rígido');
+        return;
+    }
+
     const originalText = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '<span class="status-dot snapshot" style="margin-right:6px"></span> Criando projeto com IA...';
@@ -1896,6 +1914,11 @@ async function submitQuickstartLink(e) {
 
     if (!name || !pathVal) {
         alert('Por favor, informe o nome e a pasta de origem.');
+        return;
+    }
+
+    if (!isLocalEnvironment()) {
+        showOnlineDemoNotice('vincular repositórios locais do seu computador');
         return;
     }
 
@@ -3273,6 +3296,11 @@ async function clearProjectMemory() {
     });
     if (!conf) return;
 
+    if (!isLocalEnvironment()) {
+        showOnlineDemoNotice('arquivar arquivos de memória no disco');
+        return;
+    }
+
     const btn = document.getElementById('btnClearMemoryBtn');
     if (btn) {
         btn.disabled = true;
@@ -3333,6 +3361,10 @@ async function downloadProjectBackup(type = 'markdown') {
 
 async function openSystemFolder(targetPath) {
     if (!targetPath) return;
+    if (!isLocalEnvironment()) {
+        showOnlineDemoNotice('abrir pastas no Windows Explorer');
+        return;
+    }
     try {
         showToast('📂 Solicitando abertura no Windows Explorer...', 'info', 2500);
         const res = await fetch('/api/system/open-folder', {
@@ -3350,6 +3382,10 @@ async function openSystemFolder(targetPath) {
 
 async function openSystemFile(targetPath) {
     if (!targetPath) return;
+    if (!isLocalEnvironment()) {
+        showOnlineDemoNotice('abrir arquivos no computador');
+        return;
+    }
     try {
         showToast('📄 Abrindo arquivo no computador...', 'info', 2500);
         const res = await fetch('/api/system/open-file', {
@@ -3402,6 +3438,11 @@ async function unlinkProject() {
 
     if (confirmName !== currentProject) {
         showToast('Nome digitado não confere. Desvinculação cancelada.', 'error', 4000);
+        return;
+    }
+
+    if (!isLocalEnvironment()) {
+        showOnlineDemoNotice('desvincular repositórios no disco rígido');
         return;
     }
 
@@ -3588,6 +3629,14 @@ async function saveFileContent() {
     const btnSave = document.getElementById('btnSaveFile');
     const statusText = document.getElementById('editorStatusText');
     const content = textarea ? textarea.value : '';
+
+    if (!isLocalEnvironment()) {
+        showOnlineDemoNotice('salvar alterações diretamente no disco rígido');
+        if (statusText) {
+            statusText.innerHTML = `<span class="status-dot snapshot"></span> 🌐 Modo Demo: edições não são salvas no disco em produção.`;
+        }
+        return;
+    }
 
     if (btnSave) {
         btnSave.disabled = true;
@@ -4088,6 +4137,11 @@ async function triggerAiRefinePrompt() {
     if (!rawPrompt) {
         alert('Por favor, digite uma ideia ou intenção inicial no campo abaixo antes de pedir ajuda à IA.');
         document.getElementById('rlDefinitionInput')?.focus();
+        return;
+    }
+
+    if (!isLocalEnvironment()) {
+        showOnlineDemoNotice('consultar a API do Groq Cloud');
         return;
     }
 
@@ -4749,6 +4803,12 @@ async function startLiveResearchFromModal(slug, topic) {
         </div>
     `;
 
+    if (!isLocalEnvironment()) {
+        showOnlineDemoNotice('executar o motor autônomo de síntese da Groq');
+        isResearchRunningLive = false;
+        return;
+    }
+
     // Dispara a chamada ao servidor
     try {
         const res = await fetch(`/api/projects/${encodeURIComponent(proj)}/research/${encodeURIComponent(slug)}/run`, {
@@ -5130,6 +5190,11 @@ async function confirmDeleteResearchFile(slug, relPath, title) {
     });
     if (!ok) return;
 
+    if (!isLocalEnvironment()) {
+        showOnlineDemoNotice('excluir arquivos físicos do disco');
+        return;
+    }
+
     try {
         const res = await fetch(`/api/projects/${encodeURIComponent(currentProject)}/research/${encodeURIComponent(slug)}/file/delete`, {
             method: 'POST',
@@ -5177,6 +5242,11 @@ async function confirmDeleteResearchLab(slug, topic) {
         danger: true
     });
     if (!ok) return;
+
+    if (!isLocalEnvironment()) {
+        showOnlineDemoNotice('excluir laboratórios de pesquisa no disco');
+        return;
+    }
 
     try {
         const res = await fetch(`/api/projects/${encodeURIComponent(currentProject)}/research/${encodeURIComponent(slug)}/delete`, {
@@ -5248,6 +5318,11 @@ async function confirmDeleteAllResearchFiles(slug, topic) {
         danger: true
     });
     if (!ok) return;
+
+    if (!isLocalEnvironment()) {
+        showOnlineDemoNotice('excluir arquivos gerados no disco');
+        return;
+    }
 
     try {
         const proj = currentProject || (currentProjectData && currentProjectData.name);

@@ -2050,6 +2050,12 @@ body {
     color: #fbbf24;
 }
 
+.vault-status.online-demo {
+    background: rgba(99, 102, 241, 0.15);
+    border-color: rgba(99, 102, 241, 0.4);
+    color: #a5b4fc;
+}
+
 .status-dot {
     width: 6px;
     height: 6px;

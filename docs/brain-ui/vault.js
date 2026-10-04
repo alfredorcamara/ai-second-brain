@@ -147,9 +147,16 @@ class VaultManager {
             badge.innerHTML = `<span class="status-dot folder"></span> Pasta Conectada`;
             badge.title = 'Lendo arquivos da pasta selecionada pelo navegador.';
         } else {
-            badge.className = 'vault-status snapshot';
-            badge.innerHTML = `<span class="status-dot snapshot"></span> Snapshot (${this.filesByPath.size / 3 | 0} docs)`;
-            badge.title = 'Visualizando snapshot local dos arquivos. Inicie "node server.js" para modo ao vivo.';
+            const isOnlineDemo = !window.location.hostname || (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && window.location.hostname !== '::1');
+            if (isOnlineDemo) {
+                badge.className = 'vault-status online-demo';
+                badge.innerHTML = `<span class="status-dot"></span> 🌐 Modo Demo (${Math.round(this.filesByPath.size / 3)} docs)`;
+                badge.title = 'Visualizador Web Estático (Portfólio / Vercel / GitHub Pages). Para editar no disco e abrir pastas no Windows, execute localmente com "npm start".';
+            } else {
+                badge.className = 'vault-status snapshot';
+                badge.innerHTML = `<span class="status-dot snapshot"></span> Snapshot (${this.filesByPath.size / 3 | 0} docs)`;
+                badge.title = 'Visualizando snapshot local dos arquivos. Inicie "node server.js" para modo ao vivo.';
+            }
         }
     }
 
