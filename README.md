@@ -1,6 +1,6 @@
 # AI Second Brain — Alfredo AI OS
 
-> Sistema de segundo cérebro para desenvolvimento com IA, otimizado para Google Antigravity Pro.
+> Sistema de segundo cérebro para desenvolvimento com IA, agnóstico a qualquer IDE ou ferramenta (Cursor, Claude Code, Antigravity, Windsurf, Copilot, Cline).
 
 ## O que é
 
@@ -23,7 +23,7 @@ npm run project:link meu-repo "C:\Projetos\MeuRepo" # Conecta via junção sem d
 # 3. Inicie o Cockpit Visual (Grafo 3D & Dashboard em tempo real)
 npm start
 
-# 4. Abra o workspace no Google Antigravity e comece a desenvolver!
+# 4. Abra o workspace na sua IDE favorita (Cursor, Claude Code, Antigravity, Windsurf) e comece a desenvolver!
 ```
 
 ## Estrutura
@@ -31,13 +31,16 @@ npm start
 ```
 AI_SECOND_BRAIN/
 │
-├── GEMINI.md                    ← Cérebro central
+├── GEMINI.md                    ← Ponte para Antigravity / Gemini
+├── .cursorrules                 ← Ponte para Cursor AI
+├── CLAUDE.md                    ← Ponte para Claude Code
+├── .windsurfrules               ← Ponte para Windsurf
 ├── README.md                    ← Este arquivo
 │
-├── .agents/                     ← Customizações Antigravity
+├── .agents/                     ← Regras e workflows reutilizáveis
 │   ├── rules/                   ← Regras persistentes
 │   ├── skills/                  ← Workflows reutilizáveis
-│   └── plugins/                 ← Plugin do AI OS
+│   └── plugins/                 ← Plugins do ecossistema
 │
 ├── knowledge/                   ← Base de conhecimento universal
 │   ├── global/                  ← Conhecimento transversal e índice
@@ -67,12 +70,17 @@ AI_SECOND_BRAIN/
 > Veja como funciona a pesquisa contínua e catalogação automática com IA (Groq Cloud) e Prompt Vivo em: **[docs/RESEARCH_LAB.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/RESEARCH_LAB.md)**.
 
 
-### 1. Abra este workspace no Antigravity
-O `GEMINI.md` será carregado automaticamente como regra raiz.
+### 1. Abra este workspace na sua IDE ou agente de IA favorito
+O sistema possui pontes nativas e automáticas para:
+- **Cursor AI** (lê `.cursorrules`)
+- **Claude Code** (lê `CLAUDE.md`)
+- **Google Antigravity** (lê `GEMINI.md`)
+- **Windsurf** (lê `.windsurfrules`)
+- **GitHub Copilot** (lê `.github/copilot-instructions.md`)
+- **Roo Code / Cline** (lê `.clinerules`)
 
 ### 2. As regras são aplicadas automaticamente
-Quando você trabalhar em qualquer arquivo, as regras de `.agents/rules/` serão
-descobertas e aplicadas conforme o contexto.
+Quando você trabalhar em qualquer arquivo, as diretrizes de governança serão descobertas e aplicadas conforme o contexto.
 
 ### 3. Skills são ativadas sob demanda
 O agente identifica automaticamente quando uma skill é relevante e a ativa.
@@ -97,17 +105,32 @@ Após cada sessão significativa, o agente atualiza `memory/` com o estado atual
 ## Filosofia
 
 ```
-ALFREDO AI OS
+AI SECOND BRAIN
        │
-  ┌────┴─────────────────┐
-  │                      │
-ANTIGRAVITY         KNOWLEDGE
-  │                      │
-  ┌────┼────┐    ┌────┼────┐
-  │    │    │    │    │    │
-RULES SKILLS AGENTS GLOBAL PROJECT MEMORY
-  │    │    │    │    │    │
-  └────┴────┴────┴────┴────┘
+  ┌────┴────────────────────────┐
+  │                             │
+AI AGENTS (Cursor/Claude/etc)  KNOWLEDGE VAULT
+  │                             │
+  ┌────┼────┐           ┌───────┼───────┐
+  │    │    │           │       │       │
+RULES SKILLS PROMPTS  GLOBAL  PROJECT  MEMORY
+  │    │    │           │       │       │
+  └────┴────┴───────────┴───────┴───────┘
+           │
+       AI GATEWAY
+           │
+    ┌──────┼──────┐
+    │      │      │
+  AIJEV   LLM  LOCAL AI
+    │      │      │
+    └──────┼──────┘
+           │
+     SEUS PROJETOS
+           │
+  ┌────────┼────────┐
+  ▼        ▼        ▼
+APIs/Backend  SaaS/Web    Jogos/Apps
+```
            │
        AI GATEWAY
            │

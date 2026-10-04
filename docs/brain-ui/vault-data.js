@@ -1,5 +1,10 @@
+// ═══════════════════════════════════════════════════
+// AI SECOND BRAIN — Dynamic Vault Snapshot
+// Auto-generated: 2026-10-04T16:52:46.442Z
+// ═══════════════════════════════════════════════════
+
 window.VAULT_SNAPSHOT = {
-  "timestamp": 1791131276705,
+  "timestamp": 1791132766442,
   "files": [
     {
       "id": "_agents_rules_00-core_md",
@@ -156,6 +161,18 @@ window.VAULT_SNAPSHOT = {
       "mtime": 1790519846215.9138,
       "outgoingLinks": [],
       "content": "---\nname: session-memory\ndescription: >-\n  Gerencia a memória persistente entre sessões de trabalho. Use ao final de\n  uma sessão de trabalho para registrar o que foi feito, decisões tomadas,\n  e próximos passos. Também use no início de uma sessão para carregar\n  o contexto da sessão anterior.\n---\n\n# Session Memory\n\n## Ao Iniciar uma Sessão\n\n1. Leia `memory/current-state.md` para o estado global.\n2. Leia `projects/<projeto>/CURRENT_STATE.md` para o projeto em foco.\n3. Leia `projects/<projeto>/MEMORY/` para sessões anteriores.\n4. Leia `memory/lessons-learned.md` para lições relevantes.\n\n## Ao Finalizar uma Sessão\n\n### 1. Atualizar Estado Global\n\nEdite `memory/current-state.md` com mudanças relevantes.\n\n### 2. Criar Registro de Sessão\n\nCrie arquivo em `projects/<projeto>/MEMORY/sessions/`:\n\nNome: `YYYY-MM-DD-descricao-curta.md`\n\nConteúdo:\n\n```markdown\n# Sessão: YYYY-MM-DD — Descrição Curta\n\n## Contexto\nO que motivou esta sessão de trabalho.\n\n## O que foi feito\n- [ ] Item 1\n- [ ] Item 2\n\n## Decisões tomadas\n- Decisão 1: Motivo\n\n## Problemas encontrados\n- Problema 1: Como foi resolvido\n\n## Próximos passos\n1. Passo 1\n2. Passo 2\n\n## Aprendizados\n- Lição 1\n```\n\n### 3. Atualizar CURRENT_STATE.md do projeto\n\nReflita as mudanças no estado atual do projeto.\n\n### 4. Atualizar Lessons Learned (se aplicável)\n\nSe houve aprendizados significativos, adicione em `memory/lessons-learned.md`.\n\n## Regras\n\n- Seja conciso mas completo.\n- Registre decisões com o motivo.\n- Não omita problemas encontrados.\n- Próximos passos devem ser acionáveis.\n"
+    },
+    {
+      "id": "CLAUDE_md",
+      "path": "CLAUDE.md",
+      "name": "CLAUDE.md",
+      "title": "AI SECOND BRAIN — INSTRUÇÕES PARA CLAUDE CODE",
+      "category": "core",
+      "icon": "📄",
+      "size": 1597,
+      "mtime": 1791132673347.6536,
+      "outgoingLinks": [],
+      "content": "# AI SECOND BRAIN — INSTRUÇÕES PARA CLAUDE CODE\n\n> Este repositório é o cérebro central e cofre de governança para desenvolvimento assistido por IA.\n> Qualquer sessão do Claude Code neste workspace deve seguir estas diretrizes.\n\n---\n\n## IDENTIDADE & OBJETIVO\n\nVocê opera dentro do **AI Second Brain**, um sistema estruturado que organiza conhecimento, decisões arquiteturais, memória e regras para todos os projetos.\n\n---\n\n## FLUXO DE OPERAÇÃO\n\n1. **Localização dos Projetos**: Todos os projetos gerenciados residem em `projects/<nome-do-projeto>/`.\n2. **Contratos Vivos**:\n   - `projects/<nome>/PROJECT.md` — Visão geral, objetivos de negócio, stack técnica e restrições.\n   - `projects/<nome>/CURRENT_STATE.md` — O que está pronto, o que está em andamento e próximos passos.\n   - `projects/<nome>/ARCHITECTURE.md` — Desenho técnico, diagrama de componentes e padrões.\n   - `projects/<nome>/DECISIONS/` — Architecture Decision Records (ADRs) com o histórico de por que escolhas foram feitas.\n3. **Memória Persistente**: Ao final de sessões significativas, registre o resumo em `projects/<nome>/MEMORY/sessions/` e atualize `CURRENT_STATE.md`.\n\n---\n\n## DIRETRIZES FUNDAMENTAIS\n\n- **Zero Alucinação**: Se uma informação não estiver documentada, pergunte ou declare expressamente como \"Não definido\".\n- **ADRs Obrigatórios**: Toda mudança arquitetural significativa deve gerar um novo arquivo em `projects/<nome>/DECISIONS/`.\n- **Governança Agnostica**: Os contratos são em Markdown puro para serem compreendidos por qualquer inteligência artificial.\n"
     },
     {
       "id": "decisions_GLOBAL_DECISIONS_md",
@@ -1062,14 +1079,14 @@ window.VAULT_SNAPSHOT = {
       "title": "AI Second Brain — Alfredo AI OS",
       "category": "core",
       "icon": "🧠",
-      "size": 5431,
-      "mtime": 1790958997460.974,
+      "size": 6576,
+      "mtime": 1791132643142.738,
       "outgoingLinks": [
         "file:///c:/projetos/saas/google%20antigravity/projetos/ai_second_brain/docs/como_utilizar_o_projeto.md",
         "file:///c:/projetos/saas/google%20antigravity/projetos/ai_second_brain/docs/valor_e_relevancia_do_segundo_cerebro.md",
         "file:///c:/projetos/saas/google%20antigravity/projetos/ai_second_brain/docs/research_lab.md"
       ],
-      "content": "# AI Second Brain — Alfredo AI OS\n\n> Sistema de segundo cérebro para desenvolvimento com IA, otimizado para Google Antigravity Pro.\n\n## O que é\n\nO AI Second Brain é uma estrutura de conhecimento, decisões, memória e governança\nque transforma o agente de IA de um chatbot genérico em um parceiro de desenvolvimento\nque entende o contexto, respeita regras e acumula conhecimento ao longo do tempo.\n\n## 🚀 Comece em 3 Minutos\n\n```bash\n# 1. Clone o repositório\ngit clone https://github.com/alfredorcamara/ai-second-brain.git\ncd ai-second-brain\n\n# 2. Crie seu primeiro projeto (Greenfield) OU vincule um repositório existente (Brownfield)\nnpm run project:new meu-saas          # Cria a pasta em projects/ com templates prontos\n# OU\nnpm run project:link meu-repo \"C:\\Projetos\\MeuRepo\" # Conecta via junção sem duplicar arquivos\n\n# 3. Inicie o Cockpit Visual (Grafo 3D & Dashboard em tempo real)\nnpm start\n\n# 4. Abra o workspace no Google Antigravity e comece a desenvolver!\n```\n\n## Estrutura\n\n```\nAI_SECOND_BRAIN/\n│\n├── GEMINI.md                    ← Cérebro central\n├── README.md                    ← Este arquivo\n│\n├── .agents/                     ← Customizações Antigravity\n│   ├── rules/                   ← Regras persistentes\n│   ├── skills/                  ← Workflows reutilizáveis\n│   └── plugins/                 ← Plugin do AI OS\n│\n├── knowledge/                   ← Base de conhecimento universal\n│   ├── global/                  ← Conhecimento transversal e índice\n│   ├── ai/                      ← IA, modelos, roteamento, AIJev\n│   ├── architecture/            ← Padrões universais de arquitetura\n│   └── security/                ← Segurança com IA, OWASP, privacidade\n│\n├── projects/                    ← Seus projetos (APIs, SaaS, Mobile, Jogos)\n│\n├── decisions/                   ← Decisões arquiteturais globais\n├── memory/                      ← Memória persistente\n├── templates/                   ← Templates reutilizáveis\n└── docs/                        ← Documentação do sistema\n    └── brain-ui/                ← Interface de visualização\n```\n\n## Como usar\n\n> 📘 **Manual Prático Completo:**  \n> Veja o passo a passo detalhado para criar novos projetos ou plugar projetos existentes em: **[docs/COMO_UTILIZAR_O_PROJETO.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/COMO_UTILIZAR_O_PROJETO.md)**.  \n>  \n>  \n> 🧠 **Análise Crítica & Relevância de Mercado:**  \n> Entenda por que esta estratégia é essencial para projetos construídos com IA e como ela é percebida pela comunidade em: **[docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md)**.\n>  \n> 🔬 **Research Lab (Laboratório de Conhecimento Autônomo):**  \n> Veja como funciona a pesquisa contínua e catalogação automática com IA (Groq Cloud) e Prompt Vivo em: **[docs/RESEARCH_LAB.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/RESEARCH_LAB.md)**.\n\n\n### 1. Abra este workspace no Antigravity\nO `GEMINI.md` será carregado automaticamente como regra raiz.\n\n### 2. As regras são aplicadas automaticamente\nQuando você trabalhar em qualquer arquivo, as regras de `.agents/rules/` serão\ndescobertas e aplicadas conforme o contexto.\n\n### 3. Skills são ativadas sob demanda\nO agente identifica automaticamente quando uma skill é relevante e a ativa.\nVocê também pode invocar manualmente.\n\n### 4. Projetos têm contexto próprio\nCada projeto em `projects/` tem seu `PROJECT.md`, estado atual, decisões e memória.\n\n### 5. A memória persiste entre sessões\nApós cada sessão significativa, o agente atualiza `memory/` com o estado atual.\n\n## Comandos Operacionais\n\n| Comando | Descrição |\n|---|---|\n| `npm run project:new <nome>` | Cria um novo projeto em `projects/<nome>/` com contratos e templates prontos |\n| `npm run project:link <nome> <caminho>` | Vincula um repositório Git externo existente via junção NTFS / symlink |\n| `npm start` *(ou `start-brain.bat`)* | Inicia o Live Vault Server (SSE) e abre o Visualizador 3D no navegador |\n| `npm run doctor` *(ou `npm run check`)* | Executa o linter de integridade: valida links quebrados, contratos de projetos e knowledge |\n| `npm run scan` | Atualiza o snapshot JSON estático do cofre para o visualizador offline |\n\n## Filosofia\n\n```\nALFREDO AI OS\n       │\n  ┌────┴─────────────────┐\n  │                      │\nANTIGRAVITY         KNOWLEDGE\n  │                      │\n  ┌────┼────┐    ┌────┼────┐\n  │    │    │    │    │    │\nRULES SKILLS AGENTS GLOBAL PROJECT MEMORY\n  │    │    │    │    │    │\n  └────┴────┴────┴────┴────┘\n           │\n       AI GATEWAY\n           │\n    ┌──────┼──────┐\n    │      │      │\n  AIJEV   LLM  LOCAL AI\n    │      │      │\n    └──────┼──────┘\n           │\n     SEUS PROJETOS\n           │\n  ┌────────┼────────┐\n  ▼        ▼        ▼\nAPIs/Backend  SaaS/Web    Jogos/Apps\n```\n"
+      "content": "# AI Second Brain — Alfredo AI OS\n\n> Sistema de segundo cérebro para desenvolvimento com IA, agnóstico a qualquer IDE ou ferramenta (Cursor, Claude Code, Antigravity, Windsurf, Copilot, Cline).\n\n## O que é\n\nO AI Second Brain é uma estrutura de conhecimento, decisões, memória e governança\nque transforma o agente de IA de um chatbot genérico em um parceiro de desenvolvimento\nque entende o contexto, respeita regras e acumula conhecimento ao longo do tempo.\n\n## 🚀 Comece em 3 Minutos\n\n```bash\n# 1. Clone o repositório\ngit clone https://github.com/alfredorcamara/ai-second-brain.git\ncd ai-second-brain\n\n# 2. Crie seu primeiro projeto (Greenfield) OU vincule um repositório existente (Brownfield)\nnpm run project:new meu-saas          # Cria a pasta em projects/ com templates prontos\n# OU\nnpm run project:link meu-repo \"C:\\Projetos\\MeuRepo\" # Conecta via junção sem duplicar arquivos\n\n# 3. Inicie o Cockpit Visual (Grafo 3D & Dashboard em tempo real)\nnpm start\n\n# 4. Abra o workspace na sua IDE favorita (Cursor, Claude Code, Antigravity, Windsurf) e comece a desenvolver!\n```\n\n## Estrutura\n\n```\nAI_SECOND_BRAIN/\n│\n├── GEMINI.md                    ← Ponte para Antigravity / Gemini\n├── .cursorrules                 ← Ponte para Cursor AI\n├── CLAUDE.md                    ← Ponte para Claude Code\n├── .windsurfrules               ← Ponte para Windsurf\n├── README.md                    ← Este arquivo\n│\n├── .agents/                     ← Regras e workflows reutilizáveis\n│   ├── rules/                   ← Regras persistentes\n│   ├── skills/                  ← Workflows reutilizáveis\n│   └── plugins/                 ← Plugins do ecossistema\n│\n├── knowledge/                   ← Base de conhecimento universal\n│   ├── global/                  ← Conhecimento transversal e índice\n│   ├── ai/                      ← IA, modelos, roteamento, AIJev\n│   ├── architecture/            ← Padrões universais de arquitetura\n│   └── security/                ← Segurança com IA, OWASP, privacidade\n│\n├── projects/                    ← Seus projetos (APIs, SaaS, Mobile, Jogos)\n│\n├── decisions/                   ← Decisões arquiteturais globais\n├── memory/                      ← Memória persistente\n├── templates/                   ← Templates reutilizáveis\n└── docs/                        ← Documentação do sistema\n    └── brain-ui/                ← Interface de visualização\n```\n\n## Como usar\n\n> 📘 **Manual Prático Completo:**  \n> Veja o passo a passo detalhado para criar novos projetos ou plugar projetos existentes em: **[docs/COMO_UTILIZAR_O_PROJETO.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/COMO_UTILIZAR_O_PROJETO.md)**.  \n>  \n>  \n> 🧠 **Análise Crítica & Relevância de Mercado:**  \n> Entenda por que esta estratégia é essencial para projetos construídos com IA e como ela é percebida pela comunidade em: **[docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md)**.\n>  \n> 🔬 **Research Lab (Laboratório de Conhecimento Autônomo):**  \n> Veja como funciona a pesquisa contínua e catalogação automática com IA (Groq Cloud) e Prompt Vivo em: **[docs/RESEARCH_LAB.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/RESEARCH_LAB.md)**.\n\n\n### 1. Abra este workspace na sua IDE ou agente de IA favorito\nO sistema possui pontes nativas e automáticas para:\n- **Cursor AI** (lê `.cursorrules`)\n- **Claude Code** (lê `CLAUDE.md`)\n- **Google Antigravity** (lê `GEMINI.md`)\n- **Windsurf** (lê `.windsurfrules`)\n- **GitHub Copilot** (lê `.github/copilot-instructions.md`)\n- **Roo Code / Cline** (lê `.clinerules`)\n\n### 2. As regras são aplicadas automaticamente\nQuando você trabalhar em qualquer arquivo, as diretrizes de governança serão descobertas e aplicadas conforme o contexto.\n\n### 3. Skills são ativadas sob demanda\nO agente identifica automaticamente quando uma skill é relevante e a ativa.\nVocê também pode invocar manualmente.\n\n### 4. Projetos têm contexto próprio\nCada projeto em `projects/` tem seu `PROJECT.md`, estado atual, decisões e memória.\n\n### 5. A memória persiste entre sessões\nApós cada sessão significativa, o agente atualiza `memory/` com o estado atual.\n\n## Comandos Operacionais\n\n| Comando | Descrição |\n|---|---|\n| `npm run project:new <nome>` | Cria um novo projeto em `projects/<nome>/` com contratos e templates prontos |\n| `npm run project:link <nome> <caminho>` | Vincula um repositório Git externo existente via junção NTFS / symlink |\n| `npm start` *(ou `start-brain.bat`)* | Inicia o Live Vault Server (SSE) e abre o Visualizador 3D no navegador |\n| `npm run doctor` *(ou `npm run check`)* | Executa o linter de integridade: valida links quebrados, contratos de projetos e knowledge |\n| `npm run scan` | Atualiza o snapshot JSON estático do cofre para o visualizador offline |\n\n## Filosofia\n\n```\nAI SECOND BRAIN\n       │\n  ┌────┴────────────────────────┐\n  │                             │\nAI AGENTS (Cursor/Claude/etc)  KNOWLEDGE VAULT\n  │                             │\n  ┌────┼────┐           ┌───────┼───────┐\n  │    │    │           │       │       │\nRULES SKILLS PROMPTS  GLOBAL  PROJECT  MEMORY\n  │    │    │           │       │       │\n  └────┴────┴───────────┴───────┴───────┘\n           │\n       AI GATEWAY\n           │\n    ┌──────┼──────┐\n    │      │      │\n  AIJEV   LLM  LOCAL AI\n    │      │      │\n    └──────┼──────┘\n           │\n     SEUS PROJETOS\n           │\n  ┌────────┼────────┐\n  ▼        ▼        ▼\nAPIs/Backend  SaaS/Web    Jogos/Apps\n```\n           │\n       AI GATEWAY\n           │\n    ┌──────┼──────┐\n    │      │      │\n  AIJEV   LLM  LOCAL AI\n    │      │      │\n    └──────┼──────┘\n           │\n     SEUS PROJETOS\n           │\n  ┌────────┼────────┐\n  ▼        ▼        ▼\nAPIs/Backend  SaaS/Web    Jogos/Apps\n```\n"
     },
     {
       "id": "templates_ai-use-case_md",
@@ -2004,6 +2021,13 @@ window.VAULT_SNAPSHOT = {
       "startCollapsed": true,
       "items": [
         {
+          "id": "CLAUDE_md",
+          "label": "AI SECOND BRAIN — INSTRUÇÕES PARA CLAUDE CODE",
+          "icon": "📄",
+          "path": "CLAUDE.md",
+          "size": 1597
+        },
+        {
           "id": "GEMINI_md",
           "label": "AI SECOND BRAIN — ALFREDO AI OS",
           "icon": "🧠",
@@ -2015,10 +2039,10 @@ window.VAULT_SNAPSHOT = {
           "label": "AI Second Brain — Alfredo AI OS",
           "icon": "🧠",
           "path": "README.md",
-          "size": 5431
+          "size": 6576
         }
       ],
-      "badge": 2
+      "badge": 3
     }
   ],
   "graphNodes": [
@@ -2221,6 +2245,14 @@ window.VAULT_SNAPSHOT = {
       "size": 9,
       "icon": "💾",
       "path": ".agents/skills/session-memory/SKILL.md"
+    },
+    {
+      "id": "CLAUDE_md",
+      "label": "AI SECOND BRAIN — INSTRUÇÕES PARA CLAUDE CODE",
+      "group": "core",
+      "size": 9,
+      "icon": "📄",
+      "path": "CLAUDE.md"
     },
     {
       "id": "decisions_GLOBAL_DECISIONS_md",
@@ -2913,6 +2945,10 @@ window.VAULT_SNAPSHOT = {
       "to": "_agents_skills_session-memory_SKILL_md"
     },
     {
+      "from": "hub-core",
+      "to": "CLAUDE_md"
+    },
+    {
       "from": "hub-decisions",
       "to": "decisions_GLOBAL_DECISIONS_md"
     },
@@ -3385,6 +3421,34 @@ window.VAULT_SNAPSHOT = {
       "to": "templates_session-memory_md"
     },
     {
+      "from": "CLAUDE_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "CLAUDE_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "CLAUDE_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "CLAUDE_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "CLAUDE_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "CLAUDE_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "CLAUDE_md",
+      "to": "templates_project_md"
+    },
+    {
       "from": "decisions_GLOBAL_DECISIONS_md",
       "to": "_agents_rules_01-ai-decision_md"
     },
@@ -3407,6 +3471,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "docs_analise_prompt_refinement_md",
       "to": "templates_project_md"
+    },
+    {
+      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
+      "to": "CLAUDE_md"
     },
     {
       "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
@@ -3594,6 +3662,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "CLAUDE_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
       "to": "memory_current-state_md"
     },
     {
@@ -3631,6 +3703,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
       "to": "templates_session-memory_md"
+    },
+    {
+      "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "to": "CLAUDE_md"
     },
     {
       "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
@@ -3702,7 +3778,15 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "knowledge_ai_AI_GATEWAY_md",
+      "to": "CLAUDE_md"
+    },
+    {
+      "from": "knowledge_ai_AI_GATEWAY_md",
       "to": "GEMINI_md"
+    },
+    {
+      "from": "knowledge_ai_MODEL_SELECTION_md",
+      "to": "CLAUDE_md"
     },
     {
       "from": "knowledge_ai_MODEL_SELECTION_md",
@@ -3783,6 +3867,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "memory_current-state_md",
       "to": "templates_project_md"
+    },
+    {
+      "from": "memory_lessons-learned_md",
+      "to": "CLAUDE_md"
     },
     {
       "from": "projects_Alfredo_teste_ARCHITECTURE_md",
@@ -4378,6 +4466,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "README_md",
+      "to": "CLAUDE_md"
+    },
+    {
+      "from": "README_md",
       "to": "docs_COMO_UTILIZAR_O_PROJETO_md"
     },
     {
@@ -4514,7 +4606,7 @@ window.VAULT_SNAPSHOT = {
     }
   },
   "stats": {
-    "totalFiles": 87,
+    "totalFiles": 88,
     "rulesCount": 5,
     "skillsCount": 8,
     "projectsCount": 2,
@@ -4523,7 +4615,7 @@ window.VAULT_SNAPSHOT = {
     "memoryCount": 2,
     "templatesCount": 4,
     "docsCount": 8,
-    "totalNodes": 99,
-    "totalEdges": 411
+    "totalNodes": 100,
+    "totalEdges": 426
   }
 };

@@ -903,6 +903,55 @@ Projeto externo vinculado ao AI Second Brain.
         return;
     }
 
+    // API: Selecionar e Gravar Motor de IA em brain.config.json no disco
+    if (pathname === '/api/engine/select' && req.method === 'POST') {
+        try {
+            const body = await readJsonBody(req);
+            const engineKey = (body.engineKey || 'universal').trim();
+            const engine = body.engine || {};
+
+            const configData = {
+                activeEngine: engineKey,
+                engineName: engine.name || engineKey.toUpperCase(),
+                label: engine.label || engineKey,
+                icon: engine.icon || '🌐',
+                bridgeFile: engine.bridgeFile || 'UNIVERSAL',
+                updatedAt: new Date().toISOString()
+            };
+
+            const configPath = path.join(ROOT_DIR, 'brain.config.json');
+            fs.writeFileSync(configPath, JSON.stringify(configData, null, 2), 'utf-8');
+
+            broadcastEvent('engine-changed', configData);
+
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ success: true, config: configData }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ error: err.message }));
+        }
+        return;
+    }
+
+    // API: Obter Motor de IA Atual gravado no disco
+    if (pathname === '/api/engine/current' && req.method === 'GET') {
+        try {
+            const configPath = path.join(ROOT_DIR, 'brain.config.json');
+            if (fs.existsSync(configPath)) {
+                const configContent = fs.readFileSync(configPath, 'utf-8');
+                res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(configContent);
+            } else {
+                res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ activeEngine: 'antigravity' }));
+            }
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ error: err.message }));
+        }
+        return;
+    }
+
     // API: Abrir Pasta no Explorador de Arquivos do Sistema Operacional (Windows Explorer / Finder)
     if (pathname === '/api/system/open-folder' && req.method === 'POST') {
         try {

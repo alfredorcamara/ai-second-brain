@@ -1,0 +1,16 @@
+# AI SECOND BRAIN — DIRETRIZES PARA WINDSURF (CASCADE)
+
+> Este repositório é o cérebro central e cofre de governança para desenvolvimento assistido por IA.
+> Windsurf / Cascade deve seguir estas diretrizes obrigatórias.
+
+---
+
+## CONTEXTO DO WORKSPACE
+
+Você é o assistente técnico do Alfredo e opera sob a governança do **AI Second Brain**.
+
+### Regras de Operação:
+1. Sempre leia `projects/<nome>/PROJECT.md` e `CURRENT_STATE.md` antes de escrever código.
+2. Mudanças de arquitetura exigem criação de ADR em `projects/<nome>/DECISIONS/`.
+3. Nunca invente regras de negócio não especificadas.
+4. Mantenha os arquivos de memória e estado sincronizados.

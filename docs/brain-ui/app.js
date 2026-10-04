@@ -50,6 +50,348 @@ function showOnlineDemoNotice(actionName = 'esta ação') {
 }
 window.showOnlineDemoNotice = showOnlineDemoNotice;
 
+// ── AI Engine Support & Agnostic Architecture ──────
+const AI_ENGINES = {
+    antigravity: {
+        id: 'antigravity',
+        name: 'GOOGLE ANTIGRAVITY',
+        label: 'Google Antigravity',
+        icon: '🪐',
+        gradient: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+        border: '1px solid rgba(139, 92, 246, 0.5)',
+        shadow: '0 4px 16px rgba(124, 58, 237, 0.35)',
+        bridgeFile: 'GEMINI.md'
+    },
+    cursor: {
+        id: 'cursor',
+        name: 'CURSOR AI',
+        label: 'Cursor AI',
+        icon: '⚡',
+        gradient: 'linear-gradient(135deg, #0284c7, #06b6d4)',
+        border: '1px solid rgba(14, 165, 233, 0.5)',
+        shadow: '0 4px 16px rgba(14, 165, 233, 0.35)',
+        bridgeFile: '.cursorrules'
+    },
+    claude: {
+        id: 'claude',
+        name: 'CLAUDE CODE',
+        label: 'Claude Code',
+        icon: '🤖',
+        gradient: 'linear-gradient(135deg, #d97706, #ea580c)',
+        border: '1px solid rgba(234, 88, 12, 0.5)',
+        shadow: '0 4px 16px rgba(234, 88, 12, 0.35)',
+        bridgeFile: 'CLAUDE.md'
+    },
+    windsurf: {
+        id: 'windsurf',
+        name: 'WINDSURF CASCADE',
+        label: 'Windsurf (Cascade)',
+        icon: '🏄',
+        gradient: 'linear-gradient(135deg, #0d9488, #10b981)',
+        border: '1px solid rgba(16, 185, 129, 0.5)',
+        shadow: '0 4px 16px rgba(16, 185, 129, 0.35)',
+        bridgeFile: '.windsurfrules'
+    },
+    copilot: {
+        id: 'copilot',
+        name: 'GITHUB COPILOT',
+        label: 'GitHub Copilot',
+        icon: '🐙',
+        gradient: 'linear-gradient(135deg, #24292f, #334155)',
+        border: '1px solid rgba(148, 163, 184, 0.4)',
+        shadow: '0 4px 16px rgba(0, 0, 0, 0.45)',
+        bridgeFile: '.github/copilot-instructions.md'
+    },
+    cline: {
+        id: 'cline',
+        name: 'ROO CODE / CLINE',
+        label: 'Roo Code / Cline',
+        icon: '🦾',
+        gradient: 'linear-gradient(135deg, #6366f1, #db2777)',
+        border: '1px solid rgba(219, 39, 119, 0.5)',
+        shadow: '0 4px 16px rgba(219, 39, 119, 0.35)',
+        bridgeFile: '.clinerules'
+    },
+    universal: {
+        id: 'universal',
+        name: 'AI AGENT LAYER',
+        label: 'Universal (Agnóstico)',
+        icon: '🌐',
+        gradient: 'linear-gradient(135deg, #4f46e5, #06b6d4)',
+        border: '1px solid rgba(99, 102, 241, 0.5)',
+        shadow: '0 4px 16px rgba(99, 102, 241, 0.35)',
+        bridgeFile: 'UNIVERSAL'
+    }
+};
+
+function getSelectedAiEngine() {
+    return localStorage.getItem('selectedAiEngine') || 'antigravity';
+}
+
+function onAiEngineChange(engineKey, silent = false) {
+    const engine = AI_ENGINES[engineKey] || AI_ENGINES.universal;
+    localStorage.setItem('selectedAiEngine', engineKey);
+
+    // Grava escolha no disco em brain.config.json
+    fetch('/api/engine/select', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ engineKey, engine })
+    }).catch(e => console.warn('Não foi possível gravar brain.config.json no disco:', e));
+
+    const selectEl = document.getElementById('aiEngineSelect');
+    if (selectEl && selectEl.value !== engineKey) {
+        selectEl.value = engineKey;
+    }
+
+    const box = document.getElementById('archPrimaryBox');
+    const iconEl = document.getElementById('archEngineIcon');
+    const nameEl = document.getElementById('archEngineName');
+
+    if (box) {
+        box.style.background = engine.gradient;
+        box.style.border = engine.border;
+        box.style.boxShadow = engine.shadow;
+    }
+    if (iconEl) iconEl.textContent = engine.icon;
+    if (nameEl) nameEl.textContent = engine.name;
+
+    // Se estiver no Workspace de um projeto, atualiza o botão contextual de ponte
+    const bridgeBtn = document.getElementById('pwContextualBridgeBtn');
+    if (bridgeBtn) {
+        bridgeBtn.innerHTML = `⚡ Gerar Ponte (${engine.label})`;
+    }
+
+    if (!silent) {
+        // Verifica se há um projeto ativo e se o arquivo de ponte já existe no disco
+        const projName = (typeof currentProjectData !== 'undefined' && currentProjectData && currentProjectData.name) || 
+                         (typeof currentProject !== 'undefined' && currentProject) || null;
+
+        if (projName && engine.bridgeFile && engine.bridgeFile !== 'UNIVERSAL') {
+            const files = (window.VAULT && window.VAULT.data && window.VAULT.data.files) || [];
+            const fullBridgePath = `projects/${projName}/${engine.bridgeFile}`.toLowerCase();
+            const exists = files.some(f => f.path.toLowerCase() === fullBridgePath);
+
+            if (exists) {
+                showSecondBrainToast(`✓ ${engine.icon} <strong>${engine.label}</strong> ativo! A ponte <code>${engine.bridgeFile}</code> já está pronta no projeto.`);
+            } else {
+                // Notificação Proativa com Ação Rápida em 1 Clique!
+                showAiBridgePrompt(projName, engineKey);
+            }
+        } else {
+            showSecondBrainToast(`${engine.icon} Motor padrão: <strong>${engine.label}</strong> (Gravado no disco em brain.config.json)!`);
+        }
+    }
+}
+
+function dismissAiBridgePrompt() {
+    const el = document.getElementById('aiBridgePromptBanner');
+    if (el) {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(15px) scale(0.95)';
+        el.style.transition = 'all 0.2s ease';
+        setTimeout(() => el.remove(), 200);
+    }
+}
+
+function showAiBridgePrompt(projectName, engineKey) {
+    dismissAiBridgePrompt();
+    const engine = AI_ENGINES[engineKey];
+    if (!engine || !engine.bridgeFile || engine.bridgeFile === 'UNIVERSAL') return;
+
+    const banner = document.createElement('div');
+    banner.id = 'aiBridgePromptBanner';
+    banner.className = 'ai-bridge-prompt-banner';
+    banner.innerHTML = `
+        <div class="ai-bridge-prompt-content">
+            <span class="ai-bridge-prompt-icon">${engine.icon}</span>
+            <div>
+                <div class="ai-bridge-prompt-title">Ativar ${engine.label} no projeto?</div>
+                <div class="ai-bridge-prompt-desc">
+                    O projeto <strong>${projectName}</strong> ainda não possui a ponte <code>${engine.bridgeFile}</code>. Deseja gerá-la agora para a IA começar a obedecer as regras?
+                </div>
+            </div>
+        </div>
+        <div class="ai-bridge-prompt-actions">
+            <button type="button" class="btn-prompt btn-prompt-secondary" onclick="dismissAiBridgePrompt()">Deixar para depois</button>
+            <button type="button" class="btn-prompt btn-prompt-primary" onclick="confirmGenerateBridgeFromPrompt('${projectName}', '${engineKey}')">
+                ⚡ Criar ${engine.bridgeFile}
+            </button>
+        </div>
+    `;
+
+    document.body.appendChild(banner);
+
+    setTimeout(() => {
+        const b = document.getElementById('aiBridgePromptBanner');
+        if (b === banner) dismissAiBridgePrompt();
+    }, 15000);
+}
+
+async function confirmGenerateBridgeFromPrompt(projectName, engineKey) {
+    dismissAiBridgePrompt();
+    await generateAiBridge(projectName, engineKey);
+    const bridgesList = document.getElementById('pwBridgesList');
+    if (bridgesList) {
+        bridgesList.innerHTML = renderProjectBridgesChips(projectName);
+    }
+}
+
+window.showAiBridgePrompt = showAiBridgePrompt;
+window.dismissAiBridgePrompt = dismissAiBridgePrompt;
+window.confirmGenerateBridgeFromPrompt = confirmGenerateBridgeFromPrompt;
+window.onAiEngineChange = onAiEngineChange;
+window.getSelectedAiEngine = getSelectedAiEngine;
+window.AI_ENGINES = AI_ENGINES;
+
+function openAiEngineHelpModal() {
+    const modal = document.getElementById('aiEngineHelpModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeAiEngineHelpModal() {
+    const modal = document.getElementById('aiEngineHelpModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+function handleAiEngineHelpBackdropClick(event) {
+    if (event.target && event.target.id === 'aiEngineHelpModal') {
+        closeAiEngineHelpModal();
+    }
+}
+
+// Suporte à tecla ESC para fechar o modal
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('aiEngineHelpModal');
+        if (modal && modal.style.display === 'flex') {
+            closeAiEngineHelpModal();
+        }
+    }
+});
+
+window.openAiEngineHelpModal = openAiEngineHelpModal;
+window.closeAiEngineHelpModal = closeAiEngineHelpModal;
+window.handleAiEngineHelpBackdropClick = handleAiEngineHelpBackdropClick;
+
+function renderProjectBridgesChips(projectName) {
+    const files = (window.VAULT && window.VAULT.data && window.VAULT.data.files) || [];
+    const prefix = `projects/${projectName}/`;
+    const projFiles = files.filter(f => f.path.startsWith(prefix));
+
+    const bridges = [
+        { key: 'cursor', file: '.cursorrules', label: '.cursorrules', icon: '⚡' },
+        { key: 'claude', file: 'CLAUDE.md', label: 'CLAUDE.md', icon: '🤖' },
+        { key: 'windsurf', file: '.windsurfrules', label: '.windsurfrules', icon: '🏄' },
+        { key: 'antigravity', file: 'GEMINI.md', label: 'GEMINI.md', icon: '🪐' },
+        { key: 'copilot', file: '.github/copilot-instructions.md', label: 'copilot-instructions.md', icon: '🐙' },
+        { key: 'cline', file: '.clinerules', label: '.clinerules', icon: '🦾' }
+    ];
+
+    return bridges.map(b => {
+        const fullPath = `${prefix}${b.file}`;
+        const exists = projFiles.some(f => f.path.toLowerCase() === fullPath.toLowerCase());
+
+        if (exists) {
+            return `
+                <span class="pw-bridge-chip active" onclick="navigateTo('${fullPath}')" title="Ponte ativa! Clique para visualizar ${b.file}">
+                    ✓ ${b.icon} ${b.label}
+                </span>
+            `;
+        } else {
+            return `
+                <span class="pw-bridge-chip pending" onclick="generateAiBridge('${projectName}', '${b.key}')" title="Clique para gerar ponte para ${b.file}">
+                    + ${b.icon} ${b.label}
+                </span>
+            `;
+        }
+    }).join('');
+}
+window.renderProjectBridgesChips = renderProjectBridgesChips;
+
+async function generateAiBridge(projectName, engineKey) {
+    const projName = projectName || (currentProjectData ? currentProjectData.name : currentProject);
+    if (!projName) return;
+
+    if (!isLocalEnvironment()) {
+        showOnlineDemoNotice('gerar arquivos de ponte de IA no disco local');
+        return;
+    }
+
+    const engine = AI_ENGINES[engineKey] || AI_ENGINES[getSelectedAiEngine()] || AI_ENGINES.cursor;
+
+    const bridgeTemplates = {
+        cursor: {
+            filename: '.cursorrules',
+            content: `# Diretrizes para Cursor AI — ${projName}\n\n> Este projeto é governado pelo **AI Second Brain**.\n> Antes de implementar código ou alterar arquitetura, consulte os contratos oficiais:\n\n## Contratos de Governança Obrigatórios\n- 📄 **Visão & Stack**: \`projects/${projName}/PROJECT.md\`\n- 💾 **Estado Atual & Roadmap**: \`projects/${projName}/CURRENT_STATE.md\`\n- 🏗️ **Padrões de Arquitetura**: \`projects/${projName}/ARCHITECTURE.md\`\n- ⚖️ **Histórico de Decisões (ADRs)**: \`projects/${projName}/DECISIONS/\`\n\n## Regras Mandatórias para o Cursor\n1. Respeite os padrões de código e arquitetura definidos.\n2. NUNCA altere a arquitetura sem registrar um novo ADR em \`projects/${projName}/DECISIONS/\`.\n3. Mantenha \`CURRENT_STATE.md\` sincronizado com as tarefas concluídas.\n4. Se a tarefa envolver IA, avalie regras determinísticas antes de usar LLMs.\n`
+        },
+        claude: {
+            filename: 'CLAUDE.md',
+            content: `# Instruções para Claude Code — ${projName}\n\n> Projeto governado pelo **AI Second Brain**.\n\n## Contratos de Arquitetura & Contexto\n- Leia \`projects/${projName}/PROJECT.md\` para visão do produto e stack.\n- Leia \`projects/${projName}/CURRENT_STATE.md\` para ver o que está pronto e pendente.\n- Leia \`projects/${projName}/ARCHITECTURE.md\` antes de criar componentes.\n- Consulte \`projects/${projName}/DECISIONS/\` para decisões anteriores.\n\n## Diretrizes de Operação\n- Não invente regras que contradigam os contratos de arquitetura.\n- Registre novas decisões em \`projects/${projName}/DECISIONS/\`.\n- Atualize o estado atual ao término de cada sessão.\n`
+        },
+        windsurf: {
+            filename: '.windsurfrules',
+            content: `# Regras para Windsurf (Cascade) — ${projName}\n\n> Projeto governado pelo ecossistema AI Second Brain.\n\n## Referências Obrigatórias\n- \`projects/${projName}/PROJECT.md\`: Visão geral e stack.\n- \`projects/${projName}/CURRENT_STATE.md\`: Estado do ciclo e tarefas ativas.\n- \`projects/${projName}/ARCHITECTURE.md\`: Desenho de componentes e padrões.\n- \`projects/${projName}/DECISIONS/\`: Histórico formal de ADRs.\n`
+        },
+        antigravity: {
+            filename: 'GEMINI.md',
+            content: `# Instruções para Google Antigravity — ${projName}\n\n> Este projeto é governado pelo AI Second Brain.\n\n## Regras Mandatórias\n1. Consulte \`projects/${projName}/PROJECT.md\` e \`ARCHITECTURE.md\` antes de codificar.\n2. Siga as regras globais em \`.agents/rules/\`.\n3. Atualize \`projects/${projName}/CURRENT_STATE.md\` e registre decisões em \`DECISIONS/\`.\n`
+        },
+        copilot: {
+            filename: '.github/copilot-instructions.md',
+            content: `# Diretrizes para GitHub Copilot — ${projName}\n\n> Projeto governado pelo AI Second Brain.\n\n## Contratos de Arquitetura\n- Consulte os contratos \`PROJECT.md\`, \`CURRENT_STATE.md\` e \`ARCHITECTURE.md\` em \`projects/${projName}/\`.\n- Siga os padrões documentados e registre decisões em \`DECISIONS/\`.\n`
+        },
+        cline: {
+            filename: '.clinerules',
+            content: `# Diretrizes para Roo Code / Cline — ${projName}\n\n> Projeto governado pelo AI Second Brain.\n\n## Contratos Obrigatórios\n- Leia \`projects/${projName}/PROJECT.md\` e \`ARCHITECTURE.md\`.\n- Mantenha \`CURRENT_STATE.md\` atualizado.\n- Registre decisões em \`projects/${projName}/DECISIONS/\`.\n`
+        }
+    };
+
+    try {
+        if (engineKey === 'universal') {
+            const list = ['cursor', 'claude', 'windsurf', 'antigravity', 'copilot', 'cline'];
+            for (const key of list) {
+                const b = bridgeTemplates[key];
+                await fetch('/api/file/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        path: `projects/${projName}/${b.filename}`,
+                        content: b.content
+                    })
+                });
+            }
+            showSecondBrainToast(`🌐 Todas as pontes de IA foram geradas com sucesso para <strong>${projName}</strong>!`);
+        } else {
+            const b = bridgeTemplates[engineKey] || bridgeTemplates.cursor;
+            await fetch('/api/file/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    path: `projects/${projName}/${b.filename}`,
+                    content: b.content
+                })
+            });
+            showSecondBrainToast(`✨ Ponte para <strong>${engine.label}</strong> (${b.filename}) gerada em ${projName}!`);
+        }
+
+        // Recarrega o vault e o workspace
+        if (window.VAULT) await window.VAULT.init();
+        if (currentView === 'project-workspace') {
+            await openProjectWorkspace(projName, 'overview');
+        }
+    } catch (err) {
+        alert('Erro ao gerar ponte de IA: ' + err.message);
+    }
+}
+window.generateAiBridge = generateAiBridge;
+
 // ── Universal Brain Dialog System (Confirmations & Prompts) ────
 let _brainConfirmResolver = null;
 
@@ -219,6 +561,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     initGraph();
     setupEventListeners();
     setupSearch();
+    try {
+        const engineRes = await fetch('/api/engine/current');
+        if (engineRes.ok) {
+            const engineConfig = await engineRes.json();
+            if (engineConfig && engineConfig.activeEngine) {
+                localStorage.setItem('selectedAiEngine', engineConfig.activeEngine);
+            }
+        }
+    } catch (e) {}
+    onAiEngineChange(getSelectedAiEngine(), true);
     showDashboard();
 });
 
@@ -2882,6 +3234,35 @@ function renderProjectOverviewTab() {
                                         </div>
                                     </div>
                                 `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Seção de Pontes de Contexto para IDEs (Agnosticidade Real) -->
+                        <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.06);">
+                            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                                <div>
+                                    <div style="display:flex; align-items:center; gap: 6px;">
+                                        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #38bdf8; letter-spacing: 0.05em;">
+                                            🔌 Pontes de IA para IDEs (.cursorrules, CLAUDE.md, etc.)
+                                        </span>
+                                        <button type="button" class="ai-engine-help-btn mini" onclick="openAiEngineHelpModal()" title="Como funcionam as pontes de IA no disco?">?</button>
+                                    </div>
+                                    <span style="font-size: 10px; color: var(--text-tertiary); display: block; margin-top: 2px;">
+                                        Conecta este projeto à sua IDE para que o agente leia os contratos automaticamente
+                                    </span>
+                                </div>
+                                <div style="display:flex; gap:6px;">
+                                    <button type="button" class="btn-gov create" id="pwContextualBridgeBtn" onclick="generateAiBridge('${d.name}', getSelectedAiEngine())" style="font-size: 10px; padding: 4px 10px; background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;">
+                                        ⚡ Gerar Ponte (${AI_ENGINES[getSelectedAiEngine()] ? AI_ENGINES[getSelectedAiEngine()].label : 'Ativa'})
+                                    </button>
+                                    <button type="button" class="btn-gov" onclick="generateAiBridge('${d.name}', 'universal')" style="font-size: 10px; padding: 4px 10px;" title="Gera arquivos de pontes para todas as IDEs suportadas simultaneamente">
+                                        🌐 Todas as IDEs
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Chips das pontes existentes no projeto -->
+                            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;" id="pwBridgesList">
+                                ${renderProjectBridgesChips(d.name)}
                             </div>
                         </div>
                     </div>

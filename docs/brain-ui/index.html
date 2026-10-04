@@ -484,10 +484,26 @@
                     <div class="dash-governance-grid">
                         <!-- Card 1: Arquitetura do Sistema -->
                         <div class="dash-card arch-card">
-                            <h3>🏗️ Arquitetura do Sistema</h3>
-                            <div class="arch-diagram">
+                            <div class="arch-card-header">
+                                <h3 style="margin: 0; font-size: 15px; white-space: nowrap;">🏗️ Arquitetura do Sistema</h3>
+                                <button type="button" class="ai-engine-help-btn" onclick="openAiEngineHelpModal()" title="Como funciona a troca de motor de IA e as pontes no disco?">?</button>
+                            </div>
+                            <div class="arch-diagram" style="margin-top: 14px;">
                                 <div class="arch-layer">
-                                    <div class="arch-box primary">ANTIGRAVITY PRO</div>
+                                    <div class="arch-box primary arch-node-interactive" id="archPrimaryBox" title="Clique para trocar a IDE ou Agente de IA orquestrador">
+                                        <span id="archEngineIcon">🪐</span>
+                                        <span id="archEngineName" style="margin: 0 4px;">GOOGLE ANTIGRAVITY</span>
+                                        <span class="arch-node-chevron">▾</span>
+                                        <select id="aiEngineSelect" class="arch-engine-overlay-select" onchange="onAiEngineChange(this.value)" title="Selecione sua IDE ou Agente de IA preferido">
+                                            <option value="antigravity">🪐 Google Antigravity</option>
+                                            <option value="cursor">⚡ Cursor AI</option>
+                                            <option value="claude">🤖 Claude Code</option>
+                                            <option value="windsurf">🏄 Windsurf (Cascade)</option>
+                                            <option value="copilot">🐙 GitHub Copilot</option>
+                                            <option value="cline">🦾 Roo Code / Cline</option>
+                                            <option value="universal">🌐 Universal (Agnóstico)</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="arch-connector">│</div>
                                 <div class="arch-layer triple">
@@ -1391,8 +1407,134 @@
         </div>
     </div>
 
+    <!-- Modal 4: Guia de Integração e Pontes de IA -->
+    <div id="aiEngineHelpModal" class="editor-modal-backdrop" style="display: none;" onclick="handleAiEngineHelpBackdropClick(event)">
+        <div class="editor-modal-card" style="max-width: 760px; height: auto; max-height: 88vh; overflow-y: auto;" role="dialog" aria-modal="true" aria-labelledby="aiEngineHelpTitle">
+            <div class="editor-header" style="background: linear-gradient(135deg, rgba(30, 27, 75, 0.7), rgba(15, 23, 42, 0.85));">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                        🌐
+                    </div>
+                    <div>
+                        <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #38bdf8; letter-spacing: 0.06em;">
+                            Guia de Governança &amp; Integração
+                        </div>
+                        <h2 id="aiEngineHelpTitle" style="margin: 0; font-size: 17px; font-weight: 700; color: #f8fafc;">
+                            Como Funciona a Troca de Motor de IA?
+                        </h2>
+                    </div>
+                </div>
+                <button type="button" class="editor-close-btn" onclick="closeAiEngineHelpModal()" aria-label="Fechar">✕</button>
+            </div>
 
+            <div style="padding: 24px; color: #cbd5e1; font-size: 13.5px; line-height: 1.6;">
+                <!-- Destaque 1: Como a IA e o Projeto sabem o que fazer na prática -->
+                <div class="ai-help-section" style="background: rgba(99, 102, 241, 0.05); border-color: rgba(99, 102, 241, 0.2);">
+                    <h3 style="font-size: 14.5px; color: #c7d2fe; margin: 0 0 8px 0; display: flex; align-items: center; gap: 8px;">
+                        <span>🧠</span> Como o Projeto &amp; a IA sabem o que fazer na prática?
+                    </h3>
+                    <p style="margin: 0 0 10px 0; color: var(--text-secondary);">
+                        Ferramentas como <strong>Cursor, Claude Code, Windsurf e Antigravity</strong> são programas independentes que rodam no seu sistema operacional. Elas <strong>não leem o navegador nem o painel web</strong>.
+                    </p>
+                    <p style="margin: 0 0 12px 0; color: var(--text-secondary);">
+                        A única ponte física entre o seu Segundo Cérebro e o agente de IA é um <strong>arquivo de texto na raiz do seu repositório</strong>. O fluxo opera assim:
+                    </p>
+                    <div style="background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 12px 16px; font-family: var(--font-mono); font-size: 11.5px; color: #94a3b8; line-height: 1.5; margin-bottom: 12px;">
+                        1. Você seleciona a ferramenta no nó do diagrama.<br>
+                        2. O arquivo de ponte correspondente (ex: <span style="color:#f43f5e;">CLAUDE.md</span> ou <span style="color:#a855f7;">.cursorrules</span>) é gravado no disco.<br>
+                        3. Quando você abre a IDE ou roda o comando no terminal (<code style="color:#38bdf8;">$ claude</code>), a IA lê esse arquivo.<br>
+                        4. O arquivo instrui a IA a consultar os contratos oficiais: <span style="color:#34d399;">PROJECT.md</span>, <span style="color:#34d399;">CURRENT_STATE.md</span> e <span style="color:#34d399;">DECISIONS/</span>.
+                    </div>
+                </div>
 
+                <!-- Destaque 2: Interface vs Disco & Segurança -->
+                <div class="ai-help-section">
+                    <h3 style="font-size: 14.5px; color: #f1f5f9; margin: 0 0 8px 0; display: flex; align-items: center; gap: 8px;">
+                        <span>🖥️</span> O que muda na Interface vs. no Disco?
+                    </h3>
+                    <p style="margin: 0 0 10px 0; color: var(--text-secondary);">
+                        Ao alternar o motor no nó do diagrama, a interface reage visualmente com as cores da ferramenta e adapta os botões rápidos do Workspace.
+                    </p>
+                    <div class="ai-help-callout warning" style="background: rgba(245, 158, 11, 0.08); border-left: 3px solid #f59e0b; border-radius: 6px; padding: 10px 14px; font-size: 12.5px; color: #fbbf24;">
+                        <strong>🔒 Princípio de Soberania do Desenvolvedor:</strong> O sistema <em>não</em> injeta ou altera arquivos no seu repositório Git de forma invisível. Você decide quando gerar a ponte para manter seu histórico de commits 100% limpo e sob seu controle.
+                    </div>
+                </div>
+
+                <!-- Tabela de Ferramentas e Arquivos -->
+                <div class="ai-help-section">
+                    <h3 style="font-size: 14.5px; color: #f1f5f9; margin: 0 0 8px 0; display: flex; align-items: center; gap: 8px;">
+                        <span>📄</span> Arquivos que cada Ferramenta lê na Raiz do Projeto
+                    </h3>
+                    <p style="margin: 0 0 12px 0; color: var(--text-secondary); font-size: 13px;">
+                        Cada ecossistema possui seu próprio arquivo padrão de descoberta:
+                    </p>
+                    <div class="ai-help-table-wrap" style="overflow-x: auto;">
+                        <table class="ai-help-table">
+                            <thead>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); text-align: left; color: var(--text-tertiary);">
+                                    <th>Ferramenta</th>
+                                    <th>Arquivo de Ponte</th>
+                                    <th>Como Opera na Prática</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                    <td style="font-weight: 600; color: #f8fafc;">🤖 Claude Code</td>
+                                    <td><code style="color: #f43f5e; background: rgba(244,63,94,0.1); padding: 2px 6px; border-radius: 4px;">CLAUDE.md</code></td>
+                                    <td style="color: var(--text-secondary);">Ao rodar <code>claude</code> no terminal, ele lê o arquivo e segue o Segundo Cérebro.</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                    <td style="font-weight: 600; color: #f8fafc;">⚡ Cursor AI</td>
+                                    <td><code style="color: #a855f7; background: rgba(168,85,247,0.1); padding: 2px 6px; border-radius: 4px;">.cursorrules</code></td>
+                                    <td style="color: var(--text-secondary);">O agente do Cursor carrega as regras automaticamente em cada prompt e chat.</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                    <td style="font-weight: 600; color: #f8fafc;">🏄 Windsurf</td>
+                                    <td><code style="color: #10b981; background: rgba(16,185,129,0.1); padding: 2px 6px; border-radius: 4px;">.windsurfrules</code></td>
+                                    <td style="color: var(--text-secondary);">O Cascade Agent aplica as diretrizes de arquitetura e decisões registradas.</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                    <td style="font-weight: 600; color: #f8fafc;">🪐 Antigravity</td>
+                                    <td><code style="color: #38bdf8; background: rgba(56,189,248,0.1); padding: 2px 6px; border-radius: 4px;">GEMINI.md</code></td>
+                                    <td style="color: var(--text-secondary);">O assistente nativo lê regras de <code>.agents/rules/</code> e governança central.</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                    <td style="font-weight: 600; color: #f8fafc;">🐙 GitHub Copilot</td>
+                                    <td><code style="color: #94a3b8; background: rgba(148,163,184,0.1); padding: 2px 6px; border-radius: 4px;">copilot-instructions.md</code></td>
+                                    <td style="color: var(--text-secondary);">Instruções personalizadas no diretório <code>.github/</code>.</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 600; color: #f8fafc;">🦾 Roo Code / Cline</td>
+                                    <td><code style="color: #ec4899; background: rgba(236,72,153,0.1); padding: 2px 6px; border-radius: 4px;">.clinerules</code></td>
+                                    <td style="color: var(--text-secondary);">Diretrizes mandatórias para execução autônoma de tarefas no VS Code.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Destaque 3: Super-poder da Coexistência -->
+                <div class="ai-help-section" style="margin-bottom: 24px;">
+                    <div class="ai-help-callout success" style="background: rgba(16, 185, 129, 0.08); border-left: 3px solid #10b981; border-radius: 6px; padding: 12px 16px; font-size: 13px; color: #34d399;">
+                        <strong style="color: #6ee7b7; display: block; margin-bottom: 4px; font-size: 13.5px;">💡 Super-Poder: Coexistência Sem Conflitos!</strong>
+                        Todas essas pontes podem conviver na mesma pasta do projeto. Você pode usar Cursor pela manhã, Claude Code à tarde no terminal e Antigravity à noite: <strong>todas as IAs compartilharão a mesma memória, os mesmos contratos e as mesmas decisões arquiteturais!</strong>
+                    </div>
+                </div>
+
+                <!-- Rodapé com Ações Rápidas -->
+                <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; flex-wrap: wrap; gap: 10px;">
+                    <div style="font-size: 12px; color: var(--text-tertiary);">
+                        Dica: Gere as pontes diretamente no Workspace do seu projeto com 1 clique.
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn btn-secondary" onclick="closeAiEngineHelpModal()">
+                            Entendi! Fechar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="three.min.js"></script>
     <script src="OrbitControls.js"></script>
     <script src="marked.min.js"></script>
