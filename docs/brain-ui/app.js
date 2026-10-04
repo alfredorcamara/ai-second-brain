@@ -441,19 +441,24 @@ function renderDashboardProjects() {
 
     const projectsList = Array.from(projectsMap.values());
 
+    const countBadge = document.getElementById('dashProjectsCountBadge');
+    if (countBadge) {
+        countBadge.textContent = projectsList.length;
+    }
+
     if (projectsList.length === 0) {
         // Nenhum projeto conectado:
         slot.innerHTML = `
-            <div class="dash-card status-card" onclick="openQuickstartWizard()" style="cursor: pointer; grid-column: span 2; border: 1px dashed rgba(99, 102, 241, 0.45);">
+            <div class="dash-card status-card" onclick="openQuickstartWizard()" style="cursor: pointer; grid-column: 1 / -1; border: 1px dashed rgba(99, 102, 241, 0.45); padding: 32px;">
                 <div class="status-indicator" style="background: var(--accent-primary); box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);"></div>
                 <div class="card-content">
-                    <h3>Nenhum Projeto Conectado</h3>
-                    <p>O workspace está limpo e agnóstico. Use o Quickstart Studio para criar ou conectar um projeto agora mesmo.</p>
+                    <h3 style="margin: 0 0 6px 0; font-size: 16px;">Nenhum Projeto Conectado</h3>
+                    <p style="margin-bottom: 12px; color: var(--text-secondary); font-size: 13px;">O workspace está limpo e agnóstico. Use o Quickstart Studio para criar ou conectar um projeto agora mesmo.</p>
                     <span class="status-badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
                         ✨ Clique aqui para iniciar o Quickstart de 3 minutos
                     </span>
                 </div>
-                <div class="card-icon" style="opacity: 0.8;">🚀</div>
+                <div class="card-icon" style="opacity: 0.8; font-size: 32px;">🚀</div>
             </div>
         `;
         return;

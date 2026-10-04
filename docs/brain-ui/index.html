@@ -84,12 +84,6 @@
                     <span class="breadcrumb-item active">🧠 Visão Geral</span>
                 </div>
                 <div class="topbar-actions">
-                    <button id="btnSolutionDocsTop" class="btn-solution-docs-top" onclick="navigateTo('solution-docs')" title="Abrir Documentação Completa da Solução">
-                        <span class="btn-qs-icon">📘</span> Documentação
-                    </button>
-                    <button id="btnQuickstartTop" class="btn-quickstart-top" onclick="openQuickstartWizard()" title="Criar novo projeto ou vincular repositório existente">
-                        <span class="btn-qs-icon">✨</span> Conectar Projeto
-                    </button>
                     <div class="vault-status-container">
                         <span id="vaultStatusBadge" class="vault-status snapshot" title="Status do Cérebro">
                             <span class="status-dot snapshot"></span> Snapshot
@@ -441,7 +435,7 @@
 
             <!-- Dashboard overlay on first load -->
             <div id="dashboardOverlay" class="dashboard-overlay active">
-                <div class="dashboard-grid">
+                <div class="dashboard-container">
                     <div class="dash-card hero-card">
                         <div class="hero-content">
                             <h1>AI Second Brain</h1>
@@ -460,11 +454,12 @@
                                     </svg>
                                     Ver Grafo Neural
                                 </button>
-                                <button class="btn btn-secondary" onclick="navigateTo('projects')">
-                                    <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
-                                        <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/>
+                                <button class="btn btn-hero-docs" onclick="navigateTo('solution-docs')" title="Abrir Documentação Completa da Solução">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
                                     </svg>
-                                    Ver Projetos
+                                    Documentação
                                 </button>
                             </div>
                         </div>
@@ -485,103 +480,128 @@
                         </div>
                     </div>
 
-                    <!-- Dynamic Projects Slot (Rendered via App Controller) -->
-                    <div id="dynamicProjectsSlot" style="display: contents;"></div>
+                    <!-- Governança do Cérebro (3 Colunas Perfeitas) -->
+                    <div class="dash-governance-grid">
+                        <!-- Card 1: Arquitetura do Sistema -->
+                        <div class="dash-card arch-card">
+                            <h3>🏗️ Arquitetura do Sistema</h3>
+                            <div class="arch-diagram">
+                                <div class="arch-layer">
+                                    <div class="arch-box primary">ANTIGRAVITY PRO</div>
+                                </div>
+                                <div class="arch-connector">│</div>
+                                <div class="arch-layer triple">
+                                    <div class="arch-box accent">RULES</div>
+                                    <div class="arch-box accent">SKILLS</div>
+                                    <div class="arch-box accent">KNOWLEDGE</div>
+                                </div>
+                                <div class="arch-connector">│</div>
+                                <div class="arch-layer">
+                                    <div class="arch-box secondary">AI GATEWAY</div>
+                                </div>
+                                <div class="arch-connector">│</div>
+                                <div class="arch-layer triple">
+                                    <div class="arch-box aijev">AIJEV</div>
+                                    <div class="arch-box llm">LLM</div>
+                                    <div class="arch-box rules">RULES</div>
+                                </div>
+                                <div class="arch-connector">│</div>
+                                <div class="arch-layer triple">
+                                    <div class="arch-box project">APIs / Backend</div>
+                                    <div class="arch-box project">SaaS / Web</div>
+                                    <div class="arch-box project">Jogos / Mobile</div>
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="dash-card flow-card">
-                        <h3>🧭 AI Decision Flow</h3>
-                        <div class="flow-diagram">
-                            <div class="flow-step">
-                                <div class="flow-node start">TAREFA</div>
-                                <div class="flow-arrow">↓</div>
-                            </div>
-                            <div class="flow-step">
-                                <div class="flow-node decision">Determinística?</div>
-                                <div class="flow-branch">
-                                    <span class="flow-yes">SIM → CÓDIGO</span>
+                        <!-- Card 2: AI Decision Flow -->
+                        <div class="dash-card flow-card">
+                            <h3>🧭 AI Decision Flow</h3>
+                            <div class="flow-diagram">
+                                <div class="flow-step">
+                                    <div class="flow-node start">TAREFA</div>
+                                    <div class="flow-arrow">↓</div>
                                 </div>
-                                <div class="flow-arrow">NÃO ↓</div>
-                            </div>
-                            <div class="flow-step">
-                                <div class="flow-node decision">Decisão?</div>
-                                <div class="flow-branch">
-                                    <span class="flow-yes">SIM → AIJEV</span>
+                                <div class="flow-step">
+                                    <div class="flow-node decision">Determinística?</div>
+                                    <div class="flow-branch">
+                                        <span class="flow-yes">SIM → CÓDIGO</span>
+                                    </div>
+                                    <div class="flow-arrow">NÃO ↓</div>
                                 </div>
-                                <div class="flow-arrow">NÃO ↓</div>
-                            </div>
-                            <div class="flow-step">
-                                <div class="flow-node decision">Geração?</div>
-                                <div class="flow-branch">
-                                    <span class="flow-yes">SIM → LLM</span>
+                                <div class="flow-step">
+                                    <div class="flow-node decision">Decisão?</div>
+                                    <div class="flow-branch">
+                                        <span class="flow-yes">SIM → AIJEV</span>
+                                    </div>
+                                    <div class="flow-arrow">NÃO ↓</div>
                                 </div>
-                                <div class="flow-arrow">↓</div>
+                                <div class="flow-step">
+                                    <div class="flow-node decision">Geração?</div>
+                                    <div class="flow-branch">
+                                        <span class="flow-yes">SIM → LLM</span>
+                                    </div>
+                                    <div class="flow-arrow">↓</div>
+                                </div>
+                                <div class="flow-step">
+                                    <div class="flow-node end">VALIDAÇÃO</div>
+                                </div>
                             </div>
-                            <div class="flow-step">
-                                <div class="flow-node end">VALIDAÇÃO</div>
+                        </div>
+
+                        <!-- Card 3: Métricas do Cérebro -->
+                        <div class="dash-card metrics-card">
+                            <h3>📊 Métricas do Cérebro</h3>
+                            <div class="metrics-grid">
+                                <div class="metric">
+                                    <span class="metric-value" id="metricRules">7</span>
+                                    <span class="metric-label">Rules</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-value" id="metricSkills">8</span>
+                                    <span class="metric-label">Skills</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-value" id="metricProjects">3</span>
+                                    <span class="metric-label">Projects</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-value" id="metricKnowledge">6</span>
+                                    <span class="metric-label">Knowledge</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-value" id="metricDecisions">5</span>
+                                    <span class="metric-label">Decisions</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-value" id="metricMemory">3</span>
+                                    <span class="metric-label">Memory</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="dash-card metrics-card">
-                        <h3>📊 Métricas do Cérebro</h3>
-                        <div class="metrics-grid">
-                            <div class="metric">
-                                <span class="metric-value" id="metricRules">7</span>
-                                <span class="metric-label">Rules</span>
+                    <!-- Seção Exclusiva de Projetos -->
+                    <section class="dash-projects-section" id="dashProjectsSection">
+                        <div class="dash-section-header">
+                            <div class="dash-section-title-wrap">
+                                <span class="dash-section-icon">🚀</span>
+                                <div>
+                                    <h2 class="dash-section-title">Meus Projetos Governamentais</h2>
+                                    <span class="dash-section-subtitle">Workspaces conectados e governados pelo AI Second Brain</span>
+                                </div>
+                                <span class="dash-section-badge" id="dashProjectsCountBadge">0</span>
                             </div>
-                            <div class="metric">
-                                <span class="metric-value" id="metricSkills">8</span>
-                                <span class="metric-label">Skills</span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-value" id="metricProjects">3</span>
-                                <span class="metric-label">Projects</span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-value" id="metricKnowledge">6</span>
-                                <span class="metric-label">Knowledge</span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-value" id="metricDecisions">5</span>
-                                <span class="metric-label">Decisions</span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-value" id="metricMemory">3</span>
-                                <span class="metric-label">Memory</span>
+                            <div class="dash-section-actions">
+                                <button class="btn-dash-section-act" onclick="openQuickstartWizard()" title="Criar novo projeto ou vincular pasta existente">
+                                    <span>✨</span> Conectar Novo Projeto
+                                </button>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="dash-card arch-card">
-                        <h3>🏗️ Arquitetura do Sistema</h3>
-                        <div class="arch-diagram">
-                            <div class="arch-layer">
-                                <div class="arch-box primary">ANTIGRAVITY PRO</div>
-                            </div>
-                            <div class="arch-connector">│</div>
-                            <div class="arch-layer triple">
-                                <div class="arch-box accent">RULES</div>
-                                <div class="arch-box accent">SKILLS</div>
-                                <div class="arch-box accent">KNOWLEDGE</div>
-                            </div>
-                            <div class="arch-connector">│</div>
-                            <div class="arch-layer">
-                                <div class="arch-box secondary">AI GATEWAY</div>
-                            </div>
-                            <div class="arch-connector">│</div>
-                            <div class="arch-layer triple">
-                                <div class="arch-box aijev">AIJEV</div>
-                                <div class="arch-box llm">LLM</div>
-                                <div class="arch-box rules">RULES</div>
-                            </div>
-                            <div class="arch-connector">│</div>
-                            <div class="arch-layer triple">
-                                <div class="arch-box project">APIs / Backend</div>
-                                <div class="arch-box project">SaaS / Web</div>
-                                <div class="arch-box project">Jogos / Mobile</div>
-                            </div>
-                        </div>
-                    </div>
+                        <!-- Dynamic Projects Grid (Rendered via App Controller) -->
+                        <div class="dash-projects-grid" id="dynamicProjectsSlot"></div>
+                    </section>
                 </div>
             </div>
 

@@ -1538,13 +1538,129 @@ body {
     display: block;
 }
 
+.dashboard-container,
 .dashboard-grid {
-    padding: 24px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 20px;
-    max-width: 1400px;
+    padding: 28px;
+    max-width: 1440px;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* ── Governança do Cérebro (3 Colunas Perfeitas) ─── */
+.dash-governance-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.dash-governance-grid .dash-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 380px;
+}
+
+.dash-governance-grid .flow-diagram,
+.dash-governance-grid .arch-diagram {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.dash-governance-grid .metrics-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-content: center;
+    gap: 14px;
+}
+
+/* ── Área Exclusiva de Projetos ───────────────────── */
+.dash-projects-section {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 8px;
+}
+
+.dash-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dash-section-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.dash-section-icon {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.dash-section-title {
+    font-size: 19px;
+    font-weight: 700;
+    color: #f8fafc;
+    letter-spacing: -0.3px;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.dash-section-subtitle {
+    display: block;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+}
+
+.dash-section-badge {
+    background: rgba(99, 102, 241, 0.18);
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.35);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
+}
+
+.btn-dash-section-act {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.35);
+    color: #c7d2fe;
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(8px);
+}
+
+.btn-dash-section-act:hover {
+    background: rgba(99, 102, 241, 0.25);
+    border-color: #818cf8;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+}
+
+/* Grid Dedicado de Projetos */
+.dash-projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 20px;
 }
 
 /* ── Dashboard Cards ──────────────────────────────── */
@@ -1982,9 +2098,23 @@ body {
         display: none;
     }
 
+    .dashboard-container,
     .dashboard-grid {
-        grid-template-columns: 1fr;
         padding: 16px;
+    }
+
+    .dash-governance-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dash-projects-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dash-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
     }
 
     .hero-content h1 {
@@ -2307,6 +2437,19 @@ body {
 .btn-hero-qs:hover {
     box-shadow: 0 0 30px rgba(139, 92, 246, 0.65) !important;
     transform: translateY(-2px) !important;
+}
+
+.btn-hero-docs {
+    background: linear-gradient(135deg, #2563eb 0%, #4f46e5 50%, #7c3aed 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 18px rgba(79, 70, 229, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.btn-hero-docs:hover {
+    box-shadow: 0 6px 28px rgba(99, 102, 241, 0.65) !important;
+    transform: translateY(-2px) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
 }
 
 /* Modal Backdrop */
