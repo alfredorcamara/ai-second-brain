@@ -255,7 +255,7 @@ function renderNavItem(item, depth = 0) {
                     </span>
                     ${isTopProject ? `
                         <div class="nav-project-actions">
-                            <button class="nav-act-btn" onclick="event.stopPropagation(); openProjectWorkspace('${escapeHtml(item.label)}', 'graph')" title="Constelação Neural">🔮</button>
+                            <button class="nav-act-btn" onclick="event.stopPropagation(); openProjectWorkspace('${escapeHtml(item.label)}', 'graph')" title="Grafo Neural">🔮</button>
                             <button class="nav-act-btn" onclick="event.stopPropagation(); openProjectWorkspace('${escapeHtml(item.label)}', 'settings')" title="Gerenciar Projeto">⚙️</button>
                         </div>
                     ` : ''}
@@ -497,7 +497,7 @@ function renderDashboardProjects() {
                             🚀 Abrir Workspace
                         </button>
                         <button class="btn-dash-act" onclick="event.stopPropagation(); openProjectWorkspace('${folderName}', 'graph')">
-                            🔮 Constelação
+                            🔮 Grafo Neural
                         </button>
                         <button class="btn-dash-act" onclick="event.stopPropagation(); openProjectWorkspace('${folderName}', 'settings')">
                             ⚙️ Gerenciar
@@ -1635,7 +1635,7 @@ function switchProjectTab(tabId) {
         'overview': 'Visão Geral',
         'research': '🔬 Research Lab',
         'memory': 'Memória & Saúde',
-        'graph': 'Constelação Neural',
+        'graph': 'Grafo Neural',
         'backup': 'Backup & Exportação',
         'settings': 'Gerenciar & Desvincular'
     };
@@ -2401,15 +2401,45 @@ function renderProjectGraphTab() {
 
         const btnZoomIn = document.getElementById('btnPwZoomIn');
         const btnZoomOut = document.getElementById('btnPwZoomOut');
+        const btnRotateLeft = document.getElementById('btnPwRotateLeft');
+        const btnRotateRight = document.getElementById('btnPwRotateRight');
+        const btnAutoOrbit = document.getElementById('btnPwAutoOrbit');
+        const btnShake = document.getElementById('btnPwShake');
         const btnReset = document.getElementById('btnPwResetView');
+        const toggleIcons = document.getElementById('togglePwIcons');
 
         if (btnZoomIn) btnZoomIn.onclick = () => projectGraph && projectGraph.zoomIn();
         if (btnZoomOut) btnZoomOut.onclick = () => projectGraph && projectGraph.zoomOut();
+        if (btnRotateLeft) btnRotateLeft.onclick = () => projectGraph && projectGraph.rotateBy(-Math.PI / 8);
+        if (btnRotateRight) btnRotateRight.onclick = () => projectGraph && projectGraph.rotateBy(Math.PI / 8);
+        if (btnAutoOrbit) {
+            btnAutoOrbit.onclick = () => {
+                if (!projectGraph) return;
+                const running = projectGraph.toggleAutoOrbit();
+                btnAutoOrbit.classList.toggle('active', running);
+            };
+        }
+        if (btnShake) btnShake.onclick = () => projectGraph && projectGraph.reheat(1.0);
         if (btnReset) btnReset.onclick = () => projectGraph && projectGraph.resetView();
+        if (toggleIcons) {
+            toggleIcons.onchange = (e) => {
+                if (projectGraph) projectGraph.setShowIcons(e.target.checked);
+            };
+        }
 
         projectGraph.onCameraChange = (state) => {
             const zEl = document.getElementById('pwHudZoomPill');
             if (zEl) zEl.textContent = `🔍 ${state.zoomPercent}%`;
+            const rEl = document.getElementById('pwHudRotationPill');
+            if (rEl) {
+                if (state.autoRotate) {
+                    rEl.textContent = '🪐 Em Órbita';
+                    rEl.style.color = '#38bdf8';
+                } else {
+                    rEl.textContent = '🌍 3D Planeta';
+                    rEl.style.color = '';
+                }
+            }
         };
 
         projectGraph.onNodeDblClick = (node) => {
@@ -2417,7 +2447,7 @@ function renderProjectGraphTab() {
         };
     }
 
-    // Monta a constelação radial do projeto
+    // Monta o grafo orbital 3D do projeto
     const projectName = currentProjectData.name;
     const allFiles = (window.VAULT && window.VAULT.data && window.VAULT.data.files) || [];
 
@@ -2438,7 +2468,8 @@ function renderProjectGraphTab() {
             group: 'projects',
             size: 32,
             icon: '🚀',
-            path: `projects/${projectName}/PROJECT.md`
+            path: `projects/${projectName}/PROJECT.md`,
+            isCentral: true
         }
     ];
 
@@ -2473,6 +2504,16 @@ function renderProjectGraphTab() {
     const colors = (window.VAULT && window.VAULT.data && window.VAULT.data.groupColors) || {};
     projectGraph.loadData(nodes, edges, colors);
     projectGraph.start();
+
+    // Sincroniza estado inicial dos botões e do toggle de ícones
+    const toggleIcons = document.getElementById('togglePwIcons');
+    if (toggleIcons && projectGraph) {
+        projectGraph.setShowIcons(toggleIcons.checked);
+    }
+    const btnAutoOrbit = document.getElementById('btnPwAutoOrbit');
+    if (btnAutoOrbit && projectGraph) {
+        btnAutoOrbit.classList.toggle('active', projectGraph.controls.autoRotate);
+    }
 
     const countEl = document.getElementById('pwGraphNodeCount');
     if (countEl) countEl.textContent = nodes.length;
@@ -3281,7 +3322,7 @@ function renderResearchCardHtml(r) {
                         <div class="rl-card-icon">🔬</div>
                         <div class="rl-card-title-text">
                             <h3 class="rl-card-title">${escapeHtml(topic)}</h3>
-                            <span class="rl-card-slug">projects/${escapeHtml(currentProject)}/RESEARCH/${escapeHtml(r.slug)}</span>
+                            <span class="rl-card-slug" title="projects/${escapeHtml(currentProject)}/RESEARCH/${escapeHtml(r.slug)}">projects/${escapeHtml(currentProject)}/RESEARCH/${escapeHtml(r.slug)}</span>
                         </div>
                     </div>
                     <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
@@ -3289,7 +3330,6 @@ function renderResearchCardHtml(r) {
                         <button class="btn-rl-del" title="Excluir este laboratório de pesquisa e seus arquivos" onclick="confirmDeleteResearchLab('${escapeHtml(r.slug)}', '${escapeHtml(topic).replace(/'/g, "\\'")}')">🗑️</button>
                     </div>
                 </div>
-
 
                 <!-- Prompt Vivo Box -->
                 <div class="rl-card-prompt-box">
@@ -3307,16 +3347,16 @@ function renderResearchCardHtml(r) {
                     </div>
                 </div>
 
-                <!-- Camadas de Arquivos -->
+                <!-- Camadas de Arquivos Interativas -->
                 <div class="rl-card-layers">
-                    <div class="rl-layer-chip knowledge">
+                    <div class="rl-layer-chip knowledge" onclick="openDecomposeModal('${escapeHtml(r.slug)}')" style="cursor: pointer;" title="Clique para explorar os ${knowledgeCount} arquivos conceituais em knowledge/">
                         <span class="rl-layer-chip-icon">📘</span>
                         <div>
                             <div class="rl-layer-chip-count">${knowledgeCount}</div>
                             <div class="rl-layer-chip-label">knowledge/</div>
                         </div>
                     </div>
-                    <div class="rl-layer-chip actionable">
+                    <div class="rl-layer-chip actionable" onclick="openDecomposeModal('${escapeHtml(r.slug)}')" style="cursor: pointer;" title="Clique para explorar as ${actionableCount} especificações práticas em actionable/">
                         <span class="rl-layer-chip-icon">🛠️</span>
                         <div>
                             <div class="rl-layer-chip-count">${actionableCount}</div>
@@ -3326,21 +3366,21 @@ function renderResearchCardHtml(r) {
                 </div>
             </div>
 
-            <!-- Ações do Card -->
+            <!-- Ações do Card (Grid Harmônico e Proporcional) -->
             <div class="rl-card-actions">
                 <button class="btn-rl-action primary" onclick="startResearchExecution('${escapeHtml(r.slug)}')">
                     <span>${r.status === 'completed' ? '🔄' : '▶️'}</span> ${r.status === 'completed' ? 'Recalcular / Atualizar' : 'Pesquisar Agora'}
                 </button>
-                <button class="btn-rl-action" onclick="switchProjectTab('graph')" title="Visualizar este laboratório orbitando o projeto na Constelação 3D">
-                    <span>🔮</span> Grafo 3D
-                </button>
-                <button class="btn-rl-action" onclick="openDecomposeModal('${escapeHtml(r.slug)}')">
+                <button class="btn-rl-action btn-rl-subtopics" onclick="openDecomposeModal('${escapeHtml(r.slug)}')" title="Ver estrutura detalhada de subtópicos e arquivos">
                     <span>🧩</span> Subtópicos & Arquivos
                 </button>
-                <button class="btn-rl-action" onclick="openOverviewDoc('${escapeHtml(r.slug)}')">
+                <button class="btn-rl-action btn-rl-overview" onclick="openOverviewDoc('${escapeHtml(r.slug)}')" title="Abrir documento mestre OVERVIEW.md">
                     <span>📄</span> OVERVIEW.md
                 </button>
-                <button class="btn-rl-action" onclick="openResearchFolderInExplorer('${escapeHtml(r.slug)}')">
+                <button class="btn-rl-action btn-rl-graph" onclick="switchProjectTab('graph')" title="Visualizar este laboratório orbitando o projeto no Grafo Neural 3D">
+                    <span>🔮</span> Grafo Neural
+                </button>
+                <button class="btn-rl-action btn-rl-folder" onclick="openResearchFolderInExplorer('${escapeHtml(r.slug)}')" title="Abrir pasta física da pesquisa no Windows Explorer">
                     <span>📂</span> Abrir Pasta
                 </button>
             </div>

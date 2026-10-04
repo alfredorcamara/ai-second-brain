@@ -243,7 +243,7 @@ ${synthResult.content}
         }
 
         overviewMd += `---\n\n`;
-        overviewMd += `*Todos os arquivos acima estão conectados à Constelação Neural 3D do projeto no AI Second Brain.*\n`;
+        overviewMd += `*Todos os arquivos acima estão conectados ao Grafo Neural 3D do projeto no AI Second Brain.*\n`;
 
         fs.writeFileSync(overviewPath, overviewMd, 'utf-8');
 

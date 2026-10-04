@@ -4689,8 +4689,11 @@ body {
     font-size: 11px;
     font-family: var(--font-mono);
     color: var(--text-tertiary);
-    word-break: break-all;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     display: block;
+    max-width: 100%;
 }
 
 .rl-card-status-badge {
@@ -4770,27 +4773,44 @@ body {
     flex: 1;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 6px;
-    padding: 8px 10px;
+    border-radius: 8px;
+    padding: 8px 12px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    transition: all var(--transition-fast);
+}
+
+.rl-layer-chip:hover {
+    background: rgba(255, 255, 255, 0.07);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .rl-layer-chip.knowledge {
-    border-color: rgba(56, 189, 248, 0.2);
+    border-color: rgba(56, 189, 248, 0.22);
+}
+
+.rl-layer-chip.knowledge:hover {
+    border-color: rgba(56, 189, 248, 0.5);
+    background: rgba(56, 189, 248, 0.08);
 }
 
 .rl-layer-chip.actionable {
-    border-color: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.22);
+}
+
+.rl-layer-chip.actionable:hover {
+    border-color: rgba(16, 185, 129, 0.5);
+    background: rgba(16, 185, 129, 0.08);
 }
 
 .rl-layer-chip-icon {
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .rl-layer-chip-count {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     color: #ffffff;
     font-family: var(--font-mono);
@@ -4803,14 +4823,13 @@ body {
     font-weight: 600;
 }
 
-/* Card Actions */
+/* Card Actions (Grid Proporcional e Harmônico) */
 .rl-card-actions {
-    display: flex;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
     padding-top: 14px;
-    flex-wrap: wrap;
 }
 
 .btn-rl-action {
@@ -4819,19 +4838,29 @@ body {
     color: var(--text-secondary);
     font-size: 11px;
     font-weight: 600;
-    padding: 6px 10px;
-    border-radius: 6px;
+    padding: 8px 10px;
+    border-radius: 7px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
     transition: all var(--transition-fast);
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rl-card-actions .btn-rl-action {
+    width: 100%;
 }
 
 .btn-rl-action:hover {
-    background: rgba(99, 102, 241, 0.15);
-    border-color: rgba(99, 102, 241, 0.35);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.22);
     color: #ffffff;
+    transform: translateY(-1px);
 }
 
 .btn-rl-action.primary {
@@ -4840,9 +4869,53 @@ body {
     color: #c4b5fd;
 }
 
-.btn-rl-action.primary:hover {
-    background: var(--accent-primary);
+.rl-card-actions .btn-rl-action.primary {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.28), rgba(139, 92, 246, 0.2));
+    border-color: rgba(139, 92, 246, 0.45);
+    color: #f5f3ff;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.2);
+}
+
+.rl-card-actions .btn-rl-action.primary:hover {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-color: #a78bfa;
     color: #ffffff;
+    box-shadow: 0 6px 22px rgba(99, 102, 241, 0.45);
+    transform: translateY(-1px);
+}
+
+/* Micro-acentos temáticos nos botões de ação */
+.btn-rl-action.btn-rl-subtopics:hover {
+    background: rgba(56, 189, 248, 0.15);
+    border-color: rgba(56, 189, 248, 0.45);
+    color: #7dd3fc;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+}
+
+.btn-rl-action.btn-rl-overview:hover {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.45);
+    color: #6ee7b7;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+}
+
+.btn-rl-action.btn-rl-graph:hover {
+    background: rgba(168, 85, 247, 0.15);
+    border-color: rgba(168, 85, 247, 0.45);
+    color: #d8b4fe;
+    box-shadow: 0 0 12px rgba(168, 85, 247, 0.2);
+}
+
+.btn-rl-action.btn-rl-folder:hover {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: rgba(245, 158, 11, 0.45);
+    color: #fde68a;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.2);
 }
 
 .btn-rl-action.danger,

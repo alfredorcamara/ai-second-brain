@@ -4,7 +4,7 @@
 > **Autor / Criador:** Alfredo AI OS  
 > **Arquitetura:** Hub Central de Conhecimento & Repositórios Satélites  
 > **Status:** 🟢 Operacional & UX/UI Avançado  
-> **Versão:** 2.0 (Com Research Lab Autônomo e Constelação Neural 3D)
+> **Versão:** 2.0 (Com Research Lab Autônomo e Grafo Neural 3D)
 
 ---
 
@@ -15,7 +15,7 @@
 3. [Governança & Roteamento de IA (AIJev First)](#3-governança--roteamento-de-ia-aijev-first)
 4. [O Laboratório de Pesquisa Autônomo (Research Lab)](#4-o-laboratório-de-pesquisa-autônomo-research-lab)
 5. [Ciclo de Vida de um Projeto na Prática (Hands-on)](#5-ciclo-de-vida-de-um-projeto-na-prática-hands-on)
-6. [Constelação Neural 3D & Recursos Visuais](#6-constelação-neural-3d--recursos-visuais)
+6. [Grafo Neural 3D & Recursos Visuais](#6-grafo-neural-3d--recursos-visuais)
 7. [Checklists de Governança & FAQ Técnico](#7-checklists-de-governança--faq-técnico)
 
 ---
@@ -54,7 +54,7 @@ A arquitetura opera no modelo **Hub Central & Repositórios Satélites**:
 | **Memória Global** | `memory/` | Persistência entre sessões (`current-state.md` e `lessons-learned.md`). |
 | **Projetos Governados** | `projects/` | Hub de contratos de cada projeto (`PROJECT.md`, `CURRENT_STATE.md`, `ARCHITECTURE.md`, `BACKUPS/`, `RESEARCH/`). |
 | **Research Lab** | `projects/<nome>/RESEARCH/` | Síntese autônoma de documentação técnica em duas camadas. |
-| **Portal Web Interativo** | `docs/brain-ui/` | Visualizador web em tempo real com Constelação 3D, Dashboard e Live Markdown Editor. |
+| **Portal Web Interativo** | `docs/brain-ui/` | Visualizador web em tempo real com Grafo Neural 3D, Dashboard e Live Markdown Editor. |
 
 ---
 
@@ -114,17 +114,17 @@ A governança do AI Second Brain funciona em um ciclo contínuo sem perda de mem
 
 ---
 
-## 6. Constelação Neural 3D & Recursos Visuais
+## 6. Grafo Neural 3D & Recursos Visuais
 
 O portal web do AI Second Brain (`docs/brain-ui/`) oferece três modos de trabalho:
 
 1. **Dashboard & Métricas**: Visão panorâmica dos projetos conectados, status de governança e atalhos rápidos.
-2. **Constelação Neural 3D (Three.js)**: Grafo orbital espacial que mapeia projetos como estrelas centrais e seus arquivos, regras e laboratórios de pesquisa como satélites gravitando ao redor.
+2. **Grafo Neural 3D (Three.js)**: Grafo orbital espacial que mapeia projetos como estrelas centrais e seus arquivos, regras e laboratórios de pesquisa como satélites gravitando ao redor.
 3. **Project Workspace**: Painel dedicado de cada projeto com 5 abas integradas:
    - Visão Geral & Contratos
    - 🔬 Research Lab
    - 🧮 Diagnóstico de Memória & Saúde
-   - 🔮 Constelação 3D Dedicada
+   - 🔮 Grafo Neural 3D Dedicado
    - 📦 Backup, Dossiê & Windows Explorer
 
 ---

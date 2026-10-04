@@ -239,7 +239,7 @@
                                 <span class="pw-tab-icon">🧮</span> Memória & Saúde
                             </button>
                             <button class="pw-tab" data-tab="graph" onclick="switchProjectTab('graph')">
-                                <span class="pw-tab-icon">🔮</span> Constelação Neural
+                                <span class="pw-tab-icon">🔮</span> Grafo Neural
                             </button>
                             <button class="pw-tab" data-tab="backup" onclick="switchProjectTab('backup')">
                                 <span class="pw-tab-icon">📦</span> Backup & Exportação
@@ -266,24 +266,81 @@
                         <div id="pwMemoryContent">Carregando diagnóstico de memória...</div>
                     </div>
 
-                    <!-- Tab 3: Constelação Neural Dedicada -->
+                    <!-- Tab 3: Grafo Neural Dedicado -->
                     <div class="pw-tab-pane" id="pwPaneGraph">
                         <div class="pw-graph-wrapper">
                             <canvas id="projectGraphCanvas"></canvas>
                             <div id="projectGraphTooltip" class="graph-tooltip"></div>
                             
+                            <!-- Floating HUD Status Pill -->
                             <div class="graph-hud-pill">
-                                <span class="hud-pill-item"><span class="hud-dot"></span><span id="pwGraphNodeCount">0</span> nós na constelação</span>
+                                <span class="hud-pill-item"><span class="hud-dot"></span><span id="pwGraphNodeCount">0</span> nós no grafo</span>
                                 <span class="hud-divider"></span>
                                 <span class="hud-pill-item" id="pwHudZoomPill">🔍 100%</span>
+                                <span class="hud-divider"></span>
+                                <span class="hud-pill-item" id="pwHudRotationPill">🌍 3D Planeta</span>
                                 <span class="hud-divider"></span>
                                 <span class="hud-pill-item" style="color:#38bdf8;">✨ Sol Central: Projeto</span>
                             </div>
 
+                            <!-- Floating HUD Controls Toolbar (Paridade com Grafo Neural Padrão) -->
                             <div class="graph-controls">
-                                <button id="btnPwZoomIn" class="graph-btn" title="Aproximar (+)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
-                                <button id="btnPwZoomOut" class="graph-btn" title="Afastar (-)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
-                                <button id="btnPwResetView" class="graph-btn" title="Centralizar Constelação (⊙)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg></button>
+                                <button id="btnPwZoomIn" class="graph-btn" title="Aproximar Zoom (+)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                </button>
+                                <button id="btnPwZoomOut" class="graph-btn" title="Afastar Zoom (-)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                </button>
+                                <div class="graph-btn-sep"></div>
+                                <button id="btnPwRotateLeft" class="graph-btn" title="Girar Planeta (↺)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                                        <path d="M3 3v5h5"></path>
+                                    </svg>
+                                </button>
+                                <button id="btnPwRotateRight" class="graph-btn" title="Girar Planeta (↻)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 12a9 9 0 1 1-9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                                        <path d="M21 3v5h-5"></path>
+                                    </svg>
+                                </button>
+                                <button id="btnPwAutoOrbit" class="graph-btn" title="Auto-Órbita do Planeta (🪐)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="4"></circle>
+                                        <path d="M4.93 4.93c4.24-4.24 11.14-4.24 15.38 0 4.24 4.24 4.24 11.14 0 15.38-4.24 4.24-11.14 4.24-15.38 0"></path>
+                                    </svg>
+                                </button>
+                                <div class="graph-btn-sep"></div>
+                                <button id="btnPwShake" class="graph-btn" title="Reorganizar 3D (⚡)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                                    </svg>
+                                </button>
+                                <button id="btnPwResetView" class="graph-btn" title="Centralizar Planeta (⊙)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                </button>
+                                <div class="graph-btn-sep"></div>
+                                <label class="icon-toggle" title="Mostrar ícones nos nós">
+                                    <input type="checkbox" id="togglePwIcons">
+                                    <span class="icon-toggle-slider"></span>
+                                    <span class="icon-toggle-label">🎨</span>
+                                </label>
+                            </div>
+
+                            <!-- Floating HUD Hints -->
+                            <div class="graph-hud-hints">
+                                <div class="hint-item"><kbd>Girar Planeta</kbd> Arrastar botão esquerdo</div>
+                                <div class="hint-item"><kbd>Puxar Nó</kbd> Arrastar esfera 3D</div>
+                                <div class="hint-item"><kbd>Zoom</kbd> Scroll roda do mouse</div>
+                                <div class="hint-item"><kbd>Mover</kbd> Shift + Arrastar</div>
                             </div>
                         </div>
                     </div>
@@ -462,7 +519,7 @@
                                 <a href="#cap-roteamento" class="sdoc-toc-link" onclick="scrollToDocCap('cap-roteamento', event)">3. Governança &amp; Roteamento</a>
                                 <a href="#cap-research-lab" class="sdoc-toc-link" onclick="scrollToDocCap('cap-research-lab', event)">4. Research Lab Autônomo</a>
                                 <a href="#cap-ciclo-vida" class="sdoc-toc-link" onclick="scrollToDocCap('cap-ciclo-vida', event)">5. Ciclo de Vida &amp; Hands-on</a>
-                                <a href="#cap-recursos-visuais" class="sdoc-toc-link" onclick="scrollToDocCap('cap-recursos-visuais', event)">6. Constelação Neural 3D</a>
+                                <a href="#cap-recursos-visuais" class="sdoc-toc-link" onclick="scrollToDocCap('cap-recursos-visuais', event)">6. Grafo Neural 3D</a>
                                 <a href="#cap-faq" class="sdoc-toc-link" onclick="scrollToDocCap('cap-faq', event)">7. Checklists &amp; FAQ</a>
                             </nav>
                             <div class="sdoc-toc-footer">
@@ -723,10 +780,10 @@
                             </div>
                         </section>
 
-                        <!-- Cap 6: Constelação Neural 3D -->
+                        <!-- Cap 6: Grafo Neural 3D -->
                         <section class="sdoc-chapter" id="cap-recursos-visuais">
                             <div class="sdoc-chapter-num">06</div>
-                            <h2 class="sdoc-chapter-title">Constelação Neural 3D &amp; Recursos Visuais</h2>
+                            <h2 class="sdoc-chapter-title">Grafo Neural 3D &amp; Recursos Visuais</h2>
                             <p>
                                 O visualizador web (<code>docs/brain-ui/</code>) transforma o conhecimento abstrato em um universo interativo navegável:
                             </p>
@@ -734,7 +791,7 @@
                             <div class="sdoc-grid-cards">
                                 <div class="sdoc-card">
                                     <div class="sdoc-card-icon">🔮</div>
-                                    <h3>Constelação Neural 3D (Three.js)</h3>
+                                    <h3>Grafo Neural 3D (Three.js)</h3>
                                     <p>Os projetos atuam como estrelas centrais com campo gravitacional. Regras, skills, arquivos locais e pesquisas orbitam como satélites interligados.</p>
                                 </div>
                                 <div class="sdoc-card">

@@ -14,7 +14,7 @@ Em vez de buscas genéricas ou conversas efêmeras, o Research Lab opera de mane
 2. A IA (Groq Cloud) lê os contratos existentes do projeto (`PROJECT.md`, `ARCHITECTURE.md`) e refina o briefing, garantindo que a pesquisa atenda às restrições e objetivos reais daquele projeto.
 3. O tema é decomposto em sub-tópicos com taxonomia clara.
 4. O motor cataloga todo o conhecimento em arquivos `.md` organizados e versionados no disco sob a pasta do projeto.
-5. Os arquivos gerados alimentam a Constelação Neural 3D do projeto e a memória de longo prazo.
+5. Os arquivos gerados alimentam o Grafo Neural 3D do projeto e a memória de longo prazo.
 
 ---
 
@@ -100,5 +100,5 @@ A definição de uma pesquisa não é estática. No AI Second Brain, adotamos o 
   - Resiliência com auto-retry e detecção de TPM limit na API da Groq Cloud
   - Resumabilidade inteligente: arquivos pré-existentes são preservados sem retrabalho
   - Consolidação automática em `OVERVIEW.md` com links relativos navegáveis
-  - Integração com a Constelação Neural 3D (`scripts/scan-vault.js`) com ícones específicos para cada camada de pesquisa
+  - Integração com o Grafo Neural 3D (`scripts/scan-vault.js`) com ícones específicos para cada camada de pesquisa
 

@@ -268,6 +268,8 @@ class BrainGraph {
         // 1. Calculate 3D Spherical Positions for Nodes (Planetary Cortex)
         const planetRadius = 210;
 
+        const isProjectGraph = graphNodes.some(n => n.isCentral || (n.id.startsWith('proj_') && graphNodes.length < 150));
+
         // Group continental sectors on the sphere: (polar theta & azimuth phi)
         const groupSectors = {
             'core': { theta: 0, phi: 0.35, r: planetRadius * 1.05 }, // North polar crown (System / Core)
@@ -289,17 +291,69 @@ class BrainGraph {
         }
         const groupIndices = {};
 
-        this.nodes = graphNodes.map(n => {
-            const idx = groupIndices[n.group] || 0;
-            groupIndices[n.group] = idx + 1;
-            const count = groupCounts[n.group] || 1;
+        // In project graph, prepare balanced orbital indexing for surrounding satellites
+        let localIdx = 0;
+        const localNodes = graphNodes.filter((n, i) => !n.isCentral && n.id !== 'brain' && !(i === 0 && n.id.startsWith('proj_')) && (n.group === 'projects' || (n.path && !n.path.includes('/RESEARCH/'))));
+        let researchIdx = 0;
+        const researchNodes = graphNodes.filter(n => !n.isCentral && (n.group === 'research' || (n.path && n.path.includes('/RESEARCH/'))));
+        let fwIdx = 0;
+        const fwNodes = graphNodes.filter(n => !n.isCentral && (n.group === 'rules' || n.group === 'skills' || (n.group === 'knowledge' && n.id.startsWith('fw_'))));
 
-            const sector = groupSectors[n.group] || { theta: 0, phi: Math.PI / 2, r: planetRadius };
-
+        this.nodes = graphNodes.map((n, i) => {
+            const isCentral = n.isCentral || n.id === 'brain' || (isProjectGraph && i === 0 && n.id.startsWith('proj_'));
             let pos3D;
-            if (n.id === 'brain') {
+
+            if (isCentral) {
+                // The Central Sun/Project is fixed DEAD-CENTER at (0,0,0), perfectly aligned with the rotating wireframe core and celestial rings!
                 pos3D = new THREE.Vector3(0, 0, 0);
+            } else if (isProjectGraph) {
+                const isResearch = n.group === 'research' || (n.path && n.path.includes('/RESEARCH/'));
+                const isFw = n.group === 'rules' || n.group === 'skills' || (n.group === 'knowledge' && n.id.startsWith('fw_'));
+
+                if (isFw) {
+                    // Northern governance crown above the project
+                    const idx = fwIdx++;
+                    const count = Math.max(1, fwNodes.length);
+                    const theta = (count > 1) ? (-Math.PI * 0.65 + (idx / (count - 1)) * Math.PI * 1.3) : 0;
+                    const phi = 0.72 + (idx % 2 === 0 ? 0.12 : -0.12);
+                    const r = planetRadius * 1.05 + (Math.random() - 0.5) * 15;
+                    pos3D = new THREE.Vector3(
+                        r * Math.sin(phi) * Math.sin(theta),
+                        r * Math.cos(phi),
+                        r * Math.sin(phi) * Math.cos(theta)
+                    );
+                } else if (isResearch) {
+                    // Southern / Equatorial Research Lab orbital belt
+                    const idx = researchIdx++;
+                    const count = Math.max(1, researchNodes.length);
+                    const theta = (idx / count) * Math.PI * 2 + 0.3;
+                    const phi = 2.05 + (idx % 2 === 0 ? 0.22 : -0.22);
+                    const r = planetRadius * 1.0 + (Math.random() - 0.5) * 20;
+                    pos3D = new THREE.Vector3(
+                        r * Math.sin(phi) * Math.sin(theta),
+                        r * Math.cos(phi),
+                        r * Math.sin(phi) * Math.cos(theta)
+                    );
+                } else {
+                    // Core project documents (PROJECT.md, CURRENT_STATE.md, ARCHITECTURE.md, etc.)
+                    // Form an equatorial ring around the central project planet
+                    const idx = localIdx++;
+                    const count = Math.max(1, localNodes.length);
+                    const theta = (idx / count) * Math.PI * 2;
+                    const phi = Math.PI * 0.5 + (idx % 2 === 0 ? 0.26 : -0.26);
+                    const r = planetRadius * 0.95 + (Math.random() - 0.5) * 20;
+                    pos3D = new THREE.Vector3(
+                        r * Math.sin(phi) * Math.sin(theta),
+                        r * Math.cos(phi),
+                        r * Math.sin(phi) * Math.cos(theta)
+                    );
+                }
             } else {
+                const idx = groupIndices[n.group] || 0;
+                groupIndices[n.group] = idx + 1;
+                const count = groupCounts[n.group] || 1;
+                const sector = groupSectors[n.group] || { theta: 0, phi: Math.PI / 2, r: planetRadius };
+
                 // Spread children within their continental hemisphere
                 const angleOffset = (idx / count) * Math.PI * 0.75 - Math.PI * 0.375;
                 const r = sector.r + (Math.random() - 0.5) * 25;
@@ -321,6 +375,7 @@ class BrainGraph {
 
             const nodeObj = {
                 ...n,
+                isCentral: isCentral,
                 position: pos3D,
                 initialPos: pos3D.clone(),
                 velocity: new THREE.Vector3(),
@@ -341,9 +396,15 @@ class BrainGraph {
 
         // 2.1 Save equilibrium celestial home positions & masses for spring dynamics
         for (const node of this.nodes) {
-            node.homePos = node.position.clone();
+            if (node.isCentral) {
+                node.position.set(0, 0, 0);
+                node.homePos = new THREE.Vector3(0, 0, 0);
+                node.mass = 999999;
+            } else {
+                node.homePos = node.position.clone();
+                node.mass = (node.size >= 14 ? 2.5 : 1.2);
+            }
             node.velocity = new THREE.Vector3(0, 0, 0);
-            node.mass = node.id === 'brain' ? 999999 : (node.size >= 14 ? 2.5 : 1.2);
         }
 
         // 3. Build 3D Meshes for Nodes
@@ -379,7 +440,7 @@ class BrainGraph {
 
     _relax3DNodes() {
         const iterations = 45;
-        const nodes = this.nodes.filter(n => n.id !== 'brain');
+        const nodes = this.nodes.filter(n => !n.isCentral && n.id !== 'brain');
 
         for (let iter = 0; iter < iterations; iter++) {
             for (let i = 0; i < nodes.length; i++) {
@@ -711,6 +772,15 @@ class BrainGraph {
         // 3. Elastic tether pulling nodes back toward their celestial home positions
         for (let i = 0; i < nodeCount; i++) {
             const node = this.nodes[i];
+            if (node.isCentral || node.id === 'brain') {
+                if (node !== this.dragNode) {
+                    node.position.set(0, 0, 0);
+                    node.velocity.set(0, 0, 0);
+                    if (node.mesh) node.mesh.position.set(0, 0, 0);
+                }
+                continue;
+            }
+
             if (node === this.dragNode) continue;
 
             const homeDiff = new THREE.Vector3().subVectors(node.homePos, node.position);
