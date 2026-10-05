@@ -1680,6 +1680,10 @@ function initGraph() {
         getGraphInstance: () => graph
     });
 
+    if (typeof updateNodeStyleUI === 'function') {
+        updateNodeStyleUI(graph.nodeStyle);
+    }
+
     // Update HUD Node Count
     const nodeCountEl = document.getElementById('hudNodeCount');
     if (nodeCountEl) {
@@ -2149,6 +2153,32 @@ function setupEventListeners() {
     // Pesquisa de documentos em tempo real no Grafo Global
     setupGraphSearch('graphSearchInput', 'btnGraphSearchClear', 'graphSearchBadge', 'hudNodeCount', () => graph);
 
+    // Node Style Toggle (Esferas vs Neurônios)
+    function updateNodeStyleUI(style) {
+        const isNeuron = style === 'neuron';
+        const iconEl = document.getElementById('nodeStyleIcon');
+        const pwIconEl = document.getElementById('pwNodeStyleIcon');
+        const btn = document.getElementById('btnToggleNodeStyle');
+        const pwBtn = document.getElementById('btnPwToggleNodeStyle');
+
+        if (iconEl) iconEl.textContent = isNeuron ? '🧠' : '🪐';
+        if (pwIconEl) pwIconEl.textContent = isNeuron ? '🧠' : '🪐';
+        if (btn) btn.title = isNeuron ? 'Estilo atual: 🧠 Neurônios (clique para Esferas)' : 'Estilo atual: 🪐 Esferas (clique para Neurônios)';
+        if (pwBtn) pwBtn.title = isNeuron ? 'Estilo atual: 🧠 Neurônios (clique para Esferas)' : 'Estilo atual: 🪐 Esferas (clique para Neurônios)';
+    }
+    window.updateNodeStyleUI = updateNodeStyleUI;
+
+    const btnToggleNodeStyle = document.getElementById('btnToggleNodeStyle');
+    if (btnToggleNodeStyle) {
+        btnToggleNodeStyle.addEventListener('click', () => {
+            if (graph) {
+                const next = graph.toggleNodeStyle();
+                if (projectGraph) projectGraph.setNodeStyle(next);
+                updateNodeStyleUI(next);
+            }
+        });
+    }
+
     // Icon Toggle
     const toggleIcons = document.getElementById('toggleIcons');
     if (toggleIcons) {
@@ -2210,6 +2240,16 @@ function setupEventListeners() {
             } else if (e.code === 'Space') {
                 e.preventDefault();
                 graph.reheat(1.0);
+            } else if (e.key.toLowerCase() === 'n') {
+                e.preventDefault();
+                let next = 'sphere';
+                if (graph) {
+                    next = graph.toggleNodeStyle();
+                    if (projectGraph) projectGraph.setNodeStyle(next);
+                } else if (projectGraph) {
+                    next = projectGraph.toggleNodeStyle();
+                }
+                updateNodeStyleUI(next);
             } else if (e.key.toLowerCase() === 'i') {
                 e.preventDefault();
                 if (toggleIcons) {
@@ -3565,6 +3605,15 @@ function renderProjectGraphTab() {
                 if (projectGraph) projectGraph.setShowIcons(e.target.checked);
             };
         }
+        const btnPwToggleStyle = document.getElementById('btnPwToggleNodeStyle');
+        if (btnPwToggleStyle) {
+            btnPwToggleStyle.onclick = () => {
+                if (!projectGraph) return;
+                const next = projectGraph.toggleNodeStyle();
+                if (graph) graph.setNodeStyle(next);
+                if (typeof updateNodeStyleUI === 'function') updateNodeStyleUI(next);
+            };
+        }
 
         // Fullscreen do Grafo do Projeto
         setupFullscreenButton('btnPwFullscreen', document.querySelector('.pw-graph-wrapper'), () => projectGraph);
@@ -3672,6 +3721,9 @@ function renderProjectGraphTab() {
     const toggleIcons = document.getElementById('togglePwIcons');
     if (toggleIcons && projectGraph) {
         projectGraph.setShowIcons(toggleIcons.checked);
+    }
+    if (typeof updateNodeStyleUI === 'function' && projectGraph) {
+        updateNodeStyleUI(projectGraph.nodeStyle);
     }
     const btnAutoOrbit = document.getElementById('btnPwAutoOrbit');
     if (btnAutoOrbit && projectGraph) {

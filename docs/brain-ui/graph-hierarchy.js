@@ -267,7 +267,7 @@
                 icon: f.icon || '📄',
                 path: f.path,
                 group: classify(fullSegs, true),
-                size: (f.size || 0) > 2000 ? 11 : 10,
+                size: (f.size || 0) > 2000 ? 7 : 6,
                 isFolder: false,
                 hkind: 'file',
                 depth: segs.length,
@@ -303,33 +303,58 @@
             }
         }
 
-        // ── Layout radial 3D por profundidade ──
-        const maxDepth = nodes.reduce((m, n) => Math.max(m, n.depth), 0);
+        // ── Layout radial 3D por profundidade (v2: casca dinâmica + constelações) ──
+        // Apenas pastas definem as camadas; arquivos orbitam a própria pasta-mãe.
+        const maxDepth = nodes.reduce((m, n) => (n.isFolder ? Math.max(m, n.depth) : m), 1);
         const rMin = opts.rMin || 110;
-        const rMax = opts.rMax || 300;
-        const step = maxDepth > 1 ? Math.min(95, (rMax - rMin) / (maxDepth - 1)) : 0;
+        // Casca cresce com o volume do grafo para evitar aglomeração
+        const rMax = opts.rMax || Math.round(260 + Math.sqrt(nodes.length) * 10);
+        const step = maxDepth > 1 ? Math.max(65, Math.min(100, (rMax - rMin) / (maxDepth - 1))) : 0;
         const radiusFor = d => (d === 0 ? 0 : rMin + (d - 1) * step);
+
+        const FILE_ORBIT = 26;    // distância radial extra dos arquivos em relação à pasta
+        const FILE_SPACING = 14;  // espaçamento lateral entre arquivos irmãos
+        const SECTOR_PAD = 0.92;  // folga angular entre setores de pastas irmãs
 
         root.hpos = { x: 0, y: 0, z: 0 };
 
         function placeChildren(node, dir, cap) {
             const kids = (children.get(node.id) || []).slice()
                 .sort((a, b) => (weight.get(b.id) - weight.get(a.id)) || a.label.localeCompare(b.label));
-            const n = kids.length;
-            if (n === 0) return;
+            if (kids.length === 0) return;
             const wParent = weight.get(node.id) || 1;
             const azOffset = node.depth * 1.3;
+            const folders = kids.filter(k => k.isFolder);
+            const files = kids.filter(k => !k.isFolder);
 
-            kids.forEach((kid, i) => {
-                const ang = n === 1 ? cap * 0.2 : cap * 0.88 * Math.sqrt((i + 0.5) / n);
+            // 1. Subpastas: cones proporcionais ao volume, com folga entre irmãs
+            const nF = folders.length;
+            folders.forEach((kid, i) => {
+                const ang = nF === 1 ? cap * 0.25 : cap * 0.9 * Math.sqrt((i + 0.5) / nF);
                 const az = i * GOLDEN_ANGLE + azOffset;
                 const d = coneDirection(dir, ang, az);
                 const r = radiusFor(kid.depth);
                 kid.hpos = { x: d.x * r, y: d.y * r, z: d.z * r };
 
                 const share = (weight.get(kid.id) || 1) / wParent;
-                const kidCap = Math.max(0.09, Math.min(cap * 0.9, cap * Math.sqrt(share) * 1.1));
+                const kidCap = Math.max(0.1, Math.min(cap * 0.85, cap * Math.sqrt(share) * SECTOR_PAD));
                 placeChildren(kid, d, kidCap);
+            });
+
+            // 2. Arquivos: "luas" em órbita compacta ao redor da própria pasta-mãe
+            const nFi = files.length;
+            if (nFi === 0) return;
+            const parentR = radiusFor(node.depth);
+            const orbitR = parentR + FILE_ORBIT;
+            const parentSize = node.size || 14;
+            const innerAng = (parentSize + 8) / orbitR; // não cobrir a pasta-mãe
+            const outerAng = Math.min(Math.max(cap, innerAng * 1.6), innerAng + (FILE_SPACING * Math.sqrt(nFi)) / orbitR);
+            files.forEach((kid, i) => {
+                const ang = innerAng + (outerAng - innerAng) * Math.sqrt((i + 0.5) / nFi);
+                const az = i * GOLDEN_ANGLE + azOffset + 0.6;
+                const d = coneDirection(dir, ang, az);
+                const r = orbitR + ((i % 3) - 1) * 7; // variação radial orgânica e determinística
+                kid.hpos = { x: d.x * r, y: d.y * r, z: d.z * r };
             });
         }
 

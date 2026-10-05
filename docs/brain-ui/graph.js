@@ -37,9 +37,9 @@ class BrainGraph {
         this.coreGroup = new THREE.Group();
         this.interactiveMeshes = [];
 
-        // Synaptic particles
+        // Synaptic light photons (feixes rápidos de luz)
         this.particles = [];
-        this.maxParticles = 50;
+        this.maxParticles = 55;
 
         // Interaction state
         this.hoveredNode = null;
@@ -69,6 +69,15 @@ class BrainGraph {
 
         // Icon Display
         this.showIcons = false;
+
+        // Estilo visual dos nós: 'sphere' (esferas) | 'neuron' (neurônios) — escolha persistida
+        this.nodeStyle = BrainGraph.getSavedNodeStyle();
+
+        // Nível de detalhe dos rótulos (LOD)
+        this.labelFocus = new Set();      // nós em destaque (hover/seleção)
+        this.searchLabelSet = new Set();  // arquivos encontrados pela pesquisa
+        this.labelNearDist = 240;         // distância da câmera para revelar rótulos de arquivos
+        this._cameraFitted = false;
 
         // Filter & Category State
         this.currentQuery = '';
@@ -189,25 +198,25 @@ class BrainGraph {
         this.coreOrb = new THREE.Mesh(innerGeo, innerMat);
         this.coreGroup.add(this.coreOrb);
 
-        // 3. Planetary Orbital Rings (Tilted celestial rings like Saturn)
-        const ringGeo1 = new THREE.RingGeometry(180, 182, 96);
+        // 3. Planetary Orbital Rings — abraçam o núcleo (fora da casca de nós, menos ruído)
+        const ringGeo1 = new THREE.RingGeometry(88, 89.2, 96);
         const ringMat1 = new THREE.MeshBasicMaterial({
             color: 0x8b5cf6,
             side: THREE.DoubleSide,
             transparent: true,
-            opacity: 0.15
+            opacity: 0.12
         });
         this.ring1 = new THREE.Mesh(ringGeo1, ringMat1);
         this.ring1.rotation.x = Math.PI * 0.42;
         this.ring1.rotation.y = Math.PI * 0.12;
         this.coreGroup.add(this.ring1);
 
-        const ringGeo2 = new THREE.RingGeometry(240, 241.5, 96);
+        const ringGeo2 = new THREE.RingGeometry(97, 97.8, 96);
         const ringMat2 = new THREE.MeshBasicMaterial({
             color: 0x6366f1,
             side: THREE.DoubleSide,
             transparent: true,
-            opacity: 0.08
+            opacity: 0.07
         });
         this.ring2 = new THREE.Mesh(ringGeo2, ringMat2);
         this.ring2.rotation.x = Math.PI * 0.48;
@@ -436,6 +445,9 @@ class BrainGraph {
             node.velocity = new THREE.Vector3(0, 0, 0);
         }
 
+        // 2.2 Enquadra a câmera conforme o tamanho real do grafo
+        this._fitCameraToGraph();
+
         // 3. Build 3D Meshes for Nodes
         for (const node of this.nodes) {
             this._create3DNode(node);
@@ -469,25 +481,33 @@ class BrainGraph {
 
     _relax3DNodes() {
         if (this.isHierarchy) {
-            // Relaxamento suave que preserva o raio (camada de profundidade) de cada nó
+            // Relaxamento com resfriamento: preserva a camada de profundidade (±14 de folga radial)
             const nodes = this.nodes.filter(n => !n.isCentral);
             for (const n of nodes) n._r = n.position.length();
-            for (let iter = 0; iter < 30; iter++) {
+            const iterations = 60;
+            const diff = new THREE.Vector3();
+            const force = new THREE.Vector3();
+            for (let iter = 0; iter < iterations; iter++) {
+                const strength = 0.4 - (iter / iterations) * 0.3;
                 for (let i = 0; i < nodes.length; i++) {
                     const na = nodes[i];
-                    const force = new THREE.Vector3();
+                    force.set(0, 0, 0);
                     for (let j = 0; j < nodes.length; j++) {
                         if (i === j) continue;
                         const nb = nodes[j];
-                        const diff = new THREE.Vector3().subVectors(na.position, nb.position);
+                        diff.subVectors(na.position, nb.position);
                         const dist = diff.length() || 0.01;
-                        const minDist = (na.size + nb.size) * 1.7;
+                        const minDist = this._minSeparation(na, nb);
                         if (dist < minDist) {
-                            force.add(diff.multiplyScalar(((minDist - dist) / dist) * 0.35));
+                            force.addScaledVector(diff, ((minDist - dist) / dist) * strength);
                         }
                     }
                     na.position.add(force);
-                    if (na._r > 0) na.position.setLength(na._r);
+                    if (na._r > 0) {
+                        const r = na.position.length();
+                        const clamped = Math.min(na._r + 14, Math.max(na._r - 14, r));
+                        na.position.setLength(clamped);
+                    }
                 }
             }
             return;
@@ -524,59 +544,277 @@ class BrainGraph {
         }
     }
 
-    _create3DNode(node) {
-        const radius = Math.max(7, (node.size || 10) * 0.95);
+    _minSeparation(na, nb) {
+        let base = (na.size + nb.size) * 1.5;
+        if (na.isFolder && nb.isFolder) {
+            base += 32;
+        } else if (na.isFolder || nb.isFolder) {
+            base += 16;
+        } else {
+            base += 8;
+        }
+        return base;
+    }
+
+    _fitCameraToGraph() {
+        let maxDist = 200;
+        for (const n of this.nodes) {
+            if (n.position) {
+                const d = n.position.length();
+                if (d > maxDist) maxDist = d;
+            }
+        }
+        const fitCamDist = Math.max(520, Math.round(maxDist * 1.6));
+        this.defaultCameraPos.set(0, Math.round(fitCamDist * 0.12), fitCamDist);
+        this.controls.maxDistance = Math.max(1600, fitCamDist * 2.2);
+        this.labelNearDist = Math.round(fitCamDist * 0.42);
+
+        if (!this._cameraFitted) {
+            this.camera.position.copy(this.defaultCameraPos);
+            this.controls.target.copy(this.defaultTargetPos);
+            this.controls.update();
+            this._cameraFitted = true;
+        }
+    }
+
+    static getSavedNodeStyle() {
+        try {
+            return localStorage.getItem('ai_second_brain_node_style') || 'sphere';
+        } catch (e) {
+            return 'sphere';
+        }
+    }
+
+    setNodeStyle(style) {
+        if (style !== 'sphere' && style !== 'neuron') return;
+        this.nodeStyle = style;
+        try {
+            localStorage.setItem('ai_second_brain_node_style', style);
+        } catch (e) {}
+        this._rebuildAllNodeMeshes();
+    }
+
+    toggleNodeStyle() {
+        const next = this.nodeStyle === 'neuron' ? 'sphere' : 'neuron';
+        this.setNodeStyle(next);
+        return next;
+    }
+
+    _hashString(str) {
+        let hash = 0;
+        const s = String(str || '');
+        for (let i = 0; i < s.length; i++) {
+            hash = ((hash << 5) - hash) + s.charCodeAt(i);
+            hash |= 0;
+        }
+        return Math.abs(hash);
+    }
+
+    _rebuildAllNodeMeshes() {
+        for (const node of this.nodes) {
+            if (!node.mesh) continue;
+            const toRemove = [];
+            for (const child of node.mesh.children) {
+                if (child !== node.labelSprite && child !== node.iconSprite) {
+                    toRemove.push(child);
+                }
+            }
+            for (const child of toRemove) {
+                node.mesh.remove(child);
+            }
+            node.somaMesh = null;
+            node.nucleusMesh = null;
+            node.dendritesGroup = null;
+            node.outerRing = null;
+            node.glowSprite = null;
+
+            this._populateNodeVisuals(node);
+        }
+    }
+
+    _populateNodeVisuals(node) {
+        const radius = Math.max(6, (node.size || 10) * 0.95);
         const colorHex = parseInt(node.colors.fill.replace('#', '0x'), 16);
         const strokeHex = parseInt(node.colors.stroke.replace('#', '0x'), 16);
 
-        // 1. 3D Node Sphere
+        if (this.nodeStyle === 'neuron') {
+            this._buildNeuronVisuals(node, radius, colorHex, strokeHex);
+        } else {
+            this._buildSphereVisuals(node, radius, colorHex, strokeHex);
+        }
+
+        // Halo de brilho sutil e bioluminescente (escala 2.3x e opacidade suave para evitar manchas aglomeradas)
+        const glowMat = new THREE.SpriteMaterial({
+            map: this.glowTexture,
+            color: strokeHex,
+            transparent: true,
+            opacity: 0.38,
+            blending: THREE.AdditiveBlending
+        });
+        const glow = new THREE.Sprite(glowMat);
+        const glowScale = radius * 2.3;
+        glow.scale.set(glowScale, glowScale, 1);
+        node.mesh.add(glow);
+        node.glowSprite = glow;
+
+        if (this.showIcons && node.iconSprite) {
+            node.iconSprite.visible = true;
+            this._setNodeVisualsVisible(node, false);
+        }
+    }
+
+    _buildSphereVisuals(node, radius, colorHex, strokeHex) {
         const geo = new THREE.SphereGeometry(radius, 32, 32);
         const mat = new THREE.MeshStandardMaterial({
             color: colorHex,
             emissive: colorHex,
-            emissiveIntensity: 0.45,
-            roughness: 0.25,
-            metalness: 0.3
+            emissiveIntensity: 0.52,
+            roughness: 0.22,
+            metalness: 0.35
         });
 
-        const mesh = new THREE.Mesh(geo, mat);
+        const sphere = new THREE.Mesh(geo, mat);
+        sphere.userData = { node: node };
+        node.mesh.add(sphere);
+        node.somaMesh = sphere;
+
+        // Anel orbital rotativo apenas para pastas e Sol central
+        if (node.size >= 14 || node.id === 'brain') {
+            const ringGeo = new THREE.TorusGeometry(radius * 1.35, 0.7, 8, 48);
+            const ringMat = new THREE.MeshBasicMaterial({
+                color: strokeHex,
+                transparent: true,
+                opacity: 0.52
+            });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.rotation.x = Math.PI / 2;
+            ring.userData = { node: node };
+            node.mesh.add(ring);
+            node.outerRing = ring;
+        }
+    }
+
+    _buildNeuronVisuals(node, radius, colorHex, strokeHex) {
+        // 1. Corpo celular (soma orgânico com micro-relevo biológico determinístico)
+        const somaGeo = new THREE.IcosahedronGeometry(radius * 0.92, 2);
+        const posAttr = somaGeo.attributes.position;
+        const hash = this._hashString(node.id);
+        for (let i = 0; i < posAttr.count; i++) {
+            const vx = posAttr.getX(i);
+            const vy = posAttr.getY(i);
+            const vz = posAttr.getZ(i);
+            const freq = 0.32;
+            const noise = Math.sin(vx * freq + hash) * Math.cos(vy * freq + hash * 1.5) * 0.18;
+            const factor = 1.0 + noise;
+            posAttr.setXYZ(i, vx * factor, vy * factor, vz * factor);
+        }
+        somaGeo.computeVertexNormals();
+
+        const somaMat = new THREE.MeshStandardMaterial({
+            color: colorHex,
+            emissive: colorHex,
+            emissiveIntensity: 0.65,
+            roughness: 0.25,
+            metalness: 0.38
+        });
+        const soma = new THREE.Mesh(somaGeo, somaMat);
+        soma.userData = { node: node };
+        node.mesh.add(soma);
+        node.somaMesh = soma;
+
+        // 2. Núcleo bioluminescente brilhante
+        const nucGeo = new THREE.SphereGeometry(radius * 0.44, 16, 16);
+        const nucMat = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.9,
+            blending: THREE.AdditiveBlending
+        });
+        const nucleus = new THREE.Mesh(nucGeo, nucMat);
+        nucleus.userData = { node: node };
+        node.mesh.add(nucleus);
+        node.nucleusMesh = nucleus;
+
+        // 3. Ramificações dendríticas (dendritos orgânicos com botões sinápticos)
+        const dendritesGroup = new THREE.Group();
+        const dendriteCount = node.isCentral ? 9 : (node.isFolder ? 6 : 3);
+        const dendriteMat = new THREE.MeshStandardMaterial({
+            color: strokeHex,
+            emissive: strokeHex,
+            emissiveIntensity: 0.5,
+            roughness: 0.3,
+            metalness: 0.3
+        });
+        const boutonMat = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.92,
+            blending: THREE.AdditiveBlending
+        });
+
+        for (let d = 0; d < dendriteCount; d++) {
+            const t = (d + 0.5) / dendriteCount;
+            const phi = Math.acos(1 - 2 * t);
+            const theta = d * 2.3999632 + (hash % 10);
+            const dir = new THREE.Vector3(
+                Math.sin(phi) * Math.cos(theta),
+                Math.cos(phi),
+                Math.sin(phi) * Math.sin(theta)
+            ).normalize();
+
+            const dendLen = radius * (node.isFolder ? 1.35 : 0.95) + (d % 2) * 2;
+            const dendRadiusTop = Math.max(0.5, radius * 0.08);
+            const dendRadiusBottom = Math.max(1.1, radius * 0.2);
+
+            const cylGeo = new THREE.CylinderGeometry(dendRadiusTop, dendRadiusBottom, dendLen, 6);
+            cylGeo.translate(0, dendLen / 2 + radius * 0.65, 0);
+
+            const cylMesh = new THREE.Mesh(cylGeo, dendriteMat);
+            const up = new THREE.Vector3(0, 1, 0);
+            cylMesh.quaternion.setFromUnitVectors(up, dir);
+            cylMesh.userData = { node: node };
+            dendritesGroup.add(cylMesh);
+
+            // Botão sináptico terminal brilhante na ponta
+            const tipPos = dir.clone().multiplyScalar(radius * 0.68 + dendLen);
+            const bulbGeo = new THREE.SphereGeometry(Math.max(1.1, radius * 0.16), 8, 8);
+            const bulbMesh = new THREE.Mesh(bulbGeo, boutonMat);
+            bulbMesh.position.copy(tipPos);
+            bulbMesh.userData = { node: node };
+            dendritesGroup.add(bulbMesh);
+        }
+        node.mesh.add(dendritesGroup);
+        node.dendritesGroup = dendritesGroup;
+    }
+
+    _setNodeVisualsVisible(node, visible) {
+        if (!node || !node.mesh) return;
+        if (node.somaMesh) node.somaMesh.visible = visible;
+        if (node.nucleusMesh) node.nucleusMesh.visible = visible;
+        if (node.dendritesGroup) node.dendritesGroup.visible = visible;
+        if (node.outerRing) node.outerRing.visible = visible;
+        if (node.glowSprite) node.glowSprite.visible = visible;
+    }
+
+    _create3DNode(node) {
+        const radius = Math.max(6, (node.size || 10) * 0.95);
+
+        // Container Group do Nó
+        const mesh = new THREE.Group();
         mesh.position.copy(node.position);
         mesh.userData = { node: node };
         this.nodeGroup.add(mesh);
         node.mesh = mesh;
         this.interactiveMeshes.push(mesh);
 
-        // 2. Outer Halo Glow Sprite
-        const glowMat = new THREE.SpriteMaterial({
-            map: this.glowTexture,
-            color: strokeHex,
-            transparent: true,
-            opacity: 0.65,
-            blending: THREE.AdditiveBlending
-        });
-        const glow = new THREE.Sprite(glowMat);
-        const glowScale = radius * 3.8;
-        glow.scale.set(glowScale, glowScale, 1);
-        mesh.add(glow);
-        node.glowSprite = glow;
-
-        // 3. Orbiting Pulse Ring for Major Nodes
-        if (node.size >= 14 || node.id === 'brain') {
-            const ringGeo = new THREE.TorusGeometry(radius * 1.35, 0.7, 8, 48);
-            const ringMat = new THREE.MeshBasicMaterial({
-                color: strokeHex,
-                transparent: true,
-                opacity: 0.5
-            });
-            const ring = new THREE.Mesh(ringGeo, ringMat);
-            ring.rotation.x = Math.PI / 2;
-            mesh.add(ring);
-            node.outerRing = ring;
-        }
+        // Constrói os elementos visuais (esferas ou neurônios)
+        this._populateNodeVisuals(node);
 
         // 4. Billboard 3D Text Label
         node.labelSprite = this._createLabelSprite(node.label, radius, node.colors.fill);
         node.labelSprite.position.set(0, radius + 11, 0);
+        // Inicialmente visível apenas para pastas e Sol; arquivos aparecem por LOD/foco
+        node.labelSprite.visible = Boolean(node.isFolder || node.isCentral);
         mesh.add(node.labelSprite);
 
         // 5. Emoji Icon Sprite (hidden by default, toggled via setShowIcons)
@@ -585,11 +823,8 @@ class BrainGraph {
             node.iconSprite.visible = this.showIcons;
             mesh.add(node.iconSprite);
 
-            // When icons are showing, hide the sphere mesh visual but keep it interactive
             if (this.showIcons) {
-                mesh.material.visible = false;
-                if (node.glowSprite) node.glowSprite.visible = false;
-                if (node.outerRing) node.outerRing.visible = false;
+                this._setNodeVisualsVisible(node, false);
             }
         }
     }
@@ -600,7 +835,13 @@ class BrainGraph {
         const fontSize = 28;
         ctx.font = `600 ${fontSize}px Inter, -apple-system, sans-serif`;
 
-        const textMetrics = ctx.measureText(text);
+        // Trunca rótulos muito extensos com reticências para manter harmonia espacial
+        let displayText = String(text || '');
+        if (displayText.length > 28) {
+            displayText = displayText.slice(0, 26).trim() + '…';
+        }
+
+        const textMetrics = ctx.measureText(displayText);
         const textWidth = Math.ceil(textMetrics.width);
         const padding = 16;
 
@@ -630,7 +871,7 @@ class BrainGraph {
 
         // High-contrast clean white text
         ctx.fillStyle = '#ffffff';
-        ctx.fillText(text, cx, cy);
+        ctx.fillText(displayText, cx, cy);
 
         const tex = new THREE.CanvasTexture(canvas);
         tex.minFilter = THREE.LinearFilter;
@@ -638,7 +879,7 @@ class BrainGraph {
         const spriteMat = new THREE.SpriteMaterial({
             map: tex,
             transparent: true,
-            opacity: 0.92,
+            opacity: 0.95,
             depthTest: false // Ensures label stays crisp and legible over geometry
         });
 
@@ -707,17 +948,11 @@ class BrainGraph {
             if (!node.mesh) continue;
 
             if (show && node.iconSprite) {
-                // Show icon sprite, hide the 3D sphere visual
                 node.iconSprite.visible = true;
-                node.mesh.material.visible = false;
-                if (node.glowSprite) node.glowSprite.visible = false;
-                if (node.outerRing) node.outerRing.visible = false;
+                this._setNodeVisualsVisible(node, false);
             } else {
-                // Hide icon sprite, restore 3D sphere
                 if (node.iconSprite) node.iconSprite.visible = false;
-                node.mesh.material.visible = true;
-                if (node.glowSprite) node.glowSprite.visible = true;
-                if (node.outerRing) node.outerRing.visible = true;
+                this._setNodeVisualsVisible(node, true);
             }
         }
     }
@@ -742,7 +977,8 @@ class BrainGraph {
         let baseOpacity = 0.22;
         if (this.isHierarchy && edge.toNode && edge.toNode.colors) {
             baseColor = parseInt(edge.toNode.colors.stroke.replace('#', '0x'), 16);
-            baseOpacity = edge.toNode.isFolder ? 0.55 : 0.32;
+            // Linhas até arquivos mais finas e elegantes (0.16) para manter limpeza visual; pastas mantêm 0.50
+            baseOpacity = edge.toNode.isFolder ? 0.50 : 0.16;
         }
         edge.baseColor = baseColor;
         edge.baseOpacity = baseOpacity;
@@ -879,33 +1115,74 @@ class BrainGraph {
         }
     }
 
+    _calcParticleSpeed(edge) {
+        let edgeLen = 120;
+        if (edge && edge.curve && typeof edge.curve.getLength === 'function') {
+            try {
+                edgeLen = edge.curve.getLength();
+            } catch (e) {
+                edgeLen = 120;
+            }
+        } else if (edge && edge.fromNode && edge.toNode) {
+            edgeLen = edge.fromNode.position.distanceTo(edge.toNode.position);
+        }
+        // Velocidade linear suave e calma em unidades 3D por frame (~3x mais lento)
+        // Proporciona uma travessia suave e serena tanto no grafo global quanto no grafo de projetos
+        const worldSpeed = 0.42 + Math.random() * 0.22;
+        return worldSpeed / Math.max(50, edgeLen);
+    }
+
     _init3DParticles() {
         this.particles = [];
-        const particleGeo = new THREE.SphereGeometry(1.4, 8, 8);
-        const particleMat = new THREE.MeshBasicMaterial({
-            color: 0xc4b5fd,
-            transparent: true,
-            opacity: 0.9,
-            blending: THREE.AdditiveBlending
-        });
 
-        for (let i = 0; i < this.maxParticles; i++) {
-            if (this.edges.length === 0) break;
+        // Densidade equilibrada proporcional ao número de conexões do grafo:
+        // Evita hiperatividade e estroboscópio em grafos de projeto com poucas arestas
+        const edgeCount = this.edges.length;
+        if (edgeCount === 0) return;
+
+        const count = Math.max(6, Math.min(50, Math.round(edgeCount * 0.40)));
+
+        for (let i = 0; i < count; i++) {
             const edge = this.edges[Math.floor(Math.random() * this.edges.length)];
-            const mesh = new THREE.Mesh(particleGeo, particleMat.clone());
-            this.particleGroup.add(mesh);
+            const color = (edge.toNode && edge.toNode.colors)
+                ? parseInt(edge.toNode.colors.stroke.replace('#', '0x'), 16)
+                : 0xc4b5fd;
+
+            // Feixe de luz bioluminescente puro (Sprite com gradiente aditivo e núcleo branco)
+            const spriteMat = new THREE.SpriteMaterial({
+                map: this.glowTexture,
+                color: color,
+                transparent: true,
+                opacity: 0.95,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+            const sprite = new THREE.Sprite(spriteMat);
+            const size = 2.8 + Math.random() * 1.2; // Pequeno e concentrado
+            sprite.scale.set(size, size, 1);
+            this.particleGroup.add(sprite);
 
             this.particles.push({
                 edge: edge,
                 progress: Math.random(),
-                speed: 0.003 + Math.random() * 0.006,
-                mesh: mesh
+                speed: this._calcParticleSpeed(edge),
+                baseSize: size,
+                sprite: sprite
             });
         }
     }
 
     _getInteractiveMeshes() {
         return this.interactiveMeshes.filter(m => m.visible !== false);
+    }
+
+    _getNodeFromObject(obj) {
+        let cur = obj;
+        while (cur) {
+            if (cur.userData && cur.userData.node) return cur.userData.node;
+            cur = cur.parent;
+        }
+        return null;
     }
 
     // ── Interaction & Events ──────────────────────────
@@ -941,18 +1218,18 @@ class BrainGraph {
                 return;
             }
 
-            // 2. Raycast to detect hovered node (apenas meshes visíveis)
+            // 2. Raycast to detect hovered node (recursivo para acertar partes do neurônio)
             this.raycaster.setFromCamera(this.mouse, this.camera);
-            const intersects = this.raycaster.intersectObjects(this._getInteractiveMeshes());
+            const intersects = this.raycaster.intersectObjects(this._getInteractiveMeshes(), true);
 
             if (intersects.length > 0) {
-                const topMesh = intersects[0].object;
-                const node = topMesh.userData.node;
-
-                if (this.hoveredNode !== node) {
+                const node = this._getNodeFromObject(intersects[0].object);
+                if (node && this.hoveredNode !== node) {
                     this._setHoveredNode(node, px, py);
                 } else if (node) {
                     this._updateTooltipPos(px, py);
+                } else if (!node && this.hoveredNode) {
+                    this._clearHover();
                 }
             } else {
                 if (this.hoveredNode) {
@@ -973,22 +1250,22 @@ class BrainGraph {
             // Check if user clicked on a 3D node to drag it
             if (e.button === 0) {
                 this.raycaster.setFromCamera(this.mouse, this.camera);
-                const intersects = this.raycaster.intersectObjects(this._getInteractiveMeshes());
+                const intersects = this.raycaster.intersectObjects(this._getInteractiveMeshes(), true);
 
                 if (intersects.length > 0) {
-                    const topMesh = intersects[0].object;
-                    this.dragNode = topMesh.userData.node;
-                    this.isDraggingNode = true;
-                    this.physicsEnergy = 1.0;
+                    const node = this._getNodeFromObject(intersects[0].object);
+                    if (node) {
+                        this.dragNode = node;
+                        this.isDraggingNode = true;
+                        this.physicsEnergy = 1.0;
 
-                    // Plane oriented facing camera at the node position
-                    const planeNormal = new THREE.Vector3();
-                    this.camera.getWorldDirection(planeNormal).negate();
-                    this.dragPlane.setFromNormalAndCoplanarPoint(planeNormal, this.dragNode.position);
+                        const planeNormal = new THREE.Vector3();
+                        this.camera.getWorldDirection(planeNormal).negate();
+                        this.dragPlane.setFromNormalAndCoplanarPoint(planeNormal, this.dragNode.position);
 
-                    // Pause orbit rotation while dragging an individual node
-                    this.controls.enabled = false;
-                    this.canvas.style.cursor = 'grabbing';
+                        this.controls.enabled = false;
+                        this.canvas.style.cursor = 'grabbing';
+                    }
                 }
             }
         });
@@ -1000,7 +1277,7 @@ class BrainGraph {
                 this.dragNode = null;
                 this.controls.enabled = true;
                 this.canvas.style.cursor = this.hoveredNode ? 'pointer' : 'default';
-                this.physicsEnergy = 1.0; // Continue spring physics so nodes bounce back gracefully
+                this.physicsEnergy = 1.0;
             }
         });
 
@@ -1013,14 +1290,16 @@ class BrainGraph {
             const py = e.clientY - rect.top;
 
             this.raycaster.setFromCamera(this.mouse, this.camera);
-            const intersects = this.raycaster.intersectObjects(this._getInteractiveMeshes());
+            const intersects = this.raycaster.intersectObjects(this._getInteractiveMeshes(), true);
 
             if (intersects.length > 0) {
-                const node = intersects[0].object.userData.node;
-                this.selectedNode = node;
-                this._setHoveredNode(node, px, py);
-                if (this.onNodeClick) {
-                    this.onNodeClick(node);
+                const node = this._getNodeFromObject(intersects[0].object);
+                if (node) {
+                    this.selectedNode = node;
+                    this._setHoveredNode(node, px, py);
+                    if (this.onNodeClick) {
+                        this.onNodeClick(node);
+                    }
                 }
             } else {
                 this.selectedNode = null;
@@ -1034,14 +1313,16 @@ class BrainGraph {
         // Double click: Open / Navigate to node (or reset planet on empty background)
         this.canvas.addEventListener('dblclick', () => {
             this.raycaster.setFromCamera(this.mouse, this.camera);
-            const intersects = this.raycaster.intersectObjects(this._getInteractiveMeshes());
+            const intersects = this.raycaster.intersectObjects(this._getInteractiveMeshes(), true);
 
             if (intersects.length > 0) {
-                const node = intersects[0].object.userData.node;
-                if (this.onNodeDblClick) {
-                    this.onNodeDblClick(node);
-                } else {
-                    this.focusNode(node);
+                const node = this._getNodeFromObject(intersects[0].object);
+                if (node) {
+                    if (this.onNodeDblClick) {
+                        this.onNodeDblClick(node);
+                    } else {
+                        this.focusNode(node);
+                    }
                 }
             } else {
                 this.resetView();
@@ -1084,6 +1365,18 @@ class BrainGraph {
         return { pathNodes, pathEdges };
     }
 
+    _setNodeEmissive(node, intensity, scale, glowMultiplier) {
+        if (!node || !node.mesh) return;
+        node.mesh.scale.set(scale, scale, scale);
+        if (node.somaMesh && node.somaMesh.material) {
+            node.somaMesh.material.emissiveIntensity = intensity;
+        }
+        if (node.glowSprite) {
+            const baseGlow = Math.max(6, (node.size || 10) * 0.95) * 2.3;
+            node.glowSprite.scale.set(baseGlow * glowMultiplier, baseGlow * glowMultiplier, 1);
+        }
+    }
+
     _applySpotlight(node) {
         if (!node) return;
 
@@ -1095,17 +1388,11 @@ class BrainGraph {
                 const inChain = pathNodes.has(n.id);
 
                 if (isSelf) {
-                    n.mesh.scale.set(1.4, 1.4, 1.4);
-                    n.mesh.material.emissiveIntensity = 1.0;
-                    if (n.glowSprite) n.glowSprite.scale.setScalar(n.size * 5.8);
+                    this._setNodeEmissive(n, 1.0, 1.38, 2.5);
                 } else if (inChain) {
-                    n.mesh.scale.set(1.2, 1.2, 1.2);
-                    n.mesh.material.emissiveIntensity = 0.85;
-                    if (n.glowSprite) n.glowSprite.scale.setScalar(n.size * 4.4);
+                    this._setNodeEmissive(n, 0.85, 1.18, 1.8);
                 } else {
-                    n.mesh.scale.set(0.85, 0.85, 0.85);
-                    n.mesh.material.emissiveIntensity = 0.12;
-                    if (n.glowSprite) n.glowSprite.scale.setScalar(n.size * 2.2);
+                    this._setNodeEmissive(n, 0.12, 0.85, 0.9);
                 }
             }
 
@@ -1128,16 +1415,11 @@ class BrainGraph {
             const isSelf = n.id === node.id;
 
             if (isSelf) {
-                n.mesh.scale.set(1.35, 1.35, 1.35);
-                n.mesh.material.emissiveIntensity = 0.95;
-                if (n.glowSprite) n.glowSprite.scale.setScalar(n.size * 5.5);
+                this._setNodeEmissive(n, 0.95, 1.35, 2.4);
             } else if (isConn) {
-                n.mesh.scale.set(1.15, 1.15, 1.15);
-                n.mesh.material.emissiveIntensity = 0.7;
-                n.mesh.material.opacity = 1.0;
+                this._setNodeEmissive(n, 0.7, 1.15, 1.6);
             } else {
-                n.mesh.scale.set(0.9, 0.9, 0.9);
-                n.mesh.material.emissiveIntensity = 0.15;
+                this._setNodeEmissive(n, 0.15, 0.9, 0.9);
             }
         }
 
@@ -1155,6 +1437,14 @@ class BrainGraph {
     _setHoveredNode(node, px, py) {
         this.hoveredNode = node;
         this.canvas.style.cursor = 'pointer';
+
+        this.labelFocus.clear();
+        if (this.isHierarchy) {
+            const { pathNodes } = this._getPathChain(node);
+            for (const id of pathNodes) this.labelFocus.add(id);
+        } else {
+            this.labelFocus.add(node.id);
+        }
 
         this._applySpotlight(node);
 
@@ -1190,19 +1480,21 @@ class BrainGraph {
         this.canvas.style.cursor = 'default';
         this.tooltip.classList.remove('visible');
 
+        this.labelFocus.clear();
         if (this.selectedNode) {
+            if (this.isHierarchy) {
+                const { pathNodes } = this._getPathChain(this.selectedNode);
+                for (const id of pathNodes) this.labelFocus.add(id);
+            } else {
+                this.labelFocus.add(this.selectedNode.id);
+            }
             this._applySpotlight(this.selectedNode);
             return;
         }
 
         // Restaura todos os nós e arestas para a cor/opacidade original
         for (const n of this.nodes) {
-            n.mesh.scale.set(1, 1, 1);
-            n.mesh.material.emissiveIntensity = 0.45;
-            if (n.glowSprite) {
-                const s = Math.max(7, (n.size || 10) * 0.95) * 3.8;
-                n.glowSprite.scale.set(s, s, 1);
-            }
+            this._setNodeEmissive(n, this.nodeStyle === 'neuron' ? 0.65 : 0.52, 1.0, 1.0);
         }
 
         for (const edge of this.edges) {
@@ -1389,6 +1681,8 @@ class BrainGraph {
         const satelliteNodes = this.nodes.filter(n => !n.isCentral && n.id !== 'brain');
         const totalCount = satelliteNodes.length;
 
+        this.searchLabelSet.clear();
+
         if (!hasQuery && !hasCat) {
             for (const n of this.nodes) {
                 if (n.mesh) n.mesh.visible = true;
@@ -1428,7 +1722,10 @@ class BrainGraph {
             }
 
             if (matchCat && matchText) {
-                if (!n.isFolder) matchedCount++;
+                if (!n.isFolder) {
+                    matchedCount++;
+                    this.searchLabelSet.add(n.id);
+                }
                 visibleSet.add(n.id);
 
                 // Mantém toda a rota hierárquica de pastas visível até o Sol
@@ -1475,13 +1772,9 @@ class BrainGraph {
             if (!n.mesh || !n.mesh.visible) continue;
             const isMatch = n.group === groupKey;
             if (isMatch) {
-                n.mesh.scale.set(1.32, 1.32, 1.32);
-                n.mesh.material.emissiveIntensity = 0.95;
-                if (n.glowSprite) n.glowSprite.scale.setScalar(n.size * 5.2);
+                this._setNodeEmissive(n, 0.95, 1.32, 2.2);
             } else {
-                n.mesh.scale.set(0.85, 0.85, 0.85);
-                n.mesh.material.emissiveIntensity = 0.12;
-                if (n.glowSprite) n.glowSprite.scale.setScalar(n.size * 2.2);
+                this._setNodeEmissive(n, 0.12, 0.85, 0.9);
             }
         }
         for (const edge of this.edges) {
@@ -1507,14 +1800,7 @@ class BrainGraph {
             return;
         }
         for (const n of this.nodes) {
-            if (n.mesh) {
-                n.mesh.scale.set(1, 1, 1);
-                n.mesh.material.emissiveIntensity = 0.45;
-            }
-            if (n.glowSprite) {
-                const s = Math.max(7, (n.size || 10) * 0.95) * 3.8;
-                n.glowSprite.scale.set(s, s, 1);
-            }
+            this._setNodeEmissive(n, this.nodeStyle === 'neuron' ? 0.65 : 0.52, 1.0, 1.0);
         }
         for (const edge of this.edges) {
             if (edge.lineMesh) {
@@ -1539,9 +1825,9 @@ class BrainGraph {
             if (node.group === groupKey) {
                 node.colors.fill = hexColor;
                 node.colors.stroke = hexColor;
-                if (node.mesh && node.mesh.material) {
-                    node.mesh.material.color.setHex(colorHex);
-                    node.mesh.material.emissive.setHex(colorHex);
+                if (node.somaMesh && node.somaMesh.material) {
+                    node.somaMesh.material.color.setHex(colorHex);
+                    node.somaMesh.material.emissive.setHex(colorHex);
                 }
                 if (node.glowSprite && node.glowSprite.material) {
                     node.glowSprite.material.color.setHex(colorHex);
@@ -1628,7 +1914,7 @@ class BrainGraph {
             this.ring2.rotation.z -= 0.0008;
         }
 
-        // 4. Update Node Orbit Rings & Depth Label Fading
+        // 4. Update Node Orbit Rings, Pulsing Nuclei & Smart Label LOD
         const camDir = new THREE.Vector3();
         this.camera.getWorldDirection(camDir);
 
@@ -1637,39 +1923,98 @@ class BrainGraph {
                 n.outerRing.rotation.z += 0.015;
             }
 
-            // Faint labels of nodes on the back side of the planetary sphere
+            // Pulso orgânico suave no núcleo dos neurônios
+            if (n.nucleusMesh) {
+                const pulse = 0.9 + Math.sin(this.time * 3 + (n.size || 10)) * 0.15;
+                n.nucleusMesh.scale.setScalar(pulse);
+            }
+
+            // Controle inteligente de visibilidade e LOD dos rótulos
             if (n.labelSprite && n.id !== 'brain') {
                 const nodeDir = n.position.clone().normalize();
                 const dot = nodeDir.dot(camDir);
-                // If facing away, attenuate opacity smoothly
-                const targetOpacity = dot < 0.15 ? 0.92 : 0.25;
-                n.labelSprite.material.opacity += (targetOpacity - n.labelSprite.material.opacity) * 0.1;
+
+                // 1. Rótulos virados para trás são 100% ocultados (zero ruído no hemisfério oposto)
+                if (dot >= 0.08) {
+                    n.labelSprite.visible = false;
+                    n.labelSprite.material.opacity = 0;
+                    continue;
+                }
+
+                // 2. Visibilidade inteligente na face frontal:
+                // - Pastas e Sol central: sempre visíveis
+                // - Arquivos: visíveis se em foco (hover/seleção), se encontrados na busca,
+                //   ou se a câmera estiver em zoom próximo
+                const isFolderOrSun = n.isFolder || n.isCentral;
+                const isFocused = this.labelFocus.has(n.id);
+                const isSearchResult = this.searchLabelSet.has(n.id);
+                const distToCam = n.position.distanceTo(this.camera.position);
+                const isNearZoom = distToCam < this.labelNearDist;
+
+                let targetOpacity = 0.0;
+                if (isFolderOrSun) {
+                    targetOpacity = 0.95;
+                } else if (isFocused) {
+                    targetOpacity = 1.0;
+                } else if (isSearchResult) {
+                    targetOpacity = 0.95;
+                } else if (isNearZoom) {
+                    targetOpacity = 0.85;
+                } else {
+                    targetOpacity = 0.0;
+                }
+
+                if (targetOpacity > 0.02) {
+                    n.labelSprite.visible = true;
+                    n.labelSprite.material.opacity += (targetOpacity - n.labelSprite.material.opacity) * 0.15;
+                } else {
+                    n.labelSprite.material.opacity += (0 - n.labelSprite.material.opacity) * 0.2;
+                    if (n.labelSprite.material.opacity < 0.03) {
+                        n.labelSprite.visible = false;
+                    }
+                }
             }
         }
 
-        // 5. Update Synaptic Pulse Photons
+        // 5. Update Synaptic Light Photons (feixes de luz calibrados por velocidade física)
         const visibleEdges = this.edges.filter(e => e.lineMesh && e.lineMesh.visible);
         for (const p of this.particles) {
             if (!p.edge || !p.edge.curve || (p.edge.lineMesh && !p.edge.lineMesh.visible)) {
                 if (visibleEdges.length > 0) {
                     p.edge = visibleEdges[Math.floor(Math.random() * visibleEdges.length)];
                     p.progress = Math.random();
+                    p.speed = this._calcParticleSpeed(p.edge);
+                    if (p.edge.toNode && p.edge.toNode.colors) {
+                        const c = parseInt(p.edge.toNode.colors.stroke.replace('#', '0x'), 16);
+                        p.sprite.material.color.setHex(c);
+                    }
                 } else {
-                    p.mesh.visible = false;
+                    p.sprite.visible = false;
                     continue;
                 }
             }
-            p.mesh.visible = true;
+            p.sprite.visible = true;
             p.progress += p.speed;
             if (p.progress >= 1.0) {
                 p.progress = 0;
                 if (visibleEdges.length > 0) {
                     p.edge = visibleEdges[Math.floor(Math.random() * visibleEdges.length)];
+                    p.speed = this._calcParticleSpeed(p.edge);
+                    if (p.edge.toNode && p.edge.toNode.colors) {
+                        const c = parseInt(p.edge.toNode.colors.stroke.replace('#', '0x'), 16);
+                        p.sprite.material.color.setHex(c);
+                    }
                 }
             }
             if (p.edge && p.edge.curve) {
                 const pt = p.edge.curve.getPoint(p.progress);
-                p.mesh.position.copy(pt);
+                p.sprite.position.copy(pt);
+
+                // Efeito elétrico de luz: arco senoidal de intensidade com foco e velocidade uniforme
+                const lifeAlpha = Math.sin(p.progress * Math.PI);
+                p.sprite.material.opacity = 0.35 + lifeAlpha * 0.65;
+                const sz = p.baseSize * (0.85 + lifeAlpha * 0.25);
+                p.sprite.scale.set(sz, sz, 1);
             }
         }
 
