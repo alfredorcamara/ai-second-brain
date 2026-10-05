@@ -571,7 +571,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     } catch (e) {}
     onAiEngineChange(getSelectedAiEngine(), true);
-    showDashboard();
+    if (window.location.hash === '#graph' || window.location.search.includes('view=graph')) {
+        showView('graph');
+    } else {
+        showDashboard();
+    }
 });
 
 // ── Sidebar ───────────────────────────────────────

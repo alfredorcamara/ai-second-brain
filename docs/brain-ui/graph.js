@@ -41,6 +41,9 @@ class BrainGraph {
         this.particles = [];
         this.maxParticles = 55;
 
+        // Botões sinápticos terminais com pulso cintilante suave
+        this.synapticBoutons = [];
+
         // Interaction state
         this.hoveredNode = null;
         this.selectedNode = null;
@@ -58,6 +61,7 @@ class BrainGraph {
 
         // Shared Textures & Geometries
         this.glowTexture = null;
+        this.flareTexture = null;
         this.time = 0;
         this.animFrame = null;
 
@@ -139,8 +143,15 @@ class BrainGraph {
         this.scene.add(this.particleGroup);
         this.scene.add(this.nodeGroup);
 
-        // Procedural Glow Texture
+        // Procedural Glow & Synaptic Flare Textures
         this.glowTexture = this._createGlowTexture();
+        this.flareTexture = this._createFlareTexture();
+
+        // Constantes de cor para cintilação sináptica biológica (Âmbar quente -> Ouro-branco diamante)
+        if (!BrainGraph.COLOR_EMBER && typeof THREE !== 'undefined') {
+            BrainGraph.COLOR_EMBER = new THREE.Color(0xff8811);
+            BrainGraph.COLOR_PEAK = new THREE.Color(0xfff8e8);
+        }
     }
 
     _setupCanvas() {
@@ -266,6 +277,70 @@ class BrainGraph {
         return tex;
     }
 
+    _createFlareTexture() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 128;
+        canvas.height = 128;
+        const ctx = canvas.getContext('2d');
+        const cx = 64;
+        const cy = 64;
+
+        // 1. Coroa difusa de fogo quente (âmbar / dourado)
+        const radGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 64);
+        radGrad.addColorStop(0, 'rgba(255, 255, 255, 1.0)');
+        radGrad.addColorStop(0.12, 'rgba(255, 240, 160, 0.95)');
+        radGrad.addColorStop(0.32, 'rgba(255, 170, 30, 0.75)');
+        radGrad.addColorStop(0.60, 'rgba(255, 90, 0, 0.25)');
+        radGrad.addColorStop(1, 'rgba(255, 40, 0, 0)');
+        ctx.fillStyle = radGrad;
+        ctx.fillRect(0, 0, 128, 128);
+
+        // 2. Raios ópticos cruzados (Optical Flare anamórfico estilo starburst)
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+
+        // Raio horizontal
+        const hGrad = ctx.createLinearGradient(0, cy, 128, cy);
+        hGrad.addColorStop(0, 'rgba(255, 180, 50, 0)');
+        hGrad.addColorStop(0.38, 'rgba(255, 220, 100, 0.45)');
+        hGrad.addColorStop(0.5, 'rgba(255, 255, 255, 1.0)');
+        hGrad.addColorStop(0.62, 'rgba(255, 220, 100, 0.45)');
+        hGrad.addColorStop(1, 'rgba(255, 180, 50, 0)');
+        ctx.fillStyle = hGrad;
+        ctx.fillRect(0, cy - 2.5, 128, 5);
+
+        // Raio vertical
+        const vGrad = ctx.createLinearGradient(cx, 0, cx, 128);
+        vGrad.addColorStop(0, 'rgba(255, 180, 50, 0)');
+        vGrad.addColorStop(0.38, 'rgba(255, 220, 100, 0.45)');
+        vGrad.addColorStop(0.5, 'rgba(255, 255, 255, 1.0)');
+        vGrad.addColorStop(0.62, 'rgba(255, 220, 100, 0.45)');
+        vGrad.addColorStop(1, 'rgba(255, 180, 50, 0)');
+        ctx.fillStyle = vGrad;
+        ctx.fillRect(cx - 2.5, 0, 5, 128);
+
+        // Raio diagonal 45 graus
+        ctx.translate(cx, cy);
+        ctx.rotate(Math.PI / 4);
+        const dGrad = ctx.createLinearGradient(-48, 0, 48, 0);
+        dGrad.addColorStop(0, 'rgba(255, 160, 30, 0)');
+        dGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.7)');
+        dGrad.addColorStop(1, 'rgba(255, 160, 30, 0)');
+        ctx.fillStyle = dGrad;
+        ctx.fillRect(-48, -2, 96, 4);
+
+        // Raio diagonal -45 graus
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillStyle = dGrad;
+        ctx.fillRect(-48, -2, 96, 4);
+
+        ctx.restore();
+
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.needsUpdate = true;
+        return tex;
+    }
+
     // ── Load Data & 3D Spherical Planet Layout ────────
     loadData(graphNodes, graphEdges, groupColors) {
         this.groupColors = groupColors || {};
@@ -282,6 +357,12 @@ class BrainGraph {
             this.particleGroup.remove(this.particleGroup.children[0]);
         }
         this.interactiveMeshes = [];
+        this.synapticBoutons = [];
+
+        // No modo neurônio, oculta o núcleo wireframe mecânico do planeta
+        if (this.coreGroup) {
+            this.coreGroup.visible = (this.nodeStyle !== 'neuron');
+        }
 
         // 1. Calculate 3D Spherical Positions for Nodes (Planetary Cortex)
         const planetRadius = 210;
@@ -448,6 +529,19 @@ class BrainGraph {
         // 2.2 Enquadra a câmera conforme o tamanho real do grafo
         this._fitCameraToGraph();
 
+        // 2.3 Mapeia adjacências (vizinhos conectados) para que os neurônios orientem seus axônios
+        for (const node of this.nodes) {
+            node.neighbors = [];
+        }
+        for (const e of graphEdges) {
+            const fromNode = this.nodeMap.get(e.from);
+            const toNode = this.nodeMap.get(e.to);
+            if (fromNode && toNode) {
+                fromNode.neighbors.push(toNode);
+                toNode.neighbors.push(fromNode);
+            }
+        }
+
         // 3. Build 3D Meshes for Nodes
         for (const node of this.nodes) {
             this._create3DNode(node);
@@ -591,6 +685,9 @@ class BrainGraph {
         try {
             localStorage.setItem('ai_second_brain_node_style', style);
         } catch (e) {}
+        if (this.coreGroup) {
+            this.coreGroup.visible = (style !== 'neuron');
+        }
         this._rebuildAllNodeMeshes();
     }
 
@@ -611,6 +708,23 @@ class BrainGraph {
     }
 
     _rebuildAllNodeMeshes() {
+        this.synapticBoutons = [];
+
+        if (this.coreGroup) {
+            this.coreGroup.visible = (this.nodeStyle !== 'neuron');
+        }
+
+        // Atualiza conexões vizinhas a partir das arestas ativas
+        for (const node of this.nodes) {
+            node.neighbors = [];
+        }
+        for (const edge of this.edges) {
+            if (edge.fromNode && edge.toNode) {
+                edge.fromNode.neighbors.push(edge.toNode);
+                edge.toNode.neighbors.push(edge.fromNode);
+            }
+        }
+
         for (const node of this.nodes) {
             if (!node.mesh) continue;
             const toRemove = [];
@@ -627,32 +741,47 @@ class BrainGraph {
             node.dendritesGroup = null;
             node.outerRing = null;
             node.glowSprite = null;
+            node.nucRing = null;
+            node.nucleolus = null;
+            node.nucAura = null;
 
             this._populateNodeVisuals(node);
         }
     }
 
     _populateNodeVisuals(node) {
-        const radius = Math.max(6, (node.size || 10) * 0.95);
         const colorHex = parseInt(node.colors.fill.replace('#', '0x'), 16);
         const strokeHex = parseInt(node.colors.stroke.replace('#', '0x'), 16);
-
+        let radius;
         if (this.nodeStyle === 'neuron') {
+            // Em modo neurônio, corpos celulares mais esguios, orgânicos e compactos
+            // O Sol/Hub central fica elegante (~12.0) e pastas/categorias intermediárias (~9.0 a 10.2) sem ficarem balões gigantes
+            if (node.isCentral || node.id === 'brain') {
+                radius = 12.0;
+            } else if (node.isFolder || (node.size && node.size >= 14)) {
+                radius = Math.min(10.2, 6.6 + (node.size || 10) * 0.15);
+            } else {
+                radius = Math.max(4.2, Math.min(6.2, (node.size || 10) * 0.50));
+            }
+            node.visualRadius = radius;
             this._buildNeuronVisuals(node, radius, colorHex, strokeHex);
         } else {
+            radius = Math.max(6, (node.size || 10) * 0.95);
+            node.visualRadius = radius;
             this._buildSphereVisuals(node, radius, colorHex, strokeHex);
         }
 
-        // Halo de brilho sutil e bioluminescente (escala 2.3x e opacidade suave para evitar manchas aglomeradas)
+        // Halo de brilho bioluminescente sutil
+        const isNeuron = this.nodeStyle === 'neuron';
         const glowMat = new THREE.SpriteMaterial({
             map: this.glowTexture,
             color: strokeHex,
             transparent: true,
-            opacity: 0.38,
+            opacity: isNeuron ? 0.26 : 0.38,
             blending: THREE.AdditiveBlending
         });
         const glow = new THREE.Sprite(glowMat);
-        const glowScale = radius * 2.3;
+        const glowScale = isNeuron ? radius * 1.8 : radius * 2.3;
         glow.scale.set(glowScale, glowScale, 1);
         node.mesh.add(glow);
         node.glowSprite = glow;
@@ -695,96 +824,320 @@ class BrainGraph {
     }
 
     _buildNeuronVisuals(node, radius, colorHex, strokeHex) {
-        // 1. Corpo celular (soma orgânico com micro-relevo biológico determinístico)
-        const somaGeo = new THREE.IcosahedronGeometry(radius * 0.92, 2);
+        // 1. Corpo celular multipolar estrelado (Soma biológico com braços orgânicos contínuos)
+        const somaGeo = new THREE.SphereGeometry(radius * 0.92, 32, 32);
         const posAttr = somaGeo.attributes.position;
         const hash = this._hashString(node.id);
+        const v = new THREE.Vector3();
+
+        // Determina os pólos principais do neurônio (axônios conectados + troncos dendríticos)
+        const branchPoles = [];
+
+        // Adiciona direções dos vizinhos conectados
+        if (node.neighbors && node.neighbors.length > 0) {
+            for (const nb of node.neighbors) {
+                const dir = new THREE.Vector3().subVectors(nb.position, node.position).normalize();
+                if (!branchPoles.some(bp => bp.dot(dir) > 0.72)) {
+                    branchPoles.push(dir);
+                }
+            }
+        }
+
+        // Completa até 5-7 pólos para dar a forma estrelada multipolar característica da referência
+        const totalPoles = Math.max(5, Math.min(7, branchPoles.length + 3));
+        const needed = totalPoles - branchPoles.length;
+        for (let k = 0; k < needed; k++) {
+            const phi = Math.acos(1 - 2 * ((k + 0.5) / needed));
+            const theta = k * 2.3999632 + (hash % 10);
+            const extraDir = new THREE.Vector3(
+                Math.sin(phi) * Math.cos(theta),
+                Math.cos(phi),
+                Math.sin(phi) * Math.sin(theta)
+            ).normalize();
+            if (!branchPoles.some(bp => bp.dot(extraDir) > 0.6)) {
+                branchPoles.push(extraDir);
+            }
+        }
+
+        // Deforma os vértices para criar a fusão ameboide e as raízes do corpo celular
         for (let i = 0; i < posAttr.count; i++) {
-            const vx = posAttr.getX(i);
-            const vy = posAttr.getY(i);
-            const vz = posAttr.getZ(i);
-            const freq = 0.32;
-            const noise = Math.sin(vx * freq + hash) * Math.cos(vy * freq + hash * 1.5) * 0.18;
-            const factor = 1.0 + noise;
-            posAttr.setXYZ(i, vx * factor, vy * factor, vz * factor);
+            v.fromBufferAttribute(posAttr, i);
+            const dir = v.clone().normalize();
+
+            // Proximidade com o pólo mais próximo (alongamento nos braços)
+            let maxDot = -1;
+            for (const pole of branchPoles) {
+                const dot = dir.dot(pole);
+                if (dot > maxDot) maxDot = dot;
+            }
+
+            // Alongamento proporcional nos braços (axon hillocks) com concavidade mais orgânica
+            let armStretch = 0;
+            if (maxDot > 0.22) {
+                const t = (maxDot - 0.22) / 0.78;
+                armStretch = Math.pow(t, 1.6) * 0.44;
+            } else {
+                // Cintura membranar recuada entre braços (silhueta estrelada verdadeira, sem inchaço)
+                armStretch = -0.16 * Math.pow(1 - Math.max(0, maxDot + 0.45), 1.6);
+            }
+
+            // Ondulações e micro-rugosidades biológicas da membrana
+            const f1 = 3.2;
+            const f2 = 5.4;
+            const noise = Math.sin(dir.x * f1 + hash) * Math.cos(dir.y * f1 + hash * 1.4) * 0.05 +
+                          Math.sin(dir.z * f2 + hash * 0.8) * 0.03;
+
+            const factor = Math.max(0.60, 1.0 + armStretch + noise);
+            v.multiplyScalar(factor);
+            posAttr.setXYZ(i, v.x, v.y, v.z);
         }
         somaGeo.computeVertexNormals();
 
+        // Material da membrana plasmática: translúcida, biológica e acetinada
         const somaMat = new THREE.MeshStandardMaterial({
             color: colorHex,
             emissive: colorHex,
-            emissiveIntensity: 0.65,
-            roughness: 0.25,
-            metalness: 0.38
+            emissiveIntensity: 0.38,
+            roughness: 0.20,
+            metalness: 0.12,
+            transparent: true,
+            opacity: 0.84,
+            depthWrite: true
         });
         const soma = new THREE.Mesh(somaGeo, somaMat);
         soma.userData = { node: node };
         node.mesh.add(soma);
         node.somaMesh = soma;
 
-        // 2. Núcleo bioluminescente brilhante
-        const nucGeo = new THREE.SphereGeometry(radius * 0.44, 16, 16);
-        const nucMat = new THREE.MeshBasicMaterial({
-            color: 0xffffff,
+        // 2. Núcleo celular verde-esmeralda bioluminescente (idêntico à organela central da referência)
+        const nucRadius = radius * 0.36;
+
+        // Membrana nuclear externa (anel escuro/profundo)
+        const nucRingGeo = new THREE.SphereGeometry(nucRadius * 1.10, 16, 16);
+        const nucRingMat = new THREE.MeshBasicMaterial({
+            color: 0x064e3b,
+            wireframe: false,
             transparent: true,
-            opacity: 0.9,
-            blending: THREE.AdditiveBlending
+            opacity: 0.65
+        });
+        const nucRing = new THREE.Mesh(nucRingGeo, nucRingMat);
+        node.mesh.add(nucRing);
+        node.nucRing = nucRing;
+
+        // Núcleo interno verde esmeralda brilhante
+        const nucGeo = new THREE.SphereGeometry(nucRadius, 20, 20);
+        const nucMat = new THREE.MeshStandardMaterial({
+            color: 0x10b981,
+            emissive: 0x059669,
+            emissiveIntensity: 0.90,
+            roughness: 0.15,
+            metalness: 0.2
         });
         const nucleus = new THREE.Mesh(nucGeo, nucMat);
         nucleus.userData = { node: node };
         node.mesh.add(nucleus);
         node.nucleusMesh = nucleus;
 
-        // 3. Ramificações dendríticas (dendritos orgânicos com botões sinápticos)
+        // Nucléolo interno de alta energia (centro luminoso)
+        const nucleolusGeo = new THREE.SphereGeometry(nucRadius * 0.36, 12, 12);
+        const nucleolusMat = new THREE.MeshBasicMaterial({
+            color: 0xecfdf5,
+            transparent: true,
+            opacity: 0.95,
+            blending: THREE.AdditiveBlending
+        });
+        const nucleolus = new THREE.Mesh(nucleolusGeo, nucleolusMat);
+        node.mesh.add(nucleolus);
+        node.nucleolus = nucleolus;
+
+        // Halo bioluminescente verde esmeralda de difusão
+        const nucAuraMat = new THREE.SpriteMaterial({
+            map: this.glowTexture,
+            color: 0x34d399,
+            transparent: true,
+            opacity: 0.65,
+            blending: THREE.AdditiveBlending
+        });
+        const nucAura = new THREE.Sprite(nucAuraMat);
+        const nucScale = radius * 1.35;
+        nucAura.scale.set(nucScale, nucScale, 1);
+        node.mesh.add(nucAura);
+        node.nucAura = nucAura;
+
+        // 3. Sistema Dendrítico e Axonal Arborizado com Bifurcações em Y e Ópticos Dourados
         const dendritesGroup = new THREE.Group();
-        const dendriteCount = node.isCentral ? 9 : (node.isFolder ? 6 : 3);
-        const dendriteMat = new THREE.MeshStandardMaterial({
+
+        const branchMat = new THREE.MeshStandardMaterial({
             color: strokeHex,
             emissive: strokeHex,
-            emissiveIntensity: 0.5,
-            roughness: 0.3,
-            metalness: 0.3
+            emissiveIntensity: 0.46,
+            roughness: 0.26,
+            metalness: 0.18
         });
-        const boutonMat = new THREE.MeshBasicMaterial({
-            color: 0xffffff,
+
+        const boutonBulbMat = new THREE.MeshBasicMaterial({
+            color: 0xfff4cc,
+            transparent: true,
+            opacity: 0.95,
+            blending: THREE.AdditiveBlending
+        });
+
+        const boutonFlareMat = new THREE.SpriteMaterial({
+            map: this.flareTexture || this.glowTexture,
+            color: 0xffaa22, // Fogo dourado incandescente (exatamente como na referência)
             transparent: true,
             opacity: 0.92,
             blending: THREE.AdditiveBlending
         });
 
-        for (let d = 0; d < dendriteCount; d++) {
-            const t = (d + 0.5) / dendriteCount;
-            const phi = Math.acos(1 - 2 * t);
-            const theta = d * 2.3999632 + (hash % 10);
-            const dir = new THREE.Vector3(
-                Math.sin(phi) * Math.cos(theta),
-                Math.cos(phi),
-                Math.sin(phi) * Math.sin(theta)
-            ).normalize();
+        // 3.1 Gera prolongamentos longos e bifurcados para cada pólo celular
+        const isFolder = node.isFolder || (node.size && node.size >= 14);
+        for (let p = 0; p < branchPoles.length; p++) {
+            const dir = branchPoles[p];
+            const isConnectedAxon = node.neighbors && node.neighbors.some(nb => {
+                const nd = new THREE.Vector3().subVectors(nb.position, node.position).normalize();
+                return nd.dot(dir) > 0.75;
+            });
 
-            const dendLen = radius * (node.isFolder ? 1.35 : 0.95) + (d % 2) * 2;
-            const dendRadiusTop = Math.max(0.5, radius * 0.08);
-            const dendRadiusBottom = Math.max(1.1, radius * 0.2);
+            // Proporções elegantes: galhos esguios e harmônicos
+            const totalLen = radius * (isConnectedAxon ? (isFolder ? 2.5 : 2.0) : 1.6) + (p % 2) * (radius * 0.3);
+            const rBase = Math.max(0.75, radius * (isConnectedAxon ? 0.16 : 0.12));
+            const boutonSize = Math.max(0.85, radius * 0.14);
 
-            const cylGeo = new THREE.CylinderGeometry(dendRadiusTop, dendRadiusBottom, dendLen, 6);
-            cylGeo.translate(0, dendLen / 2 + radius * 0.65, 0);
-
-            const cylMesh = new THREE.Mesh(cylGeo, dendriteMat);
-            const up = new THREE.Vector3(0, 1, 0);
-            cylMesh.quaternion.setFromUnitVectors(up, dir);
-            cylMesh.userData = { node: node };
-            dendritesGroup.add(cylMesh);
-
-            // Botão sináptico terminal brilhante na ponta
-            const tipPos = dir.clone().multiplyScalar(radius * 0.68 + dendLen);
-            const bulbGeo = new THREE.SphereGeometry(Math.max(1.1, radius * 0.16), 8, 8);
-            const bulbMesh = new THREE.Mesh(bulbGeo, boutonMat);
-            bulbMesh.position.copy(tipPos);
-            bulbMesh.userData = { node: node };
-            dendritesGroup.add(bulbMesh);
+            this._createArborizedBranch(
+                dendritesGroup,
+                dir,
+                radius * 0.92,
+                totalLen,
+                rBase,
+                branchMat,
+                boutonBulbMat,
+                boutonFlareMat,
+                boutonSize,
+                node,
+                hash + p * 41 + 17
+            );
         }
+
         node.mesh.add(dendritesGroup);
         node.dendritesGroup = dendritesGroup;
+    }
+
+    _createArborizedBranch(parentGroup, dir, startOffset, totalLength, rBase, branchMat, boutonBulbMat, boutonFlareMat, boutonSize, node, seed) {
+        // Vetor ortogonal para dar ondulação e bifurcação orgânica
+        const up = Math.abs(dir.y) < 0.88 ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(1, 0, 0);
+        const lat1 = new THREE.Vector3().crossVectors(dir, up).normalize();
+        const lat2 = new THREE.Vector3().crossVectors(dir, lat1).normalize();
+
+        const baseAngle = (((seed * 47) % 360) * Math.PI) / 180;
+        const curlTrunk = lat1.clone().multiplyScalar(Math.cos(baseAngle))
+            .add(lat2.clone().multiplyScalar(Math.sin(baseAngle)))
+            .multiplyScalar(totalLength * 0.16);
+
+        // 1. Tronco Principal (da base celular até o ponto de bifurcação Y)
+        const trunkLen = totalLength * 0.54;
+        const p0 = dir.clone().multiplyScalar(startOffset * 0.95);
+        const p1 = dir.clone().multiplyScalar(startOffset + trunkLen * 0.5).add(curlTrunk);
+        const pFork = dir.clone().multiplyScalar(startOffset + trunkLen);
+
+        const trunkCurve = new THREE.QuadraticBezierCurve3(p0, p1, pFork);
+        const rFork = rBase * 0.58;
+        this._buildTaperedTubeMesh(parentGroup, trunkCurve, rBase, rFork, branchMat, node);
+
+        // Botão sináptico incandescente no ponto de bifurcação (exatamente como na imagem de referência)
+        this._addSynapticFlare(parentGroup, pFork, boutonSize * 0.88, boutonBulbMat, boutonFlareMat, node);
+
+        // 2. Dois ramos filhos bifurcados (Y-fork)
+        const forkSpread = 0.35;
+        const forkLen = totalLength * 0.50;
+
+        // Ramo 1
+        const dirFork1 = dir.clone().add(lat1.clone().multiplyScalar(forkSpread)).normalize();
+        const curl1 = lat2.clone().multiplyScalar(forkLen * 0.18);
+        const pFork1Mid = pFork.clone().add(dirFork1.clone().multiplyScalar(forkLen * 0.5)).add(curl1);
+        const pTip1 = pFork.clone().add(dirFork1.clone().multiplyScalar(forkLen));
+        const curveFork1 = new THREE.QuadraticBezierCurve3(pFork, pFork1Mid, pTip1);
+        this._buildTaperedTubeMesh(parentGroup, curveFork1, rFork * 0.78, rBase * 0.16, branchMat, node);
+        this._addSynapticFlare(parentGroup, pTip1, boutonSize, boutonBulbMat, boutonFlareMat, node);
+
+        // Ramo 2 (se o galho for longo o suficiente)
+        if (totalLength > startOffset * 0.8) {
+            const dirFork2 = dir.clone().add(lat1.clone().multiplyScalar(-forkSpread)).add(lat2.clone().multiplyScalar(forkSpread * 0.4)).normalize();
+            const curl2 = lat2.clone().multiplyScalar(-forkLen * 0.18);
+            const pFork2Mid = pFork.clone().add(dirFork2.clone().multiplyScalar(forkLen * 0.45)).add(curl2);
+            const pTip2 = pFork.clone().add(dirFork2.clone().multiplyScalar(forkLen * 0.88));
+            const curveFork2 = new THREE.QuadraticBezierCurve3(pFork, pFork2Mid, pTip2);
+            this._buildTaperedTubeMesh(parentGroup, curveFork2, rFork * 0.68, rBase * 0.14, branchMat, node);
+            this._addSynapticFlare(parentGroup, pTip2, boutonSize * 0.85, boutonBulbMat, boutonFlareMat, node);
+        }
+    }
+
+    _buildTaperedTubeMesh(parentGroup, curve, rStart, rEnd, material, node, segments = 8, radialSegments = 6) {
+        const tubeGeo = new THREE.TubeGeometry(curve, segments, rStart, radialSegments, false);
+        const pos = tubeGeo.attributes.position;
+        const ringSize = radialSegments + 1;
+
+        for (let i = 0; i <= segments; i++) {
+            const t = i / segments;
+            const factor = (1 - t) + (rEnd / rStart) * t;
+            const pt = curve.getPoint(t);
+
+            for (let j = 0; j < ringSize; j++) {
+                const idx = i * ringSize + j;
+                if (idx < pos.count) {
+                    const vx = pos.getX(idx);
+                    const vy = pos.getY(idx);
+                    const vz = pos.getZ(idx);
+                    pos.setXYZ(
+                        idx,
+                        pt.x + (vx - pt.x) * factor,
+                        pt.y + (vy - pt.y) * factor,
+                        pt.z + (vz - pt.z) * factor
+                    );
+                }
+            }
+        }
+        tubeGeo.computeVertexNormals();
+
+        const branchMesh = new THREE.Mesh(tubeGeo, material);
+        branchMesh.userData = { node: node };
+        parentGroup.add(branchMesh);
+    }
+
+    _addSynapticFlare(parentGroup, position, size, bulbMat, flareMat, node) {
+        // Gema incandescente interna com material individual para pulso e opacidade independentes
+        const bulbMatInstance = bulbMat.clone();
+        const bulbGeo = new THREE.SphereGeometry(size, 8, 8);
+        const bulbMesh = new THREE.Mesh(bulbGeo, bulbMatInstance);
+        bulbMesh.position.copy(position);
+        bulbMesh.userData = { node: node };
+        parentGroup.add(bulbMesh);
+
+        // Starburst / Optical flare com raios cruzados e material individual para cintilação e centelhas
+        const flareMatInstance = flareMat.clone();
+        const rot = Math.random() * Math.PI * 2;
+        flareMatInstance.rotation = rot;
+        const flareSprite = new THREE.Sprite(flareMatInstance);
+        flareSprite.position.copy(position);
+        const flareScale = size * 5.4;
+        flareSprite.scale.set(flareScale, flareScale, 1);
+        parentGroup.add(flareSprite);
+
+        // Registra para o pulso cintilante UAU orgânico e assíncrono
+        if (this.synapticBoutons) {
+            this.synapticBoutons.push({
+                flare: flareSprite,
+                bulb: bulbMesh,
+                baseScale: flareScale,
+                baseBulbScale: size,
+                baseRot: rot,
+                phase: Math.random() * Math.PI * 2,
+                speed: 1.2 + Math.random() * 1.4,        // onda respiratória suave (1.2 a 2.6 rad/s)
+                twinkleFreq: 4.8 + Math.random() * 4.5,  // cintilação estelar de alta frequência
+                burstFreq: 0.6 + Math.random() * 0.8,    // micro-descargas sinápticas espontâneas (~3 a 6s)
+                burstPhase: Math.random() * Math.PI * 2
+            });
+        }
     }
 
     _setNodeVisualsVisible(node, visible) {
@@ -1925,8 +2278,13 @@ class BrainGraph {
 
             // Pulso orgânico suave no núcleo dos neurônios
             if (n.nucleusMesh) {
-                const pulse = 0.9 + Math.sin(this.time * 3 + (n.size || 10)) * 0.15;
+                const pulse = 0.9 + Math.sin(this.time * 2.5 + (n.size || 10)) * 0.12;
                 n.nucleusMesh.scale.setScalar(pulse);
+                if (n.nucAura) {
+                    const baseScale = (n.visualRadius || 8) * 1.35;
+                    const auraPulse = baseScale * (0.94 + Math.sin(this.time * 2.0 + (n.size || 10)) * 0.12);
+                    n.nucAura.scale.set(auraPulse, auraPulse, 1);
+                }
             }
 
             // Controle inteligente de visibilidade e LOD dos rótulos
@@ -1972,6 +2330,55 @@ class BrainGraph {
                     if (n.labelSprite.material.opacity < 0.03) {
                         n.labelSprite.visible = false;
                     }
+                }
+            }
+        }
+
+        // 4.1 Pulso cintilante UAU nas terminações e botões sinápticos
+        if (this.nodeStyle === 'neuron' && this.synapticBoutons && this.synapticBoutons.length > 0) {
+            const t = this.time;
+            const colEmber = BrainGraph.COLOR_EMBER;
+            const colPeak = BrainGraph.COLOR_PEAK;
+
+            for (let i = 0; i < this.synapticBoutons.length; i++) {
+                const sb = this.synapticBoutons[i];
+                if (!sb.flare.parent) continue;
+
+                // 1. Ciclo respiratório suave e orgânico (0.0 a 1.0)
+                const breathRaw = Math.sin(t * sb.speed + sb.phase);
+                const breath = breathRaw * 0.5 + 0.5;
+
+                // 2. Micro-cintilação biológica eletrostática (shimmer)
+                const shimmer = Math.sin(t * sb.twinkleFreq + sb.phase * 2.1) * 0.12
+                              + Math.sin(t * (sb.twinkleFreq * 1.6) + sb.phase) * 0.06;
+
+                // 3. Centelha / Micro-descarga sináptica espontânea (burst estelar rápido e vivo)
+                const burstRaw = Math.sin(t * sb.burstFreq + sb.burstPhase);
+                const burst = burstRaw > 0.80 ? Math.pow((burstRaw - 0.80) / 0.20, 2.5) : 0;
+
+                // Dinâmica de escala perceptível e impactante (de 0.74x a 1.90x na centelha)
+                const scaleFactor = 0.74 + breath * 0.50 + shimmer + burst * 0.65;
+                const s = sb.baseScale * scaleFactor;
+                sb.flare.scale.set(s, s, 1);
+
+                // Modulação de opacidade e brilho (de 0.40 suave a 1.0 incandescente)
+                const alpha = Math.min(1.0, 0.42 + breath * 0.48 + shimmer * 0.4 + burst * 0.35);
+                sb.flare.material.opacity = alpha;
+
+                // Transição de temperatura de cor (Âmbar aconchegante -> Ouro solar -> Diamante incandescente)
+                if (colEmber && colPeak) {
+                    const colorT = Math.min(1.0, breath * 0.65 + burst * 0.60);
+                    sb.flare.material.color.lerpColors(colEmber, colPeak, colorT);
+                }
+
+                // Rotação suave anamórfica da cruz de luz
+                sb.flare.material.rotation = sb.baseRot + Math.sin(t * 0.6 + sb.phase) * 0.14;
+
+                // Bulbo interno incandescente acompanha o pulso
+                if (sb.bulb) {
+                    const bulbScale = 0.75 + breath * 0.45 + burst * 0.75;
+                    sb.bulb.scale.setScalar(bulbScale);
+                    sb.bulb.material.opacity = Math.min(1.0, 0.55 + breath * 0.35 + burst * 0.20);
                 }
             }
         }
