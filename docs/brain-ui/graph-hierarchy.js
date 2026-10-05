@@ -312,8 +312,8 @@
         const step = maxDepth > 1 ? Math.max(65, Math.min(100, (rMax - rMin) / (maxDepth - 1))) : 0;
         const radiusFor = d => (d === 0 ? 0 : rMin + (d - 1) * step);
 
-        const FILE_ORBIT = 26;    // distância radial extra dos arquivos em relação à pasta
-        const FILE_SPACING = 14;  // espaçamento lateral entre arquivos irmãos
+        const FILE_ORBIT = 46;    // distância radial expandida para arborização neural orgânica
+        const FILE_SPACING = 17;  // espaçamento lateral entre terminações sinápticas
         const SECTOR_PAD = 0.92;  // folga angular entre setores de pastas irmãs
 
         root.hpos = { x: 0, y: 0, z: 0 };

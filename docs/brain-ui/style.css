@@ -670,7 +670,7 @@ body {
     flex: 1;
     position: relative;
     display: none;
-    background: var(--bg-primary);
+    background: radial-gradient(ellipse at 30% 20%, #10213a, #04060d 65%);
     overflow: hidden;
 }
 
