@@ -16,9 +16,10 @@
         blendSrc: THREE.SrcAlphaFactor, blendDst: THREE.OneFactor,
         blendSrcAlpha: THREE.ZeroFactor, blendDstAlpha: THREE.OneFactor
     };
-    const S = 10;                       // amostras por dendrito
+    const S0 = 10, CY = [.3, .85, 1];   // amostras por dendrito / cor das referências
+    const fmtSize = b => b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : b >= 1024 ? Math.round(b / 1024) + ' KB' : b + ' B';
+    const fmtAge = ms => { const d = ms / 864e5; return d < 1 / 24 ? 'agora há pouco' : d < 1 ? 'há ' + Math.round(d * 24) + ' h' : d < 60 ? 'há ' + Math.round(d) + (Math.round(d) === 1 ? ' dia' : ' dias') : 'há ' + Math.round(d / 30) + ' meses'; };
     const GOLD = '#ffc76b', BULB = '#e8b04a';
-    const CY = [.3, .85, 1];            // ciano luminoso: sinapses semânticas / links markdown
     const hash = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619); return h >>> 0; };
     const mulberry = a => () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
     const mix = (hex, to, k) => '#' + new THREE.Color(hex).lerp(new THREE.Color(to), k).getHexString();
@@ -48,6 +49,7 @@
             this.k = 1; this.M = []; this.E = []; this.N = []; this.leaves = []; this.hits = [];
             this.selLink = null; this.hovLink = null; this.litSet = null; this.lastSig = '';
             this.grab = null; this._down = null; this._mx = null; this._my = null; this._lastZp = -1;
+            this.S = S0; this._results = []; this._ri = -1; this._ptrs = new Map(); this._pinch = null; this._fr = 0; this._slow = 0; this._nMatch = 0;
             this._initThree();
             this._setupEvents();
         }
@@ -201,109 +203,26 @@
                 let best = null, bd = 1e9; for (const B of this.N) { if (A === B) continue; const d = A.so.p.distanceTo(B.so.p); if (d < bd) { bd = d; best = B; } }
                 if (best && bd < (geo.get(A.node.id).R + geo.get(best.node.id).R) * 1.6) link(A, best, .2, .35, 'near');
             }
-
-            // ── sinapses semânticas: hiperlinks e referências cruzadas entre documentos (linhas azuis/ciano CY)
-            const vaultFiles = (typeof window !== 'undefined' && window.VAULT && window.VAULT.data && window.VAULT.data.files) || [];
-            const vaultMap = new Map();
-            for (const vf of vaultFiles) {
-                if (vf.id) vaultMap.set(vf.id, vf);
-                if (vf.path) vaultMap.set(vf.path.toLowerCase().replace(/\\/g, '/'), vf);
-                if (vf.name) vaultMap.set(vf.name.toLowerCase(), vf);
+            // ── ligações REAIS entre documentos (links nos .md)
+            const byBase = new Map();
+            for (const l of this.leaves) { const b = this._base(l.file.path || l.file.label); if (!byBase.has(b)) byBase.set(b, []); byBase.get(b).push(l); }
+            const seen = new Set(); let nref = 0;
+            for (const l of this.leaves) for (const r of this._refs(l.file)) {
+                const cand = byBase.get(this._base(r)); if (!cand) continue; const rl = r.toLowerCase();
+                const t = cand.length > 1 ? (cand.find(c => { const cp = (c.file.path || '').toLowerCase(); return cp && (rl.endsWith(cp) || cp.endsWith(rl)); }) || cand[0]) : cand[0];
+                if (t === l) continue; const key = [l.file.id, t.file.id].sort().join('|');
+                if (seen.has(key) || nref >= 150) continue; seen.add(key); nref++;
+                const e = this._edge(l, t, .12, .12, l.own, .9, .4); e.col = CY; e.link = 1; e.kind = 'ref'; l.nref++; t.nref++;
             }
-
-            const leafByPath = new Map();
-            const leafByName = new Map();
-            const leafById = new Map();
+            // ── recência (brilho ciano nas edições recentes)
+            let mxm = 0; for (const l of this.leaves) mxm = Math.max(mxm, l.mtime || 0);
+            const refT = Date.now() - mxm < 30 * 864e5 ? Date.now() : mxm;
             for (const l of this.leaves) {
-                const f = l.file;
-                if (!f) continue;
-                if (f.id) leafById.set(f.id, l);
-                if (f.path) {
-                    const p = f.path.toLowerCase().replace(/\\/g, '/');
-                    leafByPath.set(p, l);
-                    const stem = p.split('/').pop().replace(/\.md$/, '');
-                    leafByName.set(stem, l);
-                    leafByName.set(stem + '.md', l);
-                }
-                if (f.name) {
-                    const nm = f.name.toLowerCase();
-                    leafByName.set(nm, l);
-                    leafByName.set(nm.replace(/\.md$/, ''), l);
-                }
+                l.rec = l.mtime ? clamp(1 - (refT - l.mtime) / (3 * 864e5), 0, 1) : 0;
+                if (l.rec > .05) { l.halo = this._spr('#8ff0ff', 3.4 * this.k, 0); this.world.add(l.halo); }
             }
-
-            const findLeaf = ref => {
-                if (!ref) return null;
-                const clean = ref.trim().replace(/^\.?\//, '').toLowerCase().replace(/\\/g, '/').split('#')[0];
-                const base = clean.split('/').pop();
-                const stem = base.replace(/\.md$/, '');
-
-                for (const [p, leaf] of leafByPath.entries()) {
-                    if (p === clean || p === clean + '.md' || p.endsWith('/' + clean) || p.endsWith('/' + base) || p.endsWith('/' + stem + '.md')) {
-                        return leaf;
-                    }
-                }
-                if (leafByName.has(stem)) return leafByName.get(stem);
-                if (leafByName.has(base)) return leafByName.get(base);
-                if (leafById.has(clean)) return leafById.get(clean);
-                return null;
-            };
-
-            const pr = new Set();
-            for (const la of this.leaves) {
-                const f = la.file;
-                if (!f) continue;
-                const vf = vaultMap.get(f.id) || vaultMap.get((f.path || '').toLowerCase()) || f;
-                const text = (vf.content || vf.text || f.content || f.text || '') + ' ' + (vf.outgoingLinks || f.outgoingLinks || []).join(' ');
-                if (!text.trim()) continue;
-
-                const matches = [...text.matchAll(/\[\[([^\]]+)\]\]|\]\(([^)]+\.md[^\)]*)\)/g)];
-                for (const m of matches) {
-                    const rawRef = (m[1] || m[2]).split('#')[0].trim();
-                    const lb = findLeaf(rawRef);
-                    if (lb && lb !== la && pr.size < 180) {
-                        const k = [la.file.id, lb.file.id].sort().join('|');
-                        if (!pr.has(k)) {
-                            pr.add(k);
-                            const e = this._edge(la, lb, 0.14, 0.14, la.own, 1.2, 0.42);
-                            e.link = 1;
-                            e.kind = 'semantic';
-                            e.isSemantic = true;
-                            e.col = CY; // [0.3, 0.85, 1.0] Cyan luminoso
-                            e.na = la.own;
-                            e.nb = lb.own;
-                            e.fa = la.file;
-                            e.fb = lb.file;
-                            e.refText = rawRef;
-                        }
-                    }
-                }
-            }
-
-            // Suporta também conexões cross-link que venham em edgesIn (scan-vault)
-            for (const edIn of (edgesIn || [])) {
-                if (edIn.isCrossLink || (edIn.from && edIn.to && !edIn.hier && !edIn.from.startsWith('hub') && !edIn.to.startsWith('hub') && edIn.from !== 'brain' && edIn.to !== 'brain')) {
-                    const la = leafById.get(edIn.from) || findLeaf(edIn.from);
-                    const lb = leafById.get(edIn.to) || findLeaf(edIn.to);
-                    if (la && lb && la !== lb && pr.size < 180) {
-                        const k = [la.file.id, lb.file.id].sort().join('|');
-                        if (!pr.has(k)) {
-                            pr.add(k);
-                            const e = this._edge(la, lb, 0.14, 0.14, la.own, 1.2, 0.42);
-                            e.link = 1;
-                            e.kind = 'semantic';
-                            e.isSemantic = true;
-                            e.col = CY;
-                            e.na = la.own;
-                            e.nb = lb.own;
-                            e.fa = la.file;
-                            e.fb = lb.file;
-                        }
-                    }
-                }
-            }
-
             this.E.forEach((e, i) => { e.hid = i; });
+            const S = this.S = this.E.length <= 400 ? S0 : this.E.length <= 1200 ? 7 : 5;
 
             // ── ribbons + pulsos
             const mk = () => {
@@ -315,7 +234,7 @@
                 const m = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ vertexColors: true, ...AB, transparent: true, depthWrite: false, side: THREE.DoubleSide }));
                 m.frustumCulled = false; m.renderOrder = 1; this.world.add(m); return m;
             };
-            this.mC = mk(); this.mH = mk();
+            this.mC = mk(); this.mH = mk(); this.mH.visible = this.E.length <= 1500;
             const np = Math.min(220, this.E.length * 2);
             this.pulses = Array.from({ length: np }, () => ({ e: this.E[this.E.length * Math.random() | 0], u: Math.random(), v: 1 + Math.random() }));
             this.pPos = new Float32Array(np * 3);
@@ -388,7 +307,8 @@
 
         _leaf(nb, l, fl) {
             const k = this.k, tint = mix(BULB, this._col(fl.group), .45);
-            l.tint = tint; l.vf = l.tv = 1; l.em = 1;
+            l.tint = tint; l.vf = l.tv = 1; l.em = 1; l.lo = 0; l.nref = 0;
+            const mt = this._meta(fl); l.bytes = mt.bytes; l.mtime = mt.mtime; l.sz = 1 + .35 * clamp((Math.log10(l.bytes + 1) - 3) / 2, -.5, 1);
             l.bulb = this._spr(tint, 1.7 * k); l.lab = this._label(this._text(fl, 30), .95 * k, '#fff4d6', true);
             l.bulb.userData = l.lab.userData.hit = { node: fl, kind: 'file', mn: l };
             l.lab.userData.hit = l.bulb.userData;
@@ -433,6 +353,29 @@
             this.onCameraChange({ scale: zp / 100, zoomPercent: zp, rotationDeg: 0, autoOrbit: this.autoRotate, autoRotate: this.autoRotate });
         }
 
+        // ── Metadados, referências e navegação de busca ──
+        _meta(n) {
+            if (n._meta) return n._meta;
+            const arr = (window.VAULT_SNAPSHOT && window.VAULT_SNAPSHOT.files) || [];
+            if (this._fsrc !== arr) { this._fsrc = arr; this._fidx = new Map(arr.map(x => [x.id, x])); }
+            const m = this._fidx.get(n.id) || {};
+            return n._meta = { content: n.content || m.content || '', mtime: n.mtime || m.mtime || 0, bytes: n.bytes || m.size || 0, links: n.outgoingLinks || m.outgoingLinks || [] };
+        }
+        _base(x) { x = String(x || ''); try { x = decodeURIComponent(x); } catch (e) { } return x.split('#')[0].split('|')[0].split(/[\\/]/).pop().replace(/\.(md|markdown)$/i, '').trim().toLowerCase(); }
+        _refs(n) {
+            const m = this._meta(n), out = [];
+            for (const u of m.links) if (/\.(md|markdown)(#|$)/i.test(u)) out.push(u);
+            const c = m.content;
+            if (c && c.length < 4e5) {
+                let r; const w = /\[\[([^\]|#]+)/g, l = /\]\(([^)#\s]+\.md)\)/gi;
+                while ((r = w.exec(c))) out.push(r[1]);
+                while ((r = l.exec(c))) if (!/^https?:/i.test(r[1])) out.push(r[1]);
+            }
+            return out;
+        }
+        _goto(i) { const n = this._results.length; if (!n) return; this._ri = ((i % n) + n) % n; this.focusNode(this._results[this._ri]); }
+        nextResult(dir) { if (!this._results.length) return false; this._goto(this._ri + (dir || 1)); return true; }
+
         // ── Categorias, filtros e cores ─────────────
         getDynamicCategories() {
             const catMap = new Map(); let totalDocs = 0;
@@ -456,7 +399,7 @@
             const q = norm(this.currentQuery), hasQ = q.length > 0, cat = this.currentCategory, hasCat = Boolean(cat);
             const sat = this.nodes.filter(n => !n.isCentral && n.id !== 'brain'), total = sat.length;
             this.searchLabelSet.clear();
-            if (!hasQ && !hasCat) { this.visSet = null; this._applyVis(); return { matchedCount: total, totalCount: total, isFiltering: false }; }
+            if (!hasQ && !hasCat) { this.visSet = null; this._results = []; this._nMatch = 0; this._applyVis(); return { matchedCount: total, totalCount: total, isFiltering: false }; }
             const vis = new Set(); let matched = 0;
             for (const n of this.nodes) if (n.isCentral || n.id === 'brain') vis.add(n.id);
             for (const n of sat) {
@@ -467,14 +410,19 @@
                 let cur = n.id; while (cur) { vis.add(cur); cur = this.parentOf.get(cur); }
             }
             if (matched === 0 && hasCat && vis.size > 1) matched = [...vis].filter(id => { const n = this.nodeMap.get(id); return n && !n.isCentral && n.id !== 'brain' && !n.isFolder; }).length;
-            this.visSet = vis; this._applyVis();
+            this.visSet = vis; this._applyVis(); this._nMatch = matched; this._results = [];
+            if (hasQ) {
+                const mf = sat.filter(n => this.searchLabelSet.has(n.id)).sort((a, b) => (a.label || '').localeCompare(b.label || ''));
+                this._results = mf.length ? mf : sat.filter(n => n.isFolder && vis.has(n.id) && norm(n.label).includes(q));
+                if (this._results.length) { clearTimeout(this._ft); this._ft = setTimeout(() => this._goto(0), 250); }
+            }
             return { matchedCount: matched, totalCount: total, isFiltering: true };
         }
         _isVis(n) { return !this.visSet || this.visSet.has(n.id); }
         _applyVis() {
             for (const n of this.N) n.tv = this._isVis(n.node) ? 1 : 0;
             for (const l of this.leaves) l.tv = this._isVis(l.file) ? 1 : 0;
-            for (const e of this.E) e.tv = e.link ? (e.na.tv && e.nb.tv ? 1 : 0) : (e.leaves.some(l => l.tv) || (!e.leaves.length && e.own.tv) ? 1 : 0);
+            for (const e of this.E) e.tv = e.link ? ((e.kind === 'ref' ? e.a.tv && e.b.tv : e.na.tv && e.nb.tv) ? 1 : 0) : (e.leaves.some(l => l.tv) || (!e.leaves.length && e.own.tv) ? 1 : 0);
         }
         highlightCategory(key) { if (!key || key === 'all') return this.clearCategoryHighlight(); this.highlightedCategory = key; }
         clearCategoryHighlight() { this.highlightedCategory = null; }
@@ -483,7 +431,7 @@
             if (!this.groupColors[groupKey]) this.groupColors[groupKey] = { fill: hex, stroke: hex, glow: hex }; else { this.groupColors[groupKey].fill = hex; this.groupColors[groupKey].stroke = hex; }
             for (const n of this.N) if (n.node.group === groupKey) {
                 n.col = hex; n.nm.uniforms.c.value.set(hex); n.g1.material.map = BrainGraph.G(hex); n.sphere.material.color.set(hex);
-                n.ecol = rgb(mix(GOLD, hex, .3)); for (const e of this.E) if (e.own === n && !e.isSemantic) e.col = n.ecol;
+                n.ecol = rgb(mix(GOLD, hex, .3)); for (const e of this.E) if (e.own === n) e.col = n.ecol;
             }
             for (const l of this.leaves) if (l.file.group === groupKey) { l.tint = mix(BULB, hex, .45); l.bulb.material.map = BrainGraph.G(l.tint); }
         }
@@ -497,7 +445,7 @@
             return null;
         }
         _pickLink(x, y) {
-            let b = null, bd = 12; const pv = this.tmp3;
+            const S = this.S; let b = null, bd = 12; const pv = this.tmp3;
             for (const e of this.E) {
                 if (!e.link || e.vf < .5) continue;
                 for (let i = 0; i <= S; i += 2) {
@@ -514,13 +462,21 @@
         }
         _setupEvents() {
             const cv = this.canvas;
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Enter' && e.target && e.target.tagName === 'INPUT' && this._results.length && cv.getClientRects().length) { e.preventDefault(); this.nextResult(e.shiftKey ? -1 : 1); }
+            });
             cv.addEventListener('contextmenu', e => e.preventDefault());
             cv.addEventListener('pointerdown', e => {
+                this._ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY }); cv.setPointerCapture(e.pointerId);
+                if (this._ptrs.size === 2) { const [a, b] = [...this._ptrs.values()]; this._pinch = { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, dT: this.dT }; this._down = null; this.grab = null; return; }
+                if (this._ptrs.size > 2) return;
                 const p = this._rel(e), h = this._pick(p.x, p.y);
                 this._down = { x: e.clientX, y: e.clientY, m: 0, pan: e.button === 2 || e.shiftKey, g: h && h.mn };
-                cv.setPointerCapture(e.pointerId); this._hideTip();
+                this._hideTip();
             });
             cv.addEventListener('pointermove', e => {
+                if (this._ptrs.has(e.pointerId)) this._ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+                if (this._pinch && this._ptrs.size === 2) { const [a, b] = [...this._ptrs.values()]; this._dollyTo(this._pinch.dT * this._pinch.d / (Math.hypot(a.x - b.x, a.y - b.y) || 1)); this._notifyCameraChange(); return; }
                 const p = this._rel(e); this._mx = p.x; this._my = p.y; const d = this._down; if (!d) return;
                 const dx = e.clientX - d.x, dy = e.clientY - d.y; d.m += Math.abs(dx) + Math.abs(dy); d.x = e.clientX; d.y = e.clientY;
                 if (d.g) { if (d.m > 6) this._drag(p.x, p.y, d.g); }
@@ -528,6 +484,7 @@
                 else { this.th -= dx * .005; this.ph = clamp(this.ph - dy * .005, .15, 2.99); }
             });
             const up = e => {
+                this._ptrs.delete(e.pointerId); if (this._ptrs.size < 2) this._pinch = null;
                 const d = this._down; this._down = null; this.grab = null; if (!d || d.m >= 6 || e.type === 'pointercancel') return;
                 const p = this._rel(e), h = this._pick(p.x, p.y);
                 if (h) { this.selectedNode = h.node; this.selLink = null; if (this.onNodeClick) this.onNodeClick(h.node); return; }
@@ -554,14 +511,8 @@
         _nodeRoute(node) {
             const s = new Set(); const m = this.M.find(x => x.file === node) || (this.N.find(n => n.node === node) || {}).so;
             if (!m) return s; this._path(m, s);
+            for (const e of this.E) if (e.kind === 'ref' && (e.a === m || e.b === m)) { s.add(e); this._path(e.a, s); this._path(e.b, s); }
             let nb = m.own; while (nb && nb.up) { s.add(nb.up); this._path(nb.up.a, s); this._path(nb.up.b, s); nb = nb.up.nb === nb ? nb.up.na : nb.up.nb; }
-            for (const e of this.E) {
-                if (e.isSemantic && (e.a === m || e.b === m)) {
-                    s.add(e);
-                    this._path(e.a, s);
-                    this._path(e.b, s);
-                }
-            }
             return s;
         }
         _computeLit() {
@@ -578,13 +529,14 @@
         // ── Render ──────────────────────────────────
         _bez(e, u, o) { return o.copy(e.P).multiplyScalar((1 - u) * (1 - u)).addScaledVector(e.M, 2 * u * (1 - u)).addScaledVector(e.C, u * u); }
         _fill(g, wm, bm) {
+            const S = this.S;
             const P = g.attributes.position.array, C = g.attributes.color.array, pp = this.tmp, tg = this.tmp2, sd = this.F, vv = this.tmp3; let q = 0;
             const sphere = this.nodeStyle === 'sphere' ? .45 : 1;
             for (const e of this.E) for (let i = 0; i <= S; i++) {
                 const u = i / S; this._bez(e, u, pp);
                 tg.copy(e.M).sub(e.P).multiplyScalar(2 * (1 - u)).addScaledVector(vv.copy(e.C).sub(e.M), 2 * u);
                 sd.crossVectors(tg, vv.copy(this.camera.position).sub(pp)).normalize().multiplyScalar((e.w0 + (e.w1 - e.w0) * u) * wm * this.k * sphere / 2 * (1 + Math.max(e.k, 0) * (e.link ? 1.5 : .6)) * (e.link ? .5 + .5 * Math.sin(Math.PI * u) : 1) * e.vf);
-                const br = bm * e.br * (e.isSemantic ? (0.7 + 0.3 * Math.sin(Math.PI * u)) : (e.link ? .5 * Math.pow(Math.max(Math.sin(Math.PI * u), 0), .6) : (.55 + .45 * (1 - u)))) * (1 + e.k * .9) * e.vf;
+                const br = bm * e.br * (e.link ? .5 * Math.pow(Math.max(Math.sin(Math.PI * u), 0), .6) : 1) * (1 + e.k * .9) * (.55 + .45 * (1 - u)) * e.vf;
                 for (const s of [1, -1]) { P[q] = pp.x + sd.x * s; P[q + 1] = pp.y + sd.y * s; P[q + 2] = pp.z + sd.z * s; C[q] = e.col[0] * br; C[q + 1] = e.col[1] * br; C[q + 2] = e.col[2] * br; q += 3; }
             }
             g.attributes.position.needsUpdate = g.attributes.color.needsUpdate = true;
@@ -619,12 +571,11 @@
             this._computeLit();
             for (const e of this.E) e.k += ((this.litSet ? (this.litSet.has(e) ? 1 : -.3) : 0) - e.k) * ek;
             const rm = this.nodeStyle === 'sphere' ? .7 : 1;
-            this._fill(this.mH.geometry, 3.2, .16 * rm); this._fill(this.mC.geometry, 1, .8 * rm);
-            // pulsos (efeito de luz que caminha pelas linhas)
+            if (this.E.length <= 600 || (this._fr++ & 1) === 0) { if (this.mH.visible) this._fill(this.mH.geometry, 3.2, .16 * rm); this._fill(this.mC.geometry, 1, .8 * rm); }
+            // pulsos
             const pa = this.pPos;
-            const pulseSpeed = 3.0; // Multiplicador de velocidade (ajuste conforme preferir: ex. 2.0, 3.0, 4.0)
             this.pulses.forEach((p, i) => {
-                p.u += (p.v * pulseSpeed) * dt / Math.max(2, p.e.P.distanceTo(p.e.C));
+                p.u += p.v * dt / Math.max(2, p.e.P.distanceTo(p.e.C));
                 if (p.u > 1) { p.u = 0; p.e = p.e.b.out.length ? p.e.b.out[p.e.b.out.length * Math.random() | 0] : this.E[this.E.length * Math.random() | 0]; }
                 if (p.e.vf < .3) { pa[i * 3] = 0; pa[i * 3 + 1] = -1e5; pa[i * 3 + 2] = 0; return; }
                 this._bez(p.e, p.u, this.tmp); pa[i * 3] = this.tmp.x; pa[i * 3 + 1] = this.tmp.y; pa[i * 3 + 2] = this.tmp.z;
@@ -643,12 +594,21 @@
                 const vis = n.vf > .03; n.shell.visible = vis && this.nodeStyle === 'neuron'; n.nu.visible = n.shell.visible; n.sphere.visible = vis && this.nodeStyle === 'sphere';
                 n.g1.visible = n.g2.visible = n.lb.visible = vis;
             });
+            const mouse = this._mx !== null && !this._down, few = this.visSet && this._nMatch > 0 && this._nMatch <= 14;
             for (const l of this.leaves) {
                 const f = l.file, on = f === sn || f === hn, found = this.searchLabelSet.has(f.id) && this.visSet, d = cp.distanceTo(l.cur), v = l.vf * l.em, vis = l.vf > .03;
                 l.bulb.position.copy(l.cur); l.lab.position.copy(l.cur);
-                l.bulb.scale.setScalar((on ? 2.6 : 1.5 + .25 * Math.sin(t * 3 + l.ph) + (found ? .6 : 0)) * k * (.55 + .45 * d / ref));
-                l.bulb.material.opacity = v; l.lab.material.opacity = (on || found ? 1 : clamp(1.6 - d / (ref * .8), .12, 1)) * v;
-                l.bulb.visible = l.lab.visible = vis;
+                l.bulb.scale.setScalar((on ? 2.6 : 1.5 + .25 * Math.sin(t * 3 + l.ph) + (found ? .6 : 0)) * l.sz * k * (.55 + .45 * d / ref));
+                // rótulo só quando faz sentido: seleção, rota, busca, categoria, perto da câmera ou do cursor
+                let w = d < ref * .5 ? 1 - d / (ref * .5) : 0;
+                if (on || found && few) w = 1;
+                else if (this.litSet && l.pe && this.litSet.has(l.pe)) w = 1;
+                else if (hl && f.group === hl) w = Math.max(w, .85);
+                else if (mouse) { const q = this.tmp.copy(l.cur).project(this.camera); if (q.z < 1) { const m = Math.hypot((q.x + 1) / 2 * this.width - this._mx, (1 - q.y) / 2 * this.height - this._my); if (m < 120) w = Math.max(w, 1 - m / 140); } }
+                l.lo += (w - l.lo) * ek;
+                l.bulb.material.opacity = v; l.lab.material.opacity = l.lo * v;
+                l.bulb.visible = vis; l.lab.visible = vis && l.lo > .03;
+                if (l.halo) { l.halo.visible = vis; l.halo.position.copy(l.cur); l.halo.scale.setScalar((3.4 + .8 * Math.sin(t * 2 + l.ph)) * k * (.55 + .45 * d / ref)); l.halo.material.opacity = .55 * l.rec * v * (.65 + .35 * Math.sin(t * 2 + l.ph)); }
             }
         }
 
@@ -657,9 +617,12 @@
         stop() { if (this.animFrame) { cancelAnimationFrame(this.animFrame); this.animFrame = null; } }
         _animate() {
             this.animFrame = requestAnimationFrame(() => this._animate());
+            if (document.hidden || !this.canvas.getClientRects().length) { this.clock.getDelta(); return; }   // pausa: grafo invisível
             if (!this.N.length) { this.renderer.render(this.scene, this.camera); return; }
             if (!this._sized) this._setupCanvas();
             const dt = Math.min(this.clock.getDelta(), .05); this.time += dt; const t = this.time;
+            this._slow = dt > .04 ? this._slow + 1 : Math.max(0, this._slow - 1);
+            if (this._slow > 90 && this.renderer.getPixelRatio() > 1) { this.renderer.setPixelRatio(1); this._sized = false; this._slow = 0; }
             if (this.anim) {
                 const a = this.anim; a.t = Math.min(1, a.t + dt / .75); const e = a.t < .5 ? 4 * a.t ** 3 : 1 - Math.pow(-2 * a.t + 2, 3) / 2;
                 this.th = a.a.th + (a.b.th - a.a.th) * e; this.ph = a.a.ph + (a.b.ph - a.a.ph) * e; this.di = a.a.di + (a.b.di - a.a.di) * e; this.tgt.lerpVectors(a.a.tg, a.b.tg, e); this.tT.copy(this.tgt);
@@ -683,22 +646,15 @@
             this.hoveredNode = h ? h.node : null;
             this.hovLink = h ? null : this._pickLink(this._mx, this._my);
             this.canvas.style.cursor = h || this.hovLink ? 'pointer' : 'default';
-            if (this.hovLink && this.hovLink.isSemantic && this.hovLink.fa && this.hovLink.fb) {
-                const fa = this.hovLink.fa, fb = this.hovLink.fb;
-                this._tipFor = this.hovLink;
-                this.tooltip.innerHTML = `<div class="tooltip-title" style="display:flex;align-items:center;gap:6px;color:#38bdf8;"><span>🔗</span><span>Sinapse Semântica (Cross-Link)</span></div><div class="tooltip-type" style="color:#e2e8f0;font-size:12px;margin:5px 0 3px;display:flex;align-items:center;gap:6px;"><span style="color:#fde047;">${fa.title || fa.name}</span><span style="color:#38bdf8;">➔</span><span style="color:#7dd3fc;">${fb.title || fb.name}</span></div><div style="font-size:10.5px;color:#94a3b8;font-family:monospace;word-break:break-all;">${this.hovLink.refText ? `Referência: [[${this.hovLink.refText}]]` : 'Hiperlink Markdown entre documentos'}</div>`;
-                this.tooltip.style.left = (this._mx + 16) + 'px';
-                this.tooltip.style.top = (this._my - 8) + 'px';
-                this.tooltip.classList.add('visible');
-                return;
-            }
             if (!h) return this._hideTip();
             const node = h.node, isF = node.isFolder, icon = node.icon || (isF ? '📂' : '📄');
             const type = isF ? (node.isCentral ? '☀️ SOL DO PROJETO' : `📂 PASTA • ${node.fileCount || node.childCount || 0} arquivos`) : '📄 DOCUMENTO';
             const hint = isF ? (node.isCentral ? '🌟 Núcleo orbital' : '⚡ Clique para destacar rota da pasta') : '⚡ Duplo-clique para abrir documento';
+            let extra = '';
+            if (this._tipFor !== node && !isF) { const mm = this.M.find(x => x.file === node); if (mm) extra = `<div style="font-size:10.5px;color:#94a3b8;margin-bottom:4px;">${mm.bytes ? fmtSize(mm.bytes) : ''}${mm.mtime ? ' • editado ' + fmtAge(Date.now() - mm.mtime) : ''}${mm.nref ? ' • 🔗 ' + mm.nref + ' ligações' : ''}</div>`; }
             if (this._tipFor !== node) {
                 this._tipFor = node;
-                this.tooltip.innerHTML = `<div class="tooltip-title" style="display:flex;align-items:center;gap:6px;"><span>${icon}</span><span>${node.label}</span></div><div class="tooltip-type" style="color:#c4b5fd;">${type}</div>${node.path ? `<div style="font-size:10.5px;color:#94a3b8;font-family:monospace;margin:4px 0 6px;word-break:break-all;">${node.path}</div>` : ''}<div class="tooltip-hint" style="font-size:11px;color:#38bdf8;margin-top:4px;font-weight:500;">${hint}</div>`;
+                this.tooltip.innerHTML = `<div class="tooltip-title" style="display:flex;align-items:center;gap:6px;"><span>${icon}</span><span>${node.label}</span></div><div class="tooltip-type" style="color:#c4b5fd;">${type}</div>${node.path ? `<div style="font-size:10.5px;color:#94a3b8;font-family:monospace;margin:4px 0 6px;word-break:break-all;">${node.path}</div>` : ''}${extra}<div class="tooltip-hint" style="font-size:11px;color:#38bdf8;margin-top:4px;font-weight:500;">${hint}</div>`;
             }
             this.tooltip.style.left = (this._mx + 16) + 'px'; this.tooltip.style.top = (this._my - 8) + 'px'; this.tooltip.classList.add('visible');
         }

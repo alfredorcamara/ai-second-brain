@@ -2703,6 +2703,32 @@ async function openProjectWorkspace(projectName, defaultTab = 'overview') {
         switchProjectTab(defaultTab);
 
     } catch (err) {
+        // Modo offline (index.html aberto via file:// ou servidor indisponível):
+        // monta os dados mínimos do projeto a partir do snapshot embutido, para o grafo funcionar.
+        try {
+            const snap = ((window.VAULT && window.VAULT.data && window.VAULT.data.files) || [])
+                .filter(f => f.path && f.path.startsWith(`projects/${projectName}/`));
+            if (snap.length) {
+                console.warn('Backend indisponível — usando snapshot embutido do projeto:', projectName);
+                currentProjectData = {
+                    name: projectName, realPath: 'Modo offline (snapshot embutido)', isJunction: false,
+                    stack: 'Livre', status: 'Offline', decisions: [], sessions: [], sessionsCount: 0,
+                    governanceFiles: [], missingContracts: [], memorySizeKb: 0, decisionsCount: 0,
+                    archivedCount: 0, totalProjectFiles: snap.length, projectMd: null, currentStateMd: null
+                };
+                if (titleEl) titleEl.textContent = projectName;
+                if (pathEl) pathEl.textContent = currentProjectData.realPath;
+                if (badgeType) badgeType.textContent = 'Greenfield 🚀 (Offline)';
+                if (badgeStack) badgeStack.textContent = 'Livre';
+                if (badgeStatus) badgeStatus.textContent = 'Offline';
+                const openDocBtn = document.getElementById('btnPwOpenDoc');
+                if (openDocBtn) openDocBtn.onclick = () => navigateTo(`projects/${projectName}/PROJECT.md`);
+                switchProjectTab(defaultTab);
+                return;
+            }
+        } catch (offlineErr) {
+            console.error('Falha no modo offline do projeto:', offlineErr);
+        }
         console.error('Erro ao carregar projeto:', err);
         if (pathEl) pathEl.textContent = 'Erro ao conectar ao projeto.';
         const overviewEl = document.getElementById('pwOverviewContent');

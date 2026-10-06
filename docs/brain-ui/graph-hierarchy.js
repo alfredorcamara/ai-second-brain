@@ -271,11 +271,7 @@
                 isFolder: false,
                 hkind: 'file',
                 depth: segs.length,
-                parentId,
-                name: f.name || '',
-                content: f.content || '',
-                text: f.content || '',
-                outgoingLinks: f.outgoingLinks || []
+                parentId
             };
             map.set(node.id, node);
             nodes.push(node);

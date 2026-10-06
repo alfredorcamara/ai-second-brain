@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Second Brain — Dê uma memória à sua IA</title>
+<meta name="description" content="Memória persistente em Markdown para agentes de IA, com um grafo neural 3D interativo. Open source.">
+<link rel="icon" href="assets/favicon.svg">
+<link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+<canvas id="graph" aria-label="Grafo neural 3D interativo"></canvas>
+<div id="tip"></div><div class="vignette"></div><div class="glow"></div>
+
+<nav class="nav">
+  <a class="brand" href="#topo"><i></i>AI Second Brain</a>
+  <div class="links"><a href="#problema">Problema</a><a href="#como">Como funciona</a><a href="#vantagens">Vantagens</a><a class="btn sm" href="https://github.com/SEU-USUARIO/ai-second-brain" target="_blank" rel="noopener" data-gh>GitHub ↗</a></div>
+</nav>
+
+<main>
+<section class="hero" id="topo">
+  <p class="eyebrow rv">Open source · 100% Markdown · Qualquer agente de IA</p>
+  <h1 class="rv">Dê uma <em>memória</em><br>à sua IA.</h1>
+  <p class="lead rv">Regras, decisões e lições viram um grafo vivo que o seu agente lê a cada sessão. Chega de repetir contexto.</p>
+  <div class="cta rv"><a class="btn" href="https://github.com/SEU-USUARIO/ai-second-brain" target="_blank" rel="noopener" data-gh>Baixar no GitHub</a><a class="btn ghost" href="#problema">Ver como funciona ↓</a></div>
+  <p class="hint rv">✦ Arraste para girar · clique numa sinapse para ler o arquivo</p>
+</section>
+
+<section class="sec" id="problema">
+  <h2 class="rv">Toda sessão começa <em>do zero.</em></h2>
+  <p class="sub rv">Seu agente é brilhante, mas esquece. Veja a diferença.</p>
+  <div class="toggle rv" role="tablist"><button class="on" data-mode="sem">Sem segundo cérebro</button><button data-mode="com">Com segundo cérebro</button></div>
+  <div class="chat rv" data-mode="sem">
+    <div class="msg you">Vamos continuar a feature de login?</div>
+    <div class="msg ai bad">Claro! Qual é a stack? Que banco usamos? Já existe alguma decisão sobre autenticação?</div>
+    <div class="msg you">…já expliquei isso ontem. De novo.</div>
+    <div class="msg ai bad">Desculpe, não tenho acesso à conversa anterior. Pode repetir?</div>
+  </div>
+  <div class="chat" data-mode="com" hidden>
+    <div class="msg you">Vamos continuar a feature de login?</div>
+    <div class="msg ai ok">Li <code>memory/estado.md</code> e <code>decisions/adr-003.md</code>. Ontem fechamos o schema; falta o refresh token. Sigo as <code>rules/seguranca.md</code>?</div>
+    <div class="msg you">Sim, vai.</div>
+    <div class="msg ai ok">Feito. Atualizei a memória da sessão e registrei a decisão. Próximo: testes.</div>
+  </div>
+</section>
+
+<section class="sec steps" id="como">
+  <h2 class="rv">Um cérebro em <em>quatro camadas.</em></h2>
+  <article class="step rv" data-k="rules"><b>01</b><h3>Regras</h3><p>A lei da casa. O que todo agente deve respeitar: segurança, documentação, quando usar IA e quando não.</p><span class="tag">rules/</span></article>
+  <article class="step rv" data-k="skills"><b>02</b><h3>Skills</h3><p>Roteiros prontos para tarefas recorrentes: nova feature, investigação de bug, revisão de arquitetura.</p><span class="tag">skills/</span></article>
+  <article class="step rv" data-k="memory"><b>03</b><h3>Memória</h3><p>O estado atual e as lições aprendidas atravessam as sessões. O próximo agente começa de onde o anterior parou.</p><span class="tag">memory/</span></article>
+  <article class="step rv" data-k="decisions"><b>04</b><h3>Decisões</h3><p>Cada escolha vira um ADR rastreável. Ninguém precisa redescobrir por que algo foi feito assim.</p><span class="tag">decisions/</span></article>
+</section>
+
+<section class="sec" id="vantagens">
+  <h2 class="rv">Por que <em>funciona.</em></h2>
+  <div class="grid">
+    <div class="card rv"><i>🧠</i><h3>Memória persistente</h3><p>Contexto que sobrevive a sessões, ferramentas e pessoas.</p></div>
+    <div class="card rv"><i>⚡</i><h3>IA ou código?</h3><p>Um portão de decisão classifica a tarefa antes de gastar tokens.</p></div>
+    <div class="card rv"><i>🛡️</i><h3>Governança e segurança</h3><p>OWASP, segredos e proteção de dados como regra, não como esperança.</p></div>
+    <div class="card rv"><i>🧩</i><h3>Qualquer stack</h3><p>API, web, mobile, jogos ou dados. O cérebro é agnóstico.</p></div>
+    <div class="card rv"><i>📝</i><h3>Só Markdown</h3><p>Versionado no Git, legível por humanos e por agentes. Zero lock-in.</p></div>
+    <div class="card rv"><i>🔭</i><h3>Grafo navegável</h3><p>Veja o conhecimento como neurônios e abra qualquer documento num clique.</p></div>
+  </div>
+  <div class="stats rv"><div><strong data-n="docs">0</strong><span>documentos no exemplo</span></div><div><strong data-n="dirs">0</strong><span>neurônios (pastas)</span></div><div><strong data-n="refs">0</strong><span>conexões entre docs</span></div></div>
+</section>
+
+<section class="sec final" id="comecar">
+  <h2 class="rv">Comece em <em>minutos.</em></h2>
+  <p class="sub rv">Clone, aponte seu agente para a pasta e conte o que você está construindo.</p>
+  <div class="code rv"><code>git clone https://github.com/SEU-USUARIO/ai-second-brain</code><button id="copy">Copiar</button></div>
+  <div class="cta rv"><a class="btn" href="https://github.com/SEU-USUARIO/ai-second-brain" target="_blank" rel="noopener" data-gh>⭐ Ver no GitHub</a></div>
+  <footer>Feito com Markdown, neurônios e café · AI Second Brain</footer>
+</section>
+</main>
+
+<aside id="reader" aria-hidden="true"><header><span id="rpath"></span><button id="rclose" aria-label="Fechar">✕</button></header><article id="rbody"></article></aside>
+
+<script src="js/vendor/three.min.js"></script>
+<script src="js/vendor/neuron-graph.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -783,7 +783,7 @@ class BrainGraph {
         this.nodeStyle = style;
         try {
             localStorage.setItem('ai_second_brain_node_style', style);
-        } catch (e) { }
+        } catch (e) {}
         if (this.coreGroup) {
             this.coreGroup.visible = (style !== 'neuron');
         }
@@ -1200,20 +1200,17 @@ class BrainGraph {
         for (let i = 0; i < this.edges.length; i++) {
             const e = this.edges[i];
             const isToFolder = e.toNode && e.toNode.isFolder;
-            const isSemantic = e.isSemantic || e.isCrossLink || (e.fromNode && e.toNode && !e.fromNode.isFolder && !e.toNode.isFolder && !e.hier);
-            e.w0 = isSemantic ? 0.14 : (isToFolder ? 1.4 : 0.85);
-            e.w1 = isSemantic ? 0.14 : (isToFolder ? 1.0 : 0.18);
-            e.br = isSemantic ? 1.25 : 1.0;
+            e.w0 = isToFolder ? 1.4 : 0.85;
+            e.w1 = isToFolder ? 1.0 : 0.18;
+            e.br = 1.0;
             e.k = 0.0;
             e.ph = Math.random() * 6.0;
 
             const diff = new THREE.Vector3().subVectors(e.toNode.position, e.fromNode.position);
             const up = Math.abs(diff.y) < Math.abs(diff.x) ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(1, 0, 0);
-            e.bend = new THREE.Vector3().crossVectors(diff, up).normalize().multiplyScalar(isSemantic ? 0.42 : 0.12);
+            e.bend = new THREE.Vector3().crossVectors(diff, up).normalize().multiplyScalar(0.12);
 
-            if (isSemantic) {
-                e.col = [0.3, 0.85, 1.0]; // Cyan luminoso
-            } else if (e.toNode && e.toNode.colors && e.toNode.colors.fill) {
+            if (e.toNode && e.toNode.colors && e.toNode.colors.fill) {
                 const c = new THREE.Color(e.toNode.colors.fill);
                 const gold = new THREE.Color(1.0, 0.78, 0.42);
                 c.lerp(gold, 0.45);
@@ -1250,10 +1247,10 @@ class BrainGraph {
             const isVisible = fn && tn && fn.mesh && tn.mesh && fn.mesh.visible !== false && tn.mesh.visible !== false;
             if (!isVisible) {
                 for (let i = 0; i <= S; i++) {
-                    pos[k] = 0; pos[k + 1] = 0; pos[k + 2] = 0;
-                    col[k] = 0; col[k + 1] = 0; col[k + 2] = 0;
-                    pos[k + 3] = 0; pos[k + 4] = 0; pos[k + 5] = 0;
-                    col[k + 3] = 0; col[k + 4] = 0; col[k + 5] = 0;
+                    pos[k] = 0; pos[k+1] = 0; pos[k+2] = 0;
+                    col[k] = 0; col[k+1] = 0; col[k+2] = 0;
+                    pos[k+3] = 0; pos[k+4] = 0; pos[k+5] = 0;
+                    col[k+3] = 0; col[k+4] = 0; col[k+5] = 0;
                     k += 6;
                 }
                 continue;
@@ -1268,11 +1265,11 @@ class BrainGraph {
             for (let i = 0; i <= S; i++) {
                 const u = i / S;
                 pp.copy(P).multiplyScalar((1 - u) * (1 - u))
-                    .addScaledVector(M, 2 * u * (1 - u))
-                    .addScaledVector(C, u * u);
+                  .addScaledVector(M, 2 * u * (1 - u))
+                  .addScaledVector(C, u * u);
 
                 tg.copy(M).sub(P).multiplyScalar(2 * (1 - u))
-                    .addScaledVector(tm.copy(C).sub(M), 2 * u);
+                  .addScaledVector(tm.copy(C).sub(M), 2 * u);
 
                 vv.copy(camPos).sub(pp);
                 sd.crossVectors(tg, vv).normalize();
@@ -1283,10 +1280,10 @@ class BrainGraph {
                 const br = bm * (e.br || 1.0) * (1.0 + (e.k || 0) * 1.6) * (0.6 + 0.4 * (1.0 - u * 0.5));
 
                 for (const s of [1, -1]) {
-                    pos[k] = pp.x + sd.x * s;
+                    pos[k]     = pp.x + sd.x * s;
                     pos[k + 1] = pp.y + sd.y * s;
                     pos[k + 2] = pp.z + sd.z * s;
-                    col[k] = e.col[0] * br;
+                    col[k]     = e.col[0] * br;
                     col[k + 1] = e.col[1] * br;
                     col[k + 2] = e.col[2] * br;
                     k += 3;
@@ -2586,12 +2583,7 @@ class BrainGraph {
                     const e = p.e;
                     if (!e || !e.fromNode || !e.toNode) continue;
                     const dist = e.fromNode.position.distanceTo(e.toNode.position);
-                    //  Efeito Especial: 
-                    //   - Dendritos Orgânicos: Pulso mais lento (~1.5-2x)
-                    //   - Sinapses Semânticas: Pulso muito mais rápido (~4-5x)
-                    const isSemantic = e.isSemantic || e.isCrossLink;
-                    const pulseSpeed = isSemantic ? 4.0 : 1.5;
-                    p.u += (p.v * pulseSpeed * dt) / Math.max(10, dist);
+                    p.u += (p.v * dt) / Math.max(10, dist);
                     if (p.u > 1.0) {
                         p.u = 0;
                         const outEdges = this.edges.filter(edge => edge.fromNode === e.toNode);
@@ -2608,9 +2600,9 @@ class BrainGraph {
                     const M = tm.clone().addScaledVector(p.e.bend, eDist * (1.0 + 0.25 * Math.sin(t * 0.8 + p.e.ph)));
                     const u = p.u;
                     pp.copy(P).multiplyScalar((1 - u) * (1 - u))
-                        .addScaledVector(M, 2 * u * (1 - u))
-                        .addScaledVector(C, u * u);
-                    this.pPos[i * 3] = pp.x;
+                      .addScaledVector(M, 2 * u * (1 - u))
+                      .addScaledVector(C, u * u);
+                    this.pPos[i * 3]     = pp.x;
                     this.pPos[i * 3 + 1] = pp.y;
                     this.pPos[i * 3 + 2] = pp.z;
                 }
@@ -2744,7 +2736,7 @@ class BrainGraph {
 
                 // 2. Micro-cintilação biológica eletrostática (shimmer)
                 const shimmer = Math.sin(t * sb.twinkleFreq + sb.phase * 2.1) * 0.12
-                    + Math.sin(t * (sb.twinkleFreq * 1.6) + sb.phase) * 0.06;
+                              + Math.sin(t * (sb.twinkleFreq * 1.6) + sb.phase) * 0.06;
 
                 // 3. Centelha / Micro-descarga sináptica espontânea
                 const burstRaw = Math.sin(t * sb.burstFreq + sb.burstPhase);
