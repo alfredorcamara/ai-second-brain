@@ -314,4 +314,18 @@
             } catch (_) { }
         };
     }
+
+    // ── Navegação interna segura para links com hash (#) ──
+    // Evita que navegadores/iframes bloqueiem a navegação por segurança no protocolo file://
+    document.addEventListener('click', e => {
+        const a = e.target.closest('a[href^="#"]');
+        if (!a) return;
+        const hash = a.getAttribute('href');
+        if (!hash || hash === '#') return;
+        const target = $(hash);
+        if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth' });
+        }
+    });
 })();
