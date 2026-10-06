@@ -1,5 +1,10 @@
+// ═══════════════════════════════════════════════════
+// AI SECOND BRAIN — Dynamic Vault Snapshot
+// Auto-generated: 2026-10-04T16:52:46.442Z
+// ═══════════════════════════════════════════════════
+
 window.VAULT_SNAPSHOT = {
-  "timestamp": 1791238471448,
+  "timestamp": 1791132766442,
   "files": [
     {
       "id": "_agents_rules_00-core_md",
@@ -704,18 +709,6 @@ window.VAULT_SNAPSHOT = {
       "content": "# teste_alfredo_22\n\n## Visão Geral\nteste_alfredo_22 de teste\n\n## Informações Gerais\n- **Tipo**: Greenfield / Projeto Novo\n- **Stack Inicial**: Node.js / TypeScript\n- **Status**: 🟢 Em Planejamento / Ativo\n- **Data de Criação**: 2026-09-30\n\n## Links & Governança\n- Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)\n- Arquitetura: [ARCHITECTURE.md](ARCHITECTURE.md)\n- Decisões Técnicas: `DECISIONS/`\n- Memória de Sessões: `MEMORY/sessions/`\n"
     },
     {
-      "id": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_01-banana-nutricional_md",
-      "path": "projects/teste_alfredo_22/RESEARCH/bolo-de-banana/knowledge/01-banana-nutricional.md",
-      "name": "01-banana-nutricional.md",
-      "title": "Perfil Nutricional da Banana",
-      "category": "projects",
-      "icon": "📘",
-      "size": 7256,
-      "mtime": 1791238439035.781,
-      "outgoingLinks": [],
-      "content": "---\ntopic: \"Bolo de Banana\"\nsubtopic: \"Perfil nutricional da banana\"\nlayer: \"knowledge\"\ncreated: \"2026-10-05T22:13:58.936Z\"\nmodel: \"openai/gpt-oss-120b\"\n---\n\n# Perfil Nutricional da Banana  \n*Resumo executivo:* A banana (Musa spp.) é uma fruta rica em carboidratos de rápida absorção, fibras solúveis, potássio e vitaminas do complexo B. Este documento detalha a composição macronutricional e micronutricional da banana fresca, apresenta comparativos com outras frutas e destaca considerações para uso em formulações alimentícias – como o bolo de banana do projeto **teste_alfredo_22**.\n\n---\n\n## 1. Fundamentação Conceitual  \n\n| Categoria | Descrição | Relevância para alimentos |\n|-----------|-----------|---------------------------|\n| **Macronutrientes** | Fornecem energia (calorias) e substratos para crescimento e reparo. | Determinam o aporte energético do bolo e influenciam a textura (umidade). |\n| **Micronutrientes** | Vitaminas e minerais que atuam como cofatores enzimáticos e reguladores fisiológicos. | Contribuem para o valor nutricional percebido pelo consumidor final. |\n| **Fibras dietéticas** | Polissacarídeos não digeríveis que modulam a absorção de glicose e a saciedade. | Melhoram a retenção de água na massa, afetando maciez e vida útil. |\n\nA banana é classificada como **fruta de alto índice glicêmico (IG 51‑62)**, mas a presença de fibras e amido resistente (especialmente em bananas verdes) pode atenuar a resposta glicêmica. Em bananas maduras, o amido se converte em açúcares simples (frutose, glicose, sacarose), aumentando o teor calórico.\n\n### 1.1. Estado da Arte em Nutrição de Frutas  \n\n- **Bases de dados**: USDA FoodData Central, IBGE (Tabela de Composição de Alimentos), FAO/INFOODS.  \n- **Métodos de análise**: Cromatografia de gases (para açúcares), espectrometria de massa (vitaminas), ICP‑OES (minerais).  \n- **Tendência**: Integração de dados de “foodomics” para mapear compostos bioativos (polifenóis, flavonoides) que vão além da nutrição tradicional.\n\n---\n\n## 2. Composição Nutricional da Banana Fresca (por 100 g)  \n\n| Nutriente | Quantidade | %VD* (Adulto) |\n|-----------|------------|---------------|\n| **Energia** | 89 kcal | 4 % |\n| **Carboidratos** | 22,8 g | 7 % |\n| &nbsp;&nbsp;• Açúcares totais | 12,2 g | — |\n| &nbsp;&nbsp;• Amido | 5,3 g | — |\n| **Fibras dietéticas** | 2,6 g | 10 % |\n| **Proteína** | 1,1 g | 2 % |\n| **Gordura total** | 0,3 g | < 1 % |\n| **Água** | 74,9 g | — |\n| **Potássio (K)** | 358 mg | 10 % |\n| **Magnésio (Mg)** | 27 mg | 7 % |\n| **Fósforo (P)** | 22 mg | 3 % |\n| **Vitamina C** | 8,7 mg | 10 % |\n| **Vitamina B6 (Piridoxina)** | 0,37 mg | 28 % |\n| **Folato (B9)** | 20 µg | 5 % |\n| **Vitamina A (β‑caroteno)** | 64 IU | 1 % |\n| **Sódio (Na)** | 1 mg | < 1 % |\n\n\\*%VD = Percentual do Valor Diário recomendado (base 2 000 kcal).  \n\n### 2.1. Comparativo rápido (100 g)  \n\n| Fruta | Calorias | Carboidratos | Fibras | Potássio |\n|-------|----------|--------------|--------|----------|\n| Banana | 89 kcal | 22,8 g | 2,6 g | 358 mg |\n| Maçã (com casca) | 52 kcal | 13,8 g | 2,4 g | 107 mg |\n| Laranja | 47 kcal | 11,8 g | 2,2 g | 181 mg |\n| Manga | 60 kcal | 15,0 g | 1,6 g | 156 mg |\n\n*Banana destaca‑se pelo alto teor de potássio e pela combinação de açúcares simples + fibras.*\n\n---\n\n## 3. Trade‑offs e Armadilhas a Evitar  \n\n| Aspecto | Potencial Problema | Mitigação |\n|---------|--------------------|-----------|\n| **Índice Glicêmico** | Picos de glicemia em consumidores sensíveis (diabéticos). | Utilizar bananas **verdes** (mais amido resistente) ou combinar com fontes de proteína/gordura (ex.: ovos, óleo de coco) para reduzir a carga glicêmica. |\n| **Umidade excessiva** | Bananas muito maduras aumentam a água da massa, comprometendo a estrutura do bolo. | Ajustar a proporção de farinha ou usar agentes secantes (farinha de amêndoas, polvilho). |\n| **Oxidação de polifenóis** | Escurecimento da polpa pode gerar sabores amargos e reduzir a percepção de frescor. | Aplicar ácido ascórbico (0,1 % da massa) ou usar bananas imediatamente após o corte. |\n| **Variabilidade de tamanho** | Diferenças de peso alteram a dosagem de açúcar e farinha. | Padronizar a **massa** de banana (ex.: 150 g de purê por porção) usando balança de precisão. |\n| **Alérgenos ocultos** | Resíduos de pesticidas podem ser problemáticos em mercados orgânicos. | Preferir bananas certificadas **orgânicas** ou realizar lavagem com solução de peróxido de hidrogênio (0,5 %). |\n\n---\n\n## 4. Como Aplicar Neste Projeto  \n\n1. **Definir a dose de banana**  \n   - Para um bolo de 1 kg, usar **300 g de purê de banana** (≈ 30 % da massa). Isso garante aporte energético (~ 270 kcal) e umidade adequada.  \n\n2. **Balanceamento de macronutrientes**  \n   - **Carboidratos totais**: 30 % da energia do bolo provém da banana; o restante pode vir de açúcar e farinha.  \n   - **Proteína**: complementar com ovos (≈ 6 g por 100 g de banana) para melhorar a estrutura.  \n\n3. **Ajuste de textura**  \n   - Adicionar **2 g de goma xantana** por 100 g de banana para estabilizar a emulsão e evitar “colapso” da massa.  \n\n4. **Controle de IG**  \n   - Se o público‑alvo inclui diabéticos, substituir **½ da banana madura** por **banana verde** (amido resistente) e aumentar a proporção de **farinha de aveia** (fonte de fibra β‑glucana).  \n\n5. **Enriquecimento de micronutrientes**  \n   - Incluir **1 % de pó de casca de banana** (rico em potássio e fibras) para elevar o teor de K em ~ 15 % sem alterar sabor.  \n\n6. **Documentação e rastreabilidade**  \n   - Registrar a origem da banana (cultivar, data de colheita) em `MEMORY/sessions/banana_nutrição.md`.  \n   - Vincular a decisão de uso da banana ao **AI Decision Gate** (`.agents/rules/01-ai-decision.md`) para validar a escolha com base em metas nutricionais do produto.  \n\n7. **Teste sensorial e nutricional**  \n   - Realizar análise de **perfil de sabor** (doçura, aroma) e **análise proximate** (AOAC) em lote piloto.  \n   - Comparar resultados com a tabela acima; ajustar formulação até que o bolo entregue **≤ 120 kcal por 100 g** e **≥ 3 g de fibra**.  \n\n---\n\n## 5. Referências  \n\n1. USDA FoodData Central – *Banana, raw, all varieties*. https://fdc.nal.usda.gov/  \n2. IBGE – *Tabela de Composição de Alimentos – Versão 4.0*. 2023.  \n3. FAO/INFOODS – *Food composition tables and data: Guidelines for food composition data*. 2022.  \n4. Slavin, J. (2021). *Fiber and Prebiotics: Mechanisms and Health Benefits*. Nutrients.  \n5. Santos, L. et al. (2020). *Impact of banana ripeness on glycemic response*. Journal of Food Science.  \n\n--- \n\n*Este documento serve como base para decisões técnicas e nutricionais no desenvolvimento do bolo de banana do projeto **teste_alfredo_22**. Atualizações devem ser versionadas em `DECISIONS/` e revisadas periodicamente.*\n\n---\n> 🧠 Documento gerado autonomamente pelo **Research Lab — AI Second Brain**.  \n> Contexto: `teste_alfredo_22` &middot; Data: 05/10/2026\n"
-    },
-    {
       "id": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_02-adocantes-baixa-caloria_md",
       "path": "projects/teste_alfredo_22/RESEARCH/bolo-de-banana/knowledge/02-adocantes-baixa-caloria.md",
       "name": "02-adocantes-baixa-caloria.md",
@@ -806,10 +799,9 @@ window.VAULT_SNAPSHOT = {
       "title": "🔬 Bolo de Banana",
       "category": "projects",
       "icon": "🔬",
-      "size": 2039,
-      "mtime": 1791238461823.878,
+      "size": 1966,
+      "mtime": 1791117097535.2097,
       "outgoingLinks": [
-        "knowledge/01-banana-nutricional.md",
         "knowledge/02-adocantes-baixa-caloria.md",
         "knowledge/03-farinhas-alternativas.md",
         "knowledge/04-reducao-gordura-bolo.md",
@@ -818,7 +810,7 @@ window.VAULT_SNAPSHOT = {
         "knowledge/07-tecnicas-assamento.md",
         "knowledge/08-avaliacao-sensorial.md"
       ],
-      "content": "# 🔬 Bolo de Banana\n\n> **Laboratório de Conhecimento Concluído**  \n> Projeto: **teste_alfredo_22** &middot; Última atualização: 05/10/2026\n\n## Briefing da Pesquisa (Prompt Vivo)\n\nQuero fazer um bolo de banana de baixa caloria\n\n## Status: 🟢 Pesquisa Concluída & Catalogada\n\n---\n\n## 📘 Camada 1: Conhecimento Teórico & Conceitual (`knowledge/`)\n\n- [**Perfil nutricional da banana**](knowledge/01-banana-nutricional.md)\n  *Analisar calorias, carboidratos, fibras e micronutrientes da banana fresca.*\n- [**Adoçantes de baixa caloria para confeitaria**](knowledge/02-adocantes-baixa-caloria.md)\n  *Estudar tipos (stévia, eritritol, sucralose) e como usá‑los em bolos.*\n- [**Farinhas alternativas de baixo teor calórico**](knowledge/03-farinhas-alternativas.md)\n  *Comparar farinha de aveia, amêndoa, coco e outras quanto a calorias e propriedades de panificação.*\n- [**Redução de gorduras na massa de bolo**](knowledge/04-reducao-gordura-bolo.md)\n  *Explorar substitutos como purê de maçã, iogurte grego sem gordura e óleo de coco em menor quantidade.*\n- [**Formulação da receita: equilíbrio de umidade e textura**](knowledge/05-formula-receita.md)\n  *Como combinar banana, adoçante e farinha para obter massa leve e úmida sem excesso calórico.*\n- [**Cálculo de porções e valor calórico por fatia**](knowledge/06-calculo-porcoes.md)\n  *Métodos para dividir o bolo e estimar calorias individuais.*\n- [**Técnicas de assamento que preservam nutrientes**](knowledge/07-tecnicas-assamento.md)\n  *Temperatura, tempo e uso de formas que minimizam perda de vitaminas e reduzem necessidade de gordura extra.*\n- [**Avaliação sensorial e ajustes finais**](knowledge/08-avaliacao-sensorial.md)\n  *Testes de sabor, textura e aparência para otimizar a aceitação do bolo de baixa caloria.*\n\n## 🛠️ Camada 2: Especificações Práticas & Código (`actionable/`)\n\n*Nenhuma especificação prática catalogada.*\n\n---\n\n*Todos os arquivos acima estão conectados ao Grafo Neural 3D do projeto no AI Second Brain.*\n"
+      "content": "# 🔬 Bolo de Banana\n\n> **Laboratório de Conhecimento Concluído**  \n> Projeto: **teste_alfredo_22** &middot; Última atualização: 04/10/2026\n\n## Briefing da Pesquisa (Prompt Vivo)\n\nQuero fazer um bolo de banana de baixa caloria\n\n## Status: 🟢 Pesquisa Concluída & Catalogada\n\n---\n\n## 📘 Camada 1: Conhecimento Teórico & Conceitual (`knowledge/`)\n\n  *Analisar calorias, carboidratos, fibras e micronutrientes da banana fresca.*\n- [**Adoçantes de baixa caloria para confeitaria**](knowledge/02-adocantes-baixa-caloria.md)\n  *Estudar tipos (stévia, eritritol, sucralose) e como usá‑los em bolos.*\n- [**Farinhas alternativas de baixo teor calórico**](knowledge/03-farinhas-alternativas.md)\n  *Comparar farinha de aveia, amêndoa, coco e outras quanto a calorias e propriedades de panificação.*\n- [**Redução de gorduras na massa de bolo**](knowledge/04-reducao-gordura-bolo.md)\n  *Explorar substitutos como purê de maçã, iogurte grego sem gordura e óleo de coco em menor quantidade.*\n- [**Formulação da receita: equilíbrio de umidade e textura**](knowledge/05-formula-receita.md)\n  *Como combinar banana, adoçante e farinha para obter massa leve e úmida sem excesso calórico.*\n- [**Cálculo de porções e valor calórico por fatia**](knowledge/06-calculo-porcoes.md)\n  *Métodos para dividir o bolo e estimar calorias individuais.*\n- [**Técnicas de assamento que preservam nutrientes**](knowledge/07-tecnicas-assamento.md)\n  *Temperatura, tempo e uso de formas que minimizam perda de vitaminas e reduzem necessidade de gordura extra.*\n- [**Avaliação sensorial e ajustes finais**](knowledge/08-avaliacao-sensorial.md)\n  *Testes de sabor, textura e aparência para otimizar a aceitação do bolo de baixa caloria.*\n\n## 🛠️ Camada 2: Especificações Práticas & Código (`actionable/`)\n\n*Nenhuma especificação prática catalogada.*\n\n---\n\n*Todos os arquivos acima estão conectados ao Grafo Neural 3D do projeto no AI Second Brain.*\n"
     },
     {
       "id": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_actionable_02-elo-implementation-node-ts_md",
@@ -935,8 +927,8 @@ window.VAULT_SNAPSHOT = {
       "title": "🔬 Sistema de Ranking ELO e Matchmaking",
       "category": "projects",
       "icon": "🔬",
-      "size": 4137,
-      "mtime": 1791238466295.4453,
+      "size": 4145,
+      "mtime": 1791007257171.243,
       "outgoingLinks": [
         "knowledge/01-elo-fundamentals.md",
         "knowledge/03-rating-persistence-model.md",
@@ -948,7 +940,7 @@ window.VAULT_SNAPSHOT = {
         "knowledge/09-rating-security-audit.md",
         "actionable/02-elo-implementation-node-ts.md"
       ],
-      "content": "# 🔬 Sistema de Ranking ELO e Matchmaking\n\n> **Laboratório de Conhecimento Concluído**  \n> Projeto: **teste_alfredo_22** &middot; Última atualização: 05/10/2026\n\n## Briefing da Pesquisa (Prompt Vivo)\n\nObjetivo da pesquisa:\n- Conceitos e fundamentos do algoritmo de ranking ELO aplicados a jogos online\n- Implementação de cálculo de ELO em Node.js/TypeScript (funções, persistência e atualização de pontuações)\n- Estratégias de matchmaking baseadas em ELO: como agrupar jogadores com rating próximo, evitar partidas desbalanceadas e minimizar tempo de espera\n- Modelos de persistência de ratings (banco relacional vs NoSQL) e integração com o backend existente\n- Ajustes de K-factor e parâmetros de calibragem para diferentes faixas de jogadores (novatos, intermediários, experientes)\n- Testes automatizados e simulações de matchmaking para validar a eficácia do sistema\n- Considerações de escalabilidade: como lidar com milhares de jogadores simultâneos e atualização em tempo real\n- Segurança e integridade dos dados de rating (prevenção de manipulação, validação de entrada)\n\nExcluir:\n- História detalhada do rating ELO em xadrez sem relação com desenvolvimento de software\n- Algoritmos de matchmaking que não utilizam rating (ex.: matchmaking por localização geográfica apenas)\n- Implementações em linguagens ou frameworks diferentes de Node.js/TypeScript (ex.: Python, Java, Unity)\n- Estratégias de monetização ou gamificação que não impactam o cálculo de ELO\n- Discussões sobre ranking de jogos de tabuleiro analógicos\n\nCasos de borda / considerações adicionais:\n- Como tratar jogadores inativos ou com rating desatualizado\n- Impacto de partidas abortadas ou desconexões no cálculo de ELO\n- Estratégias para novos usuários (rating inicial, partidas de “prova”)\n- Compatibilidade com servidores distribuídos ou microserviços\n- Como lidar com diferentes modos de jogo (ranked vs casual) usando o mesmo sistema de rating\n- Necessidade de logs auditáveis para revisão de disputas de ranking.\n\nAtualização: Focar também em partidas ranqueadas 1v1.\n\n## Status: 🟢 Pesquisa Concluída & Catalogada\n\n---\n\n## 📘 Camada 1: Conhecimento Teórico & Conceitual (`knowledge/`)\n\n- [**Fundamentos do algoritmo ELO para jogos online**](knowledge/01-elo-fundamentals.md)\n  *Conceitos básicos, fórmula de cálculo e adaptações típicas para partidas 1v1.*\n- [**Modelo de persistência de ratings**](knowledge/03-rating-persistence-model.md)\n  *Comparação entre bancos relacionais e NoSQL, definição de schema e estratégias de versionamento.*\n- [**Matchmaking baseado em ELO**](knowledge/04-elo-matchmaking-algorithm.md)\n  *Algoritmo de pareamento por rating próximo, controle de tempo de espera e prevenção de partidas desbalanceadas.*\n- [**Ajuste do K‑factor e calibração por faixa de jogador**](knowledge/05-k-factor-calibration.md)\n  *Definição de K‑factors diferenciados para novatos, intermediários e experientes.*\n- [**Tratamento de casos de borda e jogadores inativos**](knowledge/06-edge-cases-rating.md)\n  *Lógicas para rating inicial, partidas abortadas, desconexões e usuários inativos.*\n- [**Testes automatizados e simulações de matchmaking**](knowledge/07-elo-testing-simulation.md)\n  *Estrutura de testes unitários, integração e simulação de filas para validar eficácia do sistema.*\n- [**Escalabilidade e atualização em tempo real**](knowledge/08-elo-scalability.md)\n  *Estratégias para suportar milhares de jogadores simultâneos, sharding e microserviços.*\n- [**Segurança, integridade e auditoria dos ratings**](knowledge/09-rating-security-audit.md)\n  *Mecanismos de validação, prevenção de manipulação e logs auditáveis para disputas.*\n\n## 🛠️ Camada 2: Especificações Práticas & Código (`actionable/`)\n\n- [**Implementação do cálculo ELO em Node.js/TypeScript**](actionable/02-elo-implementation-node-ts.md)\n  *Funções de cálculo, atualização de rating e integração com serviços existentes.*\n\n---\n\n*Todos os arquivos acima estão conectados ao Grafo Neural 3D do projeto no AI Second Brain.*\n"
+      "content": "# 🔬 Sistema de Ranking ELO e Matchmaking\n\n> **Laboratório de Conhecimento Concluído**  \n> Projeto: **teste_alfredo_22** &middot; Última atualização: 03/10/2026\n\n## Briefing da Pesquisa (Prompt Vivo)\n\nObjetivo da pesquisa:\n- Conceitos e fundamentos do algoritmo de ranking ELO aplicados a jogos online\n- Implementação de cálculo de ELO em Node.js/TypeScript (funções, persistência e atualização de pontuações)\n- Estratégias de matchmaking baseadas em ELO: como agrupar jogadores com rating próximo, evitar partidas desbalanceadas e minimizar tempo de espera\n- Modelos de persistência de ratings (banco relacional vs NoSQL) e integração com o backend existente\n- Ajustes de K-factor e parâmetros de calibragem para diferentes faixas de jogadores (novatos, intermediários, experientes)\n- Testes automatizados e simulações de matchmaking para validar a eficácia do sistema\n- Considerações de escalabilidade: como lidar com milhares de jogadores simultâneos e atualização em tempo real\n- Segurança e integridade dos dados de rating (prevenção de manipulação, validação de entrada)\n\nExcluir:\n- História detalhada do rating ELO em xadrez sem relação com desenvolvimento de software\n- Algoritmos de matchmaking que não utilizam rating (ex.: matchmaking por localização geográfica apenas)\n- Implementações em linguagens ou frameworks diferentes de Node.js/TypeScript (ex.: Python, Java, Unity)\n- Estratégias de monetização ou gamificação que não impactam o cálculo de ELO\n- Discussões sobre ranking de jogos de tabuleiro analógicos\n\nCasos de borda / considerações adicionais:\n- Como tratar jogadores inativos ou com rating desatualizado\n- Impacto de partidas abortadas ou desconexões no cálculo de ELO\n- Estratégias para novos usuários (rating inicial, partidas de “prova”)\n- Compatibilidade com servidores distribuídos ou microserviços\n- Como lidar com diferentes modos de jogo (ranked vs casual) usando o mesmo sistema de rating\n- Necessidade de logs auditáveis para revisão de disputas de ranking.\n\nAtualização: Focar também em partidas ranqueadas 1v1.\n\n## Status: 🟢 Pesquisa Concluída & Catalogada\n\n---\n\n## 📘 Camada 1: Conhecimento Teórico & Conceitual (`knowledge/`)\n\n- [**Fundamentos do algoritmo ELO para jogos online**](knowledge/01-elo-fundamentals.md)\n  *Conceitos básicos, fórmula de cálculo e adaptações típicas para partidas 1v1.*\n- [**Modelo de persistência de ratings**](knowledge/03-rating-persistence-model.md)\n  *Comparação entre bancos relacionais e NoSQL, definição de schema e estratégias de versionamento.*\n- [**Matchmaking baseado em ELO**](knowledge/04-elo-matchmaking-algorithm.md)\n  *Algoritmo de pareamento por rating próximo, controle de tempo de espera e prevenção de partidas desbalanceadas.*\n- [**Ajuste do K‑factor e calibração por faixa de jogador**](knowledge/05-k-factor-calibration.md)\n  *Definição de K‑factors diferenciados para novatos, intermediários e experientes.*\n- [**Tratamento de casos de borda e jogadores inativos**](knowledge/06-edge-cases-rating.md)\n  *Lógicas para rating inicial, partidas abortadas, desconexões e usuários inativos.*\n- [**Testes automatizados e simulações de matchmaking**](knowledge/07-elo-testing-simulation.md)\n  *Estrutura de testes unitários, integração e simulação de filas para validar eficácia do sistema.*\n- [**Escalabilidade e atualização em tempo real**](knowledge/08-elo-scalability.md)\n  *Estratégias para suportar milhares de jogadores simultâneos, sharding e microserviços.*\n- [**Segurança, integridade e auditoria dos ratings**](knowledge/09-rating-security-audit.md)\n  *Mecanismos de validação, prevenção de manipulação e logs auditáveis para disputas.*\n\n## 🛠️ Camada 2: Especificações Práticas & Código (`actionable/`)\n\n- [**Implementação do cálculo ELO em Node.js/TypeScript**](actionable/02-elo-implementation-node-ts.md)\n  *Funções de cálculo, atualização de rating e integração com serviços existentes.*\n\n---\n\n*Todos os arquivos acima estão conectados à Constelação Neural 3D do projeto no AI Second Brain.*\n"
     },
     {
       "id": "projects_teste_alfredo_22_RESEARCH_sistema-para-controlar-rotina-de-criancas-autiostas-nivel-1_knowledge_01-requisitos-usuario-stakeholders_md",
@@ -1066,7 +1058,7 @@ window.VAULT_SNAPSHOT = {
       "category": "projects",
       "icon": "🔬",
       "size": 6378,
-      "mtime": 1791238470903.8325,
+      "mtime": 1791116136971.857,
       "outgoingLinks": [
         "knowledge/01-requisitos-usuario-stakeholders.md",
         "knowledge/02-regulamentacao-privacidade-dados.md",
@@ -1078,7 +1070,7 @@ window.VAULT_SNAPSHOT = {
         "knowledge/08-notificacoes-lembretes.md",
         "knowledge/09-analytics-progresso-relatorios.md"
       ],
-      "content": "# 🔬 Sistema para controlar rotina de crianças autiostas nivel 1\n\n> **Laboratório de Conhecimento Concluído**  \n> Projeto: **teste_alfredo_22** &middot; Última atualização: 05/10/2026\n\n## Briefing da Pesquisa (Prompt Vivo)\n\nDefinição de pesquisa – Sistema de controle de rotina para crianças autistas nível 1  \n\nObjetivo  \n- Identificar tudo que é necessário para desenvolver um aplicativo que auxilie no gerenciamento diário de rotinas de crianças autistas nível 1, incluindo requisitos funcionais, não‑funcionais, fluxos de interação e design da tela principal.  \n\nEscopo técnico (stack Node.js / TypeScript)  \n- Arquitetura back‑end: API REST ou GraphQL em Node.js, TypeScript, persistência em banco relacional ou NoSQL.  \n- Front‑end: aplicação web responsiva (React ou Next.js) ou app híbrido (React Native) em TypeScript.  \n- Integração com calendário (Google Calendar, iCal) e notificações push.  \n- Persistência de perfis de usuário, rotinas, histórico de execução e preferências de visualização.  \n\nRequisitos funcionais  \n- Cadastro e gerenciamento de perfis de crianças (nome, idade, necessidades específicas).  \n- Criação, edição e exclusão de rotinas compostas por etapas (ex.: “acordar”, “escovar os dentes”, “ir à escola”).  \n- Associação de ícones, cores e sons a cada etapa para facilitar a compreensão visual e auditiva.  \n- Visualização da rotina em tela principal com layout de “timeline” ou “grid” que mostre o progresso em tempo real.  \n- Notificações e lembretes configuráveis por horário ou evento.  \n- Modo “assistente” que permite que cuidador ou professor registre a conclusão de cada etapa manualmente ou via reconhecimento de voz.  \n\nRequisitos não funcionais  \n- Acessibilidade: contraste adequado, suporte a leitores de tela, navegação por teclado, textos simples.  \n- Performance: carregamento da tela principal < 2 s em conexões 3G.  \n- Segurança e privacidade: criptografia de dados em trânsito e em repouso, conformidade com LGPD/GDPR.  \n- Escalabilidade: arquitetura que permita adicionar novos usuários e rotinas sem degradação.  \n- Compatibilidade: suporte a navegadores modernos (Chrome, Safari, Edge) e dispositivos iOS/Android.  \n\nDesign da tela principal (ilustrações / wireframes)  \n- Layout dividido em duas áreas:  \n  * Área superior – barra de progresso da rotina do dia, data, avatar da criança.  \n  * Área central – lista de etapas da rotina representada por blocos quadrados ou circulares, cada bloco com ícone, cor e opcionalmente áudio curto.  \n- Botões de ação: “Iniciar rotina”, “Pausar”, “Marcar como concluído” em destaque, com tamanho adequado para toque.  \n- Indicadores visuais de status: cores (verde concluído, amarelo em andamento, cinza pendente) e animações suaves ao avançar.  \n- Opção de “visualização simplificada” para crianças que preferem menos estímulos visuais.  \n- Sugestão de protótipo: usar ferramentas como Figma ou Adobe XD para criar mockups de alta fidelidade, exportar como PNG ou SVG para documentação.  \n\nEdge cases e tópicos frequentemente esquecidos  \n- Rotina interrompida inesperadamente (ex.: criança sai da atividade) – necessidade de salvar estado e retomar.  \n- Usuário com conexão intermitente – modo offline com sincronização posterior.  \n- Personalização de sons e vibrações para evitar sobrecarga sensorial.  \n- Suporte a múltiplos cuidadores com permissões diferentes (admin, visualizador).  \n- Exportação de relatórios de cumprimento de rotina para pais ou profissionais de saúde.  \n- Internacionalização: suporte a português e, futuramente, outros idiomas.  \n- Testes com usuários reais (crianças e cuidadores) para validar usabilidade e eficácia.  \n\nExcluir  \n- Desenvolvimento de funcionalidades para crianças sem necessidades especiais (ex.: jogos genéricos).  \n- Integração com plataformas de ensino que não estejam relacionadas à rotina diária.  \n- Pesquisa de mercado sobre concorrentes que não ofereçam suporte a autismo nível 1.  \n- Implementação de IA avançada para diagnóstico ou terapia – fora do escopo de gerenciamento de rotina.  \n- Detalhes de infraestrutura de cloud (ex.: escolha de provedores) que não impactem diretamente o desenvolvimento do aplicativo.\n\n## Status: 🟢 Pesquisa Concluída & Catalogada\n\n---\n\n## 📘 Camada 1: Conhecimento Teórico & Conceitual (`knowledge/`)\n\n- [**Requisitos de Usuário e Stakeholders**](knowledge/01-requisitos-usuario-stakeholders.md)\n  *Mapeamento das necessidades de crianças, pais, terapeutas e educadores para rotinas nível 1.*\n- [**Regulamentação e Privacidade de Dados**](knowledge/02-regulamentacao-privacidade-dados.md)\n  *Análise das leis (LGPD, GDPR, HIPAA) e boas práticas para dados sensíveis de menores.*\n- [**Modelagem de Dados da Rotina**](knowledge/03-modelagem-dados-rotina.md)\n  *Definição de entidades (atividade, agenda, usuário, progresso) e relações no banco.*\n- [**Arquitetura de Backend (Node.js/TypeScript)**](knowledge/04-arquitetura-backend-node-ts.md)\n  *Projeto da API REST/GraphQL, camadas de serviço, repositório e testes unitários.*\n- [**Autenticação, Autorização e Controle de Acesso**](knowledge/05-autenticacao-autorizacao.md)\n  *Implementação de login seguro, perfis (pai, terapeuta, criança) e RBAC.*\n- [**Acessibilidade e Design Inclusivo**](knowledge/06-acessibilidade-design-inclusivo.md)\n  *Diretrizes de UI/UX para autismo nível 1 (cores, ícones, linguagem simples, suporte a AAC).*\n- [**Gerenciamento de Rotinas e Calendário**](knowledge/07-gerenciamento-rotinas-calendario.md)\n  *Funcionalidades de criação, edição, repetição e visualização de rotinas diárias.*\n- [**Notificações e Lembretes Multicanal**](knowledge/08-notificacoes-lembretes.md)\n  *Implementação de push, SMS e e‑mail para pais/terapeutas com opções de customização.*\n- [**Analytics de Progresso e Relatórios**](knowledge/09-analytics-progresso-relatorios.md)\n  *Coleta de métricas de adesão, geração de relatórios para acompanhamento terapêutico.*\n\n## 🛠️ Camada 2: Especificações Práticas & Código (`actionable/`)\n\n*Nenhuma especificação prática catalogada.*\n\n---\n\n*Todos os arquivos acima estão conectados ao Grafo Neural 3D do projeto no AI Second Brain.*\n"
+      "content": "# 🔬 Sistema para controlar rotina de crianças autiostas nivel 1\n\n> **Laboratório de Conhecimento Concluído**  \n> Projeto: **teste_alfredo_22** &middot; Última atualização: 04/10/2026\n\n## Briefing da Pesquisa (Prompt Vivo)\n\nDefinição de pesquisa – Sistema de controle de rotina para crianças autistas nível 1  \n\nObjetivo  \n- Identificar tudo que é necessário para desenvolver um aplicativo que auxilie no gerenciamento diário de rotinas de crianças autistas nível 1, incluindo requisitos funcionais, não‑funcionais, fluxos de interação e design da tela principal.  \n\nEscopo técnico (stack Node.js / TypeScript)  \n- Arquitetura back‑end: API REST ou GraphQL em Node.js, TypeScript, persistência em banco relacional ou NoSQL.  \n- Front‑end: aplicação web responsiva (React ou Next.js) ou app híbrido (React Native) em TypeScript.  \n- Integração com calendário (Google Calendar, iCal) e notificações push.  \n- Persistência de perfis de usuário, rotinas, histórico de execução e preferências de visualização.  \n\nRequisitos funcionais  \n- Cadastro e gerenciamento de perfis de crianças (nome, idade, necessidades específicas).  \n- Criação, edição e exclusão de rotinas compostas por etapas (ex.: “acordar”, “escovar os dentes”, “ir à escola”).  \n- Associação de ícones, cores e sons a cada etapa para facilitar a compreensão visual e auditiva.  \n- Visualização da rotina em tela principal com layout de “timeline” ou “grid” que mostre o progresso em tempo real.  \n- Notificações e lembretes configuráveis por horário ou evento.  \n- Modo “assistente” que permite que cuidador ou professor registre a conclusão de cada etapa manualmente ou via reconhecimento de voz.  \n\nRequisitos não funcionais  \n- Acessibilidade: contraste adequado, suporte a leitores de tela, navegação por teclado, textos simples.  \n- Performance: carregamento da tela principal < 2 s em conexões 3G.  \n- Segurança e privacidade: criptografia de dados em trânsito e em repouso, conformidade com LGPD/GDPR.  \n- Escalabilidade: arquitetura que permita adicionar novos usuários e rotinas sem degradação.  \n- Compatibilidade: suporte a navegadores modernos (Chrome, Safari, Edge) e dispositivos iOS/Android.  \n\nDesign da tela principal (ilustrações / wireframes)  \n- Layout dividido em duas áreas:  \n  * Área superior – barra de progresso da rotina do dia, data, avatar da criança.  \n  * Área central – lista de etapas da rotina representada por blocos quadrados ou circulares, cada bloco com ícone, cor e opcionalmente áudio curto.  \n- Botões de ação: “Iniciar rotina”, “Pausar”, “Marcar como concluído” em destaque, com tamanho adequado para toque.  \n- Indicadores visuais de status: cores (verde concluído, amarelo em andamento, cinza pendente) e animações suaves ao avançar.  \n- Opção de “visualização simplificada” para crianças que preferem menos estímulos visuais.  \n- Sugestão de protótipo: usar ferramentas como Figma ou Adobe XD para criar mockups de alta fidelidade, exportar como PNG ou SVG para documentação.  \n\nEdge cases e tópicos frequentemente esquecidos  \n- Rotina interrompida inesperadamente (ex.: criança sai da atividade) – necessidade de salvar estado e retomar.  \n- Usuário com conexão intermitente – modo offline com sincronização posterior.  \n- Personalização de sons e vibrações para evitar sobrecarga sensorial.  \n- Suporte a múltiplos cuidadores com permissões diferentes (admin, visualizador).  \n- Exportação de relatórios de cumprimento de rotina para pais ou profissionais de saúde.  \n- Internacionalização: suporte a português e, futuramente, outros idiomas.  \n- Testes com usuários reais (crianças e cuidadores) para validar usabilidade e eficácia.  \n\nExcluir  \n- Desenvolvimento de funcionalidades para crianças sem necessidades especiais (ex.: jogos genéricos).  \n- Integração com plataformas de ensino que não estejam relacionadas à rotina diária.  \n- Pesquisa de mercado sobre concorrentes que não ofereçam suporte a autismo nível 1.  \n- Implementação de IA avançada para diagnóstico ou terapia – fora do escopo de gerenciamento de rotina.  \n- Detalhes de infraestrutura de cloud (ex.: escolha de provedores) que não impactem diretamente o desenvolvimento do aplicativo.\n\n## Status: 🟢 Pesquisa Concluída & Catalogada\n\n---\n\n## 📘 Camada 1: Conhecimento Teórico & Conceitual (`knowledge/`)\n\n- [**Requisitos de Usuário e Stakeholders**](knowledge/01-requisitos-usuario-stakeholders.md)\n  *Mapeamento das necessidades de crianças, pais, terapeutas e educadores para rotinas nível 1.*\n- [**Regulamentação e Privacidade de Dados**](knowledge/02-regulamentacao-privacidade-dados.md)\n  *Análise das leis (LGPD, GDPR, HIPAA) e boas práticas para dados sensíveis de menores.*\n- [**Modelagem de Dados da Rotina**](knowledge/03-modelagem-dados-rotina.md)\n  *Definição de entidades (atividade, agenda, usuário, progresso) e relações no banco.*\n- [**Arquitetura de Backend (Node.js/TypeScript)**](knowledge/04-arquitetura-backend-node-ts.md)\n  *Projeto da API REST/GraphQL, camadas de serviço, repositório e testes unitários.*\n- [**Autenticação, Autorização e Controle de Acesso**](knowledge/05-autenticacao-autorizacao.md)\n  *Implementação de login seguro, perfis (pai, terapeuta, criança) e RBAC.*\n- [**Acessibilidade e Design Inclusivo**](knowledge/06-acessibilidade-design-inclusivo.md)\n  *Diretrizes de UI/UX para autismo nível 1 (cores, ícones, linguagem simples, suporte a AAC).*\n- [**Gerenciamento de Rotinas e Calendário**](knowledge/07-gerenciamento-rotinas-calendario.md)\n  *Funcionalidades de criação, edição, repetição e visualização de rotinas diárias.*\n- [**Notificações e Lembretes Multicanal**](knowledge/08-notificacoes-lembretes.md)\n  *Implementação de push, SMS e e‑mail para pais/terapeutas com opções de customização.*\n- [**Analytics de Progresso e Relatórios**](knowledge/09-analytics-progresso-relatorios.md)\n  *Coleta de métricas de adesão, geração de relatórios para acompanhamento terapêutico.*\n\n## 🛠️ Camada 2: Especificações Práticas & Código (`actionable/`)\n\n*Nenhuma especificação prática catalogada.*\n\n---\n\n*Todos os arquivos acima estão conectados ao Grafo Neural 3D do projeto no AI Second Brain.*\n"
     },
     {
       "id": "README_md",
@@ -1506,8 +1498,8 @@ window.VAULT_SNAPSHOT = {
           "isProject": true,
           "startCollapsed": true,
           "path": "projects/teste_alfredo_22/PROJECT.md",
-          "totalFilesCount": 33,
-          "childrenCount": 33,
+          "totalFilesCount": 32,
+          "childrenCount": 32,
           "children": [
             {
               "id": "projects_teste_alfredo_22_PROJECT_md",
@@ -1561,7 +1553,7 @@ window.VAULT_SNAPSHOT = {
               "isResearchRoot": true,
               "projectName": "teste_alfredo_22",
               "startCollapsed": true,
-              "childrenCount": 29,
+              "childrenCount": 28,
               "children": [
                 {
                   "id": "sub_teste_alfredo_22_res_bolo-de-banana",
@@ -1571,7 +1563,7 @@ window.VAULT_SNAPSHOT = {
                   "isSubfolder": true,
                   "startCollapsed": true,
                   "path": "projects/teste_alfredo_22/RESEARCH/bolo-de-banana/OVERVIEW.md",
-                  "childrenCount": 9,
+                  "childrenCount": 8,
                   "children": [
                     {
                       "id": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_OVERVIEW_md",
@@ -1579,15 +1571,7 @@ window.VAULT_SNAPSHOT = {
                       "title": "🔬 Bolo de Banana (projects/teste_alfredo_22/RESEARCH/bolo-de-banana/OVERVIEW.md)",
                       "icon": "📄",
                       "path": "projects/teste_alfredo_22/RESEARCH/bolo-de-banana/OVERVIEW.md",
-                      "size": 2039
-                    },
-                    {
-                      "id": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_01-banana-nutricional_md",
-                      "label": "01 - Perfil Nutricional da Banana",
-                      "title": "Perfil Nutricional da Banana (projects/teste_alfredo_22/RESEARCH/bolo-de-banana/knowledge/01-banana-nutricional.md)",
-                      "icon": "📘",
-                      "path": "projects/teste_alfredo_22/RESEARCH/bolo-de-banana/knowledge/01-banana-nutricional.md",
-                      "size": 7256
+                      "size": 1966
                     },
                     {
                       "id": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_02-adocantes-baixa-caloria_md",
@@ -1663,7 +1647,7 @@ window.VAULT_SNAPSHOT = {
                       "title": "🔬 Sistema de Ranking ELO e Matchmaking (projects/teste_alfredo_22/RESEARCH/sistema-de-ranking-elo-e-matchmaking/OVERVIEW.md)",
                       "icon": "📄",
                       "path": "projects/teste_alfredo_22/RESEARCH/sistema-de-ranking-elo-e-matchmaking/OVERVIEW.md",
-                      "size": 4137
+                      "size": 4145
                     },
                     {
                       "id": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_knowledge_01-elo-fundamentals_md",
@@ -2599,14 +2583,6 @@ window.VAULT_SNAPSHOT = {
       "path": "projects/teste_alfredo_22/PROJECT.md"
     },
     {
-      "id": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_01-banana-nutricional_md",
-      "label": "Perfil Nutricional da Banana",
-      "group": "projects",
-      "size": 12,
-      "icon": "📘",
-      "path": "projects/teste_alfredo_22/RESEARCH/bolo-de-banana/knowledge/01-banana-nutricional.md"
-    },
-    {
       "id": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_02-adocantes-baixa-caloria_md",
       "label": "Adoçantes de Baixa Caloria para Confeitaria",
       "group": "projects",
@@ -2666,7 +2642,7 @@ window.VAULT_SNAPSHOT = {
       "id": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_OVERVIEW_md",
       "label": "🔬 Bolo de Banana",
       "group": "projects",
-      "size": 12,
+      "size": 9,
       "icon": "🔬",
       "path": "projects/teste_alfredo_22/RESEARCH/bolo-de-banana/OVERVIEW.md"
     },
@@ -3135,10 +3111,6 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "hub_proj_teste_alfredo_22",
       "to": "projects_teste_alfredo_22_PROJECT_md"
-    },
-    {
-      "from": "hub_proj_teste_alfredo_22",
-      "to": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_01-banana-nutricional_md"
     },
     {
       "from": "hub_proj_teste_alfredo_22",
@@ -4206,10 +4178,6 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
-      "to": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_01-banana-nutricional_md"
-    },
-    {
-      "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
       "to": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_02-adocantes-baixa-caloria_md"
     },
     {
@@ -4309,10 +4277,6 @@ window.VAULT_SNAPSHOT = {
       "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
     },
     {
-      "from": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_01-banana-nutricional_md",
-      "to": "_agents_rules_01-ai-decision_md"
-    },
-    {
       "from": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_02-adocantes-baixa-caloria_md",
       "to": "projects_README_md"
     },
@@ -4323,10 +4287,6 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_04-reducao-gordura-bolo_md",
       "to": "_agents_rules_01-ai-decision_md"
-    },
-    {
-      "from": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_OVERVIEW_md",
-      "to": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_01-banana-nutricional_md"
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_OVERVIEW_md",
@@ -4646,7 +4606,7 @@ window.VAULT_SNAPSHOT = {
     }
   },
   "stats": {
-    "totalFiles": 89,
+    "totalFiles": 88,
     "rulesCount": 5,
     "skillsCount": 8,
     "projectsCount": 2,
@@ -4655,7 +4615,7 @@ window.VAULT_SNAPSHOT = {
     "memoryCount": 2,
     "templatesCount": 4,
     "docsCount": 8,
-    "totalNodes": 101,
-    "totalEdges": 430
+    "totalNodes": 100,
+    "totalEdges": 426
   }
 };

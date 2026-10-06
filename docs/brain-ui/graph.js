@@ -333,205 +333,6 @@ class BrainGraph {
         return m;
     }
 
-    _createNeuronLabel(t, h, col, left) {
-        const k = document.createElement('canvas');
-        const x = k.getContext('2d');
-        const f = '600 34px ui-sans-serif, system-ui, sans-serif';
-        x.font = f;
-        const w = x.measureText(t).width + (left ? 30 : 12);
-        k.width = Math.max(1, Math.ceil(w));
-        k.height = 52;
-        x.font = f;
-        x.shadowColor = '#04060d99';
-        x.shadowBlur = 5;
-        x.fillStyle = col;
-        x.fillText(t, left ? 26 : 6, 36);
-        const tex = new THREE.CanvasTexture(k);
-        const s = new THREE.Sprite(new THREE.SpriteMaterial({
-            map: tex,
-            transparent: true,
-            depthTest: false
-        }));
-        s.scale.set((w / 52) * h, h, 1);
-        s.center.set(left ? 0 : 0.5, 0.5);
-        s.renderOrder = 10;
-        return s;
-    }
-
-    _neuronLit(l) {
-        const s = new Set();
-        if (!l) return s;
-        if (l.pe) s.add(l.pe);
-        if (l.link) s.add(l);
-        for (const n of [l.a, l.b].filter(Boolean)) {
-            for (let x = n; x && x.pe; x = x.pe.a) {
-                s.add(x.pe);
-            }
-            const st = [n];
-            while (st.length) {
-                const x = st.pop();
-                for (const e of (x.out || [])) {
-                    if (!e.link && e.a === x) {
-                        s.add(e);
-                        st.push(e.b);
-                    }
-                }
-            }
-        }
-        return s;
-    }
-
-    _fillNeuronRibbon(g, wm, bm) {
-        if (!g || !g.attributes || !g.attributes.position || !this.neuronEdges) return;
-        const P = g.attributes.position.array;
-        const C = g.attributes.color.array;
-        const S = this.ribbonSegments || 10;
-        const camPos = this.camera.position;
-        const pp = new THREE.Vector3();
-        const tg = new THREE.Vector3();
-        const sd = new THREE.Vector3();
-        const tm = new THREE.Vector3();
-        const vv = new THREE.Vector3();
-
-        const bez = (e, u, o) => o.copy(e.P).multiplyScalar((1 - u) * (1 - u)).addScaledVector(e.M, 2 * u * (1 - u)).addScaledVector(e.C, u * u);
-
-        let k = 0;
-        for (const e of this.neuronEdges) {
-            for (let i = 0; i <= S; i++) {
-                const u = i / S;
-                bez(e, u, pp);
-                tg.copy(e.M).sub(e.P).multiplyScalar(2 * (1 - u)).addScaledVector(tm.copy(e.C).sub(e.M), 2 * u);
-                sd.crossVectors(tg, vv.copy(camPos).sub(pp)).normalize().multiplyScalar((e.w0 + (e.w1 - e.w0) * u) * wm / 2 * (1 + Math.max(e.k, 0) * (e.link ? 1.5 : 0.6)) * (e.link ? 0.5 + 0.5 * Math.sin(Math.PI * u) : 1));
-                const br = bm * e.br * (e.link ? 0.5 * Math.pow(Math.sin(Math.PI * u), 0.6) : 1) * (1 + e.k * 0.9) * (0.55 + 0.45 * (1 - u));
-                for (const s of [1, -1]) {
-                    P[k]     = pp.x + sd.x * s;
-                    P[k + 1] = pp.y + sd.y * s;
-                    P[k + 2] = pp.z + sd.z * s;
-                    C[k]     = e.col[0] * br;
-                    C[k + 1] = e.col[1] * br;
-                    C[k + 2] = e.col[2] * br;
-                    k += 3;
-                }
-            }
-        }
-        g.attributes.position.needsUpdate = true;
-        g.attributes.color.needsUpdate = true;
-    }
-
-    _animateNeuron(dt, t) {
-        if (!this.neuronNodes || this.neuronNodes.length === 0) return;
-        const sb = Math.min(dt, 0.033);
-        const tm = new THREE.Vector3();
-        const sd = new THREE.Vector3();
-        const tg = new THREE.Vector3();
-        const pp = new THREE.Vector3();
-        const F = new THREE.Vector3();
-
-        // 1. Spring physics on dragged / connected nodes
-        for (const n of this.neuronNodes) {
-            if (n === this.grabNeuronNode) continue;
-            F.copy(n.off).multiplyScalar(-7);
-            if (n.pe) F.addScaledVector(tm.copy(n.pe.a.off).sub(n.off), 25);
-            for (const e of (n.out || [])) {
-                if (!e.link && e.a === n) F.addScaledVector(tm.copy(e.b.off).sub(n.off), 25);
-            }
-            n.vl.addScaledVector(F, sb).multiplyScalar(Math.exp(-2.4 * sb));
-        }
-        for (const n of this.neuronNodes) {
-            if (n !== this.grabNeuronNode) n.off.addScaledVector(n.vl, sb);
-        }
-
-        // 2. Organic harmonic sway
-        for (const n of this.neuronNodes) {
-            if (n.soma) {
-                n.cur.copy(n.p).add(n.off);
-                continue;
-            }
-            const a = 0.05 * n.p.distanceTo(n.c) + 0.1;
-            const p = n.ph || 0;
-            n.cur.set(
-                n.p.x + (Math.sin(t * 0.8 + p) + 0.5 * Math.sin(t * 1.7 + p * 2)) * a * 0.5,
-                n.p.y + (Math.sin(t * 0.7 + p * 1.3 + 2) + 0.5 * Math.sin(t * 1.5 + p)) * a * 0.5,
-                n.p.z + (Math.cos(t * 0.75 + p * 0.7) + 0.5 * Math.sin(t * 1.9 + p * 1.6)) * a * 0.5
-            ).add(n.off);
-        }
-
-        // 3. Curved Bezier midpoint of branches
-        for (const e of this.neuronEdges) {
-            tm.copy(e.P).add(e.C).multiplyScalar(0.5);
-            let bn = e.bend;
-            if (e.link) {
-                sd.copy(e.C).sub(e.P);
-                tg.copy(e.bend).addScaledVector(sd, -e.bend.dot(sd) / (sd.lengthSq() || 1));
-                bn = tg;
-            }
-            e.M.copy(tm).addScaledVector(bn, e.P.distanceTo(e.C) * (1 + 0.25 * Math.sin(t * 0.8 + e.ph)));
-        }
-
-        // 4. Spotlight highlight logic
-        const cl = this.selLink || this.hovLink;
-        if (cl !== this.lastL) {
-            this.lastL = cl;
-            this.litSet = cl ? this._neuronLit(cl) : null;
-        }
-        for (const e of this.neuronEdges) {
-            let targetK = 0;
-            if (this.litSet) {
-                targetK = this.litSet.has(e) ? 1.0 : -0.3;
-            }
-            e.k += (targetK - e.k) * Math.min(1, dt * 8);
-        }
-
-        // 5. Fill Camera-Facing Ribbons
-        if (this.gH && this.gC) {
-            this._fillNeuronRibbon(this.gH, 3.2, 0.16);
-            this._fillNeuronRibbon(this.gC, 1.0, 0.80);
-        }
-
-        // 6. Action Potential Pulses
-        if (this.neuronPulses && this.neuronPulsePoints && this.neuronPulsePos) {
-            const bez = (e, u, o) => o.copy(e.P).multiplyScalar((1 - u) * (1 - u)).addScaledVector(e.M, 2 * u * (1 - u)).addScaledVector(e.C, u * u);
-            for (let i = 0; i < this.neuronPulses.length; i++) {
-                const p = this.neuronPulses[i];
-                p.u += (p.v * dt) / Math.max(2, p.e.P.distanceTo(p.e.C));
-                if (p.u > 1.0) {
-                    p.u = 0;
-                    p.e = (p.e.b.out && p.e.b.out.length) ? p.e.b.out[(p.e.b.out.length * Math.random()) | 0] : this.neuronEdges[(this.neuronEdges.length * Math.random()) | 0];
-                }
-                bez(p.e, p.u, pp);
-                this.neuronPulsePos[i * 3]     = pp.x;
-                this.neuronPulsePos[i * 3 + 1] = pp.y;
-                this.neuronPulsePos[i * 3 + 2] = pp.z;
-            }
-            this.neuronPulsePoints.geometry.attributes.position.needsUpdate = true;
-        }
-
-        // 7. Update Somas, Shells, Nuclei Shaders and Labels
-        for (const s of (this.neuronSomas || [])) {
-            s.ob.forEach(o => o.position.copy(s.so.cur));
-            s.lb.position.set(s.so.cur.x, s.so.cur.y + s.ly, s.so.cur.z);
-        }
-        for (let i = 0; i < (this.neuronShells || []).length; i++) {
-            this.neuronShells[i].material.uniforms.t.value = t + i;
-            this.neuronNmats[i].uniforms.t.value = t * 1.2 + i * 3.0;
-            this.neuronNuclei[i].rotation.y = t * 0.15 + i;
-            this.neuronNuclei[i].scale.setScalar(1.0 + 0.06 * Math.sin(t * 2.0 + i));
-        }
-
-        // 8. Update Leaves (Bulbs and File Labels)
-        for (const l of (this.neuronLeaves || [])) {
-            const f = l.file;
-            const on = f === this.activeNeuronFile || (this.hoveredNeuronHit && this.hoveredNeuronHit.file === f);
-            const d = this.camera.position.distanceTo(l.cur);
-            l.bulb.position.copy(l.cur);
-            l.lab.position.copy(l.cur);
-            if (l.hit) l.hit.position.copy(l.cur);
-
-            l.bulb.scale.setScalar((on ? 2.6 : 1.5 + 0.25 * Math.sin(t * 3.0 + l.ph)) * (0.8 + d / 150));
-            l.lab.material.opacity = on ? 1.0 : Math.min(1.0, Math.max(0.12, 1.5 - d / 75));
-        }
-    }
-
     _createGlowTexture() {
         const canvas = document.createElement('canvas');
         canvas.width = 128;
@@ -616,466 +417,9 @@ class BrainGraph {
         return tex;
     }
 
-    // ── Load Data & 3D Neural Map Construction ────────
+    // ── Load Data & 3D Spherical Planet Layout ────────
     loadData(graphNodes, graphEdges, groupColors) {
-        this.rawGraphNodes = graphNodes;
-        this.rawGraphEdges = graphEdges;
         this.groupColors = groupColors || {};
-
-        if (this.nodeStyle === 'neuron') {
-            this._buildNeuronGraph(graphNodes, graphEdges, this.groupColors);
-        } else {
-            this._buildSphereGraph(graphNodes, graphEdges, this.groupColors);
-        }
-    }
-
-    _buildNeuronGraph(graphNodes, graphEdges, groupColors) {
-        this.nodeMap.clear();
-
-        // 1. Clear any previous objects
-        if (this.neuronWorld) {
-            this.scene.remove(this.neuronWorld);
-            while (this.neuronWorld.children.length > 0) {
-                const c = this.neuronWorld.children[0];
-                if (c.geometry) c.geometry.dispose();
-                this.neuronWorld.remove(c);
-            }
-        }
-        this.neuronWorld = new THREE.Group();
-        this.scene.add(this.neuronWorld);
-
-        while (this.nodeGroup.children.length > 0) {
-            this.nodeGroup.remove(this.nodeGroup.children[0]);
-        }
-        while (this.edgeGroup.children.length > 0) {
-            this.edgeGroup.remove(this.edgeGroup.children[0]);
-        }
-        while (this.particleGroup.children.length > 0) {
-            this.particleGroup.remove(this.particleGroup.children[0]);
-        }
-        if (this.ribbonGroup) {
-            while (this.ribbonGroup.children.length > 0) {
-                const child = this.ribbonGroup.children[0];
-                if (child.geometry) child.geometry.dispose();
-                this.ribbonGroup.remove(child);
-            }
-        }
-        if (this.pulsePoints) {
-            this.scene.remove(this.pulsePoints);
-            if (this.pulsePoints.geometry) this.pulsePoints.geometry.dispose();
-            this.pulsePoints = null;
-        }
-
-        if (this.coreGroup) {
-            this.coreGroup.visible = false;
-        }
-
-        // Neuron state collections (exactly matching HTML)
-        this.neuronNodes = [];
-        this.neuronEdges = [];
-        this.neuronLeaves = [];
-        this.neuronShells = [];
-        this.neuronNuclei = [];
-        this.neuronNmats = [];
-        this.neuronHits = [];
-        this.neuronFiles = [];
-        this.neuronSomas = [];
-        this.interactiveMeshes = [];
-        this.synapticBoutons = [];
-        this.litSet = null;
-        this.selLink = null;
-        this.hovLink = null;
-        this.lastL = null;
-        this.activeNeuronFile = null;
-        this.activeNeuronLeaf = null;
-
-        // 2. Prepare Data: Group documents by folder
-        const allVaultFiles = (window.VAULT && window.VAULT.data && window.VAULT.data.files) || [];
-        const folderData = {};
-
-        if (allVaultFiles.length > 0) {
-            for (const f of allVaultFiles) {
-                let fo = f.folder;
-                if (!fo && f.path && f.path.includes('/')) {
-                    fo = f.path.substring(0, f.path.lastIndexOf('/'));
-                }
-                if (!fo) fo = f.category || f.group || 'geral';
-                fo = fo.replace(/\\/g, '/');
-                if (fo.startsWith('.agents/')) fo = fo.slice('.agents/'.length);
-
-                const parts = fo.split('/').filter(Boolean);
-                let primaryFolder = fo;
-                if (parts[0] === 'projects' && parts.length >= 2) {
-                    primaryFolder = parts[0] + '/' + parts[1];
-                } else if (parts[0] === 'RESEARCH' && parts.length >= 2) {
-                    primaryFolder = parts[0] + '/' + parts[1];
-                } else if (parts.length > 1) {
-                    primaryFolder = parts[0];
-                }
-
-                if (!folderData[primaryFolder]) folderData[primaryFolder] = [];
-                folderData[primaryFolder].push({
-                    id: f.id || f.path,
-                    name: f.name || (f.path ? f.path.split('/').pop() : f.id),
-                    path: f.path || '',
-                    text: f.content || '',
-                    folder: primaryFolder,
-                    subfolder: fo,
-                    group: f.category || f.group || parts[0],
-                    originalNode: graphNodes.find(n => n.id === f.id || n.path === f.path) || { id: f.id, label: f.name, path: f.path }
-                });
-            }
-        } else {
-            for (const n of graphNodes) {
-                if (n.isCentral || n.id === 'brain' || n.isFolder) continue;
-                let fo = n.folder;
-                if (!fo && n.path && n.path.includes('/')) {
-                    fo = n.path.substring(0, n.path.lastIndexOf('/'));
-                }
-                if (!fo) fo = n.group || 'geral';
-                fo = fo.replace(/\\/g, '/');
-                if (fo.startsWith('.agents/')) fo = fo.slice('.agents/'.length);
-
-                const parts = fo.split('/').filter(Boolean);
-                let primaryFolder = fo;
-                if (parts[0] === 'projects' && parts.length >= 2) {
-                    primaryFolder = parts[0] + '/' + parts[1];
-                } else if (parts[0] === 'RESEARCH' && parts.length >= 2) {
-                    primaryFolder = parts[0] + '/' + parts[1];
-                } else if (parts.length > 1) {
-                    primaryFolder = parts[0];
-                }
-
-                if (!folderData[primaryFolder]) folderData[primaryFolder] = [];
-                folderData[primaryFolder].push({
-                    id: n.id,
-                    name: n.label || n.title || (n.path ? n.path.split('/').pop() : n.id),
-                    path: n.path || '',
-                    text: n.content || n.text || '',
-                    folder: primaryFolder,
-                    subfolder: fo,
-                    group: n.group,
-                    originalNode: n
-                });
-            }
-        }
-
-        // Fallback se não houver pastas
-        if (Object.keys(folderData).length === 0) {
-            folderData['geral'] = graphNodes.filter(n => !n.isCentral && n.id !== 'brain').map(n => ({
-                id: n.id,
-                name: n.label || n.title || n.id,
-                path: n.path || '',
-                text: n.content || n.text || '',
-                group: n.group,
-                originalNode: n
-            }));
-        }
-
-        const V = THREE.Vector3;
-        const rnd = Math.random;
-        const rv = () => new V(rnd() - 0.5, rnd() - 0.5, rnd() - 0.5).normalize();
-        const GOLD = [1, 0.78, 0.42];
-        const CY = [0.3, 0.85, 1];
-        const COL = ['#2cff9a', '#ff6fae', '#7f8cff', '#35e0ff', '#ffa24a', '#c58bff', '#ffd27a', '#ff7a7a'];
-
-        const names = Object.keys(folderData).sort((a, b) => folderData[b].length - folderData[a].length);
-        const M = names.length - 1;
-
-        const mk = (p, c, d) => {
-            const n = {
-                p: p,
-                cur: p.clone(),
-                c: c,
-                d: d,
-                off: new V(),
-                vl: new V(),
-                out: [],
-                ph: p.x * 0.35 + p.y * 0.3 + p.z * 0.4 + rnd()
-            };
-            this.neuronNodes.push(n);
-            return n;
-        };
-
-        const ed = (a, b, w0, w1, col, br, bd) => {
-            const e = {
-                a: a,
-                b: b,
-                w0: w0,
-                w1: w1,
-                col: col,
-                br: br,
-                bend: rv().multiplyScalar(bd),
-                P: a.cur,
-                C: b.cur,
-                M: new V(),
-                ph: rnd() * 6,
-                k: 0
-            };
-            this.neuronEdges.push(e);
-            a.out.push(e);
-            return e;
-        };
-
-        const wd = d => 0.42 * Math.pow(0.6, d);
-        const disp = f => f.split('/').slice(-2).join('/');
-
-        names.forEach((fo, i) => {
-            const list = folderData[fo].slice(0, 80);
-            const n = list.length;
-            const r = Math.min(4.5, 2 + 0.25 * n);
-            const grp = list[0] && list[0].group;
-            const col = (grp && this.groupColors[grp] && this.groupColors[grp].fill) || COL[i % COL.length];
-
-            let c = new V();
-            if (i) {
-                const j = i - 1;
-                const y = 1 - (j + 0.5) / Math.max(M, 1) * 2;
-                const s = Math.sqrt(1 - y * y);
-                const a = j * 2.4;
-                c.set(Math.cos(a) * s, y * 0.6, Math.sin(a) * s).multiplyScalar(20 + n * 0.7 + M);
-            }
-
-            const so = mk(c.clone(), c, 0);
-            so.soma = 1;
-
-            // 1. Soma Shell Shader
-            const shell = new THREE.Mesh(new THREE.SphereGeometry(r, 48, 32), new THREE.ShaderMaterial({
-                transparent: true,
-                depthWrite: false,
-                ...BrainGraph.AB,
-                uniforms: { t: { value: 0 } },
-                vertexShader: 'uniform float t;varying vec3 N,W;void main(){vec3 p=position;p+=normal*sin(p.x*1.6+t)*sin(p.y*1.9+t*1.1)*sin(p.z*1.7+t*.9)*.35;vec4 m=modelViewMatrix*vec4(p,1.);N=normalize(normalMatrix*normal);W=normalize(-m.xyz);gl_Position=projectionMatrix*m;}',
-                fragmentShader: 'varying vec3 N,W;void main(){float f=pow(1.-abs(dot(N,W)),1.8);gl_FragColor=vec4(mix(vec3(.55,.35,.08),vec3(1.,.82,.4),f)*(.3+.6*f),.15+.35*f);}'
-            }));
-            shell.position.copy(c);
-
-            // 2. Nucleus Plasma Shader
-            const nm = new THREE.ShaderMaterial({
-                transparent: true,
-                depthWrite: false,
-                ...BrainGraph.AB,
-                uniforms: { t: { value: 0 }, c: { value: new THREE.Color(col) } },
-                vertexShader: 'uniform float t;varying vec3 N,W,P;void main(){vec3 p=position;p+=normal*(sin(p.x*3.+t)*sin(p.y*3.4+t*1.2)*sin(p.z*3.1+t*.8)*.38+sin(p.x*6.-t*1.5+p.y*4.)*.1);P=p;vec4 m=modelViewMatrix*vec4(p,1.);N=normalize(normalMatrix*normal);W=normalize(-m.xyz);gl_Position=projectionMatrix*m;}',
-                fragmentShader: 'uniform float t;uniform vec3 c;varying vec3 N,W,P;void main(){float f=pow(1.-abs(dot(N,W)),1.5);float s=.5+.5*sin(P.x*7.+P.y*5.+t*2.)*sin(P.z*6.-t*1.5+P.y*3.);gl_FragColor=vec4(c*(.3+.5*s)+vec3(f*.2),.2+.3*f+.15*s);}'
-            });
-            const nu = new THREE.Group();
-            const o = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 4), nm);
-            const n2 = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 3), nm);
-            o.scale.setScalar(r * 0.62);
-            n2.scale.set(r * 0.34, r * 0.28, r * 0.4);
-            n2.rotation.set(1, 2, 0);
-            nu.add(o, n2);
-            nu.position.copy(c);
-            this.neuronNmats.push(nm);
-
-            // 3. Glowing Bio-Auras
-            const g1 = this._createNeuronSprite(col, r * 3.2);
-            const g2 = this._createNeuronSprite('#ffb940', r * 6.0);
-            g1.material.opacity = 0.4;
-            g2.material.opacity = 0.25;
-            g1.position.copy(c);
-            g2.position.copy(c);
-            g1.userData = { folder: fo, c, isFolder: true };
-
-            // 4. Soma Label
-            const lb = this._createNeuronLabel(disp(fo) + '/', 1.9, '#ffe7b0');
-            lb.position.set(c.x, c.y + r * 1.5 + 1.2, c.z);
-            lb.userData = { folder: fo, c, isFolder: true };
-
-            const somaHit = new THREE.Mesh(new THREE.SphereGeometry(r * 1.6, 8, 8), new THREE.MeshBasicMaterial({ visible: false }));
-            somaHit.position.copy(c);
-            somaHit.userData = { folder: fo, c, isFolder: true, node: { id: fo, label: fo, isFolder: true } };
-
-            this.neuronWorld.add(shell, nu, g1, g2, lb, somaHit);
-            this.neuronShells.push(shell);
-            this.neuronNuclei.push(nu);
-            this.neuronHits.push(g1, lb, somaHit);
-            this.interactiveMeshes.push(somaHit, g1, lb);
-            this.neuronSomas.push({ fo, c, col, r, so, ob: [shell, nu, g1, g2, somaHit], lb, ly: r * 1.5 + 1.2, nm, g1 });
-
-            // 5. Dendrite Tree Growth
-            const grow = (par, dir, g, d, len) => {
-                if (g.length === 1) {
-                    const l = mk(par.p.clone().addScaledVector(dir, len * 1.2), c, d);
-                    l.pe = ed(par, l, wd(d - 1), 0.05, GOLD, 1, 0.3);
-                    l.file = g[0];
-                    l.isLeaf = true;
-                    this.neuronLeaves.push(l);
-                    return;
-                }
-                const b = mk(par.p.clone().addScaledVector(dir, len), c, d);
-                b.pe = ed(par, b, wd(d - 1), wd(d), GOLD, 1, 0.3);
-                const h = Math.ceil(g.length / 2);
-                [g.slice(0, h), g.slice(h)].forEach(s => {
-                    if (s.length) {
-                        grow(b, dir.clone().addScaledVector(rv(), 0.9).normalize(), s, d + 1, len * 0.8);
-                    }
-                });
-            };
-
-            const k = Math.min(n, Math.max(3, Math.round(Math.sqrt(n) * 1.8)));
-            const gr = Array.from({ length: k }, () => []);
-            list.forEach((f, q) => gr[q % k].push({ folder: fo, ...f }));
-            const off = rnd() * 6;
-            gr.forEach((g, q) => {
-                const y = 1 - (q + 0.5) / k * 2;
-                const s = Math.sqrt(1 - y * y);
-                const a = q * 2.4 + off;
-                grow(so, new V(Math.cos(a) * s, y, Math.sin(a) * s), g, 1, r + 3 + Math.min(n, 12) * 0.45);
-            });
-        });
-
-        // 6. Leaves (File Boutons & Labels)
-        this.neuronLeaves.forEach(l => {
-            const f = l.file;
-            f.leaf = l;
-            this.neuronFiles.push(f);
-            const origNode = f.originalNode || { id: f.id, label: f.name, path: f.path, text: f.text };
-            this.nodeMap.set(origNode.id, origNode);
-
-            l.bulb = this._createNeuronSprite('#ffcf5a', 1.7);
-            l.bulb.userData = { file: f, node: origNode, isFile: true };
-
-            l.lab = this._createNeuronLabel(f.name, 0.95, '#fff4d6', true);
-            l.lab.userData = { file: f, node: origNode, isFile: true };
-
-            const leafHit = new THREE.Mesh(new THREE.SphereGeometry(3.5, 8, 8), new THREE.MeshBasicMaterial({ visible: false }));
-            leafHit.position.copy(l.cur);
-            leafHit.userData = { file: f, node: origNode, isFile: true };
-            l.hit = leafHit;
-
-            this.neuronWorld.add(l.bulb, l.lab, leafHit);
-            this.neuronHits.push(l.bulb, l.lab, leafHit);
-            this.interactiveMeshes.push(leafHit, l.bulb);
-        });
-
-        // 7. Inter-Neuron Connections (Axon Bridges between Somas)
-        const near = (A, B) => {
-            let b = [1e9];
-            this.neuronNodes.forEach(x => {
-                if (x.c === A && x.d >= 1 && x.out.length) {
-                    this.neuronNodes.forEach(y => {
-                        if (y.c === B && y.d >= 1 && y.out.length) {
-                            const d = x.p.distanceTo(y.p);
-                            if (d < b[0]) b = [d, x, y];
-                        }
-                    });
-                }
-            });
-            return b;
-        };
-
-        const cs = this.neuronSomas.map(s => s.c);
-        const pr = new Set();
-        this.neuronSomas.forEach(s => {
-            const i = s.fo.lastIndexOf('/');
-            const ps = i > 0 && this.neuronSomas.find(q => q.fo === s.fo.slice(0, i));
-            if (ps) {
-                const r = near(s.c, ps.c);
-                if (r[1]) ed(r[1], r[2], 0.3, 0.3, GOLD, 0.9, 0.35).link = 1;
-                else ed(this.neuronNodes.find(x => x.c === s.c && x.soma), this.neuronNodes.find(x => x.c === ps.c && x.soma), 0.4, 0.4, GOLD, 0.9, 0.35).link = 1;
-            }
-        });
-
-        cs.forEach((a, i) => cs.forEach((b, j) => {
-            if (i < j && (j === i + 1 || i === 0 || (i + j) % 3 === 0)) {
-                const r = near(a, b);
-                if (r[1]) ed(r[1], r[2], 0.2, 0.2, GOLD, 0.8, 0.35).link = 1;
-            }
-        }));
-
-        // 8. Cross-references / Wikilinks (Cyan ribbons)
-        const find = ref => {
-            ref = ref.replace(/^\.?\//, '').toLowerCase();
-            return this.neuronFiles.find(f => (f.folder + '/' + f.name).toLowerCase().endsWith(ref) || (f.path && f.path.toLowerCase().endsWith(ref)));
-        };
-
-        this.neuronFiles.forEach(f => {
-            const text = f.text || (f.originalNode && (f.originalNode.content || f.originalNode.text)) || '';
-            [...text.matchAll(/\[\[([^\]]+)\]\]|\]\(([^)]+\.md)\)/g)].forEach(m => {
-                const t = find(m[1] || m[2]);
-                if (t && t !== f && pr.size < 120) {
-                    const k = [f.name + f.folder, t.name + t.folder].sort().join();
-                    if (!pr.has(k)) {
-                        pr.add(k);
-                        ed(f.leaf, t.leaf, 0.12, 0.12, CY, 0.9, 0.4).link = 1;
-                    }
-                }
-            });
-        });
-
-        // 9. Dual Camera-Facing Ribbon Geometries (gH and gC)
-        const S = 10;
-        this.ribbonSegments = S;
-        const mkG = () => {
-            const n = this.neuronEdges.length * (S + 1) * 2;
-            const g = new THREE.BufferGeometry();
-            const ix = [];
-            g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(n * 3), 3));
-            g.setAttribute('color', new THREE.BufferAttribute(new Float32Array(n * 3), 3));
-            for (let e = 0; e < this.neuronEdges.length; e++) {
-                for (let i = 0; i < S; i++) {
-                    const a = (e * (S + 1) + i) * 2;
-                    ix.push(a, a + 1, a + 2, a + 1, a + 3, a + 2);
-                }
-            }
-            g.setIndex(ix);
-            const m = new THREE.Mesh(g, new THREE.MeshBasicMaterial({
-                vertexColors: true,
-                ...BrainGraph.AB,
-                transparent: true,
-                depthWrite: false,
-                side: THREE.DoubleSide
-            }));
-            m.frustumCulled = false;
-            this.neuronWorld.add(m);
-            return g;
-        };
-        this.gC = mkG();
-        this.gH = mkG();
-
-        // 10. Action Potential Pulses
-        const np = Math.min(200, this.neuronEdges.length * 2);
-        this.neuronPulses = Array.from({ length: np }, () => ({
-            e: this.neuronEdges[this.neuronEdges.length * rnd() | 0],
-            u: rnd(),
-            v: 1 + rnd()
-        }));
-        this.neuronPulsePos = new Float32Array(np * 3);
-        const pg = new THREE.BufferGeometry();
-        pg.setAttribute('position', new THREE.BufferAttribute(this.neuronPulsePos, 3));
-        this.neuronPulsePoints = new THREE.Points(pg, new THREE.PointsMaterial({
-            map: BrainGraph.G('#fff1b8'),
-            size: 1.5,
-            ...BrainGraph.AB,
-            transparent: true,
-            depthWrite: false
-        }));
-        this.neuronPulsePoints.frustumCulled = false;
-        this.neuronWorld.add(this.neuronPulsePoints);
-
-        // 11. Initial camera positioning for neuron constellation
-        const numSomas = this.neuronSomas.length;
-        const initialDist = Math.min(220, Math.max(105, 75 + numSomas * 4.2));
-        this.defaultNeuronDist = initialDist;
-        const camDir = new THREE.Vector3(Math.sin(1.3) * Math.sin(0.6), Math.cos(1.3), Math.sin(1.3) * Math.cos(0.6)).normalize();
-        const initCamPos = camDir.clone().multiplyScalar(initialDist);
-
-        this.defaultCameraPos.copy(initCamPos);
-        this.defaultTargetPos.set(0, 0, 0);
-        this.controls.minDistance = 14;
-        this.controls.maxDistance = 500;
-        this.controls.target.set(0, 0, 0);
-        this.camera.position.copy(initCamPos);
-        this.camera.lookAt(0, 0, 0);
-        this.controls.update();
-
-        this.nodes = this.neuronFiles.map(f => f.originalNode || f);
-        this._notifyCameraChange();
-    }
-
-    _buildSphereGraph(graphNodes, graphEdges, groupColors) {
         this.nodeMap.clear();
 
         // Clear existing 3D meshes
@@ -1103,8 +447,9 @@ class BrainGraph {
         this.interactiveMeshes = [];
         this.synapticBoutons = [];
 
+        // No modo neurônio, oculta o núcleo wireframe mecânico do planeta
         if (this.coreGroup) {
-            this.coreGroup.visible = true;
+            this.coreGroup.visible = (this.nodeStyle !== 'neuron');
         }
 
         // 1. Calculate 3D Spherical Positions for Nodes (Planetary Cortex)
@@ -1120,15 +465,15 @@ class BrainGraph {
 
         // Group continental sectors on the sphere: (polar theta & azimuth phi)
         const groupSectors = {
-            'core': { theta: 0, phi: 0.35, r: planetRadius * 1.05 },
-            'rules': { theta: -0.7, phi: 0.85, r: planetRadius },
-            'skills': { theta: 0.7, phi: 0.85, r: planetRadius },
-            'agents': { theta: 0.0, phi: 0.8, r: planetRadius },
-            'ai': { theta: 0.0, phi: 1.45, r: planetRadius * 0.95 },
-            'knowledge': { theta: -0.85, phi: 2.1, r: planetRadius },
-            'projects': { theta: 0.85, phi: 2.1, r: planetRadius },
-            'memory': { theta: -0.3, phi: 2.7, r: planetRadius * 1.05 },
-            'decisions': { theta: 0.3, phi: 2.7, r: planetRadius * 1.05 },
+            'core': { theta: 0, phi: 0.35, r: planetRadius * 1.05 }, // North polar crown (System / Core)
+            'rules': { theta: -0.7, phi: 0.85, r: planetRadius }, // North-West continent
+            'skills': { theta: 0.7, phi: 0.85, r: planetRadius }, // North-East continent
+            'agents': { theta: 0.0, phi: 0.8, r: planetRadius }, // North meridian continent
+            'ai': { theta: 0.0, phi: 1.45, r: planetRadius * 0.95 }, // Equatorial front
+            'knowledge': { theta: -0.85, phi: 2.1, r: planetRadius }, // South-West continent
+            'projects': { theta: 0.85, phi: 2.1, r: planetRadius }, // South-East continent
+            'memory': { theta: -0.3, phi: 2.7, r: planetRadius * 1.05 }, // South pole
+            'decisions': { theta: 0.3, phi: 2.7, r: planetRadius * 1.05 }, // South pole
             'templates': { theta: -1.3, phi: 1.5, r: planetRadius },
             'docs': { theta: 1.3, phi: 1.5, r: planetRadius }
         };
@@ -1139,6 +484,7 @@ class BrainGraph {
         }
         const groupIndices = {};
 
+        // In project graph, prepare balanced orbital indexing for surrounding satellites
         let localIdx = 0;
         const localNodes = graphNodes.filter((n, i) => !n.isCentral && n.id !== 'brain' && !(i === 0 && n.id.startsWith('proj_')) && (n.group === 'projects' || (n.path && !n.path.includes('/RESEARCH/'))));
         let researchIdx = 0;
@@ -1151,14 +497,17 @@ class BrainGraph {
             let pos3D;
 
             if (this.isHierarchy && n.hpos) {
+                // Sistema Solar Hierárquico: posição determinística calculada por graph-hierarchy.js
                 pos3D = new THREE.Vector3(n.hpos.x, n.hpos.y, n.hpos.z);
             } else if (isCentral) {
+                // The Central Sun/Project is fixed DEAD-CENTER at (0,0,0), perfectly aligned with the rotating wireframe core and celestial rings!
                 pos3D = new THREE.Vector3(0, 0, 0);
             } else if (isProjectGraph) {
                 const isResearch = n.group === 'research' || (n.path && n.path.includes('/RESEARCH/'));
                 const isFw = n.group === 'rules' || n.group === 'skills' || (n.group === 'knowledge' && n.id.startsWith('fw_'));
 
                 if (isFw) {
+                    // Northern governance crown above the project
                     const idx = fwIdx++;
                     const count = Math.max(1, fwNodes.length);
                     const theta = (count > 1) ? (-Math.PI * 0.65 + (idx / (count - 1)) * Math.PI * 1.3) : 0;
@@ -1170,6 +519,7 @@ class BrainGraph {
                         r * Math.sin(phi) * Math.cos(theta)
                     );
                 } else if (isResearch) {
+                    // Southern / Equatorial Research Lab orbital belt
                     const idx = researchIdx++;
                     const count = Math.max(1, researchNodes.length);
                     const theta = (idx / count) * Math.PI * 2 + 0.3;
@@ -1181,6 +531,8 @@ class BrainGraph {
                         r * Math.sin(phi) * Math.cos(theta)
                     );
                 } else {
+                    // Core project documents (PROJECT.md, CURRENT_STATE.md, ARCHITECTURE.md, etc.)
+                    // Form an equatorial ring around the central project planet
                     const idx = localIdx++;
                     const count = Math.max(1, localNodes.length);
                     const theta = (idx / count) * Math.PI * 2;
@@ -1198,6 +550,7 @@ class BrainGraph {
                 const count = groupCounts[n.group] || 1;
                 const sector = groupSectors[n.group] || { theta: 0, phi: Math.PI / 2, r: planetRadius };
 
+                // Spread children within their continental hemisphere
                 const angleOffset = (idx / count) * Math.PI * 0.75 - Math.PI * 0.375;
                 const r = sector.r + (Math.random() - 0.5) * 25;
                 const phi = sector.phi + (idx % 2 === 0 ? 0.22 : -0.22) * (idx / count);
@@ -1240,6 +593,7 @@ class BrainGraph {
             return nodeObj;
         });
 
+        // Mapas de hierarquia (pai → filhos) para destaque de caminho e pesquisa contextual
         if (this.isHierarchy) {
             for (const node of this.nodes) {
                 if (node.parentId) {
@@ -1250,8 +604,10 @@ class BrainGraph {
             }
         }
 
+        // 2. Perform 3D Relaxation Step so nodes don't collide
         this._relax3DNodes();
 
+        // 2.1 Save equilibrium celestial home positions & masses for spring dynamics
         for (const node of this.nodes) {
             if (node.isCentral) {
                 node.position.set(0, 0, 0);
@@ -1264,8 +620,10 @@ class BrainGraph {
             node.velocity = new THREE.Vector3(0, 0, 0);
         }
 
+        // 2.2 Enquadra a câmera conforme o tamanho real do grafo
         this._fitCameraToGraph();
 
+        // 2.3 Mapeia adjacências (vizinhos conectados) para que os neurônios orientem seus axônios
         for (const node of this.nodes) {
             node.neighbors = [];
         }
@@ -1278,10 +636,12 @@ class BrainGraph {
             }
         }
 
+        // 3. Build 3D Meshes for Nodes
         for (const node of this.nodes) {
             this._create3DNode(node);
         }
 
+        // 4. Build 3D Synaptic Arches for Edges
         this.edges = graphEdges.map(e => {
             const fromNode = this.nodeMap.get(e.from);
             const toNode = this.nodeMap.get(e.to);
@@ -1303,6 +663,11 @@ class BrainGraph {
 
         // 5. Build 3D Synaptic Pulse Particles
         this._init3DParticles();
+
+        // 6. Build Dual Ribbon Renderers in Neuron Mode
+        if (this.nodeStyle === 'neuron') {
+            this._initNeuronRibbons();
+        }
 
         this._notifyCameraChange();
     }
@@ -1407,9 +772,9 @@ class BrainGraph {
 
     static getSavedNodeStyle() {
         try {
-            return localStorage.getItem('ai_second_brain_node_style') || 'neuron';
+            return localStorage.getItem('ai_second_brain_node_style') || 'sphere';
         } catch (e) {
-            return 'neuron';
+            return 'sphere';
         }
     }
 
@@ -1419,9 +784,22 @@ class BrainGraph {
         try {
             localStorage.setItem('ai_second_brain_node_style', style);
         } catch (e) {}
-
-        if (this.rawGraphNodes) {
-            this.loadData(this.rawGraphNodes, this.rawGraphEdges, this.groupColors);
+        if (this.coreGroup) {
+            this.coreGroup.visible = (style !== 'neuron');
+        }
+        if (this.ribbonGroup) {
+            this.ribbonGroup.visible = (style === 'neuron');
+        }
+        if (this.pulsePoints) {
+            this.pulsePoints.visible = (style === 'neuron');
+        }
+        if (this.particleGroup) {
+            this.particleGroup.visible = (style !== 'neuron');
+        }
+        this._rebuildAllNodeMeshes();
+        this._rebuildAllEdgeMeshes();
+        if (style === 'neuron') {
+            this._initNeuronRibbons();
         }
     }
 
@@ -2418,17 +1796,7 @@ class BrainGraph {
                 this.hasDraggedPointer = true;
             }
 
-            // 1. If currently dragging a node in neuron mode
-            if (this.grabNeuronNode) {
-                this.raycaster.setFromCamera(this.mouse, this.camera);
-                if (this.raycaster.ray.intersectPlane(this.dragPlane, this.dragIntersection)) {
-                    this.grabNeuronNode.off.copy(this.dragIntersection).sub(this.grabNeuronNode.p);
-                    this.grabNeuronNode.vl.set(0, 0, 0);
-                }
-                return;
-            }
-
-            // If currently dragging a 3D node in sphere mode
+            // 1. If currently dragging a 3D node
             if (this.isDraggingNode && this.dragNode) {
                 this.raycaster.setFromCamera(this.mouse, this.camera);
                 if (this.raycaster.ray.intersectPlane(this.dragPlane, this.dragIntersection)) {
@@ -2441,24 +1809,12 @@ class BrainGraph {
                 return;
             }
 
-            // 2. Raycast to detect hovered node
+            // 2. Raycast to detect hovered node (recursivo para acertar partes do neurônio)
             this.raycaster.setFromCamera(this.mouse, this.camera);
             const intersects = this.raycaster.intersectObjects(this._getInteractiveMeshes(), true);
 
             if (intersects.length > 0) {
-                const hitObj = intersects[0].object;
-                const node = this._getNodeFromObject(hitObj);
-
-                if (this.nodeStyle === 'neuron') {
-                    this.hoveredNeuronHit = hitObj.userData;
-                    if (hitObj.userData && hitObj.userData.file && hitObj.userData.file.leaf && hitObj.userData.file.leaf.pe) {
-                        this.hovLink = hitObj.userData.file.leaf.pe;
-                    } else {
-                        this.hovLink = null;
-                    }
-                    this.canvas.style.cursor = 'pointer';
-                }
-
+                const node = this._getNodeFromObject(intersects[0].object);
                 if (node && this.hoveredNode !== node) {
                     this._setHoveredNode(node, px, py);
                 } else if (node) {
@@ -2467,11 +1823,6 @@ class BrainGraph {
                     this._clearHover();
                 }
             } else {
-                if (this.nodeStyle === 'neuron') {
-                    this.hoveredNeuronHit = null;
-                    this.hovLink = null;
-                    this.canvas.style.cursor = (this.controls && this.controls.enabled) ? 'grab' : 'default';
-                }
                 if (this.hoveredNode) {
                     this._clearHover();
                 }
@@ -2493,24 +1844,8 @@ class BrainGraph {
                 const intersects = this.raycaster.intersectObjects(this._getInteractiveMeshes(), true);
 
                 if (intersects.length > 0) {
-                    const hitObj = intersects[0].object;
-                    const node = this._getNodeFromObject(hitObj);
-
-                    if (this.nodeStyle === 'neuron') {
-                        const leaf = hitObj.userData && (hitObj.userData.leaf || (hitObj.userData.file && hitObj.userData.file.leaf));
-                        const soma = hitObj.userData && (hitObj.userData.so || (hitObj.userData.soma && hitObj.userData.soma.so));
-                        const grabTarget = leaf || soma;
-
-                        if (grabTarget) {
-                            this.grabNeuronNode = grabTarget;
-                            this.controls.enabled = false;
-                            this.canvas.style.cursor = 'grabbing';
-
-                            const planeNormal = new THREE.Vector3();
-                            this.camera.getWorldDirection(planeNormal).negate();
-                            this.dragPlane.setFromNormalAndCoplanarPoint(planeNormal, grabTarget.cur || grabTarget.p);
-                        }
-                    } else if (node) {
+                    const node = this._getNodeFromObject(intersects[0].object);
+                    if (node) {
                         this.dragNode = node;
                         this.isDraggingNode = true;
                         this.physicsEnergy = 1.0;
@@ -2528,11 +1863,6 @@ class BrainGraph {
 
         // Pointer up
         window.addEventListener('pointerup', () => {
-            if (this.grabNeuronNode) {
-                this.grabNeuronNode = null;
-                this.controls.enabled = true;
-                this.canvas.style.cursor = this.hoveredNode ? 'pointer' : 'default';
-            }
             if (this.isDraggingNode) {
                 this.isDraggingNode = false;
                 this.dragNode = null;
@@ -2554,21 +1884,7 @@ class BrainGraph {
             const intersects = this.raycaster.intersectObjects(this._getInteractiveMeshes(), true);
 
             if (intersects.length > 0) {
-                const hitObj = intersects[0].object;
-                const node = this._getNodeFromObject(hitObj);
-
-                if (this.nodeStyle === 'neuron') {
-                    if (hitObj.userData && hitObj.userData.file) {
-                        this.activeNeuronFile = hitObj.userData.file;
-                        if (hitObj.userData.file.leaf && hitObj.userData.file.leaf.pe) {
-                            this.selLink = hitObj.userData.file.leaf.pe;
-                        }
-                    } else if (hitObj.userData && (hitObj.userData.folder || hitObj.userData.isFolder)) {
-                        const fo = hitObj.userData.folder || (hitObj.userData.node && hitObj.userData.node.id);
-                        if (fo) this.focusCategory(fo);
-                    }
-                }
-
+                const node = this._getNodeFromObject(intersects[0].object);
                 if (node) {
                     this.selectedNode = node;
                     this._setHoveredNode(node, px, py);
@@ -2577,10 +1893,6 @@ class BrainGraph {
                     }
                 }
             } else {
-                if (this.nodeStyle === 'neuron') {
-                    this.activeNeuronFile = null;
-                    this.selLink = null;
-                }
                 this.selectedNode = null;
                 this._clearHover();
                 if (this.onNodeClick) {
@@ -2874,15 +2186,6 @@ class BrainGraph {
     }
 
     resetView() {
-        if (this.nodeStyle === 'neuron') {
-            const dT = Math.min(180, 60 + (this.neuronSomas ? this.neuronSomas.length : 0) * 5);
-            const camDir = new THREE.Vector3(Math.sin(1.3) * Math.sin(0.6), Math.cos(1.3), Math.sin(1.3) * Math.cos(0.6)).normalize();
-            const destCam = camDir.multiplyScalar(dT);
-            this._animateCameraTo(destCam, new THREE.Vector3(0, 0, 0));
-            this.activeNeuronFile = null;
-            this.selLink = null;
-            return;
-        }
         this._animateCameraTo(this.defaultCameraPos, this.defaultTargetPos);
     }
 
@@ -2890,38 +2193,16 @@ class BrainGraph {
         if (!node) return;
         this.selectedNode = node;
 
-        if (this.nodeStyle === 'neuron' && this.neuronLeaves) {
-            const leaf = this.neuronLeaves.find(l => l.file && (l.file.id === node.id || l.file.name === node.label || l.file.path === node.path));
-            if (leaf) {
-                this.activeNeuronFile = leaf.file;
-                if (leaf.pe) this.selLink = leaf.pe;
-                const targetPos = leaf.cur.clone();
-                const camDir = this.camera.position.clone().sub(this.controls.target).normalize();
-                if (camDir.length() === 0) camDir.set(0, 0.4, 1).normalize();
-                const destCam = targetPos.clone().addScaledVector(camDir, 28);
-                this._animateCameraTo(destCam, targetPos);
-                return;
-            }
-        }
-
         // Position camera in front of node along its radial direction
-        const dir = (node.position ? node.position.clone().normalize() : new THREE.Vector3(0, 0, 1));
+        const dir = node.position.clone().normalize();
         if (dir.length() === 0) dir.set(0, 0, 1);
-        const targetPos = node.position ? node.position.clone() : new THREE.Vector3(0, 0, 0);
+        const targetPos = node.position.clone();
         const camPos = targetPos.clone().add(dir.multiplyScalar(140));
 
         this._animateCameraTo(camPos, targetPos);
     }
 
-    reheat(intensity = 1.0) {
-        if (this.nodeStyle === 'neuron' && this.neuronNodes) {
-            const rv = () => new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
-            for (const n of this.neuronNodes) {
-                n.vl.addScaledVector(rv(), 7.5 * intensity);
-            }
-            return;
-        }
-
+    reheat() {
         // Organic 3D planetary pulse with spring dynamics
         for (const n of this.nodes) {
             if (n.id === 'brain') continue;
@@ -2930,7 +2211,7 @@ class BrainGraph {
                 (Math.random() - 0.5) * 26,
                 (Math.random() - 0.5) * 26
             );
-            if (n.velocity) n.velocity.add(jitter);
+            n.velocity.add(jitter);
         }
         this.physicsEnergy = 1.0;
     }
@@ -2948,24 +2229,6 @@ class BrainGraph {
 
     // ── Dynamic Category Filtering & Live Color Customization ──
     getDynamicCategories() {
-        if (this.nodeStyle === 'neuron' && this.neuronSomas && this.neuronSomas.length > 0) {
-            const totalDocs = this.neuronFiles ? this.neuronFiles.length : 0;
-            const categories = this.neuronSomas.map(s => {
-                const groupKey = s.fo;
-                const label = s.fo.split('/').slice(-2).join('/');
-                const count = this.neuronFiles.filter(f => f.folder === s.fo).length;
-                return {
-                    key: groupKey,
-                    label: label,
-                    icon: '🧠',
-                    color: s.col,
-                    docCount: count,
-                    nodeCount: count
-                };
-            }).sort((a, b) => b.docCount - a.docCount);
-            return { totalDocs, categories };
-        }
-
         const catMap = new Map();
         let totalDocs = 0;
 
@@ -3016,73 +2279,12 @@ class BrainGraph {
         return this._applyCombinedFilter();
     }
 
-    focusCategory(key) {
-        if (this.nodeStyle === 'neuron' && this.neuronSomas) {
-            const s = this.neuronSomas.find(soma => soma.fo === key || soma.fo.endsWith('/' + key));
-            if (s) {
-                this._animateCameraTo(s.c.clone().add(new THREE.Vector3(0, 10, 45)), s.c);
-                this.activeNeuronFile = null;
-                this.activeNeuronLeaf = s.so;
-                return;
-            }
-        }
-        const targetNode = this.nodes.find(n => n.group === key || n.id === key);
-        if (targetNode) {
-            this.focusNode(targetNode);
-        }
-    }
-
     _applyCombinedFilter() {
         const rawQ = (this.currentQuery || '').trim();
         const q = rawQ.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         const hasQuery = q.length > 0;
         const cat = this.currentCategory;
         const hasCat = Boolean(cat && cat !== 'all');
-
-        if (this.nodeStyle === 'neuron' && this.neuronLeaves) {
-            const totalDocs = this.neuronFiles.length;
-            if (!hasQuery && !hasCat) {
-                this.litSet = null;
-                for (const l of this.neuronLeaves) {
-                    l.bulb.material.opacity = 1.0;
-                    l.lab.material.opacity = 0.85;
-                }
-                for (const e of this.neuronEdges) {
-                    e.k = 0;
-                }
-                return { matchedCount: totalDocs, totalCount: totalDocs, isFiltering: false };
-            }
-
-            const litSet = new Set();
-            let matchedCount = 0;
-            for (const l of this.neuronLeaves) {
-                const f = l.file;
-                let matchCat = true;
-                if (hasCat) {
-                    matchCat = (f.group === cat || f.folder === cat || (f.folder && (f.folder.startsWith(cat + '/') || f.folder.endsWith('/' + cat))));
-                }
-                let matchText = true;
-                if (hasQuery) {
-                    const cleanName = (f.name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-                    const cleanPath = (f.path || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-                    matchText = cleanName.includes(q) || cleanPath.includes(q);
-                }
-
-                const isMatch = matchCat && matchText;
-                if (isMatch) {
-                    matchedCount++;
-                    const branch = this._neuronLit(l);
-                    branch.forEach(e => litSet.add(e));
-                    l.bulb.material.opacity = 1.0;
-                    l.lab.material.opacity = 1.0;
-                } else {
-                    l.bulb.material.opacity = 0.12;
-                    l.lab.material.opacity = 0.05;
-                }
-            }
-            this.litSet = litSet;
-            return { matchedCount, totalCount: totalDocs, isFiltering: true };
-        }
 
         const satelliteNodes = this.nodes.filter(n => !n.isCentral && n.id !== 'brain');
         const totalCount = satelliteNodes.length;
@@ -3282,8 +2484,7 @@ class BrainGraph {
     _notifyCameraChange() {
         if (this.onCameraChange) {
             const dist = this.camera.position.distanceTo(this.controls.target);
-            const baseDist = this.nodeStyle === 'neuron' ? (this.defaultNeuronDist || 130) : 560;
-            const zoomPercent = Math.round((baseDist / Math.max(1, dist)) * 100);
+            const zoomPercent = Math.round((560 / dist) * 100);
             this.onCameraChange({
                 scale: zoomPercent / 100,
                 zoomPercent: zoomPercent,
@@ -3342,10 +2543,77 @@ class BrainGraph {
         // 4. Update according to nodeStyle
         const t = this.time;
         if (this.nodeStyle === 'neuron') {
-            this._animateNeuron(0.016, t);
-            this.renderer.render(this.scene, this.camera);
-            this.animFrame = requestAnimationFrame(() => this._animate());
-            return;
+            // 4.1 Organic Harmonic Swaying of nodes
+            for (let i = 0; i < this.nodes.length; i++) {
+                const n = this.nodes[i];
+                if (n === this.dragNode) continue;
+                if (!n.homePos) continue;
+                const isFolder = n.isFolder || n.isCentral || n.id === 'brain';
+                const a = isFolder ? 0.9 : 1.4;
+                const p = n.ph || 0;
+                const sx = (Math.sin(t * 0.8 + p) + 0.5 * Math.sin(t * 1.7 + p * 2.0)) * a;
+                const sy = (Math.sin(t * 0.7 + p * 1.3 + 2.0) + 0.5 * Math.sin(t * 1.5 + p)) * a;
+                const sz = (Math.cos(t * 0.75 + p * 0.7) + 0.5 * Math.sin(t * 1.9 + p * 1.6)) * a;
+                n.position.set(n.homePos.x + sx, n.homePos.y + sy, n.homePos.z + sz).add(n.velocity);
+                if (n.mesh) n.mesh.position.copy(n.position);
+            }
+
+            // 4.2 Dynamic Soma Shell and Fluid Nucleus Shaders
+            for (let i = 0; i < this.nodes.length; i++) {
+                const n = this.nodes[i];
+                if (n.somaShellMat && n.somaShellMat.uniforms) {
+                    n.somaShellMat.uniforms.t.value = t + i;
+                }
+                if (n.nucleusMat && n.nucleusMat.uniforms) {
+                    n.nucleusMat.uniforms.t.value = t * 1.2 + i * 3.0;
+                }
+                if (n.nucleusGroup) {
+                    n.nucleusGroup.rotation.y = t * 0.15 + i;
+                    n.nucleusGroup.scale.setScalar(1.0 + 0.06 * Math.sin(t * 2.0 + i));
+                }
+            }
+
+            // 4.3 Action Potential Light Pulses along Edges
+            if (this.pulses && this.pulsePoints && this.pPos) {
+                const dt = 0.016;
+                const pp = new THREE.Vector3();
+                const tm = new THREE.Vector3();
+                for (let i = 0; i < this.pulses.length; i++) {
+                    const p = this.pulses[i];
+                    const e = p.e;
+                    if (!e || !e.fromNode || !e.toNode) continue;
+                    const dist = e.fromNode.position.distanceTo(e.toNode.position);
+                    p.u += (p.v * dt) / Math.max(10, dist);
+                    if (p.u > 1.0) {
+                        p.u = 0;
+                        const outEdges = this.edges.filter(edge => edge.fromNode === e.toNode);
+                        if (outEdges.length > 0) {
+                            p.e = outEdges[Math.floor(Math.random() * outEdges.length)];
+                        } else {
+                            p.e = this.edges[Math.floor(Math.random() * this.edges.length)];
+                        }
+                    }
+                    const P = p.e.fromNode.position;
+                    const C = p.e.toNode.position;
+                    tm.copy(P).add(C).multiplyScalar(0.5);
+                    const eDist = P.distanceTo(C);
+                    const M = tm.clone().addScaledVector(p.e.bend, eDist * (1.0 + 0.25 * Math.sin(t * 0.8 + p.e.ph)));
+                    const u = p.u;
+                    pp.copy(P).multiplyScalar((1 - u) * (1 - u))
+                      .addScaledVector(M, 2 * u * (1 - u))
+                      .addScaledVector(C, u * u);
+                    this.pPos[i * 3]     = pp.x;
+                    this.pPos[i * 3 + 1] = pp.y;
+                    this.pPos[i * 3 + 2] = pp.z;
+                }
+                this.pulsePoints.geometry.attributes.position.needsUpdate = true;
+            }
+
+            // 4.4 Real-time Camera-Facing Dual Ribbons (Halo & Core)
+            if (this.gH && this.gC) {
+                this._fillRibbon(this.gH, 3.2, 0.16);
+                this._fillRibbon(this.gC, 1.0, 0.80);
+            }
         } else {
             // Planetary Core Rotations in Sphere Mode
             if (this.coreWireframe) {

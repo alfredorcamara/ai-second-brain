@@ -8097,3 +8097,17 @@ body::-webkit-scrollbar-thumb:hover {
     color: #fff;
 }
 
+
+/* ── Grafo Neural: fundo espacial (igual ao motor neuron-graph.js) ── */
+.graph-view,
+.pw-graph-wrapper,
+#graphView:fullscreen,
+#graphView.is-fullscreen,
+.pw-graph-wrapper:fullscreen,
+.pw-graph-wrapper.is-fullscreen {
+    background: radial-gradient(ellipse at 30% 20%, #10213a, #04060d 65%) !important;
+}
+#graphCanvas,
+#projectGraphCanvas {
+    background: transparent !important;
+}
