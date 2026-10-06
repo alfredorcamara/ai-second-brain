@@ -271,7 +271,11 @@
                 isFolder: false,
                 hkind: 'file',
                 depth: segs.length,
-                parentId
+                parentId,
+                name: f.name || '',
+                content: f.content || '',
+                text: f.content || '',
+                outgoingLinks: f.outgoingLinks || []
             };
             map.set(node.id, node);
             nodes.push(node);

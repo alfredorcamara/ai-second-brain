@@ -1200,17 +1200,20 @@ class BrainGraph {
         for (let i = 0; i < this.edges.length; i++) {
             const e = this.edges[i];
             const isToFolder = e.toNode && e.toNode.isFolder;
-            e.w0 = isToFolder ? 1.4 : 0.85;
-            e.w1 = isToFolder ? 1.0 : 0.18;
-            e.br = 1.0;
+            const isSemantic = e.isSemantic || e.isCrossLink || (e.fromNode && e.toNode && !e.fromNode.isFolder && !e.toNode.isFolder && !e.hier);
+            e.w0 = isSemantic ? 0.14 : (isToFolder ? 1.4 : 0.85);
+            e.w1 = isSemantic ? 0.14 : (isToFolder ? 1.0 : 0.18);
+            e.br = isSemantic ? 1.25 : 1.0;
             e.k = 0.0;
             e.ph = Math.random() * 6.0;
 
             const diff = new THREE.Vector3().subVectors(e.toNode.position, e.fromNode.position);
             const up = Math.abs(diff.y) < Math.abs(diff.x) ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(1, 0, 0);
-            e.bend = new THREE.Vector3().crossVectors(diff, up).normalize().multiplyScalar(0.12);
+            e.bend = new THREE.Vector3().crossVectors(diff, up).normalize().multiplyScalar(isSemantic ? 0.42 : 0.12);
 
-            if (e.toNode && e.toNode.colors && e.toNode.colors.fill) {
+            if (isSemantic) {
+                e.col = [0.3, 0.85, 1.0]; // Cyan luminoso
+            } else if (e.toNode && e.toNode.colors && e.toNode.colors.fill) {
                 const c = new THREE.Color(e.toNode.colors.fill);
                 const gold = new THREE.Color(1.0, 0.78, 0.42);
                 c.lerp(gold, 0.45);

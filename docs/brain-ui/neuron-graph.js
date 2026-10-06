@@ -18,6 +18,7 @@
     };
     const S = 10;                       // amostras por dendrito
     const GOLD = '#ffc76b', BULB = '#e8b04a';
+    const CY = [.3, .85, 1];            // ciano luminoso: sinapses semânticas / links markdown
     const hash = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619); return h >>> 0; };
     const mulberry = a => () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
     const mix = (hex, to, k) => '#' + new THREE.Color(hex).lerp(new THREE.Color(to), k).getHexString();
@@ -200,6 +201,108 @@
                 let best = null, bd = 1e9; for (const B of this.N) { if (A === B) continue; const d = A.so.p.distanceTo(B.so.p); if (d < bd) { bd = d; best = B; } }
                 if (best && bd < (geo.get(A.node.id).R + geo.get(best.node.id).R) * 1.6) link(A, best, .2, .35, 'near');
             }
+
+            // ── sinapses semânticas: hiperlinks e referências cruzadas entre documentos (linhas azuis/ciano CY)
+            const vaultFiles = (typeof window !== 'undefined' && window.VAULT && window.VAULT.data && window.VAULT.data.files) || [];
+            const vaultMap = new Map();
+            for (const vf of vaultFiles) {
+                if (vf.id) vaultMap.set(vf.id, vf);
+                if (vf.path) vaultMap.set(vf.path.toLowerCase().replace(/\\/g, '/'), vf);
+                if (vf.name) vaultMap.set(vf.name.toLowerCase(), vf);
+            }
+
+            const leafByPath = new Map();
+            const leafByName = new Map();
+            const leafById = new Map();
+            for (const l of this.leaves) {
+                const f = l.file;
+                if (!f) continue;
+                if (f.id) leafById.set(f.id, l);
+                if (f.path) {
+                    const p = f.path.toLowerCase().replace(/\\/g, '/');
+                    leafByPath.set(p, l);
+                    const stem = p.split('/').pop().replace(/\.md$/, '');
+                    leafByName.set(stem, l);
+                    leafByName.set(stem + '.md', l);
+                }
+                if (f.name) {
+                    const nm = f.name.toLowerCase();
+                    leafByName.set(nm, l);
+                    leafByName.set(nm.replace(/\.md$/, ''), l);
+                }
+            }
+
+            const findLeaf = ref => {
+                if (!ref) return null;
+                const clean = ref.trim().replace(/^\.?\//, '').toLowerCase().replace(/\\/g, '/').split('#')[0];
+                const base = clean.split('/').pop();
+                const stem = base.replace(/\.md$/, '');
+
+                for (const [p, leaf] of leafByPath.entries()) {
+                    if (p === clean || p === clean + '.md' || p.endsWith('/' + clean) || p.endsWith('/' + base) || p.endsWith('/' + stem + '.md')) {
+                        return leaf;
+                    }
+                }
+                if (leafByName.has(stem)) return leafByName.get(stem);
+                if (leafByName.has(base)) return leafByName.get(base);
+                if (leafById.has(clean)) return leafById.get(clean);
+                return null;
+            };
+
+            const pr = new Set();
+            for (const la of this.leaves) {
+                const f = la.file;
+                if (!f) continue;
+                const vf = vaultMap.get(f.id) || vaultMap.get((f.path || '').toLowerCase()) || f;
+                const text = (vf.content || vf.text || f.content || f.text || '') + ' ' + (vf.outgoingLinks || f.outgoingLinks || []).join(' ');
+                if (!text.trim()) continue;
+
+                const matches = [...text.matchAll(/\[\[([^\]]+)\]\]|\]\(([^)]+\.md[^\)]*)\)/g)];
+                for (const m of matches) {
+                    const rawRef = (m[1] || m[2]).split('#')[0].trim();
+                    const lb = findLeaf(rawRef);
+                    if (lb && lb !== la && pr.size < 180) {
+                        const k = [la.file.id, lb.file.id].sort().join('|');
+                        if (!pr.has(k)) {
+                            pr.add(k);
+                            const e = this._edge(la, lb, 0.14, 0.14, la.own, 1.2, 0.42);
+                            e.link = 1;
+                            e.kind = 'semantic';
+                            e.isSemantic = true;
+                            e.col = CY; // [0.3, 0.85, 1.0] Cyan luminoso
+                            e.na = la.own;
+                            e.nb = lb.own;
+                            e.fa = la.file;
+                            e.fb = lb.file;
+                            e.refText = rawRef;
+                        }
+                    }
+                }
+            }
+
+            // Suporta também conexões cross-link que venham em edgesIn (scan-vault)
+            for (const edIn of (edgesIn || [])) {
+                if (edIn.isCrossLink || (edIn.from && edIn.to && !edIn.hier && !edIn.from.startsWith('hub') && !edIn.to.startsWith('hub') && edIn.from !== 'brain' && edIn.to !== 'brain')) {
+                    const la = leafById.get(edIn.from) || findLeaf(edIn.from);
+                    const lb = leafById.get(edIn.to) || findLeaf(edIn.to);
+                    if (la && lb && la !== lb && pr.size < 180) {
+                        const k = [la.file.id, lb.file.id].sort().join('|');
+                        if (!pr.has(k)) {
+                            pr.add(k);
+                            const e = this._edge(la, lb, 0.14, 0.14, la.own, 1.2, 0.42);
+                            e.link = 1;
+                            e.kind = 'semantic';
+                            e.isSemantic = true;
+                            e.col = CY;
+                            e.na = la.own;
+                            e.nb = lb.own;
+                            e.fa = la.file;
+                            e.fb = lb.file;
+                        }
+                    }
+                }
+            }
+
             this.E.forEach((e, i) => { e.hid = i; });
 
             // ── ribbons + pulsos
@@ -380,7 +483,7 @@
             if (!this.groupColors[groupKey]) this.groupColors[groupKey] = { fill: hex, stroke: hex, glow: hex }; else { this.groupColors[groupKey].fill = hex; this.groupColors[groupKey].stroke = hex; }
             for (const n of this.N) if (n.node.group === groupKey) {
                 n.col = hex; n.nm.uniforms.c.value.set(hex); n.g1.material.map = BrainGraph.G(hex); n.sphere.material.color.set(hex);
-                n.ecol = rgb(mix(GOLD, hex, .3)); for (const e of this.E) if (e.own === n) e.col = n.ecol;
+                n.ecol = rgb(mix(GOLD, hex, .3)); for (const e of this.E) if (e.own === n && !e.isSemantic) e.col = n.ecol;
             }
             for (const l of this.leaves) if (l.file.group === groupKey) { l.tint = mix(BULB, hex, .45); l.bulb.material.map = BrainGraph.G(l.tint); }
         }
@@ -452,6 +555,13 @@
             const s = new Set(); const m = this.M.find(x => x.file === node) || (this.N.find(n => n.node === node) || {}).so;
             if (!m) return s; this._path(m, s);
             let nb = m.own; while (nb && nb.up) { s.add(nb.up); this._path(nb.up.a, s); this._path(nb.up.b, s); nb = nb.up.nb === nb ? nb.up.na : nb.up.nb; }
+            for (const e of this.E) {
+                if (e.isSemantic && (e.a === m || e.b === m)) {
+                    s.add(e);
+                    this._path(e.a, s);
+                    this._path(e.b, s);
+                }
+            }
             return s;
         }
         _computeLit() {
@@ -474,7 +584,7 @@
                 const u = i / S; this._bez(e, u, pp);
                 tg.copy(e.M).sub(e.P).multiplyScalar(2 * (1 - u)).addScaledVector(vv.copy(e.C).sub(e.M), 2 * u);
                 sd.crossVectors(tg, vv.copy(this.camera.position).sub(pp)).normalize().multiplyScalar((e.w0 + (e.w1 - e.w0) * u) * wm * this.k * sphere / 2 * (1 + Math.max(e.k, 0) * (e.link ? 1.5 : .6)) * (e.link ? .5 + .5 * Math.sin(Math.PI * u) : 1) * e.vf);
-                const br = bm * e.br * (e.link ? .5 * Math.pow(Math.max(Math.sin(Math.PI * u), 0), .6) : 1) * (1 + e.k * .9) * (.55 + .45 * (1 - u)) * e.vf;
+                const br = bm * e.br * (e.isSemantic ? (0.7 + 0.3 * Math.sin(Math.PI * u)) : (e.link ? .5 * Math.pow(Math.max(Math.sin(Math.PI * u), 0), .6) : (.55 + .45 * (1 - u)))) * (1 + e.k * .9) * e.vf;
                 for (const s of [1, -1]) { P[q] = pp.x + sd.x * s; P[q + 1] = pp.y + sd.y * s; P[q + 2] = pp.z + sd.z * s; C[q] = e.col[0] * br; C[q + 1] = e.col[1] * br; C[q + 2] = e.col[2] * br; q += 3; }
             }
             g.attributes.position.needsUpdate = g.attributes.color.needsUpdate = true;
@@ -572,6 +682,15 @@
             this.hoveredNode = h ? h.node : null;
             this.hovLink = h ? null : this._pickLink(this._mx, this._my);
             this.canvas.style.cursor = h || this.hovLink ? 'pointer' : 'default';
+            if (this.hovLink && this.hovLink.isSemantic && this.hovLink.fa && this.hovLink.fb) {
+                const fa = this.hovLink.fa, fb = this.hovLink.fb;
+                this._tipFor = this.hovLink;
+                this.tooltip.innerHTML = `<div class="tooltip-title" style="display:flex;align-items:center;gap:6px;color:#38bdf8;"><span>🔗</span><span>Sinapse Semântica (Cross-Link)</span></div><div class="tooltip-type" style="color:#e2e8f0;font-size:12px;margin:5px 0 3px;display:flex;align-items:center;gap:6px;"><span style="color:#fde047;">${fa.title || fa.name}</span><span style="color:#38bdf8;">➔</span><span style="color:#7dd3fc;">${fb.title || fb.name}</span></div><div style="font-size:10.5px;color:#94a3b8;font-family:monospace;word-break:break-all;">${this.hovLink.refText ? `Referência: [[${this.hovLink.refText}]]` : 'Hiperlink Markdown entre documentos'}</div>`;
+                this.tooltip.style.left = (this._mx + 16) + 'px';
+                this.tooltip.style.top = (this._my - 8) + 'px';
+                this.tooltip.classList.add('visible');
+                return;
+            }
             if (!h) return this._hideTip();
             const node = h.node, isF = node.isFolder, icon = node.icon || (isF ? '📂' : '📄');
             const type = isF ? (node.isCentral ? '☀️ SOL DO PROJETO' : `📂 PASTA • ${node.fileCount || node.childCount || 0} arquivos`) : '📄 DOCUMENTO';
