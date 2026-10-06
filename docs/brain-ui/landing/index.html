@@ -3,78 +3,366 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AI Second Brain — Dê uma memória à sua IA</title>
-<meta name="description" content="Memória persistente em Markdown para agentes de IA, com um grafo neural 3D interativo. Open source.">
+<title>AI Second Brain — Dê uma memória viva e persistente à sua IA</title>
+<meta name="description" content="Memória persistente em Markdown para agentes de IA, com um grafo neural 3D interativo. Open source, agnóstico e sem lock-in.">
 <link rel="icon" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/landing.css">
 </head>
 <body>
-<canvas id="graph" aria-label="Grafo neural 3D interativo"></canvas>
-<div id="tip"></div><div class="vignette"></div><div class="glow"></div>
 
+<!-- ── Palco 3D do Grafo Neural ── -->
+<div id="graph-stage" aria-hidden="true">
+  <canvas id="graph" aria-label="Grafo neural 3D interativo"></canvas>
+  <div class="vignette"></div>
+  <div class="nebula"></div>
+  <div class="glow"></div>
+</div>
+
+<div id="tip"></div>
+
+<!-- ── Barra de Navegação ── -->
 <nav class="nav">
   <a class="brand" href="#topo"><i></i>AI Second Brain</a>
-  <div class="links"><a href="#problema">Problema</a><a href="#como">Como funciona</a><a href="#vantagens">Vantagens</a><a class="btn sm" href="https://github.com/SEU-USUARIO/ai-second-brain" target="_blank" rel="noopener" data-gh>GitHub ↗</a></div>
+  <div class="links">
+    <a href="#problema">Problema</a>
+    <a href="#como">4 Camadas</a>
+    <a href="#vantagens">Vantagens</a>
+    <a class="btn sm primary" href="https://github.com/SEU-USUARIO/ai-second-brain" target="_blank" rel="noopener" data-gh>GitHub ↗</a>
+  </div>
 </nav>
 
+<!-- ── Barra de Exploração 3D Fullscreen (Modo Imersivo) ── -->
+<div id="explorer-bar" class="explorer-bar" hidden>
+  <div class="exp-left">
+    <span class="exp-title">🧠 Modo Imersivo 3D</span>
+    <div class="exp-chips" id="exp-categories">
+      <!-- Injetado dinamicamente via JS -->
+    </div>
+  </div>
+  <div class="exp-right">
+    <button id="btn-style" title="Alternar estilo visual">Estilo: Neurônio</button>
+    <button id="btn-zoom-in" title="Aproximar câmera">+</button>
+    <button id="btn-zoom-out" title="Afastar câmera">−</button>
+    <button id="btn-exit-exp" class="btn-exit" title="Sair do modo exploração">✕ Voltar à Página</button>
+  </div>
+</div>
+
 <main>
+<!-- ── HERO SECTION ── -->
 <section class="hero" id="topo">
-  <p class="eyebrow rv">Open source · 100% Markdown · Qualquer agente de IA</p>
-  <h1 class="rv">Dê uma <em>memória</em><br>à sua IA.</h1>
-  <p class="lead rv">Regras, decisões e lições viram um grafo vivo que o seu agente lê a cada sessão. Chega de repetir contexto.</p>
-  <div class="cta rv"><a class="btn" href="https://github.com/SEU-USUARIO/ai-second-brain" target="_blank" rel="noopener" data-gh>Baixar no GitHub</a><a class="btn ghost" href="#problema">Ver como funciona ↓</a></div>
-  <p class="hint rv">✦ Arraste para girar · clique numa sinapse para ler o arquivo</p>
+  <div class="hero-content">
+    <div class="eyebrow rv">
+      <span class="eyebrow-dot"></span>
+      <span>Open Source · 100% Markdown · Qualquer Agente de IA</span>
+    </div>
+    <h1 class="rv">
+      Dê uma <span class="gradient-text">memória viva</span><br>ao seu Agente de IA.
+    </h1>
+    <p class="lead rv">
+      Regras, decisões arquiteturais e lições aprendidas viram um <strong>grafo neural 3D vivo</strong> que o seu agente lê a cada sessão. Chega de repetir o mesmo contexto todo santo dia.
+    </p>
+    <div class="cta rv">
+      <a class="btn primary" href="https://github.com/SEU-USUARIO/ai-second-brain" target="_blank" rel="noopener" data-gh>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+        <span>Baixar no GitHub</span>
+      </a>
+      <a class="btn ghost" href="#problema">
+        <span>Ver como funciona ↓</span>
+      </a>
+      <button class="btn glass-btn" id="hero-explore-btn">
+        <span>🔭 Explorar Grafo 3D</span>
+      </button>
+    </div>
+    <div class="hero-tips rv">
+      <span class="hint-badge">✦ Interação</span>
+      <span>Arraste com o mouse para orbitar em 3D · Clique nas sinapses para ler os arquivos</span>
+    </div>
+  </div>
 </section>
 
+<!-- ── SEÇÃO: PROBLEMA (COMPARAÇÃO INTERATIVA) ── -->
 <section class="sec" id="problema">
-  <h2 class="rv">Toda sessão começa <em>do zero.</em></h2>
-  <p class="sub rv">Seu agente é brilhante, mas esquece. Veja a diferença.</p>
-  <div class="toggle rv" role="tablist"><button class="on" data-mode="sem">Sem segundo cérebro</button><button data-mode="com">Com segundo cérebro</button></div>
-  <div class="chat rv" data-mode="sem">
-    <div class="msg you">Vamos continuar a feature de login?</div>
-    <div class="msg ai bad">Claro! Qual é a stack? Que banco usamos? Já existe alguma decisão sobre autenticação?</div>
-    <div class="msg you">…já expliquei isso ontem. De novo.</div>
-    <div class="msg ai bad">Desculpe, não tenho acesso à conversa anterior. Pode repetir?</div>
+  <div class="sec-badge rv">A Amnésia dos Agentes vs. O Segundo Cérebro</div>
+  <h2 class="rv">Toda sessão começa <em>do zero absoluto.</em></h2>
+  <p class="sub rv">Seu agente é brilhante no raciocínio, mas tem amnésia crônica entre conversas. Veja a diferença ao vivo:</p>
+  
+  <div class="toggle rv" role="tablist">
+    <button class="on" data-mode="sem" id="tab-sem">
+      <span class="tab-indicator red"></span>
+      <span>Sem Segundo Cérebro</span>
+      <span class="tab-tag">Amnésia</span>
+    </button>
+    <button data-mode="com" id="tab-com">
+      <span class="tab-indicator green"></span>
+      <span>Com Segundo Cérebro</span>
+      <span class="tab-tag">Memória Ativa</span>
+    </button>
   </div>
-  <div class="chat" data-mode="com" hidden>
-    <div class="msg you">Vamos continuar a feature de login?</div>
-    <div class="msg ai ok">Li <code>memory/estado.md</code> e <code>decisions/adr-003.md</code>. Ontem fechamos o schema; falta o refresh token. Sigo as <code>rules/seguranca.md</code>?</div>
-    <div class="msg you">Sim, vai.</div>
-    <div class="msg ai ok">Feito. Atualizei a memória da sessão e registrei a decisão. Próximo: testes.</div>
+
+  <div class="terminal-mockup rv">
+    <div class="terminal-header">
+      <div class="terminal-dots"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+      <div class="terminal-title">agent_session_trace.log — Claude / Cursor / Antigravity</div>
+      <div class="terminal-pill" id="terminal-mode-pill">Status: Amnésia Ativa</div>
+    </div>
+    
+    <div class="chat" data-mode="sem">
+      <div class="chat-banner alert-banner">
+        <span>⚠️ Nenhuma memória persistente encontrada. O agente não conhece o projeto nem as decisões arquiteturais tomadas ontem.</span>
+      </div>
+      <div class="msg you">
+        <div class="msg-author">Alfredo (Dev)</div>
+        <div class="msg-text">Vamos continuar a feature de login que começamos ontem?</div>
+      </div>
+      <div class="msg ai bad">
+        <div class="msg-author">Agente de IA (Sem Memória)</div>
+        <div class="msg-text">Claro! Qual é a stack do projeto? Que banco usamos? Já existe alguma decisão sobre JWT ou Session cookies? Como tratamos os segredos de autenticação?</div>
+      </div>
+      <div class="msg you">
+        <div class="msg-author">Alfredo (Dev)</div>
+        <div class="msg-text">…já expliquei tudo isso ontem. Passamos 40 minutos alinhando a arquitetura. De novo isso?</div>
+      </div>
+      <div class="msg ai bad">
+        <div class="msg-author">Agente de IA (Sem Memória)</div>
+        <div class="msg-text">Mil desculpas! Não tenho memória persistente entre sessões. Se puder reenviar o contexto, schemas e decisões arquiteturais, começo agora…</div>
+      </div>
+      <div class="chat-footer-stat red-stat">
+        <span>🔴 Impacto: ~4.850 tokens gastos reexplicando o básico + 35 minutos perdidos + alto risco de desvio arquitetural.</span>
+      </div>
+    </div>
+
+    <div class="chat" data-mode="com" hidden>
+      <div class="chat-banner success-banner">
+        <span>⚡ Memória conectada: <code>memory/estado.md</code>, <code>decisions/adr-003.md</code> e <code>rules/seguranca.md</code> carregados em 12ms.</span>
+      </div>
+      <div class="msg you">
+        <div class="msg-author">Alfredo (Dev)</div>
+        <div class="msg-text">Vamos continuar a feature de login que começamos ontem?</div>
+      </div>
+      <div class="msg ai ok">
+        <div class="msg-author">Agente de IA (Com Segundo Cérebro)</div>
+        <div class="msg-text">
+          Pronto! Li o <code>memory/estado.md</code> da sessão anterior e o <code>decisions/adr-003.md</code>. O schema Prisma com refresh token já foi migrado ontem; falta apenas o middleware de validação JWT.
+          <br><br>
+          Vou seguir o padrão de hashing seguro definido em <code>rules/seguranca.md</code> e documentar a alteração na memória da sessão. Posso gerar o middleware?
+        </div>
+      </div>
+      <div class="msg you">
+        <div class="msg-author">Alfredo (Dev)</div>
+        <div class="msg-text">Sim, vai em frente. Perfeito.</div>
+      </div>
+      <div class="msg ai ok">
+        <div class="msg-author">Agente de IA (Com Segundo Cérebro)</div>
+        <div class="msg-text">Feito! Middleware criado e testado. Atualizei <code>memory/sessao-13.md</code> com os próximos passos. Próximo agente assume sem perda de contexto.</div>
+      </div>
+      <div class="chat-footer-stat green-stat">
+        <span>🟢 Impacto: 0 tokens desperdiçados · Contexto 100% preservado · Início imediato em 10 segundos.</span>
+      </div>
+    </div>
   </div>
 </section>
 
+<!-- ── SEÇÃO: COMO FUNCIONA (4 CAMADAS) ── -->
 <section class="sec steps" id="como">
-  <h2 class="rv">Um cérebro em <em>quatro camadas.</em></h2>
-  <article class="step rv" data-k="rules"><b>01</b><h3>Regras</h3><p>A lei da casa. O que todo agente deve respeitar: segurança, documentação, quando usar IA e quando não.</p><span class="tag">rules/</span></article>
-  <article class="step rv" data-k="skills"><b>02</b><h3>Skills</h3><p>Roteiros prontos para tarefas recorrentes: nova feature, investigação de bug, revisão de arquitetura.</p><span class="tag">skills/</span></article>
-  <article class="step rv" data-k="memory"><b>03</b><h3>Memória</h3><p>O estado atual e as lições aprendidas atravessam as sessões. O próximo agente começa de onde o anterior parou.</p><span class="tag">memory/</span></article>
-  <article class="step rv" data-k="decisions"><b>04</b><h3>Decisões</h3><p>Cada escolha vira um ADR rastreável. Ninguém precisa redescobrir por que algo foi feito assim.</p><span class="tag">decisions/</span></article>
-</section>
+  <div class="sec-badge rv">Arquitetura Elegante</div>
+  <h2 class="rv">Um cérebro vivo em <em>quatro camadas.</em></h2>
+  <p class="sub rv">Zero banco vetorial opaco, zero infraestrutura cara. Apenas arquivos Markdown organizados no Git que refletem um grafo neural biológico.</p>
 
-<section class="sec" id="vantagens">
-  <h2 class="rv">Por que <em>funciona.</em></h2>
-  <div class="grid">
-    <div class="card rv"><i>🧠</i><h3>Memória persistente</h3><p>Contexto que sobrevive a sessões, ferramentas e pessoas.</p></div>
-    <div class="card rv"><i>⚡</i><h3>IA ou código?</h3><p>Um portão de decisão classifica a tarefa antes de gastar tokens.</p></div>
-    <div class="card rv"><i>🛡️</i><h3>Governança e segurança</h3><p>OWASP, segredos e proteção de dados como regra, não como esperança.</p></div>
-    <div class="card rv"><i>🧩</i><h3>Qualquer stack</h3><p>API, web, mobile, jogos ou dados. O cérebro é agnóstico.</p></div>
-    <div class="card rv"><i>📝</i><h3>Só Markdown</h3><p>Versionado no Git, legível por humanos e por agentes. Zero lock-in.</p></div>
-    <div class="card rv"><i>🔭</i><h3>Grafo navegável</h3><p>Veja o conhecimento como neurônios e abra qualquer documento num clique.</p></div>
+  <div class="step-nav rv" id="step-nav">
+    <button class="step-nav-btn act" data-step="rules"><span class="step-dot" style="background:#f87171"></span> 01 Regras</button>
+    <button class="step-nav-btn" data-step="skills"><span class="step-dot" style="background:#a3e635"></span> 02 Skills</button>
+    <button class="step-nav-btn" data-step="memory"><span class="step-dot" style="background:#38bdf8"></span> 03 Memória</button>
+    <button class="step-nav-btn" data-step="decisions"><span class="step-dot" style="background:#c084fc"></span> 04 Decisões</button>
   </div>
-  <div class="stats rv"><div><strong data-n="docs">0</strong><span>documentos no exemplo</span></div><div><strong data-n="dirs">0</strong><span>neurônios (pastas)</span></div><div><strong data-n="refs">0</strong><span>conexões entre docs</span></div></div>
+
+  <div class="steps-container">
+    <article class="step rv act" data-k="rules" id="step-rules">
+      <div class="step-header">
+        <div class="step-num" style="color:#f87171">01</div>
+        <div class="step-tag-pill" style="border-color:#f8717155;color:#f87171">rules/</div>
+      </div>
+      <h3>Regras Inegociáveis</h3>
+      <p>A constituição do projeto. As regras pétreas que qualquer agente deve obedecer antes de gerar uma única linha de código: segurança OWASP, quando usar IA vs código determinístico, e padrões de commit.</p>
+      <div class="step-files">
+        <span class="file-chip" data-doc="rules/nucleo">📄 nucleo.md</span>
+        <span class="file-chip" data-doc="rules/seguranca">📄 seguranca.md</span>
+        <span class="file-chip" data-doc="rules/decisao-ia">📄 decisao-ia.md</span>
+      </div>
+      <button class="step-focus-btn" data-k="rules">🎯 Focar Camada no Grafo 3D</button>
+    </article>
+
+    <article class="step rv" data-k="skills" id="step-skills">
+      <div class="step-header">
+        <div class="step-num" style="color:#a3e635">02</div>
+        <div class="step-tag-pill" style="border-color:#a3e63555;color:#a3e635">skills/</div>
+      </div>
+      <h3>Skills & Protocolos de Ação</h3>
+      <p>Roteiros prontos para tarefas recorrentes. Em vez de inventar na hora como investigar um bug ou arquitetar uma feature, o agente segue um playbook passo a passo de alta eficiência testado e validado.</p>
+      <div class="step-files">
+        <span class="file-chip" data-doc="skills/ai-decision-gate">⚡ ai-decision-gate.md</span>
+        <span class="file-chip" data-doc="skills/new-feature">⚡ new-feature.md</span>
+        <span class="file-chip" data-doc="skills/bug-investigation">⚡ bug-investigation.md</span>
+      </div>
+      <button class="step-focus-btn" data-k="skills">🎯 Focar Camada no Grafo 3D</button>
+    </article>
+
+    <article class="step rv" data-k="memory" id="step-memory">
+      <div class="step-header">
+        <div class="step-num" style="color:#38bdf8">03</div>
+        <div class="step-tag-pill" style="border-color:#38bdf855;color:#38bdf8">memory/</div>
+      </div>
+      <h3>Memória & Continuidade</h3>
+      <p>O estado atual da aplicação e os erros do passado que nunca mais serão repetidos. Cada sessão registra onde parou, o que funcionou e o que ficou pendente para o próximo agente continuar instantaneamente.</p>
+      <div class="step-files">
+        <span class="file-chip" data-doc="memory/estado">🧠 estado.md</span>
+        <span class="file-chip" data-doc="memory/licoes">🧠 licoes.md</span>
+        <span class="file-chip" data-doc="memory/sessao-13">🧠 sessao-13.md</span>
+      </div>
+      <button class="step-focus-btn" data-k="memory">🎯 Focar Camada no Grafo 3D</button>
+    </article>
+
+    <article class="step rv" data-k="decisions" id="step-decisions">
+      <div class="step-header">
+        <div class="step-num" style="color:#c084fc">04</div>
+        <div class="step-tag-pill" style="border-color:#c084fc55;color:#c084fc">decisions/</div>
+      </div>
+      <h3>Decisões Arquiteturais (ADRs)</h3>
+      <p>Cada escolha relevante vira um Architectural Decision Record imutável. Motivos, alternativas descartadas e trade-offs ficam registrados para que nenhum agente desfaça uma decisão deliberada.</p>
+      <div class="step-files">
+        <span class="file-chip" data-doc="decisions/adr-001">⚖️ adr-001.md</span>
+        <span class="file-chip" data-doc="decisions/adr-002">⚖️ adr-002.md</span>
+        <span class="file-chip" data-doc="decisions/adr-003">⚖️ adr-003.md</span>
+      </div>
+      <button class="step-focus-btn" data-k="decisions">🎯 Focar Camada no Grafo 3D</button>
+    </article>
+  </div>
 </section>
 
+<!-- ── SEÇÃO: VANTAGENS (BENTO GRID) ── -->
+<section class="sec" id="vantagens">
+  <div class="sec-badge rv">Superpoderes do Sistema</div>
+  <h2 class="rv">Por que este modelo <em>funciona tão bem.</em></h2>
+  <p class="sub rv">Projetado por quem vive codificando com agentes no dia a dia. Sem mágica opaca, com controle total.</p>
+  
+  <div class="grid">
+    <div class="card rv">
+      <div class="card-icon-wrap" style="--c:#38bdf8"><i>🧠</i></div>
+      <h3>Memória Persistente Real</h3>
+      <p>Contexto vital que sobrevive a fechamento de abas, reinicialização de IDEs, trocas de LLMs e mudanças na equipe.</p>
+    </div>
+    <div class="card rv">
+      <div class="card-icon-wrap" style="--c:#a3e635"><i>⚡</i></div>
+      <h3>AI Decision Gate</h3>
+      <p>Um portão de roteamento classifica se a tarefa deve usar código determinístico ou LLM, economizando milhares de tokens.</p>
+    </div>
+    <div class="card rv">
+      <div class="card-icon-wrap" style="--c:#f87171"><i>🛡️</i></div>
+      <h3>Governança & OWASP</h3>
+      <p>Proteção contra vazamento de segredos, injeção de prompt e violação de privacidade tratados como regra inegociável.</p>
+    </div>
+    <div class="card rv">
+      <div class="card-icon-wrap" style="--c:#ffc76b"><i>🧩</i></div>
+      <h3>100% Agnóstico de Stack</h3>
+      <p>Node, Python, Go, C#, Rust, Flutter, React ou SQL. O cérebro opera sobre o raciocínio e a governança, não a sintaxe.</p>
+    </div>
+    <div class="card rv">
+      <div class="card-icon-wrap" style="--c:#facc15"><i>📝</i></div>
+      <h3>Zero Lock-In (Puro Markdown)</h3>
+      <p>Sem bancos de dados proprietários. Seus arquivos estão versionados no Git, auditáveis por humanos e legíveis por qualquer IA.</p>
+    </div>
+    <div class="card rv">
+      <div class="card-icon-wrap" style="--c:#c084fc"><i>🌐</i></div>
+      <h3>Grafo Espacial 3D Vivo</h3>
+      <p>Visualize seu conhecimento como neurônios conectados. Descubra links cruzados e abra qualquer arquivo num clique.</p>
+    </div>
+  </div>
+
+  <div class="stats rv">
+    <div class="stat-item"><strong data-n="docs">0</strong><span>documentos no exemplo</span></div>
+    <div class="stat-sep"></div>
+    <div class="stat-item"><strong data-n="dirs">0</strong><span>neurônios (pastas)</span></div>
+    <div class="stat-sep"></div>
+    <div class="stat-item"><strong data-n="refs">0</strong><span>sinapses conectadas</span></div>
+    <div class="stat-sep"></div>
+    <div class="stat-item"><strong>100%</strong><span>Git versionado</span></div>
+  </div>
+</section>
+
+<!-- ── SEÇÃO: COMEÇAR (TERMINAL & QUICKSTART) ── -->
 <section class="sec final" id="comecar">
-  <h2 class="rv">Comece em <em>minutos.</em></h2>
-  <p class="sub rv">Clone, aponte seu agente para a pasta e conte o que você está construindo.</p>
-  <div class="code rv"><code>git clone https://github.com/SEU-USUARIO/ai-second-brain</code><button id="copy">Copiar</button></div>
-  <div class="cta rv"><a class="btn" href="https://github.com/SEU-USUARIO/ai-second-brain" target="_blank" rel="noopener" data-gh>⭐ Ver no GitHub</a></div>
-  <footer>Feito com Markdown, neurônios e café · AI Second Brain</footer>
+  <div class="sec-badge rv">Implementação Imediata</div>
+  <h2 class="rv">Comece em <em>menos de 2 minutos.</em></h2>
+  <p class="sub rv">Basta clonar o template na raiz do seu projeto e apontar seu agente favorito (Claude, Cursor, Antigravity, Copilot).</p>
+  
+  <div class="code-box rv">
+    <div class="code-header">
+      <span class="code-tag">bash</span>
+      <span class="code-desc">Terminal de Instalação</span>
+    </div>
+    <div class="code-body">
+      <code>git clone https://github.com/SEU-USUARIO/ai-second-brain</code>
+      <button id="copy" class="copy-btn" aria-label="Copiar comando">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        <span>Copiar</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="cta rv">
+    <a class="btn primary" href="https://github.com/SEU-USUARIO/ai-second-brain" target="_blank" rel="noopener" data-gh>⭐ Abrir Repositório no GitHub</a>
+    <button class="btn ghost" id="final-recenter-btn">🌐 Vista Geral do Grafo</button>
+  </div>
+  
+  <footer>
+    <div class="footer-content">
+      <span>AI Second Brain — O Sistema Operacional de Memória para Agentes de IA</span>
+      <span class="footer-sep">·</span>
+      <span>100% Open Source & Markdown</span>
+    </div>
+  </footer>
 </section>
 </main>
 
-<aside id="reader" aria-hidden="true"><header><span id="rpath"></span><button id="rclose" aria-label="Fechar">✕</button></header><article id="rbody"></article></aside>
+<!-- ── DOCK FLUTUANTE DE CONTROLE DO GRAFO ── -->
+<div class="brain-dock" id="dock" aria-label="Controles do Grafo Neural">
+  <div class="dock-badge">
+    <span class="live-dot"></span>
+    <span class="dock-status">Grafo Neural Vivo</span>
+    <span class="dock-sep">·</span>
+    <span class="dock-count" data-dock-docs>36 docs</span>
+  </div>
+  <div class="dock-divider"></div>
+  <div class="dock-actions">
+    <button id="btn-recenter" title="Centralizar e resetar câmera" aria-label="Centralizar câmera">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>
+      <span>Centralizar</span>
+    </button>
+    <button id="btn-surge" title="Disparar pulso elétrico sináptico" aria-label="Disparar pulso elétrico">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      <span>Pulso</span>
+    </button>
+    <button id="btn-orbit" class="active" title="Alternar rotação da órbita" aria-label="Alternar rotação">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+      <span>Órbita</span>
+    </button>
+    <button id="btn-explore" title="Ativar modo imersivo 3D" aria-label="Explorar Grafo 3D">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+      <span>Explorar 3D</span>
+    </button>
+  </div>
+</div>
+
+<!-- ── LEITOR DE MARKDOWN (PAINEL LATERAL FUTURISTA) ── -->
+<aside id="reader" aria-hidden="true">
+  <header>
+    <span id="rpath"></span>
+    <button id="rclose" aria-label="Fechar">✕ Fechar</button>
+  </header>
+  <article id="rbody"></article>
+</aside>
 
 <script src="js/vendor/three.min.js"></script>
 <script src="js/vendor/neuron-graph.js"></script>

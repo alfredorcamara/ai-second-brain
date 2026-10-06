@@ -71,15 +71,30 @@
             this.scene.add(this.dust);
             this.world = new THREE.Group(); this.scene.add(this.world);
             this._setupCanvas();
-            if (window.ResizeObserver && this.canvas.parentElement) new ResizeObserver(() => this._setupCanvas()).observe(this.canvas.parentElement);
+            if (window.ResizeObserver) {
+                new ResizeObserver(() => this._setupCanvas()).observe(this.canvas);
+            }
+            window.addEventListener('resize', () => { this._sized = false; this._setupCanvas(); });
         }
 
         _setupCanvas() {
-            const p = this.canvas.parentElement; if (!p) return;
-            const r = p.getBoundingClientRect(); if (!r.width || !r.height) return;
-            if (r.width === this.width && r.height === this.height && this._sized) return;
-            this._sized = true; this.width = r.width; this.height = r.height;
-            this.camera.aspect = this.width / this.height; this.camera.updateProjectionMatrix();
+            let w = this.canvas.clientWidth;
+            let h = this.canvas.clientHeight;
+            if (!w || !h) {
+                const r = this.canvas.getBoundingClientRect();
+                w = Math.round(r.width);
+                h = Math.round(r.height);
+            }
+            if (!w || !h) {
+                w = window.innerWidth;
+                h = window.innerHeight;
+            }
+            if (w === this.width && h === this.height && this._sized) return;
+            this._sized = true;
+            this.width = w;
+            this.height = h;
+            this.camera.aspect = this.width / this.height;
+            this.camera.updateProjectionMatrix();
             this.renderer.setSize(this.width, this.height, false);
         }
         resize() { this._sized = false; this._setupCanvas(); }
@@ -347,6 +362,19 @@
         reheat() {
             for (const m of this.M) { m.vl.add(this.tmp.set(Math.random() - .5, Math.random() - .5, Math.random() - .5).multiplyScalar(26)); }
         }
+        pulseSurge() {
+            if (this.pulses) {
+                this.pulses.forEach(p => { p.v = 3.6 + Math.random() * 2.8; });
+            }
+            this.reheat();
+        }
+        setBrainMode(mode) {
+            this.brainMode = mode;
+            const isAmnesia = (mode === 'sem' || mode === 'amnesia');
+            this._amnesiaFactor = isAmnesia ? 0.22 : 1.0;
+            this._autoRotateSpeed = isAmnesia ? 0.02 : 0.09;
+            if (!isAmnesia) this.pulseSurge();
+        }
         _notifyCameraChange() {
             if (!this.onCameraChange) return;
             const zp = Math.round(this.defaultDist / this.di * 100);
@@ -566,10 +594,11 @@
             }
             // visibilidade / ênfase
             const hl = this.highlightedCategory;
-            for (const n of this.N) { n.vf += (n.tv - n.vf) * ek; n.em += ((hl ? (n.node.group === hl ? 1 : .2) : 1) - n.em) * ek; }
-            for (const l of this.leaves) { l.vf += (l.tv - l.vf) * ek; l.em += ((hl ? (l.file.group === hl ? 1 : .2) : 1) - l.em) * ek; }
+            const amf = this._amnesiaFactor !== undefined ? this._amnesiaFactor : 1.0;
+            for (const n of this.N) { n.vf += (n.tv - n.vf) * ek; n.em += (((hl ? (n.node.group === hl ? 1 : .2) : 1) * amf) - n.em) * ek; }
+            for (const l of this.leaves) { l.vf += (l.tv - l.vf) * ek; l.em += (((hl ? (l.file.group === hl ? 1 : .2) : 1) * amf) - l.em) * ek; }
             this._computeLit();
-            for (const e of this.E) e.k += ((this.litSet ? (this.litSet.has(e) ? 1 : -.3) : 0) - e.k) * ek;
+            for (const e of this.E) e.k += (((this.litSet ? (this.litSet.has(e) ? 1 : -.3) : 0) * amf) - e.k) * ek;
             const rm = this.nodeStyle === 'sphere' ? .7 : 1;
             if (this.E.length <= 600 || (this._fr++ & 1) === 0) { if (this.mH.visible) this._fill(this.mH.geometry, 3.2, .16 * rm); this._fill(this.mC.geometry, 1, .8 * rm); }
             // pulsos
@@ -628,10 +657,26 @@
                 this.th = a.a.th + (a.b.th - a.a.th) * e; this.ph = a.a.ph + (a.b.ph - a.a.ph) * e; this.di = a.a.di + (a.b.di - a.a.di) * e; this.tgt.lerpVectors(a.a.tg, a.b.tg, e); this.tT.copy(this.tgt);
                 if (a.t >= 1) { this.anim = null; this.dT = this.di; }
             } else {
-                if (this.autoRotate && !this._down && !this.grab) this.th += dt * .09;
+                if (this.autoRotate && !this._down && !this.grab) this.th += dt * (this._autoRotateSpeed || .09);
                 this.tgt.lerp(this.tT, .06); this.di += (this.dT - this.di) * .08;
             }
-            this.camera.position.set(this.tgt.x + this.di * Math.sin(this.ph) * Math.sin(this.th), this.tgt.y + this.di * Math.cos(this.ph), this.tgt.z + this.di * Math.sin(this.ph) * Math.cos(this.th));
+            // Paralaxe do mouse
+            if (this._mx !== null && !this._down && !this.grab && this.width && this.height) {
+                const nx = (this._mx / this.width - .5) * 2;
+                const ny = (this._my / this.height - .5) * 2;
+                this._tParallaxX = nx * 14;
+                this._tParallaxY = -ny * 10;
+            } else {
+                this._tParallaxX = 0;
+                this._tParallaxY = 0;
+            }
+            this._cParallaxX = (this._cParallaxX || 0) + ((this._tParallaxX || 0) - (this._cParallaxX || 0)) * .05;
+            this._cParallaxY = (this._cParallaxY || 0) + ((this._tParallaxY || 0) - (this._cParallaxY || 0)) * .05;
+
+            const eyeX = this.tgt.x + this.di * Math.sin(this.ph) * Math.sin(this.th) + this._cParallaxX;
+            const eyeY = this.tgt.y + this.di * Math.cos(this.ph) + this._cParallaxY;
+            const eyeZ = this.tgt.z + this.di * Math.sin(this.ph) * Math.cos(this.th);
+            this.camera.position.set(eyeX, eyeY, eyeZ);
             this.camera.lookAt(this.tgt); this.camera.updateMatrixWorld();
             this.dust.rotation.y += dt * .004;
             this._step(dt, t);

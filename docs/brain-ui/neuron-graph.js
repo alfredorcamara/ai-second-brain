@@ -71,15 +71,30 @@
             this.scene.add(this.dust);
             this.world = new THREE.Group(); this.scene.add(this.world);
             this._setupCanvas();
-            if (window.ResizeObserver && this.canvas.parentElement) new ResizeObserver(() => this._setupCanvas()).observe(this.canvas.parentElement);
+            if (window.ResizeObserver) {
+                new ResizeObserver(() => this._setupCanvas()).observe(this.canvas);
+            }
+            window.addEventListener('resize', () => { this._sized = false; this._setupCanvas(); });
         }
 
         _setupCanvas() {
-            const p = this.canvas.parentElement; if (!p) return;
-            const r = p.getBoundingClientRect(); if (!r.width || !r.height) return;
-            if (r.width === this.width && r.height === this.height && this._sized) return;
-            this._sized = true; this.width = r.width; this.height = r.height;
-            this.camera.aspect = this.width / this.height; this.camera.updateProjectionMatrix();
+            let w = this.canvas.clientWidth;
+            let h = this.canvas.clientHeight;
+            if (!w || !h) {
+                const r = this.canvas.getBoundingClientRect();
+                w = Math.round(r.width);
+                h = Math.round(r.height);
+            }
+            if (!w || !h) {
+                w = window.innerWidth;
+                h = window.innerHeight;
+            }
+            if (w === this.width && h === this.height && this._sized) return;
+            this._sized = true;
+            this.width = w;
+            this.height = h;
+            this.camera.aspect = this.width / this.height;
+            this.camera.updateProjectionMatrix();
             this.renderer.setSize(this.width, this.height, false);
         }
         resize() { this._sized = false; this._setupCanvas(); }
