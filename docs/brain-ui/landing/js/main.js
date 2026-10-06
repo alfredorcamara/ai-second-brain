@@ -206,75 +206,57 @@
         g.resetView();
     };
 
-    // ── Modo Explorador 3D Fullscreen ──
-    const explorerBar = $('#explorer-bar');
+    // ── Modo Explorador 3D (Controlado pelo Dock Inferior) ──
     const heroExploreBtn = $('#hero-explore-btn');
     const dockExploreBtn = $('#btn-explore');
-    const btnExitExp = $('#btn-exit-exp');
+    const dockExploreText = $('#btn-explore-text');
+    const dockEl = $('#dock');
     const mainEl = $('main');
 
     let isExploring = false;
 
+    function toggleExplorerMode() {
+        if (isExploring) {
+            exitExplorerMode();
+        } else {
+            enterExplorerMode();
+        }
+    }
+
     function enterExplorerMode() {
         isExploring = true;
         g.wheelZoom = true;
-        explorerBar.hidden = false;
         mainEl.style.transition = 'opacity 0.4s';
         mainEl.style.opacity = '0.06';
         mainEl.style.pointerEvents = 'none';
         cv.style.cursor = 'grab';
-        $('#dock').style.transform = 'translate(-50%, 120px)'; // recolhe dock
-
-        // Gera chips de categorias se ainda não gerados
-        const chipsContainer = $('#exp-categories');
-        if (chipsContainer && !chipsContainer.children.length) {
-            const allBtn = document.createElement('button');
-            allBtn.className = 'exp-chip on';
-            allBtn.textContent = 'Todos';
-            allBtn.onclick = () => {
-                $$('.exp-chip').forEach(c => c.classList.remove('on'));
-                allBtn.classList.add('on');
-                g.clearCategoryHighlight();
-                g.setCategoryFilter('all');
-            };
-            chipsContainer.appendChild(allBtn);
-
-            for (const k in folders) {
-                const b = document.createElement('button');
-                b.className = 'exp-chip';
-                b.textContent = `${folders[k].icon} ${folders[k].label}`;
-                b.onclick = () => {
-                    $$('.exp-chip').forEach(c => c.classList.remove('on'));
-                    b.classList.add('on');
-                    g.highlightCategory('g-' + k);
-                    g.focusNode(folders[k]);
-                };
-                chipsContainer.appendChild(b);
-            }
-        }
+        dockEl.classList.add('exploring');
+        if (dockExploreBtn) dockExploreBtn.classList.add('active');
+        if (dockExploreText) dockExploreText.textContent = '✕ Sair 3D';
         g.pulseSurge();
     }
 
     function exitExplorerMode() {
         isExploring = false;
         g.wheelZoom = false;
-        explorerBar.hidden = true;
         mainEl.style.opacity = '1';
         mainEl.style.pointerEvents = 'none';
-        $('#dock').style.transform = 'translate(-50%, 0)';
+        dockEl.classList.remove('exploring');
+        if (dockExploreBtn) dockExploreBtn.classList.remove('active');
+        if (dockExploreText) dockExploreText.textContent = 'Modo 3D';
         g.clearCategoryHighlight();
         g.resetView();
     }
 
     if (heroExploreBtn) heroExploreBtn.onclick = enterExplorerMode;
-    if (dockExploreBtn) dockExploreBtn.onclick = enterExplorerMode;
-    if (btnExitExp) btnExitExp.onclick = exitExplorerMode;
+    if (dockExploreBtn) dockExploreBtn.onclick = toggleExplorerMode;
 
     const btnStyle = $('#btn-style');
+    const btnStyleText = $('#btn-style-text');
     if (btnStyle) {
         btnStyle.onclick = () => {
             const style = g.toggleNodeStyle();
-            btnStyle.textContent = style === 'sphere' ? 'Estilo: Esferas' : 'Estilo: Neurônio';
+            if (btnStyleText) btnStyleText.textContent = style === 'sphere' ? 'Esferas' : 'Neurônios';
             g.pulseSurge();
         };
     }

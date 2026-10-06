@@ -494,101 +494,58 @@ h1 {
   border-color: rgba(255, 199, 107, 0.4);
 }
 
-/* ── Fullscreen Explorer Bar ── */
-.explorer-bar {
-  position: fixed;
-  top: 70px;
-  left: 20px;
-  right: 20px;
-  z-index: 35;
-  display: flex;
-  justify-content: space-between;
+/* ── Unified Floating Dock Controls & Exploring State ── */
+.brain-dock.exploring {
+  border-color: rgba(56, 189, 248, 0.45);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.8), 0 0 32px rgba(56, 189, 248, 0.22);
+  background: rgba(4, 9, 22, 0.94);
+}
+
+.dock-zoom-group {
+  display: inline-flex;
   align-items: center;
-  padding: 10px 18px;
-  border-radius: 16px;
-  background: rgba(6, 12, 26, 0.92);
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
-  pointer-events: auto;
-  animation: slide-down 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  overflow: hidden;
 }
 
-@keyframes slide-down {
-  from { opacity: 0; transform: translateY(-12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.exp-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  overflow-x: auto;
-}
-
-.exp-title {
+.dock-zoom-group button {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 6px 11px !important;
   font-weight: 600;
   font-size: 13.5px;
-  color: #fff;
-  white-space: nowrap;
-}
-
-.exp-chips {
-  display: flex;
-  gap: 6px;
-}
-
-.exp-chip {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--line);
+  line-height: 1;
   color: var(--fg-dim);
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s;
-  font-family: inherit;
 }
 
-.exp-chip:hover, .exp-chip.on {
-  background: rgba(255, 199, 107, 0.2);
-  color: #fff;
-  border-color: var(--gold);
+.dock-zoom-group button:first-child {
+  border-right: 1px solid var(--line) !important;
 }
 
-.exp-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
+.dock-zoom-group button:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #fff !important;
 }
 
-.exp-right button {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid var(--line);
-  color: #fff;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 12.5px;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: inherit;
+.btn-explore-toggle {
+  border-color: rgba(56, 189, 248, 0.3) !important;
+  color: #6fe3ff !important;
 }
 
-.exp-right button:hover {
-  background: rgba(255, 255, 255, 0.18);
+.btn-explore-toggle:hover {
+  background: rgba(56, 189, 248, 0.16) !important;
+  border-color: rgba(56, 189, 248, 0.6) !important;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
 }
 
-.exp-right .btn-exit {
-  background: rgba(248, 113, 113, 0.16);
-  border-color: rgba(248, 113, 113, 0.4);
-  color: #ff9b9b;
-}
-
-.exp-right .btn-exit:hover {
-  background: rgba(248, 113, 113, 0.3);
+.btn-explore-toggle.active {
+  background: rgba(248, 113, 113, 0.18) !important;
+  border-color: rgba(248, 113, 113, 0.5) !important;
+  color: #ff9b9b !important;
+  box-shadow: 0 0 20px rgba(248, 113, 113, 0.25) !important;
 }
 
 /* ── Generic Section Styles ── */

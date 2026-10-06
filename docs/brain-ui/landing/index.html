@@ -34,22 +34,6 @@
   </div>
 </nav>
 
-<!-- ── Barra de Exploração 3D Fullscreen (Modo Imersivo) ── -->
-<div id="explorer-bar" class="explorer-bar" hidden>
-  <div class="exp-left">
-    <span class="exp-title">🧠 Modo Imersivo 3D</span>
-    <div class="exp-chips" id="exp-categories">
-      <!-- Injetado dinamicamente via JS -->
-    </div>
-  </div>
-  <div class="exp-right">
-    <button id="btn-style" title="Alternar estilo visual">Estilo: Neurônio</button>
-    <button id="btn-zoom-in" title="Aproximar câmera">+</button>
-    <button id="btn-zoom-out" title="Afastar câmera">−</button>
-    <button id="btn-exit-exp" class="btn-exit" title="Sair do modo exploração">✕ Voltar à Página</button>
-  </div>
-</div>
-
 <main>
 <!-- ── HERO SECTION ── -->
 <section class="hero" id="topo">
@@ -348,9 +332,17 @@
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
       <span>Órbita</span>
     </button>
-    <button id="btn-explore" title="Ativar modo imersivo 3D" aria-label="Explorar Grafo 3D">
+    <button id="btn-style" title="Alternar entre neurônios orgânicos e esferas" aria-label="Alternar estilo">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M8.5 8.5l7 7"/></svg>
+      <span id="btn-style-text">Neurônios</span>
+    </button>
+    <div class="dock-zoom-group">
+      <button id="btn-zoom-in" title="Aproximar zoom" aria-label="Aproximar zoom">+</button>
+      <button id="btn-zoom-out" title="Afastar zoom" aria-label="Afastar zoom">−</button>
+    </div>
+    <button id="btn-explore" class="btn-explore-toggle" title="Alternar modo imersivo 3D livre" aria-label="Modo Imersivo 3D">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-      <span>Explorar 3D</span>
+      <span id="btn-explore-text">Modo 3D</span>
     </button>
   </div>
 </div>
