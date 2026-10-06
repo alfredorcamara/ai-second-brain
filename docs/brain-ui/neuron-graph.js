@@ -620,10 +620,11 @@
             for (const e of this.E) e.k += ((this.litSet ? (this.litSet.has(e) ? 1 : -.3) : 0) - e.k) * ek;
             const rm = this.nodeStyle === 'sphere' ? .7 : 1;
             this._fill(this.mH.geometry, 3.2, .16 * rm); this._fill(this.mC.geometry, 1, .8 * rm);
-            // pulsos
+            // pulsos (efeito de luz que caminha pelas linhas)
             const pa = this.pPos;
+            const pulseSpeed = 3.0; // Multiplicador de velocidade (ajuste conforme preferir: ex. 2.0, 3.0, 4.0)
             this.pulses.forEach((p, i) => {
-                p.u += p.v * dt / Math.max(2, p.e.P.distanceTo(p.e.C));
+                p.u += (p.v * pulseSpeed) * dt / Math.max(2, p.e.P.distanceTo(p.e.C));
                 if (p.u > 1) { p.u = 0; p.e = p.e.b.out.length ? p.e.b.out[p.e.b.out.length * Math.random() | 0] : this.E[this.E.length * Math.random() | 0]; }
                 if (p.e.vf < .3) { pa[i * 3] = 0; pa[i * 3 + 1] = -1e5; pa[i * 3 + 2] = 0; return; }
                 this._bez(p.e, p.u, this.tmp); pa[i * 3] = this.tmp.x; pa[i * 3 + 1] = this.tmp.y; pa[i * 3 + 2] = this.tmp.z;
