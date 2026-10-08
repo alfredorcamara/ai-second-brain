@@ -253,6 +253,9 @@
 
     const btnStyle = $('#btn-style');
     const btnStyleText = $('#btn-style-text');
+    if (btnStyleText && g) {
+        btnStyleText.textContent = g.nodeStyle === 'sphere' ? 'Esferas' : 'Neurônios';
+    }
     if (btnStyle) {
         btnStyle.onclick = () => {
             const style = g.toggleNodeStyle();

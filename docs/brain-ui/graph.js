@@ -772,9 +772,9 @@ class BrainGraph {
 
     static getSavedNodeStyle() {
         try {
-            return localStorage.getItem('ai_second_brain_node_style') || 'sphere';
+            return localStorage.getItem('ai_second_brain_node_style') || 'neuron';
         } catch (e) {
-            return 'sphere';
+            return 'neuron';
         }
     }
 

@@ -35,7 +35,7 @@
             this.height = canvas.clientHeight || 600;
             this.nodes = []; this.edges = []; this.nodeMap = new Map(); this.groupColors = {};
             this.parentOf = new Map();
-            this.nodeStyle = 'neuron';
+            this.nodeStyle = BrainGraph.getSavedNodeStyle();
             this.showIcons = false;
             this.autoRotate = true;
             this.onCameraChange = null; this.onNodeClick = null; this.onNodeDblClick = null;
@@ -360,8 +360,18 @@
         }
 
         // ── Estilo / ícones ─────────────────────────
+        static getSavedNodeStyle() {
+            try {
+                return localStorage.getItem('ai_second_brain_node_style') || 'neuron';
+            } catch (e) {
+                return 'neuron';
+            }
+        }
         setNodeStyle(style) {
             this.nodeStyle = style === 'sphere' ? 'sphere' : 'neuron';
+            try {
+                localStorage.setItem('ai_second_brain_node_style', this.nodeStyle);
+            } catch (e) {}
             const sp = this.nodeStyle === 'sphere';
             for (const n of this.N) { n.shell.visible = n.nu.visible = !sp; n.sphere.visible = sp; }
             if (this.pts) this.pts.visible = !sp;
