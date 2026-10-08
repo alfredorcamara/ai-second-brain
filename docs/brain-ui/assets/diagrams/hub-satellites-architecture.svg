@@ -74,25 +74,41 @@
         stroke-dasharray: 8, 16;
         animation: flowDash 3s linear infinite;
       }
-      .pulse-beacon {
-        animation: pulseCore 3s ease-in-out infinite;
+      /* Aura respiratória suave centrada no Hub (luz pura sem oscilar textos) */
+      .hub-aura {
+        animation: auraBreathe 4s ease-in-out infinite;
         transform-origin: 460px 270px;
       }
-      .satellite-float-1 { animation: floatSlow 6s ease-in-out infinite; }
-      .satellite-float-2 { animation: floatSlow 7s ease-in-out infinite 1s; }
-      .satellite-float-3 { animation: floatSlow 6.5s ease-in-out infinite 2s; }
-      .satellite-float-4 { animation: floatSlow 7.5s ease-in-out infinite 0.5s; }
+      .hub-card-border {
+        animation: borderBreathe 4s ease-in-out infinite;
+      }
+      /* Pulso suave nos LEDs indicadores dos satélites (ping de rede) */
+      .beacon-dot-1 { animation: beaconGlow 2.5s ease-in-out infinite; }
+      .beacon-dot-2 { animation: beaconGlow 2.5s ease-in-out infinite 0.6s; }
+      .beacon-dot-3 { animation: beaconGlow 2.5s ease-in-out infinite 1.2s; }
+      .beacon-dot-4 { animation: beaconGlow 2.5s ease-in-out infinite 1.8s; }
+      .flow-particle {
+        animation: particlePulse 2.5s ease-in-out infinite;
+      }
 
       @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
       @keyframes spinRev { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
       @keyframes flowDash { to { stroke-dashoffset: -48; } }
-      @keyframes pulseCore {
-        0%, 100% { transform: scale(1); opacity: 0.9; }
-        50% { transform: scale(1.03); opacity: 1; filter: drop-shadow(0 0 25px rgba(99, 102, 241, 0.6)); }
+      @keyframes auraBreathe {
+        0%, 100% { transform: scale(0.92); opacity: 0.35; }
+        50% { transform: scale(1.18); opacity: 0.85; }
       }
-      @keyframes floatSlow {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-6px); }
+      @keyframes borderBreathe {
+        0%, 100% { stroke-opacity: 0.45; }
+        50% { stroke-opacity: 1; }
+      }
+      @keyframes beaconGlow {
+        0%, 100% { opacity: 0.4; }
+        50% { opacity: 1; }
+      }
+      @keyframes particlePulse {
+        0%, 100% { opacity: 0.6; }
+        50% { opacity: 1; }
       }
     </style>
   </defs>
@@ -116,68 +132,60 @@
   <path d="M 460 270 Q 600 360 710 430" fill="none" stroke="url(#lineGrad4)" stroke-width="2.5" opacity="0.75" class="data-pulse-1"/>
 
   <!-- Flow Direction Indicators (Glow Particles) -->
-  <circle cx="345" cy="200" r="3.5" fill="#38bdf8" filter="url(#glowPulse)"/>
-  <circle cx="575" cy="200" r="3.5" fill="#34d399" filter="url(#glowPulse)"/>
-  <circle cx="345" cy="340" r="3.5" fill="#f472b6" filter="url(#glowPulse)"/>
-  <circle cx="575" cy="340" r="3.5" fill="#fbbf24" filter="url(#glowPulse)"/>
+  <circle cx="345" cy="200" r="3.5" fill="#38bdf8" filter="url(#glowPulse)" class="flow-particle"/>
+  <circle cx="575" cy="200" r="3.5" fill="#34d399" filter="url(#glowPulse)" class="flow-particle"/>
+  <circle cx="345" cy="340" r="3.5" fill="#f472b6" filter="url(#glowPulse)" class="flow-particle"/>
+  <circle cx="575" cy="340" r="3.5" fill="#fbbf24" filter="url(#glowPulse)" class="flow-particle"/>
 
   <!-- SATELLITE 1: Backend / API (Top Left) -->
   <g transform="translate(60, 45)">
-    <g class="satellite-float-1">
-      <rect width="250" height="90" rx="14" fill="#0d1326" stroke="rgba(56, 189, 248, 0.4)" stroke-width="1.5" filter="url(#cardShadow)"/>
-      <circle cx="35" cy="45" r="22" fill="#0369a1" fill-opacity="0.3"/>
-      <text x="35" y="52" font-size="22" text-anchor="middle" fill="#38bdf8">⚙️</text>
-      <text x="70" y="38" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#f1f5f9">Repositório Satélite</text>
-      <text x="70" y="56" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#38bdf8">API Node / Nest / Go / .NET</text>
-      <text x="70" y="72" font-family="system-ui, sans-serif" font-size="10.5" fill="#94a3b8">Código físico, CI/CD e Docker</text>
-      <circle cx="235" cy="20" r="4" fill="#38bdf8"/>
-    </g>
+    <rect width="250" height="90" rx="14" fill="#0d1326" stroke="rgba(56, 189, 248, 0.4)" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <circle cx="35" cy="45" r="22" fill="#0369a1" fill-opacity="0.3"/>
+    <text x="35" y="52" font-size="22" text-anchor="middle" fill="#38bdf8">⚙️</text>
+    <text x="70" y="38" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#f1f5f9">Repositório Satélite</text>
+    <text x="70" y="56" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#38bdf8">API Node / Nest / Go / .NET</text>
+    <text x="70" y="72" font-family="system-ui, sans-serif" font-size="10.5" fill="#94a3b8">Código físico, CI/CD e Docker</text>
+    <circle cx="235" cy="20" r="4" fill="#38bdf8" class="beacon-dot-1"/>
   </g>
 
   <!-- SATELLITE 2: Mobile App (Top Right) -->
   <g transform="translate(610, 45)">
-    <g class="satellite-float-2">
-      <rect width="250" height="90" rx="14" fill="#0d1a1b" stroke="rgba(52, 211, 153, 0.4)" stroke-width="1.5" filter="url(#cardShadow)"/>
-      <circle cx="35" cy="45" r="22" fill="#047857" fill-opacity="0.3"/>
-      <text x="35" y="52" font-size="22" text-anchor="middle" fill="#34d399">📱</text>
-      <text x="70" y="38" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#f1f5f9">Repositório Satélite</text>
-      <text x="70" y="56" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#34d399">App Flutter / React Native</text>
-      <text x="70" y="72" font-family="system-ui, sans-serif" font-size="10.5" fill="#94a3b8">Telas, stores e builds móveis</text>
-      <circle cx="235" cy="20" r="4" fill="#34d399"/>
-    </g>
+    <rect width="250" height="90" rx="14" fill="#0d1a1b" stroke="rgba(52, 211, 153, 0.4)" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <circle cx="35" cy="45" r="22" fill="#047857" fill-opacity="0.3"/>
+    <text x="35" y="52" font-size="22" text-anchor="middle" fill="#34d399">📱</text>
+    <text x="70" y="38" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#f1f5f9">Repositório Satélite</text>
+    <text x="70" y="56" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#34d399">App Flutter / React Native</text>
+    <text x="70" y="72" font-family="system-ui, sans-serif" font-size="10.5" fill="#94a3b8">Telas, stores e builds móveis</text>
+    <circle cx="235" cy="20" r="4" fill="#34d399" class="beacon-dot-2"/>
   </g>
 
   <!-- SATELLITE 3: Web SaaS (Bottom Left) -->
   <g transform="translate(60, 400)">
-    <g class="satellite-float-3">
-      <rect width="250" height="90" rx="14" fill="#170f1e" stroke="rgba(244, 114, 182, 0.4)" stroke-width="1.5" filter="url(#cardShadow)"/>
-      <circle cx="35" cy="45" r="22" fill="#be185d" fill-opacity="0.3"/>
-      <text x="35" y="52" font-size="22" text-anchor="middle" fill="#f472b6">🌐</text>
-      <text x="70" y="38" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#f1f5f9">Repositório Satélite</text>
-      <text x="70" y="56" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#f472b6">Web SaaS (Next.js / Vue / Vite)</text>
-      <text x="70" y="72" font-family="system-ui, sans-serif" font-size="10.5" fill="#94a3b8">UI/UX, landing page e rotas</text>
-      <circle cx="235" cy="20" r="4" fill="#f472b6"/>
-    </g>
+    <rect width="250" height="90" rx="14" fill="#170f1e" stroke="rgba(244, 114, 182, 0.4)" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <circle cx="35" cy="45" r="22" fill="#be185d" fill-opacity="0.3"/>
+    <text x="35" y="52" font-size="22" text-anchor="middle" fill="#f472b6">🌐</text>
+    <text x="70" y="38" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#f1f5f9">Repositório Satélite</text>
+    <text x="70" y="56" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#f472b6">Web SaaS (Next.js / Vue / Vite)</text>
+    <text x="70" y="72" font-family="system-ui, sans-serif" font-size="10.5" fill="#94a3b8">UI/UX, landing page e rotas</text>
+    <circle cx="235" cy="20" r="4" fill="#f472b6" class="beacon-dot-3"/>
   </g>
 
   <!-- SATELLITE 4: Game / AI Engine (Bottom Right) -->
   <g transform="translate(610, 400)">
-    <g class="satellite-float-4">
-      <rect width="250" height="90" rx="14" fill="#1a140d" stroke="rgba(251, 191, 36, 0.4)" stroke-width="1.5" filter="url(#cardShadow)"/>
-      <circle cx="35" cy="45" r="22" fill="#b45309" fill-opacity="0.3"/>
-      <text x="35" y="52" font-size="22" text-anchor="middle" fill="#fbbf24">🎮</text>
-      <text x="70" y="38" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#f1f5f9">Repositório Satélite</text>
-      <text x="70" y="56" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#fbbf24">Game Unity / Godot / Python</text>
-      <text x="70" y="72" font-family="system-ui, sans-serif" font-size="10.5" fill="#94a3b8">Scripts, shaders e lógica local</text>
-      <circle cx="235" cy="20" r="4" fill="#fbbf24"/>
-    </g>
+    <rect width="250" height="90" rx="14" fill="#1a140d" stroke="rgba(251, 191, 36, 0.4)" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <circle cx="35" cy="45" r="22" fill="#b45309" fill-opacity="0.3"/>
+    <text x="35" y="52" font-size="22" text-anchor="middle" fill="#fbbf24">🎮</text>
+    <text x="70" y="38" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#f1f5f9">Repositório Satélite</text>
+    <text x="70" y="56" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#fbbf24">Game Unity / Godot / Python</text>
+    <text x="70" y="72" font-family="system-ui, sans-serif" font-size="10.5" fill="#94a3b8">Scripts, shaders e lógica local</text>
+    <circle cx="235" cy="20" r="4" fill="#fbbf24" class="beacon-dot-4"/>
   </g>
 
   <!-- CENTRAL HUB: AI SECOND BRAIN -->
-  <circle cx="460" cy="270" r="145" fill="url(#hubGlow)"/>
+  <circle cx="460" cy="270" r="145" fill="url(#hubGlow)" class="hub-aura"/>
   
-  <g class="pulse-beacon" transform-origin="460 270">
-    <rect x="330" y="165" width="260" height="210" rx="22" fill="#101429" stroke="url(#lineGrad1)" stroke-width="2.5" filter="url(#cardShadow)"/>
+  <g>
+    <rect x="330" y="165" width="260" height="210" rx="22" fill="#101429" stroke="url(#lineGrad1)" stroke-width="2.5" filter="url(#cardShadow)" class="hub-card-border"/>
     
     <!-- Hub Header Badge -->
     <rect x="350" y="180" width="220" height="28" rx="14" fill="rgba(99, 102, 241, 0.2)" stroke="rgba(129, 140, 248, 0.4)"/>
