@@ -2148,7 +2148,12 @@ function setupEventListeners() {
             btnAutoOrbit.classList.toggle('active', isActive);
         }
     });
-    if (btnShake) btnShake.addEventListener('click', () => graph && graph.reheat(1.0));
+    if (btnShake) btnShake.addEventListener('click', () => {
+        if (graph) {
+            if (typeof graph.pulseSurge === 'function') graph.pulseSurge();
+            else graph.reheat(1.0);
+        }
+    });
     if (btnResetView) btnResetView.addEventListener('click', () => graph && graph.resetView());
 
     // Fullscreen do Grafo Global
@@ -3628,7 +3633,12 @@ function renderProjectGraphTab() {
                 btnAutoOrbit.classList.toggle('active', running);
             };
         }
-        if (btnShake) btnShake.onclick = () => projectGraph && projectGraph.reheat(1.0);
+        if (btnShake) btnShake.onclick = () => {
+            if (projectGraph) {
+                if (typeof projectGraph.pulseSurge === 'function') projectGraph.pulseSurge();
+                else projectGraph.reheat(1.0);
+            }
+        };
         if (btnReset) btnReset.onclick = () => projectGraph && projectGraph.resetView();
         if (toggleIcons) {
             toggleIcons.onchange = (e) => {

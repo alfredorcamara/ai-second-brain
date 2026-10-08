@@ -237,6 +237,29 @@
                 if (l.rec > .05) { l.halo = this._spr('#8ff0ff', 3.4 * this.k, 0); this.world.add(l.halo); }
             }
             this.E.forEach((e, i) => { e.hid = i; });
+
+            // ── Auto-centralização global geométrica do grafo ──
+            if (this.M.length > 0) {
+                let minX = Infinity, maxX = -Infinity;
+                let minY = Infinity, maxY = -Infinity;
+                let minZ = Infinity, maxZ = -Infinity;
+                for (const m of this.M) {
+                    minX = Math.min(minX, m.p.x); maxX = Math.max(maxX, m.p.x);
+                    minY = Math.min(minY, m.p.y); maxY = Math.max(maxY, m.p.y);
+                    minZ = Math.min(minZ, m.p.z); maxZ = Math.max(maxZ, m.p.z);
+                }
+                const center = new V3((minX + maxX) * 0.5, (minY + maxY) * 0.5, (minZ + maxZ) * 0.5);
+                for (const m of this.M) {
+                    m.p.sub(center);
+                    m.cur.sub(center);
+                }
+                let ext = 20;
+                for (const m of this.M) ext = Math.max(ext, m.p.length());
+                this.defaultDist = clamp((ext + 18) * 2.1, 130, 1100);
+                this.k = Math.max(1, this.defaultDist / 110);
+                this.di = this.dT = this.defaultDist;
+            }
+
             const S = this.S = this.E.length <= 400 ? S0 : this.E.length <= 1200 ? 7 : 5;
 
             // ── ribbons + pulsos
@@ -251,7 +274,12 @@
             };
             this.mC = mk(); this.mH = mk(); this.mH.visible = this.E.length <= 1500;
             const np = Math.min(220, this.E.length * 2);
-            this.pulses = Array.from({ length: np }, () => ({ e: this.E[this.E.length * Math.random() | 0], u: Math.random(), v: 1 + Math.random() }));
+            // Multiplicador de velocidade dos pulsos (ajuste este valor para acelerar/desacelerar)
+            this.pulseSpeed = 2.2;
+            this.pulses = Array.from({ length: np }, () => {
+                const baseV = (1 + Math.random()) * this.pulseSpeed;
+                return { e: this.E[this.E.length * Math.random() | 0], u: Math.random(), v: baseV, baseV };
+            });
             this.pPos = new Float32Array(np * 3);
             const pg = new THREE.BufferGeometry(); pg.setAttribute('position', new THREE.BufferAttribute(this.pPos, 3));
             this.pts = new THREE.Points(pg, new THREE.PointsMaterial({ map: BrainGraph.G('#fff1b8'), size: 1.5 * this.k, ...AB, transparent: true, depthWrite: false }));
@@ -352,7 +380,7 @@
         rotateBy(r) { this.th += r; }
         toggleAutoOrbit() { this.autoRotate = !this.autoRotate; this._notifyCameraChange(); return this.autoRotate; }
         _flyTo(th, ph, di, tgt) { this.anim = { t: 0, a: { th: this.th, ph: this.ph, di: this.di, tg: this.tgt.clone() }, b: { th, ph, di, tg: tgt.clone() } }; }
-        resetView() { this._flyTo(this.th, 1.3, this.defaultDist, new V3()); this.dT = this.defaultDist; }
+        resetView() { this._flyTo(0.6, 1.3, this.defaultDist, new V3()); this.dT = this.defaultDist; }
         focusNode(node) {
             if (!node) return; this.selectedNode = node;
             const p = node.position ? node.position.clone() : new V3();
@@ -364,7 +392,7 @@
         }
         pulseSurge() {
             if (this.pulses) {
-                this.pulses.forEach(p => { p.v = 3.6 + Math.random() * 2.8; });
+                this.pulses.forEach(p => { p.v = 7.6 + Math.random() * 4.8; });
             }
             this.reheat();
         }
@@ -604,6 +632,10 @@
             // pulsos
             const pa = this.pPos;
             this.pulses.forEach((p, i) => {
+                // Decaimento suave de volta à velocidade normal após o pulso (dura cerca de 2.5s)
+                if (p.v > p.baseV) {
+                    p.v += (p.baseV - p.v) * Math.min(1, dt * 1.2);
+                }
                 p.u += p.v * dt / Math.max(2, p.e.P.distanceTo(p.e.C));
                 if (p.u > 1) { p.u = 0; p.e = p.e.b.out.length ? p.e.b.out[p.e.b.out.length * Math.random() | 0] : this.E[this.E.length * Math.random() | 0]; }
                 if (p.e.vf < .3) { pa[i * 3] = 0; pa[i * 3 + 1] = -1e5; pa[i * 3 + 2] = 0; return; }

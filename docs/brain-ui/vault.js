@@ -29,8 +29,10 @@ class VaultManager {
 
     async _tryLiveServer() {
         try {
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const timeoutMs = isLocal ? 6000 : 1200;
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 1200);
+            const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
             const res = await fetch('/api/vault', { signal: controller.signal });
             clearTimeout(timeoutId);
 
