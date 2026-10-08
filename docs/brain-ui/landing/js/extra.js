@@ -19,7 +19,9 @@
         f.src = DEMO_URL; f.title = 'AI Second Brain — demo ao vivo'; f.loading = 'lazy'; f.allow = 'fullscreen';
         u.className = 'unload'; u.type = 'button'; u.textContent = (window.I18N && I18N.lang === 'en') ? 'Unload ✕' : 'Descarregar ✕';
         u.onclick = () => { f.remove(); u.remove(); loadBtn.hidden = false; g && g.start(); };
-        loadBtn.hidden = true; body.append(f, u); g && g.stop();      // pausa o grafo do fundo enquanto a demo roda
+        loadBtn.hidden = true; body.append(f, u);
+        // Mantém o grafo do fundo ativo e animado continuamente
+        g && g.start();
     });
 
     // ── Idioma também no grafo (títulos e documentos de exemplo) ──
@@ -30,5 +32,5 @@
     // ── Acessibilidade ──
     $$('.toggle button').forEach(b => { b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', b.classList.contains('on')); b.addEventListener('click', () => $$('.toggle button').forEach(x => x.setAttribute('aria-selected', x === b))); });
     if (g && matchMedia('(prefers-reduced-motion: reduce)').matches) g.autoRotate = false;
-    document.addEventListener('visibilitychange', () => { if (!g) return; document.hidden ? g.stop() : (!document.querySelector('#demo-body iframe') && g.start()); });
+    document.addEventListener('visibilitychange', () => { if (!g) return; document.hidden ? g.stop() : g.start(); });
 })();
