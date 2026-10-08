@@ -442,13 +442,13 @@
             }
             return { totalDocs, categories: Array.from(catMap.values()).sort((a, b) => (b.docCount - a.docCount) || a.label.localeCompare(b.label)) };
         }
-        setCategoryFilter(key) { this.currentCategory = (key === 'all' || !key) ? null : key; return this._applyCombinedFilter(); }
+        setCategoryFilter(key) { this.highlightedCategory = null; this.currentCategory = (key === 'all' || !key) ? null : key; return this._applyCombinedFilter(); }
         filterNodes(q) { this.currentQuery = (q || '').trim(); return this._applyCombinedFilter(); }
         _applyCombinedFilter() {
             const q = norm(this.currentQuery), hasQ = q.length > 0, cat = this.currentCategory, hasCat = Boolean(cat);
             const sat = this.nodes.filter(n => !n.isCentral && n.id !== 'brain'), total = sat.length;
             this.searchLabelSet.clear();
-            if (!hasQ && !hasCat) { this.visSet = null; this._results = []; this._nMatch = 0; this._applyVis(); return { matchedCount: total, totalCount: total, isFiltering: false }; }
+            if (!hasQ && !hasCat) { this.visSet = null; this._results = []; this._nMatch = 0; this.highlightedCategory = null; this._applyVis(); return { matchedCount: total, totalCount: total, isFiltering: false }; }
             const vis = new Set(); let matched = 0;
             for (const n of this.nodes) if (n.isCentral || n.id === 'brain') vis.add(n.id);
             for (const n of sat) {

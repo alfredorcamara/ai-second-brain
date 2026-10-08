@@ -1488,6 +1488,7 @@ function setupGraphCategoryPanel(opts) {
             e.stopPropagation();
             dropdown.style.display = 'none';
             wrap.classList.remove('open');
+            if (typeof g.clearCategoryHighlight === 'function') g.clearCategoryHighlight();
         };
     }
 
@@ -1497,6 +1498,7 @@ function setupGraphCategoryPanel(opts) {
             if (!wrap.contains(e.target)) {
                 dropdown.style.display = 'none';
                 wrap.classList.remove('open');
+                if (typeof g.clearCategoryHighlight === 'function') g.clearCategoryHighlight();
             }
         };
         document.addEventListener('click', wrap._docClickHandler);
@@ -1506,6 +1508,7 @@ function setupGraphCategoryPanel(opts) {
     if (resetBtn) {
         resetBtn.onclick = (e) => {
             e.stopPropagation();
+            if (typeof g.clearCategoryHighlight === 'function') g.clearCategoryHighlight();
             try {
                 if (window.resetToDefaultColors) {
                     window.resetToDefaultColors();
@@ -1571,20 +1574,30 @@ function setupGraphCategoryPanel(opts) {
 
         list.innerHTML = html;
 
+        // Limpa destaque caso o cursor saia de toda a lista
+        list.onmouseleave = () => {
+            if (typeof g.clearCategoryHighlight === 'function') g.clearCategoryHighlight();
+        };
+
         // Binds de hover e clique para filtrar
         list.querySelectorAll('.cat-item').forEach(itemEl => {
             const key = itemEl.getAttribute('data-key');
 
             itemEl.onmouseenter = () => {
-                if (key !== 'all') g.highlightCategory(key);
+                if (key !== 'all') {
+                    if (typeof g.highlightCategory === 'function') g.highlightCategory(key);
+                } else {
+                    if (typeof g.clearCategoryHighlight === 'function') g.clearCategoryHighlight();
+                }
             };
             itemEl.onmouseleave = () => {
-                g.clearCategoryHighlight();
+                if (typeof g.clearCategoryHighlight === 'function') g.clearCategoryHighlight();
             };
 
             itemEl.onclick = (e) => {
                 if (e.target.closest('.cat-item-color-box')) return;
 
+                if (typeof g.clearCategoryHighlight === 'function') g.clearCategoryHighlight();
                 const nextKey = (g.currentCategory === key || key === 'all') ? null : key;
                 const filterRes = g.setCategoryFilter(nextKey);
 

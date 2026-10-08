@@ -2270,6 +2270,7 @@ class BrainGraph {
     }
 
     setCategoryFilter(categoryKey) {
+        this.highlightedCategory = null;
         this.currentCategory = (categoryKey === 'all' || !categoryKey) ? null : categoryKey;
         return this._applyCombinedFilter();
     }
@@ -2292,6 +2293,7 @@ class BrainGraph {
         this.searchLabelSet.clear();
 
         if (!hasQuery && !hasCat) {
+            this.highlightedCategory = null;
             for (const n of this.nodes) {
                 if (n.mesh) n.mesh.visible = true;
             }
