@@ -1,7 +1,7 @@
 (() => {
     'use strict';
     const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-    const { nodes, colors, folders } = window.LANDING_DATA;
+    let { nodes, colors, folders } = window.LANDING_DATA;
 
     // ── Grafo neural 3D (palco vivo) ──
     const cv = $('#graph'), g = new BrainGraph(cv, $('#tip'));
@@ -9,6 +9,8 @@
     g.wheelZoom = false; // por padrão roda rola a página, mas em modo explorer ativa zoom
     g.loadData(nodes, [], colors);
     g.start();
+    // Ponte para extra.js / i18n: recarrega o grafo em outro idioma sem recriar o motor
+    window.__brain = { g, setData(d) { nodes = d.nodes; folders = d.folders; colors = d.colors; g.loadData(nodes, [], colors); } };
 
     // Eventos de clique em nós
     g.onNodeClick = n => {
@@ -253,10 +255,8 @@
 
     const btnStyle = $('#btn-style');
     const btnStyleText = $('#btn-style-text');
-    if (btnStyleText && g) {
-        btnStyleText.textContent = g.nodeStyle === 'sphere' ? 'Esferas' : 'Neurônios';
-    }
     if (btnStyle) {
+        if (btnStyleText && g) btnStyleText.textContent = g.nodeStyle === 'sphere' ? 'Esferas' : 'Neurônios';
         btnStyle.onclick = () => {
             const style = g.toggleNodeStyle();
             if (btnStyleText) btnStyleText.textContent = style === 'sphere' ? 'Esferas' : 'Neurônios';

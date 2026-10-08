@@ -6,10 +6,21 @@
 <title>AI Second Brain — Dê uma memória viva e persistente à sua IA</title>
 <meta name="description" content="Memória persistente em Markdown para agentes de IA, com um grafo neural 3D interativo. Open source, agnóstico e sem lock-in.">
 <link rel="icon" href="assets/favicon.svg">
+<link rel="canonical" href="https://alfredorcamara.github.io/ai-second-brain/landing/">
+<meta name="theme-color" content="#03060f">
+<meta property="og:type" content="website"><meta property="og:site_name" content="AI Second Brain">
+<meta property="og:title" content="AI Second Brain — Dê uma memória viva ao seu agente de IA">
+<meta property="og:description" content="Regras, decisões e lições em Markdown viram um grafo neural 3D que o seu agente lê a cada sessão. Open source.">
+<meta property="og:image" content="https://alfredorcamara.github.io/ai-second-brain/landing/assets/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:url" content="https://alfredorcamara.github.io/ai-second-brain/landing/"><meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI Second Brain"><meta name="twitter:description" content="Memória persistente em Markdown para agentes de IA, com grafo neural 3D interativo.">
+<meta name="twitter:image" content="https://alfredorcamara.github.io/ai-second-brain/landing/assets/og-image.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/landing.css">
+<link rel="stylesheet" href="css/extra.css">
 </head>
 <body>
 
@@ -29,7 +40,10 @@
   <div class="links">
     <a href="#problema">Problema</a>
     <a href="#como">4 Camadas</a>
-    <a href="#vantagens">Vantagens</a>
+    <a href="#arquitetura">Arquitetura</a>
+    <a href="#demo">Demo</a>
+    <a href="#faq">FAQ</a>
+    <button class="lang-btn" id="lang-btn" type="button" aria-label="Mudar idioma / Switch language">EN</button>
     <a class="btn sm primary" href="https://github.com/alfredorcamara/ai-second-brain" target="_blank" rel="noopener" data-gh>GitHub ↗</a>
   </div>
 </nav>
@@ -73,6 +87,11 @@
   <h2 class="rv">Toda sessão começa <em>do zero absoluto.</em></h2>
   <p class="sub rv">Seu agente é brilhante no raciocínio, mas tem amnésia crônica entre conversas. Veja a diferença ao vivo:</p>
   
+  <div class="pains">
+    <div class="pain rv"><i>🌪️</i><h3>Amnésia de Contexto</h3><p>Cada nova janela de contexto reinicia o modelo. Sem um cérebro externo, o agente esquece por que escolheu cada biblioteca e refaz erros passados.</p></div>
+    <div class="pain rv"><i>🧭</i><h3>Context Drift</h3><p>Sem diretrizes de arquitetura centralizadas, a base de código degrada com padrões conflitantes a cada novo prompt.</p></div>
+    <div class="pain rv"><i>💸</i><h3>Desperdício de Tokens</h3><p>Uso abusivo de LLMs caros para resolver lógicas determinísticas que código simples ou motores de regras resolvem com latência zero.</p></div>
+  </div>
   <div class="toggle rv" role="tablist">
     <button class="on" data-mode="sem" id="tab-sem">
       <span class="tab-indicator red"></span>
@@ -89,7 +108,7 @@
   <div class="terminal-mockup rv">
     <div class="terminal-header">
       <div class="terminal-dots"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
-      <div class="terminal-title">agent_session_trace.log — Claude / Cursor / Antigravity</div>
+      <div class="terminal-title">agent_session_trace.log — exemplo ilustrativo</div>
       <div class="terminal-pill" id="terminal-mode-pill">Status: Amnésia Ativa</div>
     </div>
     
@@ -98,7 +117,7 @@
         <span>⚠️ Nenhuma memória persistente encontrada. O agente não conhece o projeto nem as decisões arquiteturais tomadas ontem.</span>
       </div>
       <div class="msg you">
-        <div class="msg-author">Alfredo (Dev)</div>
+        <div class="msg-author">Dev</div>
         <div class="msg-text">Vamos continuar a feature de login que começamos ontem?</div>
       </div>
       <div class="msg ai bad">
@@ -106,7 +125,7 @@
         <div class="msg-text">Claro! Qual é a stack do projeto? Que banco usamos? Já existe alguma decisão sobre JWT ou Session cookies? Como tratamos os segredos de autenticação?</div>
       </div>
       <div class="msg you">
-        <div class="msg-author">Alfredo (Dev)</div>
+        <div class="msg-author">Dev</div>
         <div class="msg-text">…já expliquei tudo isso ontem. Passamos 40 minutos alinhando a arquitetura. De novo isso?</div>
       </div>
       <div class="msg ai bad">
@@ -114,16 +133,16 @@
         <div class="msg-text">Mil desculpas! Não tenho memória persistente entre sessões. Se puder reenviar o contexto, schemas e decisões arquiteturais, começo agora…</div>
       </div>
       <div class="chat-footer-stat red-stat">
-        <span>🔴 Impacto: ~4.850 tokens gastos reexplicando o básico + 35 minutos perdidos + alto risco de desvio arquitetural.</span>
+        <span>🔴 Impacto (exemplo ilustrativo): ~4.850 tokens gastos reexplicando o básico + 35 minutos perdidos + alto risco de desvio arquitetural.</span>
       </div>
     </div>
 
     <div class="chat" data-mode="com" hidden>
       <div class="chat-banner success-banner">
-        <span>⚡ Memória conectada: <code>memory/estado.md</code>, <code>decisions/adr-003.md</code> e <code>rules/seguranca.md</code> carregados em 12ms.</span>
+        <span>⚡ Memória conectada: <code>memory/estado.md</code>, <code>decisions/adr-003.md</code> e <code>rules/seguranca.md</code> carregados no início da sessão.</span>
       </div>
       <div class="msg you">
-        <div class="msg-author">Alfredo (Dev)</div>
+        <div class="msg-author">Dev</div>
         <div class="msg-text">Vamos continuar a feature de login que começamos ontem?</div>
       </div>
       <div class="msg ai ok">
@@ -135,7 +154,7 @@
         </div>
       </div>
       <div class="msg you">
-        <div class="msg-author">Alfredo (Dev)</div>
+        <div class="msg-author">Dev</div>
         <div class="msg-text">Sim, vai em frente. Perfeito.</div>
       </div>
       <div class="msg ai ok">
@@ -143,7 +162,7 @@
         <div class="msg-text">Feito! Middleware criado e testado. Atualizei <code>memory/sessao-13.md</code> com os próximos passos. Próximo agente assume sem perda de contexto.</div>
       </div>
       <div class="chat-footer-stat green-stat">
-        <span>🟢 Impacto: 0 tokens desperdiçados · Contexto 100% preservado · Início imediato em 10 segundos.</span>
+        <span>🟢 Impacto (exemplo ilustrativo): 0 tokens desperdiçados · Contexto 100% preservado · Início imediato em 10 segundos.</span>
       </div>
     </div>
   </div>
@@ -225,6 +244,34 @@
   </div>
 </section>
 
+<section class="sec " id="arquitetura">
+  <div class="sec-badge rv">Por dentro do cérebro</div>
+  <h2 class="rv">Arquitetura que <em>não esquece.</em></h2>
+  <p class="sub rv">Quatro diagramas mostram como o cérebro se conecta aos seus repositórios, decide entre IA e código, pesquisa sozinho e mantém o contexto entre sessões.</p>
+  <div class="diag-tabs rv" role="tablist"><button role="tab" class="diag-tab on" data-d="hub" aria-selected="true">Hub & Satélites</button><button role="tab" class="diag-tab" data-d="rota" aria-selected="false">Decisão: IA ou código</button><button role="tab" class="diag-tab" data-d="lab" aria-selected="false">Research Lab</button><button role="tab" class="diag-tab" data-d="ciclo" aria-selected="false">Ciclo da sessão</button></div>
+  <div class="diagram-frame rv"><img class="diag on" data-d="hub" src="assets/diagrams/hub-satellites-architecture.svg" alt="Diagrama: hub central e repositórios satélite" loading="lazy"><img class="diag" data-d="rota" src="assets/diagrams/ai-decision-routing.svg" alt="Diagrama: roteamento de decisão entre IA e código" loading="lazy"><img class="diag" data-d="lab" src="assets/diagrams/research-two-layers.svg" alt="Diagrama: Research Lab em duas camadas" loading="lazy"><img class="diag" data-d="ciclo" src="assets/diagrams/session-lifecycle-loop.svg" alt="Diagrama: ciclo de vida da sessão com zero amnésia" loading="lazy"></div>
+  <div class="diag-caps rv"><p class="diag-cap on" data-d="hub">Um hub central guarda governança, regras e memória. Cada repositório satélite (API, app web, mobile) mantém o código, o CI/CD e o Docker, e se conecta ao cérebro sem duplicar arquivos.</p><p class="diag-cap" data-d="rota">Antes de gastar tokens, o portão de decisão pergunta: a tarefa é determinística e sem ambiguidade semântica? Se sim, código ou regras resolvem com latência zero. Só o restante vai para um modelo de IA.</p><p class="diag-cap" data-d="lab">O prompt de pesquisa é um documento vivo: refinado com IA e versionado (v1, v2…). O motor gera duas camadas de arquivos: conhecimento conceitual e especificações acionáveis.</p><p class="diag-cap" data-d="ciclo">Zero amnésia: cada sessão começa lendo o estado atual, desenvolve com o contexto e termina registrando o que foi feito. A próxima assume exatamente de onde esta parou.</p></div>
+</section>
+<section class="sec " id="research">
+  <div class="sec-badge rv">Research Lab</div>
+  <h2 class="rv">Um laboratório que <em>pesquisa sozinho.</em></h2>
+  <p class="sub rv">Descreva o tema, refine o prompt com IA e deixe o motor autônomo, sem dependências externas, gerar a base de conhecimento do seu projeto.</p>
+  <div class="duo">
+    <div class="layer rv" style="--c:#38bdf8"><b>1</b><h3>Camada Knowledge</h3><p>Arquivos conceituais com teoria de engenharia, arquitetura de sistemas, trade-offs e boas práticas de mercado.</p><code>research/knowledge/</code></div>
+    <div class="layer rv" style="--c:#ffc76b"><b>2</b><h3>Camada Actionable</h3><p>Especificações práticas: schemas SQL Server e Prisma, controllers TypeScript/Node.js e testes automatizados prontos para uso.</p><code>research/actionable/</code></div>
+  </div>
+  <div class="resil rv"><h3>Feito para não quebrar</h3><ul><li><b>Recuperação de rate limit:</b> lê o tempo de espera informado pela Groq Cloud e tenta de novo com 2 s de margem.</li><li><b>Cadência preventiva de 6 s</b> entre arquivos, para não esgotar o limite de tokens por minuto.</li><li><b>Retomada automática:</b> reconhece arquivos já gerados e não gasta tokens refazendo.</li><li><b>Progresso em tempo real</b> (SSE) na interface durante toda a pesquisa.</li><li><b>Fallback entre modelos</b> com retentativas exponenciais; decisões determinísticas seguem 100% locais.</li></ul></div>
+</section>
+<section class="sec " id="projeto">
+  <div class="sec-badge rv">Quickstart Studio</div>
+  <h2 class="rv">Conecte um projeto em <em>menos de 3 minutos.</em></h2>
+  <p class="sub rv">Dois caminhos, o mesmo resultado: governança, decisões e memória persistente desde o primeiro dia.</p>
+  <div class="grid trio">
+    <div class="card rv"><div class="card-icon-wrap" style="--c:#a3e635"><i>🚀</i></div><h3>Criar do zero</h3><p>Para ideias novas. Cria PROJECT.md e CURRENT_STATE.md, um template de ARCHITECTURE.md e o diretório de decisões e de memória de sessões.</p></div>
+    <div class="card rv"><div class="card-icon-wrap" style="--c:#38bdf8"><i>🔗</i></div><h3>Vincular um projeto existente</h3><p>Conecta qualquer pasta ou repositório Git que você já tem, sem duplicar arquivos. No Windows usa junções NTFS ou symlinks: seu código continua onde está.</p></div>
+    <div class="card rv"><div class="card-icon-wrap" style="--c:#c084fc"><i>💾</i></div><h3>Backups e dossiês</h3><p>Cada projeto exporta um dossiê completo em Markdown (legível por humanos) e JSON (auditável por scripts) na pasta BACKUPS do projeto.</p></div>
+  </div>
+</section>
 <!-- ── SEÇÃO: VANTAGENS (BENTO GRID) ── -->
 <section class="sec" id="vantagens">
   <div class="sec-badge rv">Superpoderes do Sistema</div>
@@ -275,11 +322,35 @@
   </div>
 </section>
 
+<section class="sec " id="demo">
+  <div class="sec-badge rv">Demo ao vivo</div>
+  <h2 class="rv">Não acredite: <em>teste agora.</em></h2>
+  <p class="sub rv">O dashboard real, rodando no navegador com um vault de exemplo. Explore o grafo, abra documentos e leia a documentação. É somente leitura.</p>
+  <div class="browser rv">
+    <div class="browser-bar"><span class="dots"><i></i><i></i><i></i></span><span class="url">demo/index.html</span><a href="../demo/index.html" target="_blank" rel="noopener">Abrir em tela cheia ↗</a></div>
+    <div class="browser-body" id="demo-body"><button class="btn primary" id="load-demo" type="button">▶ Carregar o dashboard aqui</button></div>
+  </div>
+  <p class="note rv">Criar projetos, editar arquivos e rodar o Research Lab exigem a instalação local.</p>
+</section>
+<section class="sec " id="faq">
+  <div class="sec-badge rv">Perguntas frequentes</div>
+  <h2 class="rv">Dúvidas? <em>Respondidas.</em></h2>
+  <p class="sub rv">O que quem vai instalar costuma perguntar.</p>
+  <div class="faq"><details class="rv"><summary>Como os projetos são vinculados sem duplicar arquivos?</summary><p>No Windows, o AI Second Brain usa junções NTFS (Junctions) ou symlinks de diretório. Os arquivos permanecem nos repositórios originais; só o espelho de governança é conectado ao cérebro.</p></details><details class="rv"><summary>Funciona com qualquer agente de IA?</summary><p>Com qualquer agente que leia arquivos do projeto. Arquivos de entrada na raiz (como CLAUDE.md e GEMINI.md) apontam o agente para as regras, a memória e as decisões.</p></details><details class="rv"><summary>Preciso de banco vetorial ou de alguma infraestrutura?</summary><p>Não. O cérebro é feito de arquivos Markdown versionados no Git, legíveis por pessoas e por qualquer IA, sem banco proprietário e sem lock-in.</p></details><details class="rv"><summary>Meus dados saem da minha máquina?</summary><p>O cérebro vive nos seus arquivos locais e no seu Git. O Research Lab é o recurso que chama um provedor de IA em nuvem (Groq Cloud), e só quando você o usa. Tarefas determinísticas e decisões seguem locais.</p></details><details class="rv"><summary>O que acontece se a Groq Cloud ficar indisponível?</summary><p>O cliente HTTP tem fallback para outros modelos e retentativas exponenciais com backoff. Tarefas determinísticas e decisões do portão de IA continuam funcionando com 100% de disponibilidade local.</p></details><details class="rv"><summary>Onde ficam os backups e dossiês de governança?</summary><p>Na pasta física projects/&lt;nome&gt;/BACKUPS/, com exportação completa em Markdown (legível por humanos) e JSON estruturado (auditável por scripts).</p></details><details class="rv"><summary>Posso testar antes de instalar?</summary><p>Sim. A demo ao vivo desta página roda o dashboard real com um vault de exemplo, em modo somente leitura.</p></details></div>
+</section>
+<section class="sec " id="comunidade">
+  <div class="sec-badge rv">Open source de verdade</div>
+  <h2 class="rv">Construído <em>em aberto.</em></h2>
+  <p class="sub rv">Encontrou um bug, quer uma skill nova ou tem uma ideia? Abra uma issue ou envie um pull request.</p>
+  <div class="cta rv"><a class="btn primary" href="https://github.com/alfredorcamara/ai-second-brain" target="_blank" rel="noopener">⭐ Dar uma estrela</a>
+    <a class="btn ghost" href="https://github.com/alfredorcamara/ai-second-brain/issues" target="_blank" rel="noopener">🐛 Reportar uma issue</a>
+    <a class="btn ghost" href="https://github.com/alfredorcamara/ai-second-brain/pulls" target="_blank" rel="noopener">🤝 Contribuir</a></div>
+</section>
 <!-- ── SEÇÃO: COMEÇAR (TERMINAL & QUICKSTART) ── -->
 <section class="sec final" id="comecar">
   <div class="sec-badge rv">Implementação Imediata</div>
   <h2 class="rv">Comece em <em>menos de 2 minutos.</em></h2>
-  <p class="sub rv">Basta clonar o template na raiz do seu projeto e apontar seu agente favorito (Claude, Cursor, Antigravity, Copilot).</p>
+  <p class="sub rv">Basta clonar o template na raiz do seu projeto e apontar seu agente favorito (ex.: Claude Code, Cursor, Antigravity ou qualquer agente que leia arquivos do projeto).</p>
   
   <div class="code-box rv">
     <div class="code-header">
@@ -301,6 +372,7 @@
   </div>
   
   <footer>
+    <div class="footer-links"><a href="../demo/index.html">Demo</a><a href="https://github.com/alfredorcamara/ai-second-brain/issues" target="_blank" rel="noopener">Issues</a><a href="#faq">FAQ</a></div>
     <div class="footer-content">
       <span>AI Second Brain — O Sistema Operacional de Memória para Agentes de IA</span>
       <span class="footer-sep">·</span>
@@ -359,6 +431,9 @@
 <script src="js/vendor/three.min.js"></script>
 <script src="js/vendor/neuron-graph.js"></script>
 <script src="js/data.js"></script>
+<script src="js/i18n.dict.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/main.js"></script>
+<script src="js/extra.js"></script>
 </body>
 </html>

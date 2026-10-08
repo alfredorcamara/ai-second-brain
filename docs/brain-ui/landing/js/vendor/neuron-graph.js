@@ -390,7 +390,7 @@
         rotateBy(r) { this.th += r; }
         toggleAutoOrbit() { this.autoRotate = !this.autoRotate; this._notifyCameraChange(); return this.autoRotate; }
         _flyTo(th, ph, di, tgt) { this.anim = { t: 0, a: { th: this.th, ph: this.ph, di: this.di, tg: this.tgt.clone() }, b: { th, ph, di, tg: tgt.clone() } }; }
-        resetView() { this._flyTo(0.6, 1.3, this.defaultDist, new V3()); this.dT = this.defaultDist; }
+        resetView() { this._flyTo(this.th, 1.3, this.defaultDist, new V3()); this.dT = this.defaultDist; }
         focusNode(node) {
             if (!node) return; this.selectedNode = node;
             const p = node.position ? node.position.clone() : new V3();

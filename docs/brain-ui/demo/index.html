@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[Demo] AI Second Brain — Visualizer</title>
+    <meta name="description" content="Visualizador interativo do AI Second Brain - Alfredo AI OS">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧠</text></svg>">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <div id="app">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 32 32" fill="none">
+                            <circle cx="16" cy="16" r="14" stroke="url(#grad1)" stroke-width="2"/>
+                            <circle cx="16" cy="16" r="8" stroke="url(#grad2)" stroke-width="1.5"/>
+                            <circle cx="16" cy="16" r="3" fill="url(#grad3)"/>
+                            <line x1="16" y1="2" x2="16" y2="8" stroke="url(#grad1)" stroke-width="1" opacity="0.5"/>
+                            <line x1="16" y1="24" x2="16" y2="30" stroke="url(#grad1)" stroke-width="1" opacity="0.5"/>
+                            <line x1="2" y1="16" x2="8" y2="16" stroke="url(#grad1)" stroke-width="1" opacity="0.5"/>
+                            <line x1="24" y1="16" x2="30" y2="16" stroke="url(#grad1)" stroke-width="1" opacity="0.5"/>
+                            <defs>
+                                <linearGradient id="grad1" x1="0" y1="0" x2="32" y2="32">
+                                    <stop offset="0%" stop-color="#6366f1"/>
+                                    <stop offset="100%" stop-color="#8b5cf6"/>
+                                </linearGradient>
+                                <linearGradient id="grad2" x1="8" y1="8" x2="24" y2="24">
+                                    <stop offset="0%" stop-color="#818cf8"/>
+                                    <stop offset="100%" stop-color="#a78bfa"/>
+                                </linearGradient>
+                                <radialGradient id="grad3" cx="50%" cy="50%">
+                                    <stop offset="0%" stop-color="#c4b5fd"/>
+                                    <stop offset="100%" stop-color="#8b5cf6"/>
+                                </radialGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-title">AI Second Brain</span>
+                        <span class="logo-subtitle">Alfredo AI OS</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-search">
+                <div class="search-box">
+                    <svg class="search-icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"/>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Buscar no cérebro..." autocomplete="off">
+                    <button id="btnSidebarSearchClear" class="sidebar-search-clear" title="Limpar pesquisa (Esc)" style="display: none;">✕</button>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav" id="sidebarNav">
+                <!-- Populated by JS -->
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="stats" id="brainStats">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main id="mainContent" class="main-content">
+            <!-- Top Bar -->
+            <header class="topbar">
+                <button id="sidebarToggle" class="sidebar-toggle" aria-label="Toggle sidebar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 12h18M3 6h18M3 18h18"/>
+                    </svg>
+                </button>
+                <div class="breadcrumbs" id="breadcrumbs">
+                    <span class="breadcrumb-item active">🧠 Visão Geral</span>
+                </div>
+                <div class="topbar-actions">
+                    <div class="vault-status-container">
+                        <span id="vaultStatusBadge" class="vault-status snapshot" title="Status do Cérebro">
+                            <span class="status-dot snapshot"></span> Snapshot
+                        </span>
+                        <input type="file" id="folderPickerInput" webkitdirectory directory multiple style="display:none">
+                        <button id="btnConnectFolder" class="btn-folder-connect" title="Selecionar pasta do projeto para leitura local dinâmica">
+                            📂 Conectar Pasta
+                        </button>
+                    </div>
+                    <button id="viewToggle" class="view-toggle" title="Alternar visualização">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Graph View -->
+            <div id="graphView" class="graph-view">
+                <canvas id="graphCanvas"></canvas>
+                <div id="graphTooltip" class="graph-tooltip"></div>
+
+                <!-- Floating HUD Status Pill -->
+                <div class="graph-hud-pill">
+                    <span class="hud-pill-item"><span class="hud-dot"></span><span id="hudNodeCount">30</span> nós</span>
+                    <span class="hud-divider"></span>
+                    <span class="hud-pill-item" id="hudZoomPill">🔍 100%</span>
+                    <span class="hud-divider"></span>
+                    <span class="hud-pill-item" id="hudRotationPill">🪐 Em Órbita</span>
+                    <span class="hud-divider"></span>
+                    <span class="hud-pill-item" id="hudSelectedNode" style="color: #c4b5fd;">⚡ Duplo-clique para abrir</span>
+                </div>
+
+                <!-- Floating Graph Search Box -->
+                <div class="graph-search-box" id="graphSearchBox">
+                    <span class="graph-search-icon">🔍</span>
+                    <input type="text" id="graphSearchInput" class="graph-search-input" placeholder="Pesquisar documento no grafo..." autocomplete="off" spellcheck="false">
+                    <button id="btnGraphSearchClear" class="graph-search-clear" title="Limpar pesquisa (Esc)" style="display: none;">✕</button>
+                    <span class="graph-search-badge" id="graphSearchBadge" style="display: none;">0</span>
+                </div>
+
+                <!-- Floating HUD Controls Toolbar -->
+                <div class="graph-controls">
+                    <button id="btnZoomIn" class="graph-btn" title="Aproximar Zoom (+)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                    </button>
+                    <button id="btnZoomOut" class="graph-btn" title="Afastar Zoom (-)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                    </button>
+                    <div class="graph-btn-sep"></div>
+                    <button id="btnRotateLeft" class="graph-btn" title="Girar Planeta (↺)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                            <path d="M3 3v5h5"></path>
+                        </svg>
+                    </button>
+                    <button id="btnRotateRight" class="graph-btn" title="Girar Planeta (↻)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12a9 9 0 1 1-9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                            <path d="M21 3v5h-5"></path>
+                        </svg>
+                    </button>
+                    <button id="btnAutoOrbit" class="graph-btn active" title="Auto-Órbita do Planeta (🪐)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="4"></circle>
+                            <path d="M4.93 4.93c4.24-4.24 11.14-4.24 15.38 0 4.24 4.24 4.24 11.14 0 15.38-4.24 4.24-11.14 4.24-15.38 0"></path>
+                        </svg>
+                    </button>
+                    <div class="graph-btn-sep"></div>
+                    <button id="btnShake" class="graph-btn" title="Reorganizar 3D (⚡)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                    </button>
+                    <button id="btnResetView" class="graph-btn" title="Centralizar Planeta (⊙)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                    <button id="btnFullscreen" class="graph-btn" title="Tela Cheia (⛶)">
+                        <svg class="icon-expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                        </svg>
+                        <svg class="icon-compress" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                            <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>
+                        </svg>
+                    </button>
+                    <div class="graph-btn-sep"></div>
+                    <button id="btnToggleNodeStyle" class="graph-btn" title="Alternar estilo dos nós (🪐 Esferas / 🧠 Neurônios)">
+                        <span id="nodeStyleIcon" style="font-size: 14px;">🪐</span>
+                    </button>
+                    <label class="icon-toggle" title="Mostrar ícones nos nós">
+                        <input type="checkbox" id="toggleIcons">
+                        <span class="icon-toggle-slider"></span>
+                        <span class="icon-toggle-label">🎨</span>
+                    </label>
+                </div>
+
+                <!-- Floating HUD Hints -->
+                <div class="graph-hud-hints">
+                    <div class="hint-item"><kbd>Girar Planeta</kbd> Arrastar botão esquerdo</div>
+                    <div class="hint-item"><kbd>Mover Câmera</kbd> Botão direito / Pan</div>
+                    <div class="hint-item"><kbd>Scroll</kbd> Zoom 3D</div>
+                    <div class="hint-item"><kbd>Arrastar Nó</kbd> Arrasta nós interligados (física elástica)</div>
+                    <div class="hint-item"><kbd>Clique</kbd> Selecionar e destacar rota da pasta</div>
+                    <div class="hint-item"><kbd>Duplo-Clique</kbd> Abrir documento/projeto</div>
+                    <div class="hint-item"><kbd>N</kbd> Alternar Esferas / Neurônios</div>
+                    <div class="hint-item"><kbd>I</kbd> Alternar ícones nos nós</div>
+                </div>
+
+                <!-- Floating Dynamic Category Filter & Color Customization Panel -->
+                <div class="graph-cat-panel-wrap" id="graphCatPanelWrap">
+                    <button class="graph-cat-trigger" id="graphCatTrigger" type="button" title="Filtrar por camadas e configurar cores">
+                        <span class="cat-trigger-icon">🪐</span>
+                        <span class="cat-trigger-label" id="graphCatTriggerLabel">Camadas</span>
+                        <span class="cat-trigger-badge" id="graphCatTriggerBadge">0</span>
+                        <span class="cat-trigger-arrow">▾</span>
+                    </button>
+                    <div class="graph-cat-dropdown" id="graphCatDropdown" style="display: none;">
+                        <div class="cat-dropdown-header">
+                            <div class="cat-header-title">
+                                <span>🪐</span> Camadas & Cores
+                            </div>
+                            <div class="cat-header-actions">
+                                <button class="cat-header-btn" id="btnGraphResetColors" type="button" title="Restaurar paleta original de cores">↺ Padrão</button>
+                                <button class="cat-header-btn close" id="btnGraphCloseCat" type="button" title="Fechar painel">✕</button>
+                            </div>
+                        </div>
+                        <div class="cat-dropdown-list" id="graphCatList">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Document View -->
+            <div id="docView" class="doc-view">
+                <div class="doc-container" id="docContainer">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Project Dedicated Workspace (Project Hub) -->
+            <div id="projectWorkspaceView" class="project-workspace-view">
+                <div class="pw-container">
+                    <!-- Project Hero Banner -->
+                    <div class="pw-header-card">
+                        <div class="pw-header-top">
+                            <div class="pw-title-group">
+                                <span class="pw-icon" id="pwIcon">🚀</span>
+                                <div>
+                                    <div class="pw-meta-tags">
+                                        <span class="pw-badge" id="pwTypeBadge">Brownfield 🔗</span>
+                                        <span class="pw-badge stack" id="pwStackBadge">Node.js</span>
+                                        <span class="pw-badge status" id="pwStatusBadge">🟢 Ativo</span>
+                                    </div>
+                                    <h1 class="pw-title" id="pwTitle">Nome do Projeto</h1>
+                                </div>
+                            </div>
+                            <div class="pw-header-actions">
+                                <button class="btn btn-secondary btn-sm" id="btnPwOpenDoc" title="Ver arquivo Markdown raw">
+                                    📄 Ver Markdown
+                                </button>
+                                <button class="btn btn-accent btn-sm" onclick="showDashboard()">
+                                    🧠 Dashboard Geral
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="pw-path-row">
+                            <span class="pw-path-label">Localização no Computador:</span>
+                            <code class="pw-path-code" id="pwRealPath">Carregando caminho...</code>
+                            <button class="pw-copy-btn" id="btnPwCopyPath" onclick="copyProjectPath()" title="Copiar caminho da pasta">📋 Copiar Caminho</button>
+                        </div>
+
+                        <!-- Workspace Navigation Tabs -->
+                        <div class="pw-tabs" id="pwTabs">
+                            <button class="pw-tab active" data-tab="overview" onclick="switchProjectTab('overview')">
+                                <span class="pw-tab-icon">📄</span> Visão Geral
+                            </button>
+                            <button class="pw-tab" data-tab="research" onclick="switchProjectTab('research')">
+                                <span class="pw-tab-icon">🔬</span> Research Lab <span class="pw-tab-pill" id="pwResearchTabBadge" style="display:none;">0</span>
+                            </button>
+                            <button class="pw-tab" data-tab="memory" onclick="switchProjectTab('memory')">
+                                <span class="pw-tab-icon">🧮</span> Memória & Saúde
+                            </button>
+                            <button class="pw-tab" data-tab="graph" onclick="switchProjectTab('graph')">
+                                <span class="pw-tab-icon">🔮</span> Grafo Neural
+                            </button>
+                            <button class="pw-tab" data-tab="backup" onclick="switchProjectTab('backup')">
+                                <span class="pw-tab-icon">📦</span> Backup & Exportação
+                            </button>
+                            <button class="pw-tab" data-tab="settings" onclick="switchProjectTab('settings')">
+                                <span class="pw-tab-icon">⚙️</span> Gerenciar & Desvincular
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tab 1: Visão Geral -->
+                    <div class="pw-tab-pane active" id="pwPaneOverview">
+                        <div id="pwOverviewContent">Carregando visão geral...</div>
+                    </div>
+
+                    <!-- Tab: Research Lab -->
+                    <div class="pw-tab-pane" id="pwPaneResearch">
+                        <div id="pwResearchContent">Carregando laboratório de pesquisa...</div>
+                    </div>
+
+
+                    <!-- Tab 2: Memória & Saúde -->
+                    <div class="pw-tab-pane" id="pwPaneMemory">
+                        <div id="pwMemoryContent">Carregando diagnóstico de memória...</div>
+                    </div>
+
+                    <!-- Tab 3: Grafo Neural Dedicado -->
+                    <div class="pw-tab-pane" id="pwPaneGraph">
+                        <div class="pw-graph-wrapper">
+                            <canvas id="projectGraphCanvas"></canvas>
+                            <div id="projectGraphTooltip" class="graph-tooltip"></div>
+                            
+                            <!-- Floating HUD Status Pill -->
+                            <div class="graph-hud-pill">
+                                <span class="hud-pill-item"><span class="hud-dot"></span><span id="pwGraphNodeCount">0</span> nós no grafo</span>
+                                <span class="hud-divider"></span>
+                                <span class="hud-pill-item" id="pwHudZoomPill">🔍 100%</span>
+                                <span class="hud-divider"></span>
+                                <span class="hud-pill-item" id="pwHudRotationPill">🪐 Em Órbita</span>
+                                <span class="hud-divider"></span>
+                                <span class="hud-pill-item" style="color:#38bdf8;">✨ Sol Central: Projeto</span>
+                            </div>
+
+                            <!-- Floating Project Graph Search Box -->
+                            <div class="graph-search-box" id="pwGraphSearchBox">
+                                <span class="graph-search-icon">🔍</span>
+                                <input type="text" id="pwGraphSearchInput" class="graph-search-input" placeholder="Pesquisar documento no projeto..." autocomplete="off" spellcheck="false">
+                                <button id="btnPwGraphSearchClear" class="graph-search-clear" title="Limpar pesquisa (Esc)" style="display: none;">✕</button>
+                                <span class="graph-search-badge" id="pwGraphSearchBadge" style="display: none;">0</span>
+                            </div>
+
+                            <!-- Floating HUD Controls Toolbar (Paridade com Grafo Neural Padrão) -->
+                            <div class="graph-controls">
+                                <button id="btnPwZoomIn" class="graph-btn" title="Aproximar Zoom (+)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                </button>
+                                <button id="btnPwZoomOut" class="graph-btn" title="Afastar Zoom (-)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                </button>
+                                <div class="graph-btn-sep"></div>
+                                <button id="btnPwRotateLeft" class="graph-btn" title="Girar Planeta (↺)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                                        <path d="M3 3v5h5"></path>
+                                    </svg>
+                                </button>
+                                <button id="btnPwRotateRight" class="graph-btn" title="Girar Planeta (↻)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 12a9 9 0 1 1-9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                                        <path d="M21 3v5h-5"></path>
+                                    </svg>
+                                </button>
+                                <button id="btnPwAutoOrbit" class="graph-btn active" title="Auto-Órbita do Planeta (🪐)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="4"></circle>
+                                        <path d="M4.93 4.93c4.24-4.24 11.14-4.24 15.38 0 4.24 4.24 4.24 11.14 0 15.38-4.24 4.24-11.14 4.24-15.38 0"></path>
+                                    </svg>
+                                </button>
+                                <div class="graph-btn-sep"></div>
+                                <button id="btnPwShake" class="graph-btn" title="Reorganizar 3D (⚡)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                                    </svg>
+                                </button>
+                                <button id="btnPwResetView" class="graph-btn" title="Centralizar Planeta (⊙)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                </button>
+                                <button id="btnPwFullscreen" class="graph-btn" title="Tela Cheia (⛶)">
+                                    <svg class="icon-expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                                    </svg>
+                                    <svg class="icon-compress" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                                        <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>
+                                    </svg>
+                                </button>
+                                <div class="graph-btn-sep"></div>
+                                <button id="btnPwToggleNodeStyle" class="graph-btn" title="Alternar estilo dos nós (🪐 Esferas / 🧠 Neurônios)">
+                                    <span id="pwNodeStyleIcon" style="font-size: 14px;">🪐</span>
+                                </button>
+                                <label class="icon-toggle" title="Mostrar ícones nos nós">
+                                    <input type="checkbox" id="togglePwIcons">
+                                    <span class="icon-toggle-slider"></span>
+                                    <span class="icon-toggle-label">🎨</span>
+                                </label>
+                            </div>
+
+                            <!-- Floating HUD Hints -->
+                            <div class="graph-hud-hints">
+                                <div class="hint-item"><kbd>Girar Planeta</kbd> Arrastar botão esquerdo</div>
+                                <div class="hint-item"><kbd>Puxar Nó</kbd> Arrastar esfera 3D</div>
+                                <div class="hint-item"><kbd>Zoom</kbd> Scroll roda do mouse</div>
+                                <div class="hint-item"><kbd>Mover</kbd> Shift + Arrastar</div>
+                                <div class="hint-item"><kbd>Clique</kbd> Destacar rota pasta / arquivo</div>
+                                <div class="hint-item"><kbd>N</kbd> Alternar Esferas / Neurônios</div>
+                            </div>
+
+                            <!-- Floating Dynamic Category Filter & Color Customization Panel (Project Graph) -->
+                            <div class="graph-cat-panel-wrap" id="pwGraphCatPanelWrap">
+                                <button class="graph-cat-trigger" id="pwGraphCatTrigger" type="button" title="Filtrar por camadas e configurar cores">
+                                    <span class="cat-trigger-icon">🪐</span>
+                                    <span class="cat-trigger-label" id="pwGraphCatTriggerLabel">Camadas</span>
+                                    <span class="cat-trigger-badge" id="pwGraphCatTriggerBadge">0</span>
+                                    <span class="cat-trigger-arrow">▾</span>
+                                </button>
+                                <div class="graph-cat-dropdown" id="pwGraphCatDropdown" style="display: none;">
+                                    <div class="cat-dropdown-header">
+                                        <div class="cat-header-title">
+                                            <span>🪐</span> Camadas & Cores
+                                        </div>
+                                        <div class="cat-header-actions">
+                                            <button class="cat-header-btn" id="btnPwGraphResetColors" type="button" title="Restaurar paleta original de cores">↺ Padrão</button>
+                                            <button class="cat-header-btn close" id="btnPwGraphCloseCat" type="button" title="Fechar painel">✕</button>
+                                        </div>
+                                    </div>
+                                    <div class="cat-dropdown-list" id="pwGraphCatList">
+                                        <!-- Populated dynamically via JS -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 4: Backup & Exportação -->
+                    <div class="pw-tab-pane" id="pwPaneBackup">
+                        <div id="pwBackupContent">Carregando dados de backup...</div>
+                    </div>
+
+                    <!-- Tab 5: Gerenciar & Desvincular -->
+                    <div class="pw-tab-pane" id="pwPaneSettings">
+                        <div id="pwSettingsContent">Carregando opções de gerenciamento...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard overlay on first load -->
+            <div id="dashboardOverlay" class="dashboard-overlay active">
+                <div class="dashboard-container">
+                    <div class="dash-card hero-card">
+                        <div class="hero-content">
+                            <h1>AI Second Brain</h1>
+                            <p>Seu segundo cérebro para desenvolvimento com IA. Organiza conhecimento, decisões, memória e governança para todos os seus projetos.</p>
+                            <div class="hero-actions">
+                                <button class="btn btn-accent btn-hero-qs" onclick="openQuickstartWizard()">
+                                    <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+                                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/>
+                                    </svg>
+                                    Novo ou Conectar Projeto
+                                </button>
+                                <button class="btn btn-primary" onclick="showView('graph')">
+                                    <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+                                        <circle cx="10" cy="10" r="3"/>
+                                        <path d="M10 2v3M10 15v3M3.5 6.5l2.6 1.5M13.9 12l2.6 1.5M3.5 13.5l2.6-1.5M13.9 8l2.6-1.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                                    </svg>
+                                    Ver Grafo Neural
+                                </button>
+                                <button class="btn btn-hero-docs" onclick="navigateTo('solution-docs')" title="Abrir Documentação Completa da Solução">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                                    </svg>
+                                    Documentação
+                                </button>
+                            </div>
+                        </div>
+                        <div class="hero-visual">
+                            <div class="neuron-animation">
+                                <div class="neuron n1"></div>
+                                <div class="neuron n2"></div>
+                                <div class="neuron n3"></div>
+                                <div class="neuron n4"></div>
+                                <div class="neuron n5"></div>
+                                <div class="neuron n6"></div>
+                                <div class="synapse s1"></div>
+                                <div class="synapse s2"></div>
+                                <div class="synapse s3"></div>
+                                <div class="synapse s4"></div>
+                                <div class="synapse s5"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Governança do Cérebro (3 Colunas Perfeitas) -->
+                    <div class="dash-governance-grid">
+                        <!-- Card 1: Arquitetura do Sistema -->
+                        <div class="dash-card arch-card">
+                            <div class="arch-card-header">
+                                <h3 style="margin: 0; font-size: 15px; white-space: nowrap;">🏗️ Arquitetura do Sistema</h3>
+                                <button type="button" class="ai-engine-help-btn" onclick="openAiEngineHelpModal()" title="Como funciona a troca de motor de IA e as pontes no disco?">?</button>
+                            </div>
+                            <div class="arch-diagram" style="margin-top: 14px;">
+                                <div class="arch-layer">
+                                    <div class="arch-box primary arch-node-interactive" id="archPrimaryBox" title="Clique para trocar a IDE ou Agente de IA orquestrador">
+                                        <span id="archEngineIcon">🪐</span>
+                                        <span id="archEngineName" style="margin: 0 4px;">GOOGLE ANTIGRAVITY</span>
+                                        <span class="arch-node-chevron">▾</span>
+                                        <select id="aiEngineSelect" class="arch-engine-overlay-select" onchange="onAiEngineChange(this.value)" title="Selecione sua IDE ou Agente de IA preferido">
+                                            <option value="antigravity">🪐 Google Antigravity</option>
+                                            <option value="cursor">⚡ Cursor AI</option>
+                                            <option value="claude">🤖 Claude Code</option>
+                                            <option value="windsurf">🏄 Windsurf (Cascade)</option>
+                                            <option value="copilot">🐙 GitHub Copilot</option>
+                                            <option value="cline">🦾 Roo Code / Cline</option>
+                                            <option value="universal">🌐 Universal (Agnóstico)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="arch-connector">│</div>
+                                <div class="arch-layer triple">
+                                    <div class="arch-box accent">RULES</div>
+                                    <div class="arch-box accent">SKILLS</div>
+                                    <div class="arch-box accent">KNOWLEDGE</div>
+                                </div>
+                                <div class="arch-connector">│</div>
+                                <div class="arch-layer">
+                                    <div class="arch-box secondary">AI GATEWAY</div>
+                                </div>
+                                <div class="arch-connector">│</div>
+                                <div class="arch-layer triple">
+                                    <div class="arch-box aijev">AIJEV</div>
+                                    <div class="arch-box llm">LLM</div>
+                                    <div class="arch-box rules">RULES</div>
+                                </div>
+                                <div class="arch-connector">│</div>
+                                <div class="arch-layer triple">
+                                    <div class="arch-box project">APIs / Backend</div>
+                                    <div class="arch-box project">SaaS / Web</div>
+                                    <div class="arch-box project">Jogos / Mobile</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: AI Decision Flow -->
+                        <div class="dash-card flow-card">
+                            <h3>🧭 AI Decision Flow</h3>
+                            <div class="flow-diagram">
+                                <div class="flow-step">
+                                    <div class="flow-node start">TAREFA</div>
+                                    <div class="flow-arrow">↓</div>
+                                </div>
+                                <div class="flow-step">
+                                    <div class="flow-node decision">Determinística?</div>
+                                    <div class="flow-branch">
+                                        <span class="flow-yes">SIM → CÓDIGO</span>
+                                    </div>
+                                    <div class="flow-arrow">NÃO ↓</div>
+                                </div>
+                                <div class="flow-step">
+                                    <div class="flow-node decision">Decisão?</div>
+                                    <div class="flow-branch">
+                                        <span class="flow-yes">SIM → AIJEV</span>
+                                    </div>
+                                    <div class="flow-arrow">NÃO ↓</div>
+                                </div>
+                                <div class="flow-step">
+                                    <div class="flow-node decision">Geração?</div>
+                                    <div class="flow-branch">
+                                        <span class="flow-yes">SIM → LLM</span>
+                                    </div>
+                                    <div class="flow-arrow">↓</div>
+                                </div>
+                                <div class="flow-step">
+                                    <div class="flow-node end">VALIDAÇÃO</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: Métricas do Cérebro -->
+                        <div class="dash-card metrics-card">
+                            <h3>📊 Métricas do Cérebro</h3>
+                            <div class="metrics-grid">
+                                <div class="metric">
+                                    <span class="metric-value" id="metricRules">7</span>
+                                    <span class="metric-label">Rules</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-value" id="metricSkills">8</span>
+                                    <span class="metric-label">Skills</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-value" id="metricProjects">3</span>
+                                    <span class="metric-label">Projects</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-value" id="metricKnowledge">6</span>
+                                    <span class="metric-label">Knowledge</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-value" id="metricDecisions">5</span>
+                                    <span class="metric-label">Decisions</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-value" id="metricMemory">3</span>
+                                    <span class="metric-label">Memory</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Seção Exclusiva de Projetos -->
+                    <section class="dash-projects-section" id="dashProjectsSection">
+                        <div class="dash-section-header">
+                            <div class="dash-section-title-wrap">
+                                <span class="dash-section-icon">🚀</span>
+                                <div>
+                                    <h2 class="dash-section-title">Meus Projetos Governamentais</h2>
+                                    <span class="dash-section-subtitle">Workspaces conectados e governados pelo AI Second Brain</span>
+                                </div>
+                                <span class="dash-section-badge" id="dashProjectsCountBadge">0</span>
+                            </div>
+                            <div class="dash-section-actions">
+                                <button class="btn-dash-section-act" onclick="openQuickstartWizard()" title="Criar novo projeto ou vincular pasta existente">
+                                    <span>✨</span> Conectar Novo Projeto
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Projects Grid (Rendered via App Controller) -->
+                        <div class="dash-projects-grid" id="dynamicProjectsSlot"></div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Solution Documentation View (Experiência UAU) -->
+            <div id="solutionDocsView" class="solution-docs-view">
+                <div class="sdoc-container">
+                    <!-- TOC Lateral Esquerdo / Sticky Quick Jump -->
+                    <aside class="sdoc-toc">
+                        <div class="sdoc-toc-card">
+                            <div class="sdoc-toc-header">
+                                <span class="sdoc-toc-icon">📑</span>
+                                <span>Sumário da Solução</span>
+                            </div>
+                            <nav class="sdoc-toc-links" id="sdocTocNav">
+                                <a href="#cap-visao-geral" class="sdoc-toc-link active" onclick="scrollToDocCap('cap-visao-geral', event)">1. Visão Geral &amp; Problema</a>
+                                <a href="#cap-arquitetura" class="sdoc-toc-link" onclick="scrollToDocCap('cap-arquitetura', event)">2. Arquitetura da Solução</a>
+                                <a href="#cap-roteamento" class="sdoc-toc-link" onclick="scrollToDocCap('cap-roteamento', event)">3. Governança &amp; Roteamento</a>
+                                <a href="#cap-research-lab" class="sdoc-toc-link" onclick="scrollToDocCap('cap-research-lab', event)">4. Research Lab Autônomo</a>
+                                <a href="#cap-ciclo-vida" class="sdoc-toc-link" onclick="scrollToDocCap('cap-ciclo-vida', event)">5. Ciclo de Vida &amp; Hands-on</a>
+                                <a href="#cap-recursos-visuais" class="sdoc-toc-link" onclick="scrollToDocCap('cap-recursos-visuais', event)">6. Grafo Neural 3D</a>
+                                <a href="#cap-faq" class="sdoc-toc-link" onclick="scrollToDocCap('cap-faq', event)">7. Checklists &amp; FAQ</a>
+                            </nav>
+                            <div class="sdoc-toc-footer">
+                                <button class="btn btn-secondary btn-sm" onclick="showDashboard()" style="width: 100%; justify-content: center;">
+                                    🧠 Ir ao Dashboard
+                                </button>
+                                <button class="btn btn-accent btn-sm" onclick="openQuickstartWizard()" style="width: 100%; justify-content: center; margin-top: 6px;">
+                                    ✨ Conectar Projeto
+                                </button>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <!-- Corpo Principal da Documentação -->
+                    <article class="sdoc-body" id="sdocBodyScroll">
+                        <!-- Hero da Documentação -->
+                        <header class="sdoc-hero">
+                            <div class="sdoc-hero-badge">
+                                <span class="sdoc-badge-dot"></span>
+                                <span>DOCUMENTAÇÃO OFICIAL DA SOLUÇÃO • ALFREDO AI OS</span>
+                            </div>
+                            <h1 class="sdoc-hero-title">AI Second Brain</h1>
+                            <p class="sdoc-hero-subtitle">
+                                O Sistema Operacional de Governança, Memória Persistente e Pesquisa Autônoma para Desenvolvimento com Inteligência Artificial.
+                            </p>
+                            <div class="sdoc-meta-row">
+                                <span class="sdoc-meta-pill">⏱️ Leitura: ~12 minutos</span>
+                                <span class="sdoc-meta-pill">🏛️ Arquitetura: Hub Central &amp; Satélites</span>
+                                <span class="sdoc-meta-pill">🔬 Motor: Groq Cloud (120b) + SSE</span>
+                                <span class="sdoc-meta-pill">🟢 Status: 100% Operacional</span>
+                            </div>
+                        </header>
+
+                        <!-- Cap 1: Visão Geral & O Problema Real -->
+                        <section class="sdoc-chapter" id="cap-visao-geral">
+                            <div class="sdoc-chapter-num">01</div>
+                            <h2 class="sdoc-chapter-title">Visão Geral &amp; O Problema Real</h2>
+                            <p class="sdoc-lead">
+                                O maior gargalo atual do desenvolvimento com agentes de IA (Google Antigravity, Cursor, Claude Code) não é a capacidade de gerar código, mas sim a <strong>amnésia de contexto e a ausência de governança de longo prazo</strong>.
+                            </p>
+                            
+                            <div class="sdoc-callout warning">
+                                <div class="sdoc-callout-icon">⚠️</div>
+                                <div class="sdoc-callout-content">
+                                    <strong>O Risco do "Vibe Coding" sem Arquitetura:</strong>
+                                    Desenvolver apenas trocando mensagens em chats soltos funciona nos primeiros 2 dias. Após algumas semanas, gera código duplicado, regressões silenciosas, classes desordenadas e alto custo financeiro de tokens.
+                                </div>
+                            </div>
+
+                            <div class="sdoc-grid-cards">
+                                <div class="sdoc-card">
+                                    <div class="sdoc-card-icon">🧠</div>
+                                    <h3>Amnésia de Contexto</h3>
+                                    <p>Cada nova janela de contexto reinicia o modelo. Sem um cérebro externo, o agente esquece por que escolheu cada biblioteca e refaz erros passados.</p>
+                                </div>
+                                <div class="sdoc-card">
+                                    <div class="sdoc-card-icon">🌪️</div>
+                                    <h3>Context Drift</h3>
+                                    <p>Sem diretrizes de arquitetura centralizadas, a base de código degrada com padrões conflitantes a cada novo prompt.</p>
+                                </div>
+                                <div class="sdoc-card">
+                                    <div class="sdoc-card-icon">💸</div>
+                                    <h3>Desperdício de Tokens</h3>
+                                    <p>Uso abusivo de LLMs caros para resolver lógicas determinísticas que código simples ou motores de regras resolvem com latência zero.</p>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Cap 2: Arquitetura da Solução & Camadas do Cérebro -->
+                        <section class="sdoc-chapter" id="cap-arquitetura">
+                            <div class="sdoc-chapter-num">02</div>
+                            <h2 class="sdoc-chapter-title">Arquitetura da Solução &amp; Camadas do Cérebro</h2>
+                            <p>
+                                O <strong>AI Second Brain</strong> adota o padrão de <strong>Hub Central de Governança &amp; Repositórios Satélites Físicos</strong>. O cérebro central armazena regras, memória, decisões e pesquisas, enquanto os repositórios contêm o código executável dos seus produtos.
+                            </p>
+
+                            <!-- Diagrama SVG 1: Hub & Satélites -->
+                            <div class="sdoc-diagram-box">
+                                <div class="sdoc-diagram-header">
+                                    <span class="sdoc-diagram-tag">DIAGRAMA ARQUITETURAL INTERATIVO</span>
+                                    <span class="sdoc-diagram-status">● SVG Animado</span>
+                                </div>
+                                <img src="assets/diagrams/hub-satellites-architecture.svg?v=3" alt="Arquitetura Hub Central e Repositórios Satélites" class="sdoc-diagram-img" />
+                                <div class="sdoc-diagram-caption">
+                                    Figura 1: O Hub Central transmitindo contratos, regras e memória para múltiplos projetos satélites em qualquer stack.
+                                </div>
+                            </div>
+
+                            <h3 class="sdoc-subtitle">Onde Mora Cada Informação no Cérebro?</h3>
+                            <div class="sdoc-table-wrapper">
+                                <table class="sdoc-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Camada</th>
+                                            <th>Diretório</th>
+                                            <th>Finalidade Estratégica</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Regras Absolutas</strong></td>
+                                            <td><code>.agents/rules/</code></td>
+                                            <td>Restrições universais inegociáveis de IA, segurança e qualidade de código.</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Skills do Agente</strong></td>
+                                            <td><code>.agents/skills/</code></td>
+                                            <td>Workflows acionáveis (onboarding de projetos, revisão arquitetural, persistência de sessão).</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Base de Conhecimento</strong></td>
+                                            <td><code>knowledge/</code></td>
+                                            <td>Padrões conceituais universais (AI Gateway, AIJev, OWASP, Arquitetura).</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Memória Global</strong></td>
+                                            <td><code>memory/</code></td>
+                                            <td>Histórico de continuidade entre sessões (<code>current-state.md</code> e <code>lessons-learned.md</code>).</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Projetos Governados</strong></td>
+                                            <td><code>projects/</code></td>
+                                            <td>Hub de contratos individuais (<code>PROJECT.md</code>, <code>CURRENT_STATE.md</code>, <code>BACKUPS/</code>, <code>RESEARCH/</code>).</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Research Lab</strong></td>
+                                            <td><code>projects/&lt;nome&gt;/RESEARCH/</code></td>
+                                            <td>Laboratório autônomo de geração de conhecimento em duas camadas.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <!-- Cap 3: Governança & Roteamento de IA -->
+                        <section class="sdoc-chapter" id="cap-roteamento">
+                            <div class="sdoc-chapter-num">03</div>
+                            <h2 class="sdoc-chapter-title">Governança &amp; Roteamento de IA (AIJev First)</h2>
+                            <p>
+                                O coração da eficiência do Alfredo AI OS é o <strong>Roteamento Inteligente de Tarefas</strong>. Antes de executar qualquer ação, o agente avalia se o problema é determinístico, de decisão ou de geração.
+                            </p>
+
+                            <!-- Diagrama SVG 2: Roteamento de IA -->
+                            <div class="sdoc-diagram-box">
+                                <div class="sdoc-diagram-header">
+                                    <span class="sdoc-diagram-tag">FLUXO DE DECISÃO DE ENGENHARIA</span>
+                                    <span class="sdoc-diagram-status">● SVG Animado</span>
+                                </div>
+                                <img src="assets/diagrams/ai-decision-routing.svg?v=2" alt="Árvore de Roteamento de Decisão com IA" class="sdoc-diagram-img" />
+                                <div class="sdoc-diagram-caption">
+                                    Figura 2: Árvore de Roteamento com priorização estrita: Código Determinístico ➔ AIJev ➔ LLM apenas quando essencial.
+                                </div>
+                            </div>
+
+                            <div class="sdoc-callout tip">
+                                <div class="sdoc-callout-icon">💡</div>
+                                <div class="sdoc-callout-content">
+                                    <strong>Regra de Ouro de Custo &amp; Latência:</strong>
+                                    Se uma tarefa pode ser resolvida por um cálculo, regex ou regra de negócio condicional, ela <strong>NUNCA</strong> deve ser enviada para um LLM. O modelo generativo só é convocado quando há real necessidade de síntese semântica ou geração de código inédito.
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Cap 4: Research Lab -->
+                        <section class="sdoc-chapter" id="cap-research-lab">
+                            <div class="sdoc-chapter-num">04</div>
+                            <h2 class="sdoc-chapter-title">O Laboratório de Pesquisa Autônomo (Research Lab)</h2>
+                            <p>
+                                O <strong>Research Lab</strong> transforma intenções brutas do desenvolvedor em pesquisas técnicas aprofundadas com dezenas de páginas de documentação, schemas de banco de dados e algoritmos prontos.
+                            </p>
+
+                            <!-- Diagrama SVG 3: Two Layers -->
+                            <div class="sdoc-diagram-box">
+                                <div class="sdoc-diagram-header">
+                                    <span class="sdoc-diagram-tag">TAXONOMIA EM DUAS CAMADAS</span>
+                                    <span class="sdoc-diagram-status">● SVG Animado</span>
+                                </div>
+                                <img src="assets/diagrams/research-two-layers.svg?v=2" alt="Taxonomia de Duas Camadas do Research Lab" class="sdoc-diagram-img" />
+                                <div class="sdoc-diagram-caption">
+                                    Figura 3: Separação automática entre Fundamentos Conceituais (knowledge) e Especificações de Código (actionable).
+                                </div>
+                            </div>
+
+                            <div class="sdoc-grid-cards">
+                                <div class="sdoc-card blue-accent">
+                                    <div class="sdoc-card-icon">📘</div>
+                                    <h3>Camada 1: Knowledge</h3>
+                                    <p>Arquivos conceituais contendo teorias de engenharia, arquitetura de sistemas, trade-offs e boas práticas de mercado.</p>
+                                </div>
+                                <div class="sdoc-card green-accent">
+                                    <div class="sdoc-card-icon">🛠️</div>
+                                    <h3>Camada 2: Actionable</h3>
+                                    <p>Especificações práticas, schemas SQL Server / Prisma, controllers TypeScript / Node.js e testes automatizados prontos para uso.</p>
+                                </div>
+                            </div>
+
+                            <h3 class="sdoc-subtitle">Resiliência contra Rate Limits (Groq Cloud)</h3>
+                            <p>
+                                O motor autônomo (<code>scripts/research-engine.js</code>) opera com zero dependências externas e possui:
+                            </p>
+                            <ul class="sdoc-list">
+                                <li><strong>Rate Limit Recovery com Parser Dinâmico</strong>: Extrai o tempo de espera do cabeçalho da Groq Cloud e aguarda com +2s de segurança antes de retentar.</li>
+                                <li><strong>Cadência Preventiva de 6s</strong>: Pausa estratégica entre arquivos gerados para evitar esgotamento do bucket de TPM.</li>
+                                <li><strong>Resumabilidade Automática</strong>: Detecta arquivos já catalogados no disco e não queima tokens redundantes ao retomar pesquisas.</li>
+                                <li><strong>Streaming em Tempo Real (SSE)</strong>: Comunicação contínua com a interface informando exatamente qual arquivo a IA está gerando.</li>
+                            </ul>
+                        </section>
+
+                        <!-- Cap 5: Ciclo de Vida de uma Sessão -->
+                        <section class="sdoc-chapter" id="cap-ciclo-vida">
+                            <div class="sdoc-chapter-num">05</div>
+                            <h2 class="sdoc-chapter-title">Ciclo de Vida de um Projeto na Prática (Hands-on)</h2>
+                            <p>
+                                O fluxo de trabalho diário com o AI Second Brain elimina a perda de contexto e torna cada minuto de desenvolvimento produtivo:
+                            </p>
+
+                            <!-- Diagrama SVG 4: Session Loop -->
+                            <div class="sdoc-diagram-box">
+                                <div class="sdoc-diagram-header">
+                                    <span class="sdoc-diagram-tag">LOOP CONTÍNUO DE DESENVOLVIMENTO</span>
+                                    <span class="sdoc-diagram-status">● SVG Animado</span>
+                                </div>
+                                <img src="assets/diagrams/session-lifecycle-loop.svg?v=2" alt="Ciclo Contínuo de Desenvolvimento com Zero Amnésia" class="sdoc-diagram-img" />
+                                <div class="sdoc-diagram-caption">
+                                    Figura 4: O ciclo em 4 etapas contínuas garantindo continuidade entre qualquer sessão.
+                                </div>
+                            </div>
+
+                            <div class="sdoc-steps-list">
+                                <div class="sdoc-step-item">
+                                    <div class="sdoc-step-badge">Etapa 1</div>
+                                    <div class="sdoc-step-text">
+                                        <h4>Início da Sessão (Leitura de Estado)</h4>
+                                        <p>O agente e o desenvolvedor abrem a sessão lendo o <code>CURRENT_STATE.md</code>. O contexto de onde o projeto parou é recuperado instantaneamente.</p>
+                                    </div>
+                                </div>
+                                <div class="sdoc-step-item">
+                                    <div class="sdoc-step-badge">Etapa 2</div>
+                                    <div class="sdoc-step-text">
+                                        <h4>Desenvolvimento Focado com IA</h4>
+                                        <p>A escrita de código e arquitetura segue rigidamente as diretrizes em <code>.agents/rules/</code> e o <code>ARCHITECTURE.md</code> do projeto.</p>
+                                    </div>
+                                </div>
+                                <div class="sdoc-step-item">
+                                    <div class="sdoc-step-badge">Etapa 3</div>
+                                    <div class="sdoc-step-text">
+                                        <h4>Testes &amp; Validação de Qualidade</h4>
+                                        <p>Execução de scripts, checagens de linters e testes de integração garantindo que não haja regressão.</p>
+                                    </div>
+                                </div>
+                                <div class="sdoc-step-item">
+                                    <div class="sdoc-step-badge">Etapa 4</div>
+                                    <div class="sdoc-step-text">
+                                        <h4>Fechamento &amp; Memória Persistente</h4>
+                                        <p>Ao encerrar, a skill <code>session-memory</code> grava o que foi feito, as decisões tomadas e os próximos passos. A próxima sessão inicia sem amnésia.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Cap 6: Grafo Neural 3D -->
+                        <section class="sdoc-chapter" id="cap-recursos-visuais">
+                            <div class="sdoc-chapter-num">06</div>
+                            <h2 class="sdoc-chapter-title">Grafo Neural 3D &amp; Recursos Visuais</h2>
+                            <p>
+                                O visualizador web (<code>docs/brain-ui/</code>) transforma o conhecimento abstrato em um universo interativo navegável:
+                            </p>
+
+                            <div class="sdoc-grid-cards">
+                                <div class="sdoc-card">
+                                    <div class="sdoc-card-icon">🔮</div>
+                                    <h3>Grafo Neural 3D (Three.js)</h3>
+                                    <p>Os projetos atuam como estrelas centrais com campo gravitacional. Regras, skills, arquivos locais e pesquisas orbitam como satélites interligados.</p>
+                                </div>
+                                <div class="sdoc-card">
+                                    <div class="sdoc-card-icon">✏️</div>
+                                    <h3>Live Markdown Editor</h3>
+                                    <p>Editor de texto completo integrado à interface com salvamento instantâneo via <code>Ctrl+S</code> direto nos arquivos do disco rígido.</p>
+                                </div>
+                                <div class="sdoc-card">
+                                    <div class="sdoc-card-icon">🌳</div>
+                                    <h3>Sidebar em Árvore Hierárquica</h3>
+                                    <p>Menu lateral colapsável com linhas guias verticais, ordenação sequencial e chevrons direcionais inspirados no Obsidian e VS Code.</p>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Cap 7: Checklists & FAQ -->
+                        <section class="sdoc-chapter" id="cap-faq">
+                            <div class="sdoc-chapter-num">07</div>
+                            <h2 class="sdoc-chapter-title">Checklists de Governança &amp; FAQ Técnico</h2>
+                            
+                            <div class="sdoc-callout info">
+                                <div class="sdoc-callout-icon">📋</div>
+                                <div class="sdoc-callout-content">
+                                    <strong>Checklist de Início de Tarefa:</strong>
+                                    <ol style="margin: 6px 0 0 16px; padding: 0;">
+                                        <li>Ler o <code>PROJECT.md</code> e o <code>CURRENT_STATE.md</code> do projeto relevante.</li>
+                                        <li>Verificar <code>.agents/rules/</code> para restrições de arquitetura e segurança.</li>
+                                        <li>Classificar a tarefa antes de agir (Determinística, Decisão ou Geração).</li>
+                                    </ol>
+                                </div>
+                            </div>
+
+                            <h3 class="sdoc-subtitle" style="margin-top: 24px;">Perguntas Frequentes (FAQ)</h3>
+                            <div class="sdoc-faq-item">
+                                <h4>Como os projetos são vinculados sem duplicar arquivos?</h4>
+                                <p>No Windows, o AI Second Brain utiliza <strong>Junções NTFS (Junctions)</strong> ou symlinks de diretório. Os arquivos permanecem nos seus repositórios originais e apenas o espelho de governança é conectado ao cérebro.</p>
+                            </div>
+                            <div class="sdoc-faq-item">
+                                <h4>O que acontece se a Groq Cloud ficar indisponível?</h4>
+                                <p>O cliente HTTP possui fallback configurado para outros modelos (ex: <code>openai/gpt-oss-20b</code>) e retentativas exponenciais com backoff. Tarefas determinísticas e decisões AIJev continuam funcionando com 100% de disponibilidade local.</p>
+                            </div>
+                            <div class="sdoc-faq-item">
+                                <h4>Onde são salvos os backups e dossiês de governança?</h4>
+                                <p>Na pasta física <code>projects/&lt;nome&gt;/BACKUPS/</code>, com exportação completa em formato Markdown (legível para humanos) e JSON estruturado (auditável por scripts).</p>
+                            </div>
+                        </section>
+                    </article>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Quickstart Studio Modal (Onboarding Wizard) -->
+    <div id="quickstartModal" class="quickstart-modal-backdrop" style="display: none;" onclick="handleModalBackdropClick(event)">
+        <div class="quickstart-modal-card" role="dialog" aria-modal="true" aria-labelledby="qsTitle">
+            <!-- Modal Header -->
+            <div class="qs-header">
+                <div class="qs-badge">⚡ QUICKSTART STUDIO</div>
+                <h2 id="qsTitle" class="qs-title">Adicionar Projeto ao AI Second Brain</h2>
+                <p class="qs-subtitle">Governança, decisões de arquitetura e memória persistente em menos de 3 minutos.</p>
+                <button class="qs-close-btn" onclick="closeQuickstartWizard()" aria-label="Fechar modal">✕</button>
+            </div>
+
+            <!-- Stepper Progress -->
+            <div class="qs-stepper">
+                <div class="qs-step active" id="qsStepIndicator1">
+                    <div class="qs-step-num">1</div>
+                    <span class="qs-step-label">Modo</span>
+                </div>
+                <div class="qs-step-line" id="qsStepLine1"></div>
+                <div class="qs-step" id="qsStepIndicator2">
+                    <div class="qs-step-num">2</div>
+                    <span class="qs-step-label">Configuração</span>
+                </div>
+                <div class="qs-step-line" id="qsStepLine2"></div>
+                <div class="qs-step" id="qsStepIndicator3">
+                    <div class="qs-step-num">3</div>
+                    <span class="qs-step-label">Conectado!</span>
+                </div>
+            </div>
+
+            <!-- Wizard Body -->
+            <div class="qs-body">
+                <!-- Step 1: Mode Selection -->
+                <div class="qs-step-pane active" id="qsPaneStep1">
+                    <div class="qs-mode-cards">
+                        <!-- Greenfield Option -->
+                        <div class="qs-mode-card" onclick="selectQuickstartMode('new')">
+                            <div class="qs-mode-badge greenfield">Novo Sistema</div>
+                            <div class="qs-mode-icon">🚀</div>
+                            <h3 class="qs-mode-title">Criar Projeto do Zero</h3>
+                            <p class="qs-mode-desc">Ideal para novas ideias ou projetos que você vai começar agora com governança de IA.</p>
+                            <ul class="qs-mode-perks">
+                                <li>✨ Cria <code>PROJECT.md</code> e <code>CURRENT_STATE.md</code></li>
+                                <li>🏗️ Template de <code>ARCHITECTURE.md</code></li>
+                                <li>⚖️ Diretório de Decisões e Memória de Sessões</li>
+                            </ul>
+                            <div class="qs-mode-btn">Criar do Zero →</div>
+                        </div>
+
+                        <!-- Brownfield Option -->
+                        <div class="qs-mode-card" onclick="selectQuickstartMode('link')">
+                            <div class="qs-mode-badge brownfield">Repositório Existente</div>
+                            <div class="qs-mode-icon">🔗</div>
+                            <h3 class="qs-mode-title">Vincular Projeto Existente</h3>
+                            <p class="qs-mode-desc">Conecta qualquer pasta ou repo Git que você já tem no computador sem duplicar nenhum arquivo.</p>
+                            <ul class="qs-mode-perks">
+                                <li>⚡ Junção NTFS / Symlink nativo instantâneo</li>
+                                <li>📂 Mantém seu código 100% no local original</li>
+                                <li>🧠 Adiciona governança e memória imediatamente</li>
+                            </ul>
+                            <div class="qs-mode-btn">Vincular Pasta →</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Form Configuration -->
+                <div class="qs-step-pane" id="qsPaneStep2">
+                    <!-- Form for New Project -->
+                    <form id="qsFormNew" class="qs-form" onsubmit="submitQuickstartNew(event)" style="display: none;">
+                        <div class="qs-form-header">
+                            <span class="qs-form-tag greenfield">🚀 Criando Projeto do Zero</span>
+                            <button type="button" class="qs-back-link" onclick="goToQuickstartStep(1)">← Trocar modo</button>
+                        </div>
+                        <div class="qs-field">
+                            <label for="qsNewName">Nome do Projeto <span class="req">*</span></label>
+                            <input type="text" id="qsNewName" placeholder="ex: api-pagamentos, meu-saas, app-mobile" autocomplete="off">
+                            <small class="qs-hint">Use letras, números, hífens ou underscores.</small>
+                        </div>
+                        <div class="qs-field">
+                            <label>Stack Tecnológica Principal</label>
+                            <div class="qs-stack-chips" id="qsStackChips">
+                                <button type="button" class="qs-chip active" data-stack="Node.js / TypeScript">Node.js / TS</button>
+                                <button type="button" class="qs-chip" data-stack="C# / .NET">C# / .NET</button>
+                                <button type="button" class="qs-chip" data-stack="Python">Python</button>
+                                <button type="button" class="qs-chip" data-stack="React / Next.js">React / Next.js</button>
+                                <button type="button" class="qs-chip" data-stack="Go">Go</button>
+                                <button type="button" class="qs-chip" data-stack="Rust">Rust</button>
+                                <button type="button" class="qs-chip" data-stack="Livre / Multi-stack">Livre / Outro</button>
+                            </div>
+                            <input type="hidden" id="qsNewStack" value="Node.js / TypeScript">
+                        </div>
+                        <div class="qs-field">
+                            <label for="qsNewDesc">Descrição Rápida (Opcional)</label>
+                            <input type="text" id="qsNewDesc" placeholder="ex: Microserviço de pagamentos e checkout integrado a IA" autocomplete="off">
+                        </div>
+                        <div class="qs-form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="goToQuickstartStep(1)">Voltar</button>
+                            <button type="submit" class="btn btn-primary btn-submit-qs" id="btnSubmitNew">
+                                <span class="btn-spinner" style="display:none"></span>
+                                <span>🚀 Inicializar Projeto com IA</span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Form for Linking Existing Project -->
+                    <form id="qsFormLink" class="qs-form" onsubmit="submitQuickstartLink(event)" style="display: none;">
+                        <div class="qs-form-header">
+                            <span class="qs-form-tag brownfield">🔗 Vinculando Repositório Existente</span>
+                            <button type="button" class="qs-back-link" onclick="goToQuickstartStep(1)">← Trocar modo</button>
+                        </div>
+                        <div class="qs-field">
+                            <label for="qsLinkPath">Caminho da Pasta no seu Computador <span class="req">*</span></label>
+                            <div class="qs-path-input-wrap">
+                                <input type="text" id="qsLinkPath" placeholder="ex: C:\Projetos\meu-sistema ou D:\Code\Api" autocomplete="off" oninput="debounceValidatePath()">
+                                <button type="button" class="qs-paste-btn" onclick="pasteClipboardPath()" title="Colar caminho da área de transferência">📋 Colar</button>
+                            </div>
+                            <!-- Live Validation Feedback -->
+                            <div id="qsPathFeedback" class="qs-path-feedback" style="display: none;"></div>
+                            <small class="qs-hint">💡 <strong>Dica rápida:</strong> No Windows Explorer, basta clicar com o botão direito na pasta do projeto e selecionar <em>"Copiar como caminho"</em>.</small>
+                        </div>
+                        <div class="qs-field">
+                            <label for="qsLinkName">Nome do Projeto no Segundo Cérebro <span class="req">*</span></label>
+                            <input type="text" id="qsLinkName" placeholder="ex: meu-sistema" autocomplete="off">
+                            <small class="qs-hint">Preenchido automaticamente ao validar a pasta.</small>
+                        </div>
+                        <div class="qs-form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="goToQuickstartStep(1)">Voltar</button>
+                            <button type="submit" class="btn btn-primary btn-submit-qs" id="btnSubmitLink">
+                                <span class="btn-spinner" style="display:none"></span>
+                                <span>🔗 Vincular Repositório ao Cérebro</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 3: Success Screen -->
+                <div class="qs-step-pane" id="qsPaneStep3">
+                    <div class="qs-success-box">
+                        <div class="qs-success-icon-wrap">
+                            <div class="qs-confetti-burst"></div>
+                            <div class="qs-success-check">✓</div>
+                        </div>
+                        <h3 class="qs-success-title" id="qsSuccessTitle">Projeto Conectado com Sucesso!</h3>
+                        <p class="qs-success-msg" id="qsSuccessMsg">O AI Second Brain agora governa este projeto com governança de IA, arquitetura e memória de sessões.</p>
+
+                        <div class="qs-success-artifacts" id="qsSuccessArtifacts">
+                            <!-- Populated dynamically -->
+                        </div>
+
+                        <div class="qs-success-actions">
+                            <button type="button" class="btn btn-primary" id="btnOpenProjectDoc">
+                                📄 Abrir Documentação
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="showView('graph'); closeQuickstartWizard();">
+                                🔮 Ver no Grafo Neural 3D
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="closeQuickstartWizard()">
+                                Concluir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Markdown Editor Modal -->
+    <div id="fileEditorModal" class="editor-modal-backdrop" style="display: none;" onclick="handleEditorBackdropClick(event)">
+        <div class="editor-modal-card" role="dialog" aria-modal="true" aria-labelledby="editorModalTitle">
+            <!-- Header -->
+            <div class="editor-header">
+                <div class="editor-title-wrap">
+                    <span class="editor-badge" id="editorBadgeText">👁️ PRÉ-VISUALIZAÇÃO</span>
+                    <h2 id="editorModalTitle" class="editor-title">Visualizar Arquivo</h2>
+                    <code id="editorFilePath" class="editor-file-path">caminho/do/arquivo.md</code>
+                </div>
+                <div class="editor-header-actions">
+                    <div class="editor-tab-toggle">
+                        <button type="button" class="editor-tab-btn active" id="btnEditorTabPreview" onclick="switchEditorTab('preview')">
+                            👁️ Pré-visualizar
+                        </button>
+                        <button type="button" class="editor-tab-btn" id="btnEditorTabWrite" onclick="switchEditorTab('write')">
+                            ✏️ Escrever
+                        </button>
+                    </div>
+                    <button class="editor-close-btn" onclick="closeFileEditor()" aria-label="Fechar editor">✕</button>
+                </div>
+            </div>
+
+            <!-- Toolbar rápida -->
+            <div class="editor-toolbar" id="editorToolbar" style="display: none;">
+                <button type="button" class="ed-tool-btn" onclick="insertEditorSyntax('h2')" title="Subtítulo">H2</button>
+                <button type="button" class="ed-tool-btn" onclick="insertEditorSyntax('h3')" title="Seção">H3</button>
+                <button type="button" class="ed-tool-btn" onclick="insertEditorSyntax('bold')" title="Negrito"><strong>B</strong></button>
+                <button type="button" class="ed-tool-btn" onclick="insertEditorSyntax('italic')" title="Itálico"><em>I</em></button>
+                <span class="ed-sep"></span>
+                <button type="button" class="ed-tool-btn" onclick="insertEditorSyntax('bullet')" title="Item de Lista">• Lista</button>
+                <button type="button" class="ed-tool-btn" onclick="insertEditorSyntax('task')" title="Checklist / Tarefa">☑ Tarefa</button>
+                <button type="button" class="ed-tool-btn" onclick="insertEditorSyntax('code')" title="Bloco de Código">&lt;/&gt;</button>
+                <button type="button" class="ed-tool-btn" onclick="insertEditorSyntax('quote')" title="Nota / Citação">“ Nota</button>
+                <span class="editor-shortcut-hint">💡 Ctrl+S para salvar</span>
+            </div>
+
+            <!-- Body (Write & Preview) -->
+            <div class="editor-body">
+                <textarea id="editorTextarea" class="editor-textarea" spellcheck="false" placeholder="Digite seu conteúdo em Markdown aqui..." style="display: none;"></textarea>
+                <div id="editorPreviewPane" class="editor-preview-pane doc-markdown-body" style="display: block;"></div>
+            </div>
+
+            <!-- Footer -->
+            <div class="editor-footer">
+                <div class="editor-status" id="editorStatusText">
+                    <span class="status-dot snapshot"></span> Pronto para editar
+                </div>
+                <div class="editor-footer-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeFileEditor()">Cancelar</button>
+                    <button type="button" class="btn btn-primary btn-submit-editor" id="btnSaveFile" onclick="saveFileContent()">
+                        <span class="btn-spinner" style="display:none"></span>
+                        <span>💾 Salvar no Disco</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         RESEARCH LAB MODALS (NOVA PESQUISA & PROMPT VIVO)
+         ═══════════════════════════════════════════════════ -->
+
+    <!-- Modal 1: Nova Pesquisa com IA Groq -->
+    <div id="researchModal" class="editor-modal-backdrop" style="display: none;" onclick="handleResearchBackdropClick(event)">
+        <div class="research-modal-card" role="dialog" aria-modal="true" aria-labelledby="researchModalTitle">
+            <!-- Header -->
+            <div class="rl-modal-header">
+                <div class="rl-modal-title-group">
+                    <span class="rl-modal-badge">🔬 RESEARCH LAB &middot; IA MOTOR</span>
+                    <h2 id="researchModalTitle" class="rl-modal-title">Novo Laboratório de Pesquisa</h2>
+                    <p class="rl-modal-sub" id="researchModalSub">A IA contextualizará sua pesquisa com os contratos e arquitetura do projeto.</p>
+                </div>
+                <button class="editor-close-btn" onclick="closeResearchModal()" aria-label="Fechar">✕</button>
+            </div>
+
+            <!-- Body -->
+            <div class="rl-modal-body">
+                <form id="rlCreateForm" onsubmit="submitCreateResearch(event)">
+                    <!-- Campo: Nome / Tópico -->
+                    <div class="rl-form-group">
+                        <label class="rl-form-label" for="rlTopicInput">
+                            Tema / Título da Pesquisa <span class="req">*</span>
+                        </label>
+                        <input type="text" id="rlTopicInput" class="rl-form-input" placeholder="Ex: Sistema de Matchmaking e Ranking ELO, Caching Distribuído com Redis..." required autocomplete="off">
+                        <div class="rl-topic-presets">
+                            <span class="rl-presets-label">💡 Sugestões rápidas:</span>
+                            <button type="button" class="rl-preset-chip" onclick="applyTopicPreset('Arquitetura de Microsserviços e Event-Driven com Filas')">Event-Driven</button>
+                            <button type="button" class="rl-preset-chip" onclick="applyTopicPreset('Segurança, JWT com Refresh Tokens e OAuth2')">Auth & JWT</button>
+                            <button type="button" class="rl-preset-chip" onclick="applyTopicPreset('Estratégias de Caching Distribuído e Resiliência')">Cache & Redis</button>
+                            <button type="button" class="rl-preset-chip" onclick="applyTopicPreset('Design System Acessível e Animações Fluidas')">Design System</button>
+                        </div>
+                    </div>
+
+                    <!-- Campo: Intenção Livre (Prompt Vivo) -->
+                    <div class="rl-form-group">
+                        <div class="rl-label-row">
+                            <label class="rl-form-label" for="rlDefinitionInput">
+                                Sua Intenção / O que você quer pesquisar e aprender? <span class="req">*</span>
+                            </label>
+                            <button type="button" class="btn-ai-magic" id="btnAiRefine" onclick="triggerAiRefinePrompt()">
+                                <span class="ai-sparkles">✨</span>
+                                <span class="ai-btn-text">Melhorar com IA (Groq)</span>
+                                <span class="ai-spinner" style="display:none"></span>
+                            </button>
+                        </div>
+                        <textarea id="rlDefinitionInput" class="rl-form-textarea" rows="4" placeholder="Escreva livremente o que deseja descobrir. Ex: Quero saber quais são os padrões mais usados no mercado para filas resilientes, como lidar com mensagens duplicadas, e como estruturar os schemas no nosso banco..." required></textarea>
+                        <small class="rl-hint">O <strong>Prompt Vivo</strong> pode ser alterado a qualquer momento para enriquecer ou refocar a pesquisa.</small>
+                    </div>
+
+                    <!-- Split View de Refinamento IA (Aparece após clicar no botão mágico) -->
+                    <div id="rlRefineSplitView" class="rl-split-view" style="display: none;">
+                        <div class="rl-split-header">
+                            <div class="rl-split-badge">
+                                <span class="pulse-dot"></span> Sugestão Refinada pela IA (Contexto do Projeto Aplicado)
+                            </div>
+                            <div class="rl-split-actions">
+                                <button type="button" class="btn-rl-apply" onclick="acceptRefinedPrompt()">
+                                    ✓ Aplicar ao Briefing
+                                </button>
+                                <button type="button" class="btn-rl-edit" onclick="acceptAndEditRefinedPrompt()">
+                                    ✏️ Aplicar e Editar
+                                </button>
+                                <button type="button" class="btn-rl-dismiss" onclick="dismissRefinedPrompt()">
+                                    ✕ Descartar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="rl-split-content">
+                            <div class="rl-split-pane original">
+                                <div class="rl-pane-title">Sua Ideia Original</div>
+                                <div class="rl-pane-text" id="rlOriginalText"></div>
+                            </div>
+                            <div class="rl-split-arrow">➔</div>
+                            <div class="rl-split-pane refined">
+                                <div class="rl-pane-title">Briefing Estruturado & Contextualizado</div>
+                                <div class="rl-pane-text" id="rlRefinedText"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botão e Painel de Decomposição Prévia -->
+                    <div class="rl-decompose-box">
+                        <div class="rl-decompose-header">
+                            <div>
+                                <span class="rl-decompose-title">🔮 Subtópicos & Estrutura das Camadas</span>
+                                <p class="rl-decompose-desc">A IA pode decompor o tema em camadas de <strong>Conhecimento Teórico</strong> e <strong>Ações Práticas</strong>.</p>
+                            </div>
+                            <button type="button" class="btn-decompose-preview" id="btnPreviewDecompose" onclick="triggerPreviewDecompose()">
+                                <span>🔮 Pré-visualizar Subtópicos</span>
+                                <span class="ai-spinner" style="display:none"></span>
+                            </button>
+                        </div>
+                        <div id="rlDecomposeResults" class="rl-decompose-results" style="display: none;">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Footer do Modal -->
+                    <div class="rl-modal-footer">
+                        <div class="rl-modal-status" id="rlModalStatus">
+                            <span class="status-dot snapshot"></span> Pronto para criar laboratório
+                        </div>
+                        <div class="rl-modal-actions">
+                            <button type="button" class="btn btn-secondary" onclick="closeResearchModal()">Cancelar</button>
+                            <button type="submit" class="btn-rl-submit" id="btnSubmitResearch">
+                                <span class="btn-spinner" style="display:none"></span>
+                                <span>🚀 Inicializar Laboratório</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Ajustar Prompt Vivo & Histórico de Versões -->
+    <div id="promptVivoModal" class="editor-modal-backdrop" style="display: none;" onclick="handlePromptVivoBackdropClick(event)">
+        <div class="research-modal-card" role="dialog" aria-modal="true" aria-labelledby="pvModalTitle">
+            <div class="rl-modal-header">
+                <div class="rl-modal-title-group">
+                    <span class="rl-modal-badge">✏️ PROMPT VIVO &middot; VERSIONAMENTO</span>
+                    <h2 id="pvModalTitle" class="rl-modal-title">Evolução do Prompt da Pesquisa</h2>
+                    <p class="rl-modal-sub" id="pvModalSub">Altere o briefing a qualquer momento. Versões anteriores são preservadas no histórico.</p>
+                </div>
+                <button class="editor-close-btn" onclick="closePromptVivoModal()" aria-label="Fechar">✕</button>
+            </div>
+
+            <div class="rl-modal-body">
+                <form id="pvEditForm" onsubmit="submitPromptVivoUpdate(event)">
+                    <div class="rl-form-group">
+                        <div class="rl-label-row">
+                            <label class="rl-form-label" for="pvTextarea">
+                                Definição Atual do Laboratório
+                            </label>
+                            <button type="button" class="btn-ai-magic" id="btnPvAiRefine" onclick="triggerPvAiRefine()">
+                                <span class="ai-sparkles">✨</span>
+                                <span>Refinar com IA</span>
+                                <span class="ai-spinner" style="display:none"></span>
+                            </button>
+                        </div>
+                        <textarea id="pvTextarea" class="rl-form-textarea" rows="5" required></textarea>
+                    </div>
+
+                    <!-- Histórico de Versões (Timeline) -->
+                    <div class="pv-history-section">
+                        <h4 class="pv-history-title">📜 Histórico de Definições Desta Pesquisa</h4>
+                        <div class="pv-timeline" id="pvTimelineList">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <div class="rl-modal-footer">
+                        <div class="rl-modal-status" id="pvModalStatus">
+                            <span class="status-dot snapshot"></span> Pronto para salvar nova versão
+                        </div>
+                        <div class="rl-modal-actions">
+                            <button type="button" class="btn btn-secondary" onclick="closePromptVivoModal()">Cancelar</button>
+                            <button type="submit" class="btn-rl-submit" id="btnSubmitPv">
+                                <span class="btn-spinner" style="display:none"></span>
+                                <span>💾 Salvar Nova Versão (Prompt Vivo)</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Visualizador da Árvore de Decomposição -->
+    <div id="decomposeModal" class="editor-modal-backdrop" style="display: none;" onclick="handleDecomposeBackdropClick(event)">
+        <div class="research-modal-card" role="dialog" aria-modal="true" aria-labelledby="decModalTitle">
+            <div class="rl-modal-header">
+                <div class="rl-modal-title-group">
+                    <span class="rl-modal-badge">🔮 TAXONOMIA &middot; SUBTÓPICOS</span>
+                    <h2 id="decModalTitle" class="rl-modal-title">Decomposição Temática do Laboratório</h2>
+                    <p class="rl-modal-sub" id="decModalSub">Estrutura de conhecimento planejada pela IA para esta pesquisa.</p>
+                </div>
+                <button class="editor-close-btn" onclick="closeDecomposeModal()" aria-label="Fechar">✕</button>
+            </div>
+
+            <div class="rl-modal-body">
+                <div id="decModalContent" class="dec-modal-content">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Universal de Confirmação & Resposta do Usuário (Design System de Alta Fidelidade) -->
+    <div id="brainConfirmModal" class="editor-modal-backdrop brain-dialog-backdrop" style="display: none;" onclick="handleBrainConfirmBackdropClick(event)">
+        <div class="brain-dialog-card" role="dialog" aria-modal="true" aria-labelledby="brainConfirmTitle">
+            <div class="brain-dialog-header">
+                <div class="brain-dialog-icon-wrap" id="brainConfirmIconWrap">
+                    <span id="brainConfirmIcon" class="brain-dialog-icon">🗑️</span>
+                </div>
+                <div class="brain-dialog-title-group">
+                    <span class="brain-dialog-badge" id="brainConfirmBadge">CONFIRMAÇÃO NECESSÁRIA</span>
+                    <h3 id="brainConfirmTitle" class="brain-dialog-title">Excluir Item</h3>
+                </div>
+                <button type="button" class="editor-close-btn" onclick="resolveBrainConfirm(false)" aria-label="Fechar">✕</button>
+            </div>
+
+            <div class="brain-dialog-body">
+                <div id="brainConfirmMessage" class="brain-dialog-message">
+                    Tem certeza que deseja prosseguir com esta ação?
+                </div>
+                
+                <div id="brainConfirmInputWrap" class="brain-dialog-input-wrap" style="display: none;">
+                    <input type="text" id="brainConfirmInput" class="brain-dialog-input" placeholder="Digite sua resposta..." autocomplete="off">
+                </div>
+            </div>
+
+            <div class="brain-dialog-footer">
+                <button type="button" id="brainConfirmCancelBtn" class="btn btn-secondary btn-dialog" onclick="resolveBrainConfirm(false)">Cancelar</button>
+                <button type="button" id="brainConfirmOkBtn" class="btn btn-dialog" onclick="onBrainConfirmOkClicked()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4: Guia de Integração e Pontes de IA -->
+    <div id="aiEngineHelpModal" class="editor-modal-backdrop" style="display: none;" onclick="handleAiEngineHelpBackdropClick(event)">
+        <div class="editor-modal-card" style="max-width: 760px; height: auto; max-height: 88vh; overflow-y: auto;" role="dialog" aria-modal="true" aria-labelledby="aiEngineHelpTitle">
+            <div class="editor-header" style="background: linear-gradient(135deg, rgba(30, 27, 75, 0.7), rgba(15, 23, 42, 0.85));">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                        🌐
+                    </div>
+                    <div>
+                        <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #38bdf8; letter-spacing: 0.06em;">
+                            Guia de Governança &amp; Integração
+                        </div>
+                        <h2 id="aiEngineHelpTitle" style="margin: 0; font-size: 17px; font-weight: 700; color: #f8fafc;">
+                            Como Funciona a Troca de Motor de IA?
+                        </h2>
+                    </div>
+                </div>
+                <button type="button" class="editor-close-btn" onclick="closeAiEngineHelpModal()" aria-label="Fechar">✕</button>
+            </div>
+
+            <div style="padding: 24px; color: #cbd5e1; font-size: 13.5px; line-height: 1.6;">
+                <!-- Destaque 1: Como a IA e o Projeto sabem o que fazer na prática -->
+                <div class="ai-help-section" style="background: rgba(99, 102, 241, 0.05); border-color: rgba(99, 102, 241, 0.2);">
+                    <h3 style="font-size: 14.5px; color: #c7d2fe; margin: 0 0 8px 0; display: flex; align-items: center; gap: 8px;">
+                        <span>🧠</span> Como o Projeto &amp; a IA sabem o que fazer na prática?
+                    </h3>
+                    <p style="margin: 0 0 10px 0; color: var(--text-secondary);">
+                        Ferramentas como <strong>Cursor, Claude Code, Windsurf e Antigravity</strong> são programas independentes que rodam no seu sistema operacional. Elas <strong>não leem o navegador nem o painel web</strong>.
+                    </p>
+                    <p style="margin: 0 0 12px 0; color: var(--text-secondary);">
+                        A única ponte física entre o seu Segundo Cérebro e o agente de IA é um <strong>arquivo de texto na raiz do seu repositório</strong>. O fluxo opera assim:
+                    </p>
+                    <div style="background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 12px 16px; font-family: var(--font-mono); font-size: 11.5px; color: #94a3b8; line-height: 1.5; margin-bottom: 12px;">
+                        1. Você seleciona a ferramenta no nó do diagrama.<br>
+                        2. O arquivo de ponte correspondente (ex: <span style="color:#f43f5e;">CLAUDE.md</span> ou <span style="color:#a855f7;">.cursorrules</span>) é gravado no disco.<br>
+                        3. Quando você abre a IDE ou roda o comando no terminal (<code style="color:#38bdf8;">$ claude</code>), a IA lê esse arquivo.<br>
+                        4. O arquivo instrui a IA a consultar os contratos oficiais: <span style="color:#34d399;">PROJECT.md</span>, <span style="color:#34d399;">CURRENT_STATE.md</span> e <span style="color:#34d399;">DECISIONS/</span>.
+                    </div>
+                </div>
+
+                <!-- Destaque 2: Interface vs Disco & Segurança -->
+                <div class="ai-help-section">
+                    <h3 style="font-size: 14.5px; color: #f1f5f9; margin: 0 0 8px 0; display: flex; align-items: center; gap: 8px;">
+                        <span>🖥️</span> O que muda na Interface vs. no Disco?
+                    </h3>
+                    <p style="margin: 0 0 10px 0; color: var(--text-secondary);">
+                        Ao alternar o motor no nó do diagrama, a interface reage visualmente com as cores da ferramenta e adapta os botões rápidos do Workspace.
+                    </p>
+                    <div class="ai-help-callout warning" style="background: rgba(245, 158, 11, 0.08); border-left: 3px solid #f59e0b; border-radius: 6px; padding: 10px 14px; font-size: 12.5px; color: #fbbf24;">
+                        <strong>🔒 Princípio de Soberania do Desenvolvedor:</strong> O sistema <em>não</em> injeta ou altera arquivos no seu repositório Git de forma invisível. Você decide quando gerar a ponte para manter seu histórico de commits 100% limpo e sob seu controle.
+                    </div>
+                </div>
+
+                <!-- Tabela de Ferramentas e Arquivos -->
+                <div class="ai-help-section">
+                    <h3 style="font-size: 14.5px; color: #f1f5f9; margin: 0 0 8px 0; display: flex; align-items: center; gap: 8px;">
+                        <span>📄</span> Arquivos que cada Ferramenta lê na Raiz do Projeto
+                    </h3>
+                    <p style="margin: 0 0 12px 0; color: var(--text-secondary); font-size: 13px;">
+                        Cada ecossistema possui seu próprio arquivo padrão de descoberta:
+                    </p>
+                    <div class="ai-help-table-wrap" style="overflow-x: auto;">
+                        <table class="ai-help-table">
+                            <thead>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); text-align: left; color: var(--text-tertiary);">
+                                    <th>Ferramenta</th>
+                                    <th>Arquivo de Ponte</th>
+                                    <th>Como Opera na Prática</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                    <td style="font-weight: 600; color: #f8fafc;">🤖 Claude Code</td>
+                                    <td><code style="color: #f43f5e; background: rgba(244,63,94,0.1); padding: 2px 6px; border-radius: 4px;">CLAUDE.md</code></td>
+                                    <td style="color: var(--text-secondary);">Ao rodar <code>claude</code> no terminal, ele lê o arquivo e segue o Segundo Cérebro.</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                    <td style="font-weight: 600; color: #f8fafc;">⚡ Cursor AI</td>
+                                    <td><code style="color: #a855f7; background: rgba(168,85,247,0.1); padding: 2px 6px; border-radius: 4px;">.cursorrules</code></td>
+                                    <td style="color: var(--text-secondary);">O agente do Cursor carrega as regras automaticamente em cada prompt e chat.</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                    <td style="font-weight: 600; color: #f8fafc;">🏄 Windsurf</td>
+                                    <td><code style="color: #10b981; background: rgba(16,185,129,0.1); padding: 2px 6px; border-radius: 4px;">.windsurfrules</code></td>
+                                    <td style="color: var(--text-secondary);">O Cascade Agent aplica as diretrizes de arquitetura e decisões registradas.</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                    <td style="font-weight: 600; color: #f8fafc;">🪐 Antigravity</td>
+                                    <td><code style="color: #38bdf8; background: rgba(56,189,248,0.1); padding: 2px 6px; border-radius: 4px;">GEMINI.md</code></td>
+                                    <td style="color: var(--text-secondary);">O assistente nativo lê regras de <code>.agents/rules/</code> e governança central.</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                    <td style="font-weight: 600; color: #f8fafc;">🐙 GitHub Copilot</td>
+                                    <td><code style="color: #94a3b8; background: rgba(148,163,184,0.1); padding: 2px 6px; border-radius: 4px;">copilot-instructions.md</code></td>
+                                    <td style="color: var(--text-secondary);">Instruções personalizadas no diretório <code>.github/</code>.</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: 600; color: #f8fafc;">🦾 Roo Code / Cline</td>
+                                    <td><code style="color: #ec4899; background: rgba(236,72,153,0.1); padding: 2px 6px; border-radius: 4px;">.clinerules</code></td>
+                                    <td style="color: var(--text-secondary);">Diretrizes mandatórias para execução autônoma de tarefas no VS Code.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Destaque 3: Super-poder da Coexistência -->
+                <div class="ai-help-section" style="margin-bottom: 24px;">
+                    <div class="ai-help-callout success" style="background: rgba(16, 185, 129, 0.08); border-left: 3px solid #10b981; border-radius: 6px; padding: 12px 16px; font-size: 13px; color: #34d399;">
+                        <strong style="color: #6ee7b7; display: block; margin-bottom: 4px; font-size: 13.5px;">💡 Super-Poder: Coexistência Sem Conflitos!</strong>
+                        Todas essas pontes podem conviver na mesma pasta do projeto. Você pode usar Cursor pela manhã, Claude Code à tarde no terminal e Antigravity à noite: <strong>todas as IAs compartilharão a mesma memória, os mesmos contratos e as mesmas decisões arquiteturais!</strong>
+                    </div>
+                </div>
+
+                <!-- Rodapé com Ações Rápidas -->
+                <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; flex-wrap: wrap; gap: 10px;">
+                    <div style="font-size: 12px; color: var(--text-tertiary);">
+                        Dica: Gere as pontes diretamente no Workspace do seu projeto com 1 clique.
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn btn-secondary" onclick="closeAiEngineHelpModal()">
+                            Entendi! Fechar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="demo-mode.js"></script>
+    <script src="three.min.js"></script>
+    <script src="OrbitControls.js"></script>
+    <script src="marked.min.js"></script>
+    <script src="vault-data.js"></script>
+    <script src="vault.js"></script>
+    <script src="graph-hierarchy.js"></script>
+    <script src="neuron-graph.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+/* ═══ Seções adicionais: arquitetura, Research Lab, conectar projeto, demo, FAQ, comunidade, idioma ═══ */
+main .pains,main .pain,main .diag-tabs,main .diagram-frame,main .diag-caps,main .duo,main .layer,main .resil,main .browser,main .note,main .faq,main details,main .grid.trio{pointer-events:auto}
+.lang-btn{font:600 12px var(--font-sans);letter-spacing:.08em;color:var(--gold);background:transparent;border:1px solid var(--line-strong);border-radius:999px;padding:6px 12px;cursor:pointer;transition:.25s}
+.lang-btn:hover{background:var(--gold-glow);color:#fff;border-color:var(--gold)}
+.pains{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;width:min(1000px,100%);margin:6px 0 34px;text-align:left}
+.pain{padding:22px 24px;border:1px solid var(--line);border-radius:20px;background:var(--glass-card);backdrop-filter:blur(12px);transition:.3s}
+.pain:hover{border-color:#f8717166;transform:translateY(-3px)}.pain i{font-style:normal;font-size:26px}
+.pain h3{margin:10px 0 6px;font-size:18px;color:#fecaca}.pain p{margin:0;color:var(--mut);font-size:14.5px;line-height:1.6}
+.diag-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:18px}
+.diag-tab{padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:var(--glass);color:var(--mut);font:500 14px var(--font-sans);cursor:pointer;transition:.25s}
+.diag-tab:hover{color:#fff;border-color:var(--line-strong)}.diag-tab.on{color:#1a1203;background:linear-gradient(135deg,var(--gold2),var(--gold));border-color:transparent;font-weight:700}
+.diagram-frame{position:relative;width:min(980px,100%);padding:18px;border:1px solid var(--line);border-radius:24px;background:#050a16d9;backdrop-filter:blur(14px);box-shadow:0 30px 90px #000a,0 0 70px #ffc76b0f}
+.diag{display:none;width:100%;height:auto;border-radius:14px;animation:fadeUp .6s both}.diag.on{display:block}
+.diag-caps{width:min(820px,100%);margin-top:18px}.diag-cap{display:none;margin:0;color:var(--fg-dim);font-size:16px;line-height:1.7;animation:fadeUp .6s both}.diag-cap.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}}
+.duo{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;width:min(900px,100%);text-align:left}
+.layer{position:relative;padding:28px;border:1px solid color-mix(in srgb,var(--c) 40%,transparent);border-radius:22px;background:var(--glass-card);backdrop-filter:blur(12px);box-shadow:0 0 50px color-mix(in srgb,var(--c) 10%,transparent)}
+.layer b{font:700 52px var(--font-serif);color:var(--c);opacity:.55;line-height:1}.layer h3{margin:6px 0 8px;font-size:21px}.layer p{margin:0 0 14px;color:var(--fg-dim);font-size:15px}
+.layer code,.step code,.faq code{font:500 12px var(--font-mono);color:var(--c,var(--gold));padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:#0006}
+.resil{width:min(900px,100%);margin-top:20px;padding:26px 30px;text-align:left;border:1px solid var(--line);border-radius:22px;background:var(--glass-card);backdrop-filter:blur(12px)}
+.resil h3{margin:0 0 12px;font-size:19px;color:var(--gold2)}.resil ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.resil li{position:relative;padding-left:26px;color:var(--fg-dim);font-size:15px;line-height:1.6}.resil li::before{content:"✦";position:absolute;left:0;color:var(--gold)}.resil b{color:#fff}
+.grid.trio{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));width:min(1000px,100%)}
+.browser{width:min(1100px,100%);border:1px solid var(--line-strong);border-radius:18px;overflow:hidden;background:#04070f;box-shadow:0 40px 120px #000c,0 0 80px #ffc76b12}
+.browser-bar{display:flex;align-items:center;gap:14px;padding:11px 16px;background:#0b1224;border-bottom:1px solid var(--line)}
+.browser-bar .dots{display:flex;gap:6px}.browser-bar .dots i{width:11px;height:11px;border-radius:50%;background:#f87171}.browser-bar .dots i:nth-child(2){background:#fbbf24}.browser-bar .dots i:nth-child(3){background:#34d399}
+.browser-bar .url{flex:1;text-align:left;font:500 12px var(--font-mono);color:var(--mut);padding:5px 12px;border-radius:8px;background:#0006}
+.browser-bar a{color:var(--gold);font-size:13px;text-decoration:none;white-space:nowrap}.browser-bar a:hover{color:#fff}
+.browser-body{position:relative;aspect-ratio:16/10;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 40%,#10213a,#04060d 70%)}
+.browser-body iframe{position:absolute;inset:0;width:100%;height:100%;border:0;animation:fadeUp .8s both}
+.browser-body .unload{position:absolute;z-index:2;top:10px;right:10px;padding:6px 12px;border-radius:999px;border:1px solid var(--line-strong);background:#0a1122e6;color:var(--fg);font:500 12px var(--font-sans);cursor:pointer}
+.note{margin:16px 0 0;color:var(--mut);font-size:13.5px}
+.faq{display:grid;gap:12px;width:min(820px,100%);text-align:left}
+.faq details{border:1px solid var(--line);border-radius:16px;background:var(--glass-card);backdrop-filter:blur(12px);transition:border-color .3s,box-shadow .3s}
+.faq details[open]{border-color:#ffc76b66;box-shadow:0 0 40px #ffc76b14}
+.faq summary{list-style:none;cursor:pointer;padding:18px 54px 18px 22px;font-weight:600;font-size:16px;position:relative}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";position:absolute;right:22px;top:50%;transform:translateY(-50%);font:300 26px var(--font-sans);color:var(--gold);transition:transform .3s}
+.faq details[open] summary::after{transform:translateY(-50%) rotate(45deg)}
+.faq summary:focus-visible,.diag-tab:focus-visible,.lang-btn:focus-visible,#load-demo:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.faq details p{margin:0;padding:0 22px 20px;color:var(--fg-dim);font-size:15.5px;line-height:1.7}
+.footer-links{display:flex;gap:18px;justify-content:center;margin-bottom:10px}.footer-links a{color:var(--mut);text-decoration:none;font-size:13px;pointer-events:auto}.footer-links a:hover{color:var(--gold)}
+@media(max-width:640px){.diagram-frame{padding:8px}.browser-bar .url{display:none}.resil{padding:20px}.lang-btn{padding:5px 9px}}
