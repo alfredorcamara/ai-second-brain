@@ -34,6 +34,42 @@
   box-sizing: border-box;
 }
 
+/* ── Custom Dark Scrollbar (Global & Containers) ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) rgba(4, 7, 15, 0.85);
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(4, 7, 15, 0.85);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 199, 107, 0.5);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -1120,7 +1156,7 @@ code {
 }
 
 .code-box {
-  width: min(640px, 100%);
+  width: min(680px, 100%);
   border-radius: 18px;
   border: 1px solid var(--line-strong);
   background: rgba(2, 4, 10, 0.92);
@@ -1156,6 +1192,33 @@ code {
   justify-content: space-between;
   padding: 16px 20px;
   overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.22) rgba(2, 4, 10, 0.95);
+}
+
+.code-body::-webkit-scrollbar {
+  height: 6px;
+}
+
+.code-body::-webkit-scrollbar-track {
+  background: rgba(2, 4, 10, 0.95);
+  border-radius: 3px;
+  margin: 0 16px 4px 16px;
+}
+
+.code-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 3px;
+}
+
+.code-body::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
+
+.code-body::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .code-body code {
@@ -1270,6 +1333,26 @@ footer {
   overflow-y: auto;
   font-size: 15px;
   line-height: 1.7;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.22) rgba(4, 7, 15, 0.9);
+}
+
+#rbody::-webkit-scrollbar {
+  width: 6px;
+}
+
+#rbody::-webkit-scrollbar-track {
+  background: rgba(4, 7, 15, 0.9);
+  border-radius: 3px;
+}
+
+#rbody::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+#rbody::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
 }
 
 #rbody h1 {

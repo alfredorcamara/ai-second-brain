@@ -6776,16 +6776,39 @@ body {
 /* ═══════════════════════════════════════════════════
    CUSTOM DARK SCROLLBAR (MATCHING MODAL THEME)
    ═══════════════════════════════════════════════════ */
-.rl-modal-body,
-.research-modal-card,
-.dec-modal-content,
-.editor-modal-card,
-.editor-body,
-.editor-preview-pane,
-.pv-timeline,
-::-webkit-scrollbar {
+* {
     scrollbar-width: thin;
     scrollbar-color: rgba(99, 102, 241, 0.35) rgba(15, 15, 25, 0.9);
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(12, 13, 22, 0.95);
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.3);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 102, 241, 0.55);
+}
+
+::-webkit-scrollbar-button {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
 }
 
 .rl-modal-body::-webkit-scrollbar,
