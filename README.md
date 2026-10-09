@@ -86,11 +86,12 @@ Quando você trabalhar em qualquer arquivo, as diretrizes de governança serão 
 O agente identifica automaticamente quando uma skill é relevante e a ativa.
 Você também pode invocar manualmente.
 
-### 4. Projetos têm contexto próprio
-Cada projeto em `projects/` tem seu `PROJECT.md`, estado atual, decisões e memória.
+### 4. Projetos têm contexto e memória 100% isolados
+Cada projeto em `projects/<nome>/` possui seus próprios contratos (`PROJECT.md`, `ARCHITECTURE.md`), histórico de decisões (`DECISIONS/`) e memória viva de sessões (`CURRENT_STATE.md` e `MEMORY/sessions/`). Seus projetos nunca se misturam.
 
-### 5. A memória persiste entre sessões
-Após cada sessão significativa, o agente atualiza `memory/` com o estado atual.
+### 5. Memória persistente em dois níveis
+- **Memória dos Seus Projetos**: Ao final de cada sessão de trabalho em um software específico, o agente atualiza o `CURRENT_STATE.md` e a pasta de sessões do respectivo projeto.
+- **Memória da Plataforma**: A pasta raiz `memory/` registra a governança, estabilidade e maturidade do próprio AI Second Brain como ferramenta de desenvolvimento.
 
 ## Comandos Operacionais
 

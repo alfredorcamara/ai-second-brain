@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 title AI Second Brain — Live Server
 echo ========================================================
 echo   Iniciando AI Second Brain — Servidor Dinamico

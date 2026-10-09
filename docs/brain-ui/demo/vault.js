@@ -15,22 +15,41 @@ class VaultManager {
     }
 
     async init() {
-        // 1. Try to connect to Live Server (/api/vault)
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '::1';
+
+        // 1. Tenta conectar ao Servidor Ao Vivo (/api/vault)
         const isLive = await this._tryLiveServer();
-        if (isLive) return;
+        if (isLive) {
+            // Em ambiente local, se conectou ao vivo, remove cache antigo de pasta para evitar conflito de estado
+            if (isLocal) {
+                try { localStorage.removeItem('ai_second_brain_custom_vault'); } catch (e) {}
+            }
+            return;
+        }
 
-        // 2. Try to load cached folder from localStorage
+        // 2. Se falhar, tenta carregar pasta local do cache
         const hasCached = this._tryLoadCachedFolder();
-        if (hasCached) return;
+        if (hasCached) {
+            // Se estamos no localhost mas caímos no cache (ex: servidor ainda iniciando), inicia auto-reconexão
+            if (isLocal) {
+                this._startLiveServerAutoReconnect();
+            }
+            return;
+        }
 
-        // 3. Fallback to pre-indexed Snapshot
+        // 3. Fallback para Snapshot embutido
         this._loadSnapshot();
+        if (isLocal) {
+            this._startLiveServerAutoReconnect();
+        }
     }
 
-    async _tryLiveServer() {
+    async _tryLiveServer(retryCount = 0) {
         try {
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '::1';
+            const timeoutMs = isLocal ? 7000 : 1500;
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 1200);
+            const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
             const res = await fetch('/api/vault', { signal: controller.signal });
             clearTimeout(timeoutId);
 
@@ -43,9 +62,46 @@ class VaultManager {
                 return true;
             }
         } catch (e) {
-            // Live server not running, continue to fallbacks
+            // Se estiver no localhost e falhar na primeira tentativa (ex: servidor ainda subindo), tenta novamente
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '::1';
+            if (isLocal && retryCount < 2) {
+                await new Promise(r => setTimeout(r, 800));
+                return await this._tryLiveServer(retryCount + 1);
+            }
         }
         return false;
+    }
+
+    _startLiveServerAutoReconnect() {
+        if (this._reconnectTimer) return;
+        let attempts = 0;
+        this._reconnectTimer = setInterval(async () => {
+            attempts++;
+            if (attempts > 12 || this.mode === 'live') {
+                clearInterval(this._reconnectTimer);
+                this._reconnectTimer = null;
+                return;
+            }
+            try {
+                const res = await fetch('/api/vault');
+                if (res.ok) {
+                    clearInterval(this._reconnectTimer);
+                    this._reconnectTimer = null;
+                    const vaultData = await res.json();
+                    this.mode = 'live';
+                    try { localStorage.removeItem('ai_second_brain_custom_vault'); } catch (e) {}
+                    this._setData(vaultData);
+                    this._setupSSE();
+                    console.log('🟢 [Vault] Servidor Ao Vivo detectado! Conexão migrada para o disco.');
+                    if (this.onVaultUpdated) this.onVaultUpdated({ reason: 'live-server-reconnected' });
+                }
+            } catch (e) {}
+        }, 1500);
+    }
+
+    clearFolderCache() {
+        try { localStorage.removeItem('ai_second_brain_custom_vault'); } catch (e) {}
+        window.location.reload();
     }
 
     _setupSSE() {
@@ -144,18 +200,18 @@ class VaultManager {
             badge.title = 'Conectado diretamente aos arquivos do projeto no disco com hot-reload.';
         } else if (this.mode === 'folder') {
             badge.className = 'vault-status folder';
-            badge.innerHTML = `<span class="status-dot folder"></span> Pasta Conectada`;
-            badge.title = 'Lendo arquivos da pasta selecionada pelo navegador.';
+            badge.innerHTML = `<span class="status-dot folder"></span> Pasta em Cache <button onclick="window.VAULT.clearFolderCache()" title="Limpar cache e conectar ao Servidor Ao Vivo" style="margin-left:6px;padding:1px 6px;border-radius:10px;background:rgba(255,255,255,0.12);border:none;color:inherit;cursor:pointer;font-size:10px;">✕ Limpar Cache</button>`;
+            badge.title = 'Lendo arquivos da pasta em cache. Clique em Limpar Cache para voltar ao Servidor Ao Vivo.';
         } else {
             const isOnlineDemo = !window.location.hostname || (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && window.location.hostname !== '::1');
             if (isOnlineDemo) {
                 badge.className = 'vault-status online-demo';
                 badge.innerHTML = `<span class="status-dot"></span> 🌐 Modo Demo (${Math.round(this.filesByPath.size / 3)} docs)`;
-                badge.title = 'Visualizador Web Estático (Portfólio / Vercel / GitHub Pages). Para editar no disco e abrir pastas no Windows, execute localmente com "npm start".';
+                badge.title = 'Visualizador Web Estático (Portfólio / Vercel / GitHub Pages). Para editar no disco e abrir pastas no Windows, execute localmente com "start-brain.bat".';
             } else {
                 badge.className = 'vault-status snapshot';
                 badge.innerHTML = `<span class="status-dot snapshot"></span> Snapshot (${this.filesByPath.size / 3 | 0} docs)`;
-                badge.title = 'Visualizando snapshot local dos arquivos. Inicie "node server.js" para modo ao vivo.';
+                badge.title = 'Visualizando snapshot local dos arquivos. Inicie "start-brain.bat" para modo ao vivo.';
             }
         }
     }
@@ -239,38 +295,280 @@ class VaultManager {
 
         // Navigation Sections
         const sectionDefs = [
-            { id: 'overview', label: 'Visão Geral', icon: '🧠', items: [
+            { id: 'overview', label: 'Visão Geral', icon: '🧠', startCollapsed: true, items: [
                 { id: 'dashboard', label: 'Dashboard', icon: '📊', path: 'dashboard' },
                 { id: 'graph', label: 'Grafo Neural', icon: '🔮', path: 'graph' },
+                { id: 'solution-docs', label: 'Documentação da Solução', icon: '📘', path: 'solution-docs' },
             ]},
-            { id: 'rules', label: 'Rules', icon: '📏', items: [] },
-            { id: 'skills', label: 'Skills', icon: '⚡', items: [] },
-            { id: 'agents', label: 'Agents', icon: '🤖', items: [] },
-            { id: 'projects', label: 'Projects', icon: '📁', items: [] },
-            { id: 'knowledge', label: 'Knowledge', icon: '📚', items: [] },
-            { id: 'decisions', label: 'Decisions', icon: '⚖️', items: [] },
-            { id: 'memory', label: 'Memory', icon: '🧮', items: [] },
-            { id: 'templates', label: 'Templates', icon: '📋', items: [] },
-            { id: 'docs', label: 'Docs & Guias', icon: '📖', items: [] },
-            { id: 'core', label: 'Sistema / Core', icon: '⚙️', items: [] },
+            { id: 'rules', label: 'Rules', icon: '📏', startCollapsed: true, items: [] },
+            { id: 'skills', label: 'Skills', icon: '⚡', startCollapsed: true, items: [] },
+            { id: 'agents', label: 'Agents', icon: '🤖', startCollapsed: true, items: [] },
+            { id: 'projects', label: 'Projects', icon: '📁', startCollapsed: true, items: [] },
+            { id: 'knowledge', label: 'Knowledge', icon: '📚', startCollapsed: true, items: [] },
+            { id: 'decisions', label: 'Decisions', icon: '⚖️', startCollapsed: true, items: [] },
+            { id: 'memory', label: 'Memory', icon: '🧮', startCollapsed: true, items: [] },
+            { id: 'templates', label: 'Templates', icon: '📋', startCollapsed: true, items: [] },
+            { id: 'docs', label: 'Docs & Guias', icon: '📖', startCollapsed: true, items: [] },
+            { id: 'core', label: 'Sistema / Core', icon: '⚙️', startCollapsed: true, items: [] },
         ];
 
         const sectionsMap = new Map();
         sectionDefs.forEach(s => sectionsMap.set(s.id, s));
 
+        const projectFilesMap = new Map();
+        let projectsGuideItem = null;
+
+        function formatSlugTitle(slug) {
+            if (!slug) return '';
+            return slug
+                .replace(/-/g, ' ')
+                .replace(/\b\w/g, l => l.toUpperCase());
+        }
+
         files.forEach(f => {
-            const sec = sectionsMap.get(f.category) || sectionsMap.get('core');
-            sec.items.push({
-                id: f.id,
-                label: f.title,
-                icon: f.icon,
-                path: f.path,
-                size: f.size
-            });
+            if (f.category === 'projects') {
+                const parts = f.path.split('/');
+                if (parts.length <= 2) {
+                    projectsGuideItem = {
+                        id: f.id,
+                        label: 'Guia de Projetos',
+                        icon: '📖',
+                        path: f.path,
+                        size: f.size
+                    };
+                } else {
+                    const projName = parts[1];
+                    if (!projectFilesMap.has(projName)) {
+                        projectFilesMap.set(projName, []);
+                    }
+                    projectFilesMap.get(projName).push(f);
+                }
+            } else {
+                const sec = sectionsMap.get(f.category) || sectionsMap.get('core');
+                sec.items.push({
+                    id: f.id,
+                    label: f.title,
+                    icon: f.icon,
+                    path: f.path,
+                    size: f.size
+                });
+            }
         });
 
+        const projectGroups = new Map();
+
+        for (const [projName, pFiles] of projectFilesMap.entries()) {
+            const rootFiles = [];
+            const backupFiles = [];
+            const researchFilesMap = new Map();
+            const otherFoldersMap = new Map();
+
+            let mainProjectPath = `projects/${projName}/PROJECT.md`;
+
+            pFiles.forEach(f => {
+                const parts = f.path.split('/');
+                if (parts.length === 3) {
+                    let label = f.name;
+                    let icon = f.icon;
+                    if (f.name.toLowerCase() === 'project.md') {
+                        label = 'PROJECT.md (Visão Geral)';
+                        icon = '📄';
+                        mainProjectPath = f.path;
+                    } else if (f.name.toLowerCase() === 'current_state.md') {
+                        label = 'CURRENT_STATE.md (Estado Atual)';
+                        icon = '💾';
+                    } else if (f.name.toLowerCase() === 'architecture.md') {
+                        label = 'ARCHITECTURE.md (Arquitetura)';
+                        icon = '🏗️';
+                    }
+                    rootFiles.push({
+                        id: f.id,
+                        label: label,
+                        title: f.title,
+                        icon: icon,
+                        path: f.path,
+                        size: f.size
+                    });
+                } else if (parts[2].toUpperCase() === 'BACKUPS') {
+                    backupFiles.push(f);
+                } else if (parts[2].toUpperCase() === 'RESEARCH') {
+                    const slug = parts[3] || 'geral';
+                    if (!researchFilesMap.has(slug)) {
+                        researchFilesMap.set(slug, []);
+                    }
+                    researchFilesMap.get(slug).push(f);
+                } else {
+                    const folder = parts[2];
+                    if (!otherFoldersMap.has(folder)) {
+                        otherFoldersMap.set(folder, []);
+                    }
+                    otherFoldersMap.get(folder).push(f);
+                }
+            });
+
+            rootFiles.sort((a, b) => {
+                const priority = (p) => {
+                    const pLower = p.toLowerCase();
+                    if (pLower.endsWith('project.md')) return 1;
+                    if (pLower.endsWith('current_state.md')) return 2;
+                    if (pLower.endsWith('architecture.md')) return 3;
+                    return 10;
+                };
+                return priority(a.path) - priority(b.path) || a.label.localeCompare(b.label);
+            });
+
+            const children = [...rootFiles];
+
+            if (backupFiles.length > 0) {
+                children.push({
+                    id: `sub_${projName}_backups`,
+                    label: 'BACKUPS',
+                    icon: '📦',
+                    isGroup: true,
+                    isSubfolder: true,
+                    startCollapsed: true,
+                    childrenCount: backupFiles.length,
+                    children: backupFiles.map(f => ({
+                        id: f.id,
+                        label: f.name,
+                        title: f.title,
+                        icon: '📄',
+                        path: f.path,
+                        size: f.size
+                    }))
+                });
+            }
+
+            if (researchFilesMap.size > 0) {
+                const researchFolders = [];
+                let totalResearchFiles = 0;
+
+                for (const [slug, rFiles] of researchFilesMap.entries()) {
+                    totalResearchFiles += rFiles.length;
+                    const overviewFile = rFiles.find(f => f.name.toLowerCase() === 'overview.md');
+                    let researchTitle = formatSlugTitle(slug);
+                    if (overviewFile && overviewFile.title && !overviewFile.title.includes('Laboratório')) {
+                        researchTitle = overviewFile.title.replace(/^[\p{Emoji}\p{Extended_Pictographic}\s]+/u, '').trim();
+                        if (!researchTitle) researchTitle = formatSlugTitle(slug);
+                    }
+
+                    rFiles.sort((a, b) => {
+                        if (a.name.toLowerCase() === 'overview.md') return -1;
+                        if (b.name.toLowerCase() === 'overview.md') return 1;
+                        const numA = (a.name.match(/^(\d+)/) || [])[1];
+                        const numB = (b.name.match(/^(\d+)/) || [])[1];
+                        if (numA && numB) return parseInt(numA, 10) - parseInt(numB, 10);
+                        if (numA && !numB) return -1;
+                        if (!numA && numB) return 1;
+                        return a.path.localeCompare(b.path);
+                    });
+
+                    const formattedFiles = rFiles.map(f => {
+                        let label = f.title || f.name;
+                        let icon = f.icon;
+                        if (f.name.toLowerCase() === 'overview.md') {
+                            label = 'OVERVIEW.md (Visão Geral)';
+                            icon = '📄';
+                        } else if (f.path.includes('/actionable/')) {
+                            icon = '🛠️';
+                            const numMatch = f.name.match(/^(\d+)-(.*)\.md$/i);
+                            if (numMatch) label = `${numMatch[1]} - ${f.title}`;
+                        } else if (f.path.includes('/knowledge/')) {
+                            icon = '📘';
+                            const numMatch = f.name.match(/^(\d+)-(.*)\.md$/i);
+                            if (numMatch) label = `${numMatch[1]} - ${f.title}`;
+                        }
+
+                        return {
+                            id: f.id,
+                            label: label,
+                            title: `${f.title} (${f.path})`,
+                            icon: icon,
+                            path: f.path,
+                            size: f.size
+                        };
+                    });
+
+                    researchFolders.push({
+                        id: `sub_${projName}_res_${slug.replace(/[^a-zA-Z0-9_-]/g, '_')}`,
+                        label: researchTitle,
+                        icon: '🔬',
+                        isGroup: true,
+                        isSubfolder: true,
+                        startCollapsed: true,
+                        path: overviewFile ? overviewFile.path : rFiles[0].path,
+                        childrenCount: formattedFiles.length,
+                        children: formattedFiles
+                    });
+                }
+
+                children.push({
+                    id: `sub_${projName}_research_root`,
+                    label: 'RESEARCH',
+                    icon: '🔬',
+                    isGroup: true,
+                    isSubfolder: true,
+                    isResearchRoot: true,
+                    projectName: projName,
+                    startCollapsed: true,
+                    childrenCount: totalResearchFiles,
+                    children: researchFolders
+                });
+            }
+
+            for (const [folderName, oFiles] of otherFoldersMap.entries()) {
+                let icon = '📁';
+                if (folderName.toUpperCase() === 'DECISIONS') icon = '⚖️';
+                if (folderName.toUpperCase() === 'MEMORY') icon = '💾';
+
+                children.push({
+                    id: `sub_${projName}_${folderName.replace(/[^a-zA-Z0-9_-]/g, '_')}`,
+                    label: folderName,
+                    icon: icon,
+                    isGroup: true,
+                    isSubfolder: true,
+                    startCollapsed: true,
+                    childrenCount: oFiles.length,
+                    children: oFiles.map(f => ({
+                        id: f.id,
+                        label: f.name,
+                        title: f.title,
+                        icon: f.icon || '📄',
+                        path: f.path,
+                        size: f.size
+                    }))
+                });
+            }
+
+            projectGroups.set(projName, {
+                id: `proj_${projName}`,
+                label: projName,
+                icon: '🚀',
+                isGroup: true,
+                isProject: true,
+                startCollapsed: true,
+                path: mainProjectPath,
+                totalFilesCount: pFiles.length,
+                childrenCount: pFiles.length,
+                children: children
+            });
+        }
+
+        const projectsSec = sectionsMap.get('projects');
+        if (projectsSec) {
+            projectsSec.items = [];
+            if (projectsGuideItem) {
+                projectsSec.items.push(projectsGuideItem);
+            }
+            const sortedGroups = Array.from(projectGroups.values()).sort((a, b) => a.label.localeCompare(b.label));
+            sortedGroups.forEach(g => {
+                projectsSec.items.push(g);
+            });
+            projectsSec.badge = projectGroups.size;
+        }
+
         sectionDefs.forEach(s => {
-            if (s.id !== 'overview') {
+            if (s.id !== 'overview' && s.id !== 'projects') {
                 s.badge = s.items.length;
                 s.items.sort((a, b) => a.path.localeCompare(b.path));
             }
@@ -337,6 +635,7 @@ class VaultManager {
             groupColors: window.VAULT_SNAPSHOT ? window.VAULT_SNAPSHOT.groupColors : {},
             stats: {
                 totalFiles: files.length,
+                projectsCount: projectGroups.size,
                 totalNodes: graphNodes.length,
                 totalEdges: graphEdges.length
             }

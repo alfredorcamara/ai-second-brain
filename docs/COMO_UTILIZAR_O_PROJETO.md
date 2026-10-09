@@ -53,11 +53,14 @@ graph TD
 | Tipo de Dado | Onde Fica? | Finalidade |
 | :--- | :--- | :--- |
 | **Código-Fonte Executável** | No repositório físico do projeto (ex: `C:\Projetos\SaaS\MeuProjeto`) | Compilação, testes, Dockerfiles, builds de CI/CD. |
-| **Memória & Estado Atual** | `AI_SECOND_BRAIN/projects/<nome>/CURRENT_STATE.md` | O que foi feito, tarefas ativas e bloqueios. |
-| **Visão Geral e Stack** | `AI_SECOND_BRAIN/projects/<nome>/PROJECT.md` | Contexto de negócio, regras e definições técnicas. |
-| **Decisões Arquiteturais (ADRs)** | `AI_SECOND_BRAIN/projects/<nome>/DECISIONS/` | Histórico imutável de por que certas escolhas foram feitas. |
-| **Mapeamento de Casos de IA** | `AI_SECOND_BRAIN/projects/<nome>/AI/` | Onde e como a IA é usada (AIJev, regras ou LLM). |
-| **Regras Universais de Qualidade** | `AI_SECOND_BRAIN/.agents/rules/` | Padrões de C#, SQL Server, Segurança, etc. |
+| **Memória do Seu Projeto** | `AI_SECOND_BRAIN/projects/<nome>/CURRENT_STATE.md` & `MEMORY/` | O que foi feito, tarefas ativas, bloqueios e sessões do seu software. |
+| **Visão Geral e Stack do Projeto** | `AI_SECOND_BRAIN/projects/<nome>/PROJECT.md` | Contexto de negócio, regras e definições técnicas do seu software. |
+| **Decisões Arquiteturais (ADRs)** | `AI_SECOND_BRAIN/projects/<nome>/DECISIONS/` | Histórico imutável de por que certas escolhas foram feitas no seu projeto. |
+| **Mapeamento de Casos de IA** | `AI_SECOND_BRAIN/projects/<nome>/AI/` | Onde e como a IA é usada (AIJev, regras ou LLM) no seu software. |
+| **Memória Global do Framework** | `AI_SECOND_BRAIN/memory/` | Estado e histórico do próprio AI Second Brain (servidor, visualizador, motor de IA). |
+| **Regras Universais de Qualidade** | `AI_SECOND_BRAIN/.agents/rules/` | Padrões de C#, SQL Server, Segurança, etc. compartilhados por todos os projetos. |
+
+> 💡 **Nota de Isolamento:** A pasta raiz `memory/` registra o histórico da **plataforma** AI Second Brain como produto. Cada projeto que você criar ou conectar terá sua memória e decisões mantidas **estritamente isoladas** dentro de `projects/<nome>/`, garantindo zero poluição ou interferência entre projetos.
 
 ---
 
