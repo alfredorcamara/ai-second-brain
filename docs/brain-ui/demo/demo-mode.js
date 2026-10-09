@@ -16,7 +16,72 @@
         }
         if (u.startsWith('/api/vault') || u.startsWith('/api/events')) return Promise.resolve(new Response('', { status: 404 }));   // cai no snapshot
         if (u.startsWith('/api/engine/current')) return Promise.resolve(json({ activeEngine: 'demo' }));
-        if (u.startsWith('/api/ai/status')) return Promise.resolve(json({ available: false }));
+        if (u.startsWith('/api/ai/status') || u.startsWith('/api/ai/config')) return Promise.resolve(json({
+            success: true,
+            provider: 'groq',
+            providerName: 'Groq Cloud',
+            configured: true,
+            hasKey: true,
+            apiKeyMasked: 'gsk_••••••••Zvrf',
+            model: 'openai/gpt-oss-120b',
+            baseUrl: 'https://api.groq.com/openai/v1',
+            cacheHours: 24,
+            maxRetries: 2
+        }));
+        if (u.startsWith('/api/ai/test')) {
+            let reqBody = {};
+            try { reqBody = JSON.parse(opts?.body || '{}'); } catch(e) {}
+            const prov = reqBody.provider || 'groq';
+            const mockModelsByProv = {
+                groq: [
+                    { id: 'openai/gpt-oss-120b', name: 'GPT OSS 120B', contextWindow: 131072 },
+                    { id: 'openai/gpt-oss-20b', name: 'GPT OSS 20B', contextWindow: 131072 },
+                    { id: 'qwen/qwen3.8-27b', name: 'Qwen 3.8 27B', contextWindow: 131072 },
+                    { id: 'allam-2-7b', name: 'ALLaM-2-7b', contextWindow: 4096 }
+                ],
+                openai: [
+                    { id: 'gpt-4o-mini', name: 'GPT-4o Mini', contextWindow: 128000 },
+                    { id: 'gpt-4o', name: 'GPT-4o Flagship', contextWindow: 128000 },
+                    { id: 'o1-mini', name: 'o1-mini Raciocínio', contextWindow: 128000 }
+                ],
+                anthropic: [
+                    { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet', contextWindow: 200000 },
+                    { id: 'claude-3-5-haiku-20241022', name: 'Claude 3.5 Haiku', contextWindow: 200000 }
+                ],
+                openrouter: [
+                    { id: 'deepseek/deepseek-chat', name: 'DeepSeek V3', contextWindow: 64000 },
+                    { id: 'deepseek/deepseek-r1', name: 'DeepSeek R1', contextWindow: 64000 }
+                ],
+                ollama: [
+                    { id: 'llama3.2', name: 'Llama 3.2', contextWindow: 128000 },
+                    { id: 'deepseek-r1', name: 'DeepSeek R1', contextWindow: 64000 },
+                    { id: 'qwen2.5-coder', name: 'Qwen 2.5 Coder', contextWindow: 32000 }
+                ],
+                custom: [
+                    { id: 'default', name: 'Default Model', contextWindow: 32000 }
+                ]
+            };
+            return Promise.resolve(json({
+                success: true,
+                provider: prov,
+                latencyMs: 142,
+                models: mockModelsByProv[prov] || mockModelsByProv.groq
+            }));
+        }
+        if (u.startsWith('/api/ai/save')) {
+            let reqBody = {};
+            try { reqBody = JSON.parse(opts?.body || '{}'); } catch(e) {}
+            return Promise.resolve(json({
+                success: true,
+                message: 'Configuração simulada com sucesso no modo demo.',
+                config: {
+                    provider: reqBody.provider || 'groq',
+                    model: reqBody.model || 'openai/gpt-oss-120b',
+                    configured: true,
+                    apiKeyMasked: 'gsk_••••••••demo'
+                }
+            }));
+        }
         toast('🔒 Demo somente leitura — instale localmente para criar, editar e rodar o Research Lab.');
         return Promise.resolve(json({ ok: false, error: 'Modo demonstração (somente leitura)' }, 403));
     };

@@ -274,7 +274,12 @@ ${synthResult.content}
             actionableCount: actionableItems.length,
             files: generatedFiles
         };
-
+    } catch (err) {
+        meta.status = 'failed';
+        meta.lastError = err.message;
+        meta.failedAt = new Date().toISOString();
+        try { fs.writeFileSync(metaPath, JSON.stringify(meta, null, 2), 'utf-8'); } catch (_) {}
+        throw err;
     } finally {
         activeRuns.delete(runKey);
     }

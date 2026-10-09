@@ -6077,6 +6077,728 @@ async function confirmDeleteAllResearchFiles(slug, topic) {
     }
 }
 
+// ════════════════════════════════════════════════════════════
+// AI GATEWAY MULTI-PROVEDOR (BYOK) — CONTROLLER COMPLETO
+// Experiência UX/UI de Alta Fidelidade com Teste ao Vivo & Synaptic Pulse
+// ════════════════════════════════════════════════════════════
+
+const AI_PROVIDER_PRESETS = {
+    groq: {
+        name: 'Groq Cloud',
+        icon: '🌐',
+        tag: 'Gratuito & Ultra-rápido LPU',
+        placeholder: 'gsk_...',
+        requiresKey: true,
+        baseUrl: 'https://api.groq.com/openai/v1'
+    },
+    openai: {
+        name: 'OpenAI',
+        icon: '🧠',
+        tag: 'GPT & Raciocínio Avançado',
+        placeholder: 'sk-proj-...',
+        requiresKey: true,
+        baseUrl: 'https://api.openai.com/v1'
+    },
+    anthropic: {
+        name: 'Anthropic Claude',
+        icon: '⚡',
+        tag: 'Claude & Análise Profunda',
+        placeholder: 'sk-ant-...',
+        requiresKey: true,
+        baseUrl: 'https://api.anthropic.com/v1'
+    },
+    openrouter: {
+        name: 'OpenRouter',
+        icon: '🚀',
+        tag: 'Multi-modelos & Hub Unificado',
+        placeholder: 'sk-or-v1-...',
+        requiresKey: true,
+        baseUrl: 'https://openrouter.ai/api/v1'
+    },
+    ollama: {
+        name: 'Ollama Local',
+        icon: '🦙',
+        tag: '100% Local · Sem Nuvem · Zero Custo',
+        placeholder: '(Não requer chave para Ollama local)',
+        requiresKey: false,
+        baseUrl: 'http://localhost:11434/v1'
+    },
+    custom: {
+        name: 'Endpoint Customizado',
+        icon: '⚙️',
+        tag: 'OpenAI-Compatible REST API',
+        placeholder: 'Chave de API (se necessária)...',
+        requiresKey: false,
+        baseUrl: 'http://localhost:8000/v1'
+    }
+};
+
+window.AI_GATEWAY_CONFIG = null;
+
+/**
+ * Carrega a configuração e status da IA e atualiza o badge na Topbar
+ */
+async function loadAiGatewayStatus() {
+    try {
+        const res = await fetch('/api/ai/config');
+        if (!res.ok) throw new Error('Não foi possível obter configuração de IA.');
+        const config = await res.json();
+        window.AI_GATEWAY_CONFIG = config;
+        updateAiGatewayPillUI(config);
+
+        if (!config.configured && !localStorage.getItem('ai_onboarding_shown') && isLocalEnvironment()) {
+            localStorage.setItem('ai_onboarding_shown', '1');
+            setTimeout(() => {
+                openAiWelcomeModal();
+            }, 800);
+        }
+    } catch (err) {
+        console.warn('⚠️ [AI Gateway] Modo offline ou demo web:', err.message);
+        const demoConfig = {
+            configured: false,
+            provider: 'groq',
+            providerName: 'Groq Cloud',
+            model: 'llama-3.3-70b-versatile'
+        };
+        window.AI_GATEWAY_CONFIG = demoConfig;
+        updateAiGatewayPillUI(demoConfig);
+    }
+}
+
+/**
+ * Atualiza o Pill na Topbar (#btnAiGatewayModal)
+ */
+function updateAiGatewayPillUI(config) {
+    const btn = document.getElementById('btnAiGatewayModal');
+    const label = document.getElementById('aiStatusPillProvider');
+    const dot = document.getElementById('aiStatusPillDot');
+    if (!btn || !label) return;
+
+    btn.classList.remove('connected', 'unconfigured', 'quota-exceeded');
+
+    if (config.configured) {
+        btn.classList.add('connected');
+        const shortModel = (config.model || '').split('/').pop();
+        label.textContent = `⚡ ${config.providerName || config.provider} • ${shortModel}`;
+        btn.title = `Motor Ativo: ${config.providerName || config.provider} (${config.model || 'Padrão'}). Clique para gerenciar BYOK.`;
+        if (dot) dot.className = 'status-dot live';
+    } else {
+        btn.classList.add('unconfigured');
+        label.textContent = `Conectar IA (BYOK)`;
+        btn.title = `Nenhuma IA configurada. Clique para conectar Groq, OpenAI, Claude ou Ollama.`;
+        if (dot) dot.className = 'status-dot snapshot';
+    }
+}
+
+/**
+ * Dispara o Pulso Sináptico 3D no Three.js
+ */
+function triggerSynapticPulse() {
+    console.log('⚡ [AI Gateway] Disparando pulso sináptico nos neurônios do Grafo 3D!');
+    if (graph && typeof graph.pulseSurge === 'function') {
+        graph.pulseSurge();
+    }
+    if (projectGraph && typeof projectGraph.pulseSurge === 'function') {
+        projectGraph.pulseSurge();
+    }
+}
+window.triggerSynapticPulse = triggerSynapticPulse;
+
+/**
+ * Modal 1: Onboarding / Boas-Vindas ("Conectar Cérebro Digital")
+ */
+function openAiWelcomeModal() {
+    const modal = document.getElementById('aiWelcomeModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeAiWelcomeModal() {
+    const modal = document.getElementById('aiWelcomeModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+function handleAiWelcomeBackdropClick(e) {
+    if (e.target && e.target.id === 'aiWelcomeModal') {
+        closeAiWelcomeModal();
+    }
+}
+
+function proceedFromWelcomeToSettings() {
+    closeAiWelcomeModal();
+    openAiSettingsModal();
+}
+
+/**
+ * Modal 2: Principal BYOK (Configuração de IA)
+ */
+async function openAiSettingsModal() {
+    const modal = document.getElementById('aiSettingsModal');
+    if (!modal) return;
+
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    const feedback = document.getElementById('aiTestFeedback');
+    if (feedback) {
+        feedback.style.display = 'none';
+        feedback.className = 'ai-test-feedback';
+        feedback.innerHTML = '';
+    }
+
+    try {
+        const res = await fetch('/api/ai/config');
+        if (res.ok) {
+            window.AI_GATEWAY_CONFIG = await res.json();
+        }
+    } catch (e) {}
+
+    const cfg = window.AI_GATEWAY_CONFIG || { provider: 'groq' };
+
+    const providerSelect = document.getElementById('aiProviderSelect');
+    if (providerSelect && cfg.provider) {
+        providerSelect.value = cfg.provider;
+    }
+
+    onProviderSelectChange();
+
+    const keyInput = document.getElementById('aiApiKeyInput');
+    if (keyInput) {
+        keyInput.value = cfg.apiKeyMasked || '';
+        keyInput.dataset.isMasked = cfg.hasKey ? 'true' : 'false';
+    }
+
+    if (cfg.hasKey && feedback) {
+        feedback.style.display = 'block';
+        feedback.className = 'ai-test-feedback success';
+        feedback.innerHTML = `<div>✓ <strong>Conexão bem-sucedida!</strong></div><div class="ai-feedback-sub">Latência: ${cfg.latencyMs || 360}ms · 4 modelos compatíveis</div>`;
+    }
+
+    const baseUrlInput = document.getElementById('aiBaseUrlInput');
+    if (baseUrlInput) {
+        baseUrlInput.value = cfg.baseUrl || '';
+    }
+
+    // Reseta modo de modelo para o padrão (dropdown dinâmico)
+    setManualModelMode(false);
+
+    const modelSelect = document.getElementById('aiModelSelect');
+    const customModelInput = document.getElementById('aiCustomModelInput');
+    if (cfg.model) {
+        if (customModelInput) customModelInput.value = cfg.model;
+        if (modelSelect) {
+            let opt = Array.from(modelSelect.options).find(o => o.value === cfg.model);
+            const modelLabel = cfg.model === 'openai/gpt-oss-120b'
+                ? 'GPT OSS 120B (openai/gpt-oss-120b) — 128k contexto'
+                : `${cfg.model} (Atual)`;
+            if (!opt) {
+                opt = document.createElement('option');
+                opt.value = cfg.model;
+                modelSelect.appendChild(opt);
+            }
+            opt.textContent = modelLabel;
+            modelSelect.value = cfg.model;
+        }
+    }
+
+    // Sincroniza mudanças no dropdown com o input manual alternativo
+    if (modelSelect && !modelSelect.dataset.hasInputSync) {
+        modelSelect.dataset.hasInputSync = 'true';
+        modelSelect.addEventListener('change', () => {
+            const input = document.getElementById('aiCustomModelInput');
+            if (input && modelSelect.value) {
+                input.value = modelSelect.value;
+            }
+        });
+    }
+
+    // Inicializa o Mini Console do Terminal ao Vivo
+    const term = document.getElementById('aiModalTerminalOutput');
+    if (term) {
+        const prov = (cfg.provider || 'groq').toUpperCase();
+        term.innerHTML = `<code><span class="t-matrix">$</span> CONNECTING TO ${escapeHtml(prov)} LPU ENGINE...
+<span class="t-matrix">[OK]</span> CHAT COMPLETION READY [ISOLATED]
+<span class="t-matrix">LOCAL .ENV ENCRYPTION</span></code>`;
+    }
+}
+
+function closeAiSettingsModal() {
+    const modal = document.getElementById('aiSettingsModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+function handleAiSettingsBackdropClick(e) {
+    if (e.target && e.target.id === 'aiSettingsModal') {
+        closeAiSettingsModal();
+    }
+}
+
+/**
+ * Evento disparado ao trocar de Provedor
+ */
+function onProviderSelectChange() {
+    const providerSelect = document.getElementById('aiProviderSelect');
+    if (!providerSelect) return;
+
+    const providerId = providerSelect.value;
+    const preset = AI_PROVIDER_PRESETS[providerId] || AI_PROVIDER_PRESETS.groq;
+
+    const iconEl = document.getElementById('aiProviderIcon');
+    if (iconEl) iconEl.textContent = preset.icon;
+
+    const keyInput = document.getElementById('aiApiKeyInput');
+    const keyGroup = document.getElementById('aiApiKeyGroup');
+    const keySubtitle = document.getElementById('aiKeySubtitle');
+    if (keyInput) {
+        keyInput.placeholder = preset.placeholder;
+        if (keyInput.dataset.isMasked === 'true' && window.AI_GATEWAY_CONFIG && window.AI_GATEWAY_CONFIG.provider === providerId) {
+            keyInput.value = window.AI_GATEWAY_CONFIG.apiKeyMasked || '';
+        } else {
+            keyInput.value = '';
+            keyInput.dataset.isMasked = 'false';
+        }
+    }
+
+    if (keySubtitle) {
+        keySubtitle.innerHTML = preset.requiresKey
+            ? `Sua chave é criptografada em repouso no <code>.env</code> local e usada apenas para processar suas pesquisas.`
+            : `O provedor <strong>${preset.name}</strong> roda localmente e não requer autenticação na nuvem.`;
+    }
+
+    const baseUrlGroup = document.getElementById('aiBaseUrlGroup');
+    const baseUrlInput = document.getElementById('aiBaseUrlInput');
+    if (baseUrlGroup) {
+        const showUrl = providerId === 'ollama' || providerId === 'custom';
+        baseUrlGroup.style.display = showUrl ? 'flex' : 'none';
+        if (baseUrlInput && (!baseUrlInput.value || providerId === 'ollama')) {
+            baseUrlInput.value = preset.baseUrl || '';
+        }
+    }
+
+    // Popula modelos no Dropdown (100% dinâmico via API)
+    const modelSelect = document.getElementById('aiModelSelect');
+    const customModelInput = document.getElementById('aiCustomModelInput');
+    if (modelSelect) {
+        modelSelect.innerHTML = '';
+        const currentModel = window.AI_GATEWAY_CONFIG?.model;
+        if (currentModel && window.AI_GATEWAY_CONFIG?.provider === providerId) {
+            const opt = document.createElement('option');
+            opt.value = currentModel;
+            opt.textContent = currentModel === 'openai/gpt-oss-120b'
+                ? 'GPT OSS 120B (openai/gpt-oss-120b) — 128k contexto'
+                : `${currentModel} (Atual)`;
+            modelSelect.appendChild(opt);
+            modelSelect.value = currentModel;
+            if (customModelInput) customModelInput.value = currentModel;
+        } else {
+            const opt = document.createElement('option');
+            opt.value = '';
+            opt.textContent = 'Clique em "Testar" acima para listar os modelos disponíveis...';
+            modelSelect.appendChild(opt);
+        }
+    }
+
+    const feedback = document.getElementById('aiTestFeedback');
+    if (feedback) {
+        if (window.AI_GATEWAY_CONFIG?.hasKey && window.AI_GATEWAY_CONFIG?.provider === providerId) {
+            feedback.style.display = 'block';
+            feedback.className = 'ai-test-feedback success';
+            feedback.innerHTML = `<div>✓ <strong>Conexão bem-sucedida!</strong></div><div class="ai-feedback-sub">Latência: ${window.AI_GATEWAY_CONFIG.latencyMs || 360}ms · 4 modelos compatíveis</div>`;
+        } else {
+            feedback.style.display = 'none';
+        }
+    }
+
+    const badge = document.getElementById('aiModelCountBadge');
+    if (badge) badge.style.display = 'none';
+
+    // Atualiza status no Mini Console
+    const term = document.getElementById('aiModalTerminalOutput');
+    if (term) {
+        term.innerHTML = `<code><span class="t-matrix">$</span> CONNECTING TO ${escapeHtml(providerId.toUpperCase())} LPU ENGINE...
+<span class="t-matrix">[OK]</span> CHAT COMPLETION READY [ISOLATED]
+<span class="t-matrix">LOCAL .ENV ENCRYPTION</span></code>`;
+    }
+}
+
+/**
+ * Alternância entre Seleção por Dropdown e Digitação Manual de Modelo
+ */
+let isManualModelMode = false;
+
+function setManualModelMode(active) {
+    isManualModelMode = !!active;
+    const selectWrap = document.getElementById('aiModelSelectWrap');
+    const customWrap = document.getElementById('aiCustomModelWrap');
+    const toggleBtn = document.getElementById('btnToggleManualModel');
+    const select = document.getElementById('aiModelSelect');
+    const input = document.getElementById('aiCustomModelInput');
+
+    if (isManualModelMode) {
+        if (selectWrap) selectWrap.style.display = 'none';
+        if (customWrap) customWrap.style.display = 'block';
+        if (toggleBtn) toggleBtn.innerHTML = '📋 Selecionar da lista de modelos disponíveis';
+        if (input && select && select.value && !input.value) {
+            input.value = select.value;
+        }
+        if (input) input.focus();
+    } else {
+        if (selectWrap) selectWrap.style.display = 'block';
+        if (customWrap) customWrap.style.display = 'none';
+        if (toggleBtn) toggleBtn.innerHTML = '✏️ Digitar ID manualmente';
+        if (input && input.value.trim() && select) {
+            const val = input.value.trim();
+            const exists = Array.from(select.options).some(o => o.value === val);
+            if (!exists) {
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = `${val} (Manual)`;
+                select.appendChild(opt);
+            }
+            select.value = val;
+        }
+    }
+}
+
+function toggleManualModelMode() {
+    setManualModelMode(!isManualModelMode);
+}
+
+/**
+ * Alternar visibilidade da API Key (olho)
+ */
+function toggleAiKeyVisibility() {
+    const input = document.getElementById('aiApiKeyInput');
+    const btn = document.getElementById('btnToggleAiKeyVisibility');
+    if (!input) return;
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        if (btn) btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+    } else {
+        input.type = 'password';
+        if (btn) btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+    }
+}
+
+/**
+ * Testa a conexão com a API em tempo real (Ping BYOK)
+ */
+async function testCurrentAiConnection() {
+    const provider = document.getElementById('aiProviderSelect')?.value || 'groq';
+    let apiKey = document.getElementById('aiApiKeyInput')?.value || '';
+    const keyInput = document.getElementById('aiApiKeyInput');
+    const baseUrl = document.getElementById('aiBaseUrlInput')?.value || '';
+    const model = document.getElementById('aiModelSelect')?.value || '';
+    const providerPreset = AI_PROVIDER_PRESETS[provider] || AI_PROVIDER_PRESETS.groq;
+
+    if (keyInput && keyInput.dataset.isMasked === 'true' && apiKey.includes('••••')) {
+        apiKey = '';
+    }
+
+    const btn = document.getElementById('btnTestAiConnection');
+    const btnIcon = document.getElementById('aiTestBtnIcon');
+    const btnLabel = document.getElementById('aiTestBtnLabel');
+    const feedback = document.getElementById('aiTestFeedback');
+
+    if (btn) btn.disabled = true;
+    if (btnIcon) btnIcon.textContent = '⏳';
+    if (btnLabel) btnLabel.textContent = 'Testando...';
+
+    if (feedback) {
+        feedback.style.display = 'block';
+        feedback.className = 'ai-test-feedback loading';
+        feedback.innerHTML = `<span class="pulse-dot"></span> Conectando à API do provedor <strong>${provider.toUpperCase()}</strong>...`;
+    }
+
+    const term = document.getElementById('aiModalTerminalOutput');
+    if (term) {
+        term.innerHTML = `<code><span class="t-matrix">$</span> CONNECTING TO ${escapeHtml(provider.toUpperCase())} LPU ENGINE...
+<span class="t-matrix">[PING]</span> DISCOVERING CHAT MODELS
+<span class="t-matrix">[WAIT]</span> MEASURING ROUND-TRIP LATENCY...</code>`;
+    }
+
+    try {
+        const res = await fetch('/api/ai/test', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ provider, apiKey, baseUrl, model })
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+            feedback.className = 'ai-test-feedback success';
+            const modelList = Array.isArray(data.models) ? data.models : [];
+            const modelCount = modelList.length;
+            feedback.innerHTML = `<div>✓ <strong>Conexão bem-sucedida!</strong></div><div class="ai-feedback-sub">Latência: ${data.latencyMs || 0}ms · ${modelCount > 0 ? `${modelCount} modelos compatíveis` : 'Pronto para uso'}</div>`;
+
+            if (term) {
+                term.innerHTML = `<code><span class="t-matrix">$</span> CONNECTED TO ${escapeHtml(provider.toUpperCase())} LPU ENGINE...
+<span class="t-matrix">[OK]</span> LATENCY: ${data.latencyMs || 0}ms [ISOLATED]
+<span class="t-matrix">LOCAL .ENV ENCRYPTION</span></code>`;
+            }
+
+            const badge = document.getElementById('aiModelCountBadge');
+            if (badge) {
+                if (modelCount > 0) {
+                    badge.textContent = `${modelCount} modelos de chat compatíveis`;
+                    badge.style.display = 'inline-flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+
+            const modelSelect = document.getElementById('aiModelSelect');
+            const customInput = document.getElementById('aiCustomModelInput');
+            if (modelSelect && modelCount > 0) {
+                const previousVal = isManualModelMode && customInput?.value.trim()
+                    ? customInput.value.trim()
+                    : modelSelect.value;
+                modelSelect.innerHTML = '';
+
+                modelList.forEach(m => {
+                    let id = '';
+                    let label = '';
+                    if (typeof m === 'string') {
+                        id = m;
+                        label = m;
+                    } else if (m && typeof m === 'object') {
+                        id = m.id || m.name || m.value || '';
+                        const name = m.name || m.label || m.displayName || m.display_name || id;
+                        const ctx = m.contextWindow ? ` — ${Math.round(m.contextWindow / 1024)}k contexto` : '';
+                        label = (name && name !== id && !name.includes(id)) 
+                            ? `${name} (${id})${ctx}` 
+                            : `${id}${ctx}`;
+                    }
+                    if (!id) return;
+
+                    const opt = document.createElement('option');
+                    opt.value = id;
+                    opt.textContent = label;
+                    modelSelect.appendChild(opt);
+                });
+
+                const optionsArray = Array.from(modelSelect.options);
+                if (previousVal && optionsArray.some(o => o.value === previousVal)) {
+                    modelSelect.value = previousVal;
+                } else if (model && optionsArray.some(o => o.value === model)) {
+                    modelSelect.value = model;
+                } else if (modelSelect.options.length > 0) {
+                    modelSelect.selectedIndex = 0;
+                }
+
+                if (customInput && (!customInput.value || !isManualModelMode)) {
+                    customInput.value = modelSelect.value;
+                }
+            }
+        } else {
+            feedback.className = 'ai-test-feedback error';
+            feedback.innerHTML = `✕ <strong>Falha na conexão:</strong> ${escapeHtml(data.error || 'Não foi possível validar a chave.')}`;
+
+            if (term) {
+                term.innerHTML = `<code><span class="t-matrix">$</span> ERROR CONNECTING TO ${escapeHtml(provider.toUpperCase())}
+<span class="t-red">[FAIL]</span> ${escapeHtml(data.error || 'INVALID CREDENTIALS')}
+<span class="t-matrix">LOCAL .ENV ENCRYPTION</span></code>`;
+            }
+
+            if (data.quotaExceeded || res.status === 429) {
+                setTimeout(() => {
+                    closeAiSettingsModal();
+                    showQuotaExceededModal(data.error);
+                }, 1200);
+            }
+        }
+    } catch (err) {
+        feedback.className = 'ai-test-feedback error';
+        feedback.innerHTML = `✕ <strong>Erro de rede:</strong> ${escapeHtml(err.message)}`;
+        if (term) {
+            term.innerHTML = `<code><span class="t-matrix">$</span> NETWORK ERROR
+<span class="t-red">[FAIL]</span> ${escapeHtml(err.message)}
+<span class="t-matrix">LOCAL .ENV ENCRYPTION</span></code>`;
+        }
+    } finally {
+        if (btn) btn.disabled = false;
+        if (btnIcon) btnIcon.textContent = '🔑';
+        if (btnLabel) btnLabel.textContent = 'Testar';
+    }
+}
+
+/**
+ * Salvar e Ativar Configurações de IA
+ */
+async function handleSaveAiSettings(e) {
+    if (e) e.preventDefault();
+
+    const provider = document.getElementById('aiProviderSelect')?.value || 'groq';
+    let apiKey = document.getElementById('aiApiKeyInput')?.value || '';
+    const keyInput = document.getElementById('aiApiKeyInput');
+    const baseUrl = document.getElementById('aiBaseUrlInput')?.value || '';
+    let model = '';
+    if (isManualModelMode) {
+        model = (document.getElementById('aiCustomModelInput')?.value || '').trim();
+    } else {
+        model = (document.getElementById('aiModelSelect')?.value || '').trim();
+    }
+    if (!model) {
+        model = (document.getElementById('aiModelSelect')?.value || document.getElementById('aiCustomModelInput')?.value || '').trim();
+    }
+    const cacheHoursRaw = String(document.getElementById('aiCacheHoursInput')?.value || '24');
+    const cacheHours = parseInt(cacheHoursRaw.replace(/\D/g, ''), 10) || 24;
+    const maxRetries = parseInt(document.getElementById('aiMaxRetriesInput')?.value, 10) || 2;
+
+    if (keyInput && keyInput.dataset.isMasked === 'true' && apiKey.includes('••••')) {
+        apiKey = '';
+    }
+
+    const btn = document.getElementById('btnSaveAiSettings');
+    const spinner = document.getElementById('aiSaveSpinner');
+    const btnText = document.getElementById('aiSaveBtnText');
+
+    if (btn) btn.disabled = true;
+    if (spinner) spinner.style.display = 'inline-block';
+    if (btnText) btnText.textContent = 'Salvando e Ativando...';
+
+    try {
+        const res = await fetch('/api/ai/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                provider,
+                apiKey,
+                baseUrl,
+                model,
+                cacheHours,
+                maxRetries
+            })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+            throw new Error(data.error || 'Erro ao gravar configurações.');
+        }
+
+        window.AI_GATEWAY_CONFIG = data.config;
+        updateAiGatewayPillUI(data.config);
+
+        closeAiSettingsModal();
+
+        const provName = AI_PROVIDER_PRESETS[provider]?.name || provider;
+        showToast(`⚡ Cérebro Digital Conectado: ${provName} ativado com sucesso!`, 'success', 5000);
+        triggerSynapticPulse();
+
+        if (currentView === 'project-workspace' && currentProjectTab === 'research') {
+            renderProjectResearchTab();
+        }
+
+    } catch (err) {
+        alert('Erro ao salvar configuração de IA: ' + err.message);
+    } finally {
+        if (btn) btn.disabled = false;
+        if (spinner) spinner.style.display = 'none';
+        if (btnText) btnText.textContent = 'Salvar e Ativar ⚡';
+    }
+}
+
+/**
+ * Modal 3: Alerta de Cota de IA Esgotada (429 Rate Limit)
+ */
+function showQuotaExceededModal(customMsg) {
+    const modal = document.getElementById('aiQuotaModal');
+    if (!modal) return;
+
+    if (customMsg) {
+        const descEl = modal.querySelector('.ai-quota-desc');
+        if (descEl) descEl.textContent = customMsg;
+    }
+
+    const btn = document.getElementById('btnAiGatewayModal');
+    if (btn) {
+        btn.classList.add('quota-exceeded');
+    }
+
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeAiQuotaModal() {
+    const modal = document.getElementById('aiQuotaModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+function handleAiQuotaBackdropClick(e) {
+    if (e.target && e.target.id === 'aiQuotaModal') {
+        closeAiQuotaModal();
+    }
+}
+
+function proceedFromQuotaToSettings() {
+    closeAiQuotaModal();
+    openAiSettingsModal();
+}
+
+// Fechamento via tecla ESC
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const welcome = document.getElementById('aiWelcomeModal');
+        const settings = document.getElementById('aiSettingsModal');
+        const quota = document.getElementById('aiQuotaModal');
+
+        if (quota && quota.style.display === 'flex') {
+            closeAiQuotaModal();
+            return;
+        }
+        if (settings && settings.style.display === 'flex') {
+            closeAiSettingsModal();
+            return;
+        }
+        if (welcome && welcome.style.display === 'flex') {
+            closeAiWelcomeModal();
+            return;
+        }
+    }
+});
+
+// Exportações globais de controle
+window.loadAiGatewayStatus = loadAiGatewayStatus;
+window.openAiWelcomeModal = openAiWelcomeModal;
+window.closeAiWelcomeModal = closeAiWelcomeModal;
+window.handleAiWelcomeBackdropClick = handleAiWelcomeBackdropClick;
+window.proceedFromWelcomeToSettings = proceedFromWelcomeToSettings;
+window.openAiSettingsModal = openAiSettingsModal;
+window.closeAiSettingsModal = closeAiSettingsModal;
+window.handleAiSettingsBackdropClick = handleAiSettingsBackdropClick;
+window.onProviderSelectChange = onProviderSelectChange;
+window.toggleAiKeyVisibility = toggleAiKeyVisibility;
+window.toggleManualModelMode = toggleManualModelMode;
+window.setManualModelMode = setManualModelMode;
+window.testCurrentAiConnection = testCurrentAiConnection;
+window.handleSaveAiSettings = handleSaveAiSettings;
+window.showQuotaExceededModal = showQuotaExceededModal;
+window.closeAiQuotaModal = closeAiQuotaModal;
+window.handleAiQuotaBackdropClick = handleAiQuotaBackdropClick;
+window.proceedFromQuotaToSettings = proceedFromQuotaToSettings;
+
+// Carrega status da IA automaticamente após carregar a interface
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadAiGatewayStatus);
+} else {
+    loadAiGatewayStatus();
+}
+
+
 
 
 

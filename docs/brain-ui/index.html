@@ -84,6 +84,13 @@
                     <span class="breadcrumb-item active">🧠 Visão Geral</span>
                 </div>
                 <div class="topbar-actions">
+                    <!-- AI Gateway BYOK Pill -->
+                    <button id="btnAiGatewayModal" class="ai-status-pill unconfigured" title="Configurar Motor de Inteligência Artificial (BYOK)" onclick="openAiSettingsModal()">
+                        <span class="ai-pill-icon">✨</span>
+                        <span class="ai-pill-provider" id="aiStatusPillProvider">AI Gateway</span>
+                        <span class="status-dot snapshot" id="aiStatusPillDot"></span>
+                    </button>
+
                     <div class="vault-status-container">
                         <span id="vaultStatusBadge" class="vault-status snapshot" title="Status do Cérebro">
                             <span class="status-dot snapshot"></span> Snapshot
@@ -1543,6 +1550,254 @@
             </div>
         </div>
     </div>
+
+    <!-- ============================================================ -->
+    <!-- AI GATEWAY MULTI-PROVEDOR (BYOK) — MODAIS DE EXPERIÊNCIA UX -->
+    <!-- ============================================================ -->
+
+    <!-- Modal 1: Boas-Vindas & Onboarding ("Conectar Cérebro Digital") -->
+    <div id="aiWelcomeModal" class="editor-modal-backdrop" style="display: none;" onclick="handleAiWelcomeBackdropClick(event)">
+        <div class="ai-welcome-card" role="dialog" aria-modal="true" aria-labelledby="aiWelcomeTitle">
+            <div class="ai-welcome-icon-wrap">
+                <div class="ai-welcome-icon-glow"></div>
+                <div class="ai-welcome-robot-box">
+                    <svg class="ai-welcome-svg-robot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="10" rx="4"/>
+                        <circle cx="8.5" cy="16" r="1.5" fill="currentColor"/>
+                        <circle cx="15.5" cy="16" r="1.5" fill="currentColor"/>
+                        <path d="M12 2v5M9 7h6"/>
+                        <path d="M2 15h1M21 15h1"/>
+                    </svg>
+                </div>
+            </div>
+
+            <h2 id="aiWelcomeTitle" class="ai-welcome-title">Conectar Cérebro Digital</h2>
+            
+            <p class="ai-welcome-desc">
+                O motor cognitivo do <strong>AI Second Brain</strong> está pronto, mas precisa de combustível.
+                Conecte sua própria inteligência artificial para sintetizar pesquisas no <strong>Research Lab</strong>, refinar prompts contextuais e receber análises de arquitetura em tempo real.
+            </p>
+
+            <div class="ai-welcome-actions">
+                <button type="button" class="btn-ai-welcome-secondary" onclick="closeAiWelcomeModal()">Agora não</button>
+                <button type="button" class="btn-ai-welcome-primary" onclick="proceedFromWelcomeToSettings()">Configurar Agora</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Principal BYOK (Configuração de IA em Duas Colunas - Split Dialog) -->
+    <div id="aiSettingsModal" class="editor-modal-backdrop" style="display: none;" onclick="handleAiSettingsBackdropClick(event)">
+        <div class="ai-settings-card ai-settings-split-card" role="dialog" aria-modal="true" aria-labelledby="aiSettingsTitle">
+            
+            <!-- Coluna Esquerda: Formulário de Configuração & Ação -->
+            <div class="ai-split-col-form">
+                <div class="ai-settings-header">
+                    <div class="ai-settings-title-group">
+                        <span class="ai-settings-sparkle" aria-hidden="true">
+                            <svg class="ai-settings-sparkle-svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4L12 2z"/>
+                                <path d="M19 16l1 2.5L22.5 19.5 20 20.5 19 23l-1-2.5-2.5-1 2.5-1 1-2.5z" stroke-width="1.5"/>
+                            </svg>
+                        </span>
+                        <h2 id="aiSettingsTitle" class="ai-settings-title">Configuração de IA (BYOK)</h2>
+                    </div>
+                    <button type="button" class="ai-card-close-btn" onclick="closeAiSettingsModal()" aria-label="Fechar">✕</button>
+                </div>
+
+                <form id="aiGatewayForm" class="ai-form-scrollable" onsubmit="handleSaveAiSettings(event)">
+                    <!-- 1. Escolha o Provedor -->
+                    <div class="ai-settings-section">
+                        <label class="ai-step-title" for="aiProviderSelect">1. Escolha o Provedor</label>
+                        <div class="ai-select-wrap">
+                            <select id="aiProviderSelect" class="ai-select-input" onchange="onProviderSelectChange()">
+                                <option value="groq">Groq Cloud (Gratuito &amp; Ultra-rápido LPU)</option>
+                                <option value="openai">OpenAI (GPT-4o, GPT-4o-mini, o1)</option>
+                                <option value="anthropic">Anthropic Claude (Claude 3.5 Sonnet &amp; Haiku)</option>
+                                <option value="openrouter">OpenRouter (DeepSeek R1/V3, Llama 3.3 &amp; +300 Modelos)</option>
+                                <option value="ollama">Ollama Local (100% Offline · Sem Nuvem · Zero Custo)</option>
+                                <option value="custom">Endpoint Customizado (OpenAI-Compatible)</option>
+                            </select>
+                            <span class="ai-select-arrow">⌵</span>
+                        </div>
+                    </div>
+
+                    <!-- Custom Base URL (visível quando ollama ou custom) -->
+                    <div id="aiBaseUrlGroup" class="ai-settings-section" style="display: none;">
+                        <label class="ai-step-title" for="aiBaseUrlInput">Endpoint Base URL</label>
+                        <input type="text" id="aiBaseUrlInput" class="ai-text-input" placeholder="http://localhost:11434/v1">
+                    </div>
+
+                    <!-- 2. Sua API Key -->
+                    <div class="ai-settings-section" id="aiApiKeyGroup">
+                        <label class="ai-step-title" for="aiApiKeyInput">2. Sua API Key</label>
+                        <div class="ai-key-input-row">
+                            <div class="ai-key-input-wrap">
+                                <span class="ai-key-lock-icon" aria-hidden="true">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                    </svg>
+                                </span>
+                                <input type="password" id="aiApiKeyInput" class="ai-key-input" placeholder="Password" autocomplete="off">
+                                <button type="button" id="btnToggleAiKeyVisibility" class="btn-ai-key-eye" onclick="toggleAiKeyVisibility()" title="Mostrar/ocultar chave">
+                                    <svg id="aiEyeIconSvg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <button type="button" id="btnTestAiConnection" class="btn-ai-test-key" onclick="testCurrentAiConnection()" title="Testar chave e carregar modelos disponíveis">
+                                <span class="btn-test-icon" id="aiTestBtnIcon" style="display:none">⏳</span>
+                                <span class="btn-test-label" id="aiTestBtnLabel">Testar</span>
+                            </button>
+                        </div>
+                        <!-- Mensagem de status dinâmico do teste -->
+                        <div id="aiTestFeedback" class="ai-test-feedback" style="display: none;"></div>
+                    </div>
+
+                    <!-- 3. Modelo de IA -->
+                    <div class="ai-settings-section">
+                        <div class="ai-step-header-row">
+                            <label class="ai-step-title" for="aiModelSelect">3. Modelo de IA</label>
+                            <span id="aiModelCountBadge" class="ai-models-badge" style="display: none;"></span>
+                        </div>
+                        
+                        <!-- Dropdown de seleção de modelos -->
+                        <div id="aiModelSelectWrap" class="ai-select-wrap">
+                            <select id="aiModelSelect" class="ai-select-input">
+                                <option value="openai/gpt-oss-120b">GPT OSS 120B (openai/gpt-oss-120b) — 128k contexto</option>
+                            </select>
+                            <span class="ai-select-arrow">⌵</span>
+                        </div>
+
+                        <!-- Campo manual alternativo (oculto por padrão) -->
+                        <div id="aiCustomModelWrap" class="ai-custom-model-wrap" style="display: none;">
+                            <input type="text" id="aiCustomModelInput" class="ai-custom-model-input" placeholder="Ex: openai/gpt-oss-120b, gpt-4o, etc.">
+                        </div>
+
+                        <!-- Alternador entre Lista Dinâmica e Digitação Manual -->
+                        <div class="ai-model-mode-switch">
+                            <button type="button" id="btnToggleManualModel" class="btn-ai-model-mode-link" onclick="toggleManualModelMode()">
+                                ✏️ Digitar ID manualmente
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 4. Parâmetros -->
+                    <div class="ai-settings-section">
+                        <label class="ai-step-title">4. Parâmetros</label>
+                        <div class="ai-params-grid">
+                            <div class="ai-param-box">
+                                <span class="ai-param-label">Cache:</span>
+                                <input type="text" id="aiCacheHoursInput" class="ai-param-input" value="24h">
+                            </div>
+                            <div class="ai-param-box">
+                                <span class="ai-param-label">Tentativas:</span>
+                                <input type="number" id="aiMaxRetriesInput" class="ai-param-input" value="2" min="1" max="5">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rodapé de Ações Fixo e Sempre Visível -->
+                    <div class="ai-settings-footer">
+                        <button type="button" class="btn-ai-footer-cancel" onclick="closeAiSettingsModal()">Cancelar</button>
+                        <button type="submit" id="btnSaveAiSettings" class="btn-ai-footer-save">
+                            <span class="btn-spinner" id="aiSaveSpinner" style="display:none"></span>
+                            <span id="aiSaveBtnText">Salvar e Ativar ⚡</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Coluna Direita: Contexto, Confiança e Telemetria (4 Cards Empilhados) -->
+            <div class="ai-split-col-info">
+                <!-- Card 1: Header Gateway -->
+                <div class="ai-card-gateway-header">
+                    <div class="ai-gateway-icon-wrap">
+                        <svg class="ai-gateway-brain-svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 4.5a3 3 0 0 0-3-2.5 3.5 3.5 0 0 0-3.4 2.7 3.5 3.5 0 0 0-1.6 3.3 3.5 3.5 0 0 0 .5 3.5 3.5 3.5 0 0 0-.5 3.5 3.5 3.5 0 0 0 2 2.5 3.5 3.5 0 0 0 3 1.5 3 3 0 0 0 3-2.5"/>
+                            <path d="M12 4.5a3 3 0 0 1 3-2.5 3.5 3.5 0 0 1 3.4 2.7 3.5 3.5 0 0 1 1.6 3.3 3.5 3.5 0 0 1-.5 3.5 3.5 3.5 0 0 1 .5 3.5 3.5 3.5 0 0 1-2 2.5 3.5 3.5 0 0 1-3 1.5 3 3 0 0 1-3-2.5"/>
+                            <path d="M12 4.5V19"/>
+                            <path d="M9 8.5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2"/>
+                            <path d="M15 8.5a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2"/>
+                        </svg>
+                    </div>
+                    <div class="ai-gateway-text-wrap">
+                        <h3 class="ai-gateway-title">AI Second Brain — Cognitive Gateway</h3>
+                        <p class="ai-gateway-subtitle">Síntese técnica autônoma e aceleração cognitiva com controle total de chaves e dados.</p>
+                    </div>
+                </div>
+
+                <!-- Card 2: Terminal Console -->
+                <div class="ai-card-terminal">
+                    <pre class="ai-terminal-output" id="aiModalTerminalOutput"><code><span class="t-matrix">$</span> CONNECTING TO GROQ LPU ENGINE...
+<span class="t-matrix">[OK]</span> CHAT COMPLETION READY [ISOLATED]
+<span class="t-matrix">LOCAL .ENV ENCRYPTION</span></code></pre>
+                </div>
+
+                <!-- Card 3: Card 1 (Security) -->
+                <div class="ai-card-security">
+                    <div class="ai-card-tag">
+                        <svg class="ai-card-tag-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="m9 12 2 2 4-4"/>
+                        </svg>
+                        <span class="ai-card-tag-text sec">Card 1 (Security)</span>
+                    </div>
+                    <p class="ai-card-body-text">
+                        <strong>Segurança em Primeiro Lugar</strong> — Sua chave é gravada exclusivamente no <code>.env</code> local. Zero envio a servidores terceiros e protegida no <code>.gitignore</code>.
+                    </p>
+                </div>
+
+                <!-- Card 4: Card 2 (Scope) -->
+                <div class="ai-card-scope">
+                    <div class="ai-card-tag">
+                        <svg class="ai-card-tag-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="16" x2="12" y2="12"/>
+                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                        </svg>
+                        <span class="ai-card-tag-text scope">Card 2 (Scope)</span>
+                    </div>
+                    <p class="ai-card-body-text">
+                        <strong>O que a IA fará</strong> — Gera artigos e especificações no Research Lab. Nenhuma alteração destrutiva sem confirmação.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal 3: Alerta de Cota Esgotada (429 Rate Limit) -->
+    <div id="aiQuotaModal" class="editor-modal-backdrop" style="display: none;" onclick="handleAiQuotaBackdropClick(event)">
+        <div class="ai-quota-card" role="dialog" aria-modal="true" aria-labelledby="aiQuotaTitle">
+            <div class="ai-quota-header">
+                <span class="ai-quota-warning-icon">⚠️</span>
+                <span class="ai-quota-header-title">Aviso do Sistema</span>
+            </div>
+
+            <div class="ai-quota-body">
+                <h2 id="aiQuotaTitle" class="ai-quota-title">Cota de IA Esgotada!</h2>
+                <p class="ai-quota-desc">
+                    O seu provedor de IA informou que você não possui mais créditos ou atingiu o limite de uso (Rate Limit / Quota Exceeded) para operações de pesquisa e cognição.
+                </p>
+
+                <div class="ai-quota-box">
+                    <strong class="ai-quota-box-title">Recomendações:</strong>
+                    <ul class="ai-quota-box-list">
+                        <li>Adicione créditos na conta do seu provedor.</li>
+                        <li>Alterne para outro provedor (ex: Groq Gratuito, OpenAI, Claude ou Ollama Local) nas configurações.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="ai-quota-footer">
+                <button type="button" class="btn-ai-quota-secondary" onclick="closeAiQuotaModal()">Entendido</button>
+                <button type="button" class="btn-ai-quota-primary" onclick="proceedFromQuotaToSettings()">Configurar IA</button>
+            </div>
+        </div>
+    </div>
+
     <script src="three.min.js"></script>
     <script src="OrbitControls.js"></script>
     <script src="marked.min.js"></script>

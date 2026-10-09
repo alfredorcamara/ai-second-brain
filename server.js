@@ -14,6 +14,7 @@ const path = require('path');
 const { exec } = require('child_process');
 const { scanVault } = require('./scripts/scan-vault');
 const groq = require('./scripts/groq-client');
+const aiGateway = require('./scripts/ai-gateway');
 const researchEngine = require('./scripts/research-engine');
 
 const INITIAL_PORT = parseInt(process.env.PORT, 10) || 3333;
@@ -1049,22 +1050,72 @@ Projeto externo vinculado ao AI Second Brain.
     // RESEARCH LAB — AI-Powered Knowledge Synthesis
     // ============================================================
 
-    // API: Check AI (Groq) Configuration Status
-    if (pathname === '/api/ai/status' && req.method === 'GET') {
+    // API: Check AI Configuration Status (compatível com /status e /config)
+    if ((pathname === '/api/ai/status' || pathname === '/api/ai/config') && req.method === 'GET') {
         try {
-            const config = groq.getConfig();
+            const config = aiGateway.getConfig();
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({
-                configured: config.configured,
-                model: config.model,
-                maxTokens: config.maxTokens,
-                temperature: config.temperature,
-                // Never expose the full key
-                apiKeyPreview: config.apiKey ? `${config.apiKey.substring(0, 7)}...${config.apiKey.slice(-4)}` : null
+                success: true,
+                ...config,
+                // retrocompatibilidade com campos legados
+                apiKeyPreview: config.apiKeyMasked
             }));
         } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
-            res.end(JSON.stringify({ error: err.message }));
+            res.end(JSON.stringify({ success: false, error: err.message }));
+        }
+        return;
+    }
+
+    // API: Test AI Connection & Fetch Models (Live BYOK Ping)
+    if (pathname === '/api/ai/test' && req.method === 'POST') {
+        try {
+            const body = await readJsonBody(req);
+            const result = await aiGateway.testConnection({
+                provider: body.provider,
+                apiKey: body.apiKey,
+                baseUrl: body.baseUrl,
+                model: body.model
+            });
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify(result));
+        } catch (err) {
+            const statusCode = err.statusCode || 400;
+            res.writeHead(statusCode, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({
+                success: false,
+                error: err.message,
+                statusCode,
+                quotaExceeded: !!err.quotaExceeded
+            }));
+        }
+        return;
+    }
+
+    // API: Save AI Gateway Configuration to .env
+    if (pathname === '/api/ai/save' && req.method === 'POST') {
+        try {
+            const body = await readJsonBody(req);
+            const updated = aiGateway.saveConfig({
+                provider: body.provider,
+                apiKey: body.apiKey,
+                model: body.model,
+                baseUrl: body.baseUrl,
+                maxTokens: body.maxTokens,
+                temperature: body.temperature,
+                cacheHours: body.cacheHours,
+                maxRetries: body.maxRetries
+            });
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({
+                success: true,
+                message: 'Configuração de IA salva e ativada com sucesso.',
+                config: updated
+            }));
+        } catch (err) {
+            res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ success: false, error: err.message }));
         }
         return;
     }
@@ -1120,8 +1171,13 @@ Projeto externo vinculado ao AI Second Brain.
 
         } catch (err) {
             console.error('❌ [Research Lab] Erro no refinamento:', err.message);
-            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
-            res.end(JSON.stringify({ error: err.message }));
+            const status = err.statusCode === 429 || err.quotaExceeded ? 429 : (err.statusCode || 500);
+            res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ 
+                error: err.message, 
+                quotaExceeded: status === 429,
+                statusCode: status 
+            }));
         }
         return;
     }
@@ -1175,8 +1231,13 @@ Projeto externo vinculado ao AI Second Brain.
             }));
         } catch (err) {
             console.error('❌ [Research Lab] Erro na decomposição:', err.message);
-            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
-            res.end(JSON.stringify({ error: err.message }));
+            const status = err.statusCode === 429 || err.quotaExceeded ? 429 : (err.statusCode || 500);
+            res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ 
+                error: err.message, 
+                quotaExceeded: status === 429,
+                statusCode: status 
+            }));
         }
         return;
     }

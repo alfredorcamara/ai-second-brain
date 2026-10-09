@@ -39,3 +39,24 @@ realmente precisa de geração de texto ou raciocínio aberto.
 2. Em SPAs que suportam tanto servidor local quanto pasta offline, caches em `localStorage` não devem ter precedência sobre o servidor local em `localhost`. Race conditions durante a subida de processos exigem auto-reconexão com retentativas, e qualquer gerador offline deve manter paridade estrita de arquitetura de dados (árvore hierárquica) com o backend.
 **Ação**: Sempre forçar UTF-8 em scripts de console e implementar auto-reconexão e limpeza automática de caches obsoletos no cliente web.
 
+### Lição 7: Atualização atômica de variáveis de ambiente em tempo de execução
+**Contexto**: Ao salvar uma nova chave de API ou trocar de provedor via modal BYOK, reiniciar o servidor interromperia a sessão web do usuário.
+**Aprendizado**: É possível manter persistência física em arquivo `.env` (preservando comentários e adicionando chaves atômicas) e sincronizar imediatamente o objeto `process.env` em memória no mesmo tick de execução. Isso permite que rotas subsequentes utilizem as novas credenciais sem exigir restart do Node.js.
+**Ação**: Sempre sincronizar `fs.writeFileSync('.env')` com mutação direta em `process.env[key] = value` para configurações de infraestrutura hot-swappable.
+
+### Lição 8: Normalização de protocolos de IA (OpenAI vs Anthropic) sem dependências
+**Contexto**: Diferentes provedores utilizam convenções distintas: a maioria segue o padrão `/v1/chat/completions` da OpenAI, enquanto a Anthropic exige `/v1/messages` com cabeçalho `x-api-key` e `anthropic-version`.
+**Aprendizado**: Uma camada de abstração com zero dependências externas pode mapear transparentemente o formato de request e unificar a extração de resposta (`content[0].text` vs `choices[0].message.content`), mantendo o restante da aplicação agnóstico ao provedor escolhido.
+**Ação**: Centralizar a tradução de payloads no gateway unificado e tratar `429` (Rate Limit) de maneira uniforme para disparar telas de contingência guiada.
+
+### Lição 10: Normalização de Catálogo de Modelos (Strings vs Objetos) no Teste de Conexão BYOK
+**Contexto**: No modal de configuração de IA (BYOK), o endpoint `/api/ai/test` retornava uma lista de strings de IDs de modelos, enquanto a interface web esperava objetos com propriedades `.id` e `.name`. Isso gerava opções `<option value="undefined">undefined</option>` no dropdown, impedindo a visualização dos modelos detectados.
+**Aprendizado**: O backend de Gateway e o cliente frontend devem operar de forma defensiva e simétrica: o backend deve normalizar modelos como objetos tipados `{ id, name, contextWindow }`, filtrar modelos incompatíveis (áudio/guardrails em Groq e embeddings em OpenAI) e ordenar os recomendados no topo. O frontend, por sua vez, deve suportar tanto strings primitivas quanto objetos, apresentar contadores e chips de seleção rápida em 1 clique, e restaurar com segurança o modelo selecionado.
+**Ação**: Sempre normalizar estruturas de modelos em `{ id, name, contextWindow }` no gateway, aplicar parsing polimórfico no JavaScript client e enriquecer a UX com badges e chips rápidos.
+
+### Lição 11: Eliminação de Hardcoding de Modelos e Isolamento entre Vault Local e Demo Pública
+**Contexto**: A presença de modelos de IA fixos em código gerava acoplamento artificial, enquanto a sincronização do scanner local com a pasta da demo pública sobrescreveu o projeto de demonstração (`demo-app`) com os projetos locais reais do desenvolvedor.
+**Aprendizado**:
+1. Provedores de IA evoluem seus catálogos continuamente; fixar nomes em código gera débito técnico imediato. O gateway deve operar de forma 100% dinâmica, descobrindo os modelos disponíveis em tempo real através da API do provedor (`GET /models` / `/api/tags`) a partir do teste de conexão acionado pelo usuário.
+2. O ambiente de demonstração estático (`demo/`) da landing page e o ambiente local de desenvolvimento do workspace devem manter isolamento estrito de dados: o gerador `build_demo_vault.py` produz dados ilustrativos limpos (`demo-app`) para a web pública, enquanto o `scan-vault.js` mapeia os projetos reais do usuário apenas para o visualizador privado.
+**Ação**: Remover listas estáticas de modelos de todos os arquivos de configuração e código, e manter os geradores de dados da demo pública completamente isolados da varredura do disco local.

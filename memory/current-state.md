@@ -1,10 +1,10 @@
 # Estado Atual do AI Second Brain
 
-> Última atualização: 2026-10-08
+> Última atualização: 2026-10-09
 
-## Status do Framework: 🟢 Operacional & UX/UI Avançado + 🔬 Research Lab 100% Funcional (Etapas 1, 2 e 3 Concluídas)
+## Status do Framework: 🟢 Operacional & Cockpit Avançado + 🔬 Research Lab + ⚡ AI Gateway Multi-Provedor (BYOK Ativo)
 
-O AI Second Brain está estruturado como uma plataforma universal de governança e desenvolvimento com IA, livre de acoplamento a projetos específicos e equipada com um portal web moderno e motor de pesquisa autônoma resiliente.
+O AI Second Brain está estruturado como uma plataforma universal de governança e desenvolvimento com IA, livre de acoplamento a projetos específicos e equipada com um portal web moderno, motor de pesquisa autônoma resiliente e AI Gateway multi-provedor (BYOK).
 
 ## Estrutura do Workspace
 
@@ -16,10 +16,57 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 | `projects/` | Projetos conectados pelo desenvolvedor | 🟢 Suporta Greenfield & Brownfield + RESEARCH/ |
 | `memory/` | Memória de continuidade entre sessões | ✅ Operacional |
 | `templates/` | Modelos para novos projetos, specs e ADRs | ✅ Disponíveis |
-| `docs/brain-ui/` | Portal web interativo de visualização e governança | 🚀 UX/UI com Project Workspace & Grafo 3D |
-| `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, Groq Client, Research Engine) |
+| `docs/brain-ui/` | Portal web interativo de visualização e governança | 🚀 UX/UI com Project Workspace, Grafo 3D & AI BYOK |
+| `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway Multi-Provedor, Research Engine) |
 
 ## Sessões Recentes
+- **Data**: 2026-10-09
+  - **AI Gateway Multi-Provedor (BYOK — Bring Your Own Key)**:
+    - **Módulo Nativo Universal (`scripts/ai-gateway.js`)**: Cliente HTTP/HTTPS sem dependências externas, unificando os principais provedores de IA do mercado:
+      - **Groq Cloud**: Gratuito, ultra-rápido LPU (`openai/gpt-oss-120b` padrão, `openai/gpt-oss-20b` fallback, `qwen/qwen3.8-27b`).
+      - **OpenAI**: Flagship multimodal e raciocínio (`gpt-4o-mini`, `gpt-4o`, `o1-mini`).
+      - **Anthropic Claude**: Análise densa de código e arquitetura (`claude-3-5-sonnet-20241022`, `claude-3-5-haiku-20241022`).
+      - **OpenRouter**: Acesso a centenas de modelos abertos e proprietários (`deepseek/deepseek-chat`, `deepseek-r1`, `qwen-2.5-72b`).
+      - **Ollama Local**: 100% offline, privado na máquina do usuário, custo zero (`llama3.2`, `deepseek-r1`, `qwen2.5-coder`).
+      - **Endpoint Customizado**: Compatível com qualquer servidor local ou proxy corporativo OpenAI-Compatible.
+    - **Resiliência e Auto-Recuperação de Modelos Descontinuados**:
+      - Auto-fallback inteligente no `scripts/ai-gateway.js` quando o provedor retorna erro de modelo inexistente ou sem acesso (`does not exist or you do not have access to it` / 404). O gateway redireciona transparentemente a requisição para o modelo padrão ou de contingência sem abortar a síntese.
+      - Sincronização estrita de catálogo Groq com os modelos ativos da conta (`openai/gpt-oss-120b`, `openai/gpt-oss-20b`).
+    - **Endpoints REST no Backend (`server.js`)**:
+      - `GET /api/ai/config` e `GET /api/ai/status`: Retorna o provedor ativo, máscara segura da chave (ex: `gsk_••••••••Zvrf`), status de configuração e catálogo de provedores/modelos recomendados.
+      - `POST /api/ai/test`: Realiza ping em tempo real na API do provedor com a chave informada, mede a latência em milissegundos e retorna a lista viva de modelos disponíveis da conta do usuário.
+      - `POST /api/ai/save`: Gravação atômica das variáveis no arquivo `.env` físico e atualização imediata de `process.env` em memória sem necessidade de reiniciar o processo Node.js. Suporte a parâmetros avançados (`cacheHours`, `maxRetries`).
+      - **Interceptador de Cota 429**: Detecção de `Rate Limit / Quota Exceeded` propagando flag `quotaExceeded: true` para a interface gráfica.
+    - **Tríade de Modais UX de Alta Fidelidade no Cockpit (`docs/brain-ui/` e `docs/brain-ui/demo/`)**:
+      - **Pill Luminoso na Topbar (`#btnAiGatewayModal`)**: Exibe o status ao vivo da IA (`⚡ Groq Cloud • openai/gpt-oss-120b` com dot verde conectado; `✨ Conectar IA (BYOK)` em tom dourado quando não configurado; pulso vermelho em erro de cota).
+      - **Modal 1: Boas-Vindas & Onboarding (`#aiWelcomeModal`)**: Card escuro com robô neon pulsante convidando o desenvolvedor a conectar seu cérebro digital, acionado suavemente na primeira visita.
+      - **Modal 2: Central BYOK (`#aiSettingsModal`)**: Formulário em 4 etapas:
+        1. Seletor de provedor com ícones.
+        2. Input de chave com cadeado, botão de visibilidade olho (👁️), botão de teste (🔑) com feedback dinâmico de latência (ex: *✓ Conexão bem-sucedida! Latência: 355ms*).
+        3. Dropdown de modelos populado dinamicamente via ping da API.
+        4. Configurações avançadas (Expiração de cache em horas e tentativas máximas).
+        - **Card Verde de Privacidade**: Garante armazenamento 100% local no `.env` sob proteção do `.gitignore`.
+        - **Card Azul de Escopo**: Esclarece o raio de ação da IA (Research Lab, refinamento de briefing e grafo).
+        - **Botão "Salvar e Ativar ⚡"**: Salva a configuração e dispara evento no sistema.
+      - **Modal 3: Alerta de Cota Esgotada (`#aiQuotaModal`)**: Modal automático com cabeçalho de aviso, título dourado *"Cota de IA Esgotada!"*, caixa de recomendações (trocar para Groq gratuito, Claude ou Ollama local) e botão de redirecionamento para o configurador.
+    - **Efeito UAU: Pulso Sináptico no Grafo 3D Three.js**:
+      - Função `triggerSynapticPulse()` conectada a `graph.pulseSurge()` e `projectGraph.pulseSurge()` no `neuron-graph.js`, provocando uma aceleração visual nos impulsos elétricos das sinapses e nós ao ativar ou salvar uma chave.
+    - **Correção e Enriquecimento do Catálogo de Modelos Dinâmico (Modal BYOK)**:
+      - **Resolução do Bug de Modelos "Undefined"**: Identificado que o frontend esperava array de objetos `{ id, name }`, enquanto o gateway retornava array de strings. Implementado parsing polimórfico defensivo no frontend (`app.js` e `demo/app.js`) e normalização rica no backend (`scripts/ai-gateway.js`).
+      - **Filtragem Inteligente Universal de Modelos**: O backend agora descarta automaticamente modelos incompatíveis com chat/completions (áudio `whisper`, classificadores de moderação, guardrails, embeddings, imagem) garantindo que apenas modelos capazes de responder a prompts do Research Lab e síntese fiquem disponíveis.
+      - **Layout Limpo \u0026 Alternador de Entrada Manual**: Removidos os chips redundantes abaixo do select. A interface agora conta com badge contextualizado (`#aiModelCountBadge`), dropdown enriquecido com janela de contexto (ex: `128k contexto`) e botão alternador para digitação manual do ID do modelo (`#btnToggleManualModel` / `#aiCustomModelWrap`) para suporte flexível a modelos customizados/beta.
+      - **Suporte ao Modo Demonstração (`demo-mode.js`)**: Interceptação de `/api/ai/test` no mock offline evitando erro 403 e populando o catálogo dinâmico mesmo em ambientes estáticos (GitHub Pages).
+      - **Eliminação de Modelos Hardcoded (Arquitetura 100% Dinâmica)**:
+        - Removidos presets fixos (`defaultModel`, `recommendedModels`, `fallbackModel`) de `scripts/ai-gateway.js`, `app.js` e `demo/app.js`. O configurador agora depende exclusivamente da resposta em tempo real da API do provedor ativo via teste de conexão.
+        - Se o usuário não testou a conexão ou não selecionou um modelo, o seletor exibe instrução amigável e impede inferências sem modelo válido.
+      - **Restauração e Isolamento do Vault de Demonstração (`demo-app`)**:
+        - Restaurado o arquivo `docs/brain-ui/demo/vault-data.js` via gerador isolado `build_demo_vault.py`, garantindo que a landing page pública exiba o projeto ilustrativo `demo-app` (35 arquivos de demonstração) e nunca exponha os projetos reais e locais do desenvolvedor (`teste_alfredo_22`, `Alfredo_teste`).
+  - **Refinamentos Visuais e Documentação**:
+    - **Dark Scrollbars**: Padronização dos scrollbars em tom escuro de luxo (#1e293b / #090d16) em todos os blocos de terminal e documentações.
+    - **Card do Criador**: Seção de autoria e comunidade valorizando a criação do projeto.
+    - **Internacionalização (i18n)**: Seletor de idioma PT/EN funcional em toda a landing page.
+    - **Licenciamento Open Source**: Inclusão de `LICENSE` MIT e `.env.example` sem expor segredos.
+
 - **Data**: 2026-10-08
   - **Correção de Codificação do Terminal e Resiliência do Vault Manager**:
     - **Terminal Windows (`start-brain.bat`)**: Inclusão de `chcp 65001 >nul` ativando UTF-8 nativo no CMD, eliminando a exibição de `ÔÇö` no lugar do travessão `—` e ícones.
