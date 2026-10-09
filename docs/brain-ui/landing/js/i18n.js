@@ -20,9 +20,9 @@
     function walk(el, en) {
         if (SKIP.has(el.tagName.toUpperCase()) || el.hasAttribute('data-no-i18n')) return;
         for (const a of ['title', 'aria-label', 'alt', 'placeholder']) if (el.hasAttribute(a)) {
-            const s = 'o' + a;
-            if (en) { const v = norm(el.getAttribute(a)); if (D[v]) { el.dataset[s] = el.getAttribute(a); el.setAttribute(a, D[v].replace(/<[^>]+>/g, '')); } }
-            else if (el.dataset[s]) { el.setAttribute(a, el.dataset[s]); delete el.dataset[s]; }
+            const attr = 'data-o-' + a;
+            if (en) { const v = norm(el.getAttribute(a)); if (D[v]) { el.setAttribute(attr, el.getAttribute(a)); el.setAttribute(a, D[v].replace(/<[^>]+>/g, '')); } }
+            else if (el.hasAttribute(attr)) { el.setAttribute(a, el.getAttribute(attr)); el.removeAttribute(attr); }
         }
         if (el.children.length && !isLeaf(el)) { for (const n of el.childNodes) n.nodeType === 3 ? txt(n, en) : n.nodeType === 1 && walk(n, en); return; }
         const k = keyOf(el); if (!k) return;

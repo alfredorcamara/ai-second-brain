@@ -286,12 +286,15 @@
         });
     });
 
-    // ── Copiar comando do Git ──
+    // ── Copiar comando do Git / Início ──
     const copyBtn = $('#copy');
     if (copyBtn) {
         copyBtn.onclick = async e => {
             try {
-                const codeText = $('.code-body code').textContent;
+                const codeEls = Array.from(document.querySelectorAll('.code-body code'));
+                const codeText = codeEls.length
+                    ? codeEls.map(c => c.textContent.trim()).filter(Boolean).join('\n')
+                    : 'git clone https://github.com/alfredorcamara/ai-second-brain';
                 await navigator.clipboard.writeText(codeText);
                 const prev = copyBtn.innerHTML;
                 copyBtn.innerHTML = '<span>Copiado ✓</span>';

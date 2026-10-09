@@ -132,18 +132,9 @@ RULES SKILLS PROMPTS  GLOBAL  PROJECT  MEMORY
   ▼        ▼        ▼
 APIs/Backend  SaaS/Web    Jogos/Apps
 ```
-           │
-       AI GATEWAY
-           │
-    ┌──────┼──────┐
-    │      │      │
-  AIJEV   LLM  LOCAL AI
-    │      │      │
-    └──────┼──────┘
-           │
-     SEUS PROJETOS
-           │
-  ┌────────┼────────┐
-  ▼        ▼        ▼
-APIs/Backend  SaaS/Web    Jogos/Apps
-```
+
+## Autor & Licença
+
+Idealizado e mantido por **Alfredo R. Câmara** ([@alfredorcamara](https://github.com/alfredorcamara)).  
+Distribuído sob licença MIT. 100% Open Source.
+

@@ -41,3 +41,229 @@ main .pains,main .pain,main .diag-tabs,main .diagram-frame,main .diag-caps,main 
 .faq details p{margin:0;padding:0 22px 20px;color:var(--fg-dim);font-size:15.5px;line-height:1.7}
 .footer-links{display:flex;gap:18px;justify-content:center;margin-bottom:10px}.footer-links a{color:var(--mut);text-decoration:none;font-size:13px;pointer-events:auto}.footer-links a:hover{color:var(--gold)}
 @media(max-width:640px){.diagram-frame{padding:8px}.browser-bar .url{display:none}.resil{padding:20px}.lang-btn{padding:5px 9px}}
+
+/* ── Ferramentas Suportadas (Hero Tools) ── */
+.hero-tools {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 26px;
+  width: 100%;
+}
+.hero-tools-label {
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mut);
+  font-weight: 500;
+}
+.hero-tools-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  max-width: 720px;
+}
+.tool-tag {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fg-dim);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  padding: 5px 13px;
+  border-radius: 999px;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(8px);
+}
+.tool-tag:hover {
+  background: rgba(255, 199, 107, 0.12);
+  border-color: rgba(255, 199, 107, 0.4);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* ── Card do Criador (Comunidade & Open Source) ── */
+.creator-card {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  width: min(860px, 100%);
+  margin: 40px auto 0;
+  padding: 28px 34px;
+  background: var(--glass-card);
+  border: 1px solid var(--line-strong);
+  border-radius: 24px;
+  backdrop-filter: blur(14px);
+  text-align: left;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 40px rgba(255, 199, 107, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+.creator-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.8;
+}
+.creator-avatar {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 24px var(--gold-glow);
+  background: #080e1c;
+}
+.creator-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.creator-avatar-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 700 24px var(--font-sans);
+  color: var(--gold);
+  background: radial-gradient(circle, #1e293b, #090e17);
+  z-index: -1;
+}
+.creator-info {
+  flex: 1;
+}
+.creator-role {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.creator-name {
+  margin: 0 0 10px;
+  font-size: 22px;
+  font-weight: 700;
+}
+.creator-name a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.creator-name a:hover {
+  color: var(--gold);
+}
+.creator-quote {
+  margin: 0 0 14px;
+  padding-left: 14px;
+  border-left: 2px solid var(--gold);
+  font-style: italic;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--fg-dim);
+}
+.creator-links {
+  display: flex;
+  gap: 16px;
+}
+.creator-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--mut);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.creator-link:hover {
+  color: var(--gold);
+}
+@media (max-width: 640px) {
+  .creator-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px 20px;
+    gap: 18px;
+  }
+  .creator-quote {
+    padding-left: 0;
+    border-left: none;
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+  }
+  .creator-links {
+    justify-content: center;
+  }
+}
+
+/* ── Linhas do Terminal & Requisitos ── */
+.code-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  flex: 1;
+}
+.code-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  white-space: nowrap;
+}
+.cmd-prompt {
+  color: var(--gold);
+  font-weight: 600;
+  user-select: none;
+}
+.cmd-comment {
+  color: var(--mut);
+  font-size: 12px;
+  font-style: italic;
+  user-select: none;
+  margin-left: 6px;
+}
+.quickstart-notes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: -16px;
+  margin-bottom: 28px;
+  font-size: 13.5px;
+  color: var(--mut);
+  text-align: center;
+  max-width: 720px;
+}
+.note-pill {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: var(--cyan);
+}
+.footer-author {
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.footer-author:hover {
+  color: #fff;
+  text-decoration: underline;
+}

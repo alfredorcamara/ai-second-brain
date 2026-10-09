@@ -167,5 +167,15 @@ window.I18N_EN = {
  "Copiar comando": "Copy command",
  "Grafo neural 3D interativo": "Interactive 3D neural graph",
  "AI Second Brain — Dê uma memória viva e persistente à sua IA": "AI Second Brain — Give your AI a living, persistent memory",
- "Na pasta física projects/<nome>/BACKUPS/, com exportação completa em Markdown (legível por humanos) e JSON estruturado (auditável por scripts).": "In the physical folder projects/&lt;name&gt;/BACKUPS/, with a full export in Markdown (human-readable) and structured JSON (script-auditable)."
+ "Na pasta física projects/<nome>/BACKUPS/, com exportação completa em Markdown (legível por humanos) e JSON estruturado (auditável por scripts).": "In the physical folder projects/&lt;name&gt;/BACKUPS/, with a full export in Markdown (human-readable) and structured JSON (script-auditable).",
+ "Compatível com qualquer ferramenta de IA": "Compatible with any AI tool",
+ "Idealizado & Mantido por": "Conceived & Maintained by",
+ "Passo a Passo de Instalação": "Step-by-Step Installation",
+ "Clone o repositório, inicie o dashboard local e aponte seu agente favorito na raiz do workspace.": "Clone the repository, launch the local dashboard and point your favorite agent at the workspace root.",
+ "Requisitos": "Requirements",
+ "Node.js 18+ e Git · Zero Docker obrigatório · Sem bancos proprietários · 100% privado": "Node.js 18+ and Git · Zero mandatory Docker · No proprietary databases · 100% private",
+ "Criador: Alfredo R. Câmara": "Creator: Alfredo R. Câmara",
+ "Criado por Alfredo R. Câmara": "Created by Alfredo R. Câmara",
+ "100% Open Source sob Licença MIT": "100% Open Source under MIT License",
+ "“Desenvolver com agentes de IA sem memória persistente é como contratar um engenheiro sênior novo a cada manhã e passar metade do dia ensinando a mesma arquitetura. Criei o AI Second Brain para que a IA lembre do passado, respeite as decisões e trabalhe com continuidade real.”": "“Developing with AI agents without persistent memory is like hiring a new senior engineer every morning and spending half the day teaching the same architecture. I created AI Second Brain so AI remembers the past, respects decisions and works with real continuity.”"
 };
