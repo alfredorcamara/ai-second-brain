@@ -30,7 +30,9 @@
   scroll-behavior: smooth;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -70,7 +72,8 @@
   height: 0;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   background: var(--bg);
@@ -122,7 +125,7 @@ body {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: 
+  background:
     radial-gradient(circle at 20% 30%, rgba(56, 189, 248, 0.04) 0%, transparent 50%),
     radial-gradient(circle at 80% 70%, rgba(192, 132, 252, 0.04) 0%, transparent 50%),
     radial-gradient(circle at 50% 50%, rgba(255, 199, 107, 0.03) 0%, transparent 60%);
@@ -201,10 +204,10 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #fff;
+  color: #929fe2;
   text-decoration: none;
   font-weight: 700;
-  font-size: 17px;
+  font-size: 28px;
   letter-spacing: -0.01em;
 }
 
@@ -218,9 +221,28 @@ body {
   animation: pulse-dot 2.4s infinite;
 }
 
+.brand-brain-img {
+  width: 60%;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 0 8px rgba(84, 255, 240, 0.75));
+  transition: transform 0.3s ease;
+}
+
+.brand:hover .brand-brain-img {
+  transform: scale(1.1);
+}
+
 @keyframes pulse-dot {
-  0%, 100% { box-shadow: 0 0 0 3px rgba(44, 255, 154, 0.25), 0 0 18px #2cff9a; }
-  50% { box-shadow: 0 0 0 6px rgba(44, 255, 154, 0.15), 0 0 26px #2cff9a; }
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px rgba(44, 255, 154, 0.25), 0 0 18px #2cff9a;
+  }
+
+  50% {
+    box-shadow: 0 0 0 6px rgba(44, 255, 154, 0.15), 0 0 26px #2cff9a;
+  }
 }
 
 .links {
@@ -310,9 +332,18 @@ main {
   pointer-events: none;
 }
 
-main a, main button, main .card, main .msg, main .code-box, 
-main .step, main .stats, main .toggle, main .sub, main .step-nav,
-main .file-chip, main .step-focus-btn {
+main a,
+main button,
+main .card,
+main .msg,
+main .code-box,
+main .step,
+main .stats,
+main .toggle,
+main .sub,
+main .step-nav,
+main .file-chip,
+main .step-focus-btn {
   pointer-events: auto;
 }
 
@@ -365,7 +396,9 @@ main .file-chip, main .step-focus-btn {
   box-shadow: 0 0 10px var(--gold);
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   color: #fff;
   margin: 0;
 }
@@ -435,8 +468,15 @@ h1 {
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 /* ── Floating Brain Dock (Bottom Controls) ── */
@@ -676,8 +716,15 @@ h2 em {
   border-radius: 50%;
 }
 
-.tab-indicator.red { background: var(--red); box-shadow: 0 0 8px var(--red); }
-.tab-indicator.green { background: #2cff9a; box-shadow: 0 0 8px #2cff9a; }
+.tab-indicator.red {
+  background: var(--red);
+  box-shadow: 0 0 8px var(--red);
+}
+
+.tab-indicator.green {
+  background: #2cff9a;
+  box-shadow: 0 0 8px #2cff9a;
+}
 
 .tab-tag {
   font-size: 10.5px;
@@ -722,9 +769,17 @@ h2 em {
   border-radius: 50%;
 }
 
-.t-red { background: #ff5f56; }
-.t-yellow { background: #ffbd2e; }
-.t-green { background: #27c93f; }
+.t-red {
+  background: #ff5f56;
+}
+
+.t-yellow {
+  background: #ffbd2e;
+}
+
+.t-green {
+  background: #27c93f;
+}
 
 .terminal-title {
   color: var(--mut);
@@ -782,8 +837,15 @@ h2 em {
 }
 
 @keyframes pop {
-  from { opacity: 0; transform: translateY(14px) scale(0.97); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .msg-author {
@@ -1087,6 +1149,20 @@ code {
 .card-icon-wrap i {
   font-style: normal;
   font-size: 26px;
+}
+
+.card-brain-neon-img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 0 8px rgba(84, 255, 240, 0.7));
+}
+
+.card-icon-wrap:has(.card-brain-neon-img) {
+  background: rgba(6, 78, 70, 0.25);
+  border-color: rgba(84, 255, 240, 0.35);
+  box-shadow: 0 0 20px rgba(84, 255, 240, 0.2);
 }
 
 .card h3 {
@@ -1430,15 +1506,19 @@ footer {
     justify-content: space-between;
     padding: 8px 12px;
   }
+
   .dock-badge .dock-status {
     display: none;
   }
+
   .steps-container {
     gap: 10vh;
   }
+
   .step {
     max-width: 100%;
   }
+
   .stat-sep {
     display: none;
   }
@@ -1448,22 +1528,29 @@ footer {
   .links a:not(.btn) {
     display: none;
   }
+
   .dock-actions button span {
     display: none;
   }
+
   .hero {
     padding-top: 110px;
   }
+
   .hero-content {
     padding: 24px 14px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     animation: none !important;
     transition: none !important;
   }
+
   .rv {
     opacity: 1;
     transform: none;

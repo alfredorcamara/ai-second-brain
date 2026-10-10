@@ -1,10 +1,5 @@
-// ═══════════════════════════════════════════════════
-// AI SECOND BRAIN — Dynamic Vault Snapshot
-// Auto-generated: 2026-10-09T16:03:47.308Z
-// ═══════════════════════════════════════════════════
-
 window.VAULT_SNAPSHOT = {
-  "timestamp": 1791561827308,
+  "timestamp": 1791585475086,
   "files": [
     {
       "id": "_agents_rules_00-core_md",
@@ -850,6 +845,18 @@ window.VAULT_SNAPSHOT = {
       "content": "# 🔬 Bolo de Banana\n\n> **Laboratório de Conhecimento Concluído**  \n> Projeto: **teste_alfredo_22** &middot; Última atualização: 09/10/2026\n\n## Briefing da Pesquisa (Prompt Vivo)\n\nQuero fazer um bolo de banana de baixa caloria\n\n## Status: 🟢 Pesquisa Concluída & Catalogada\n\n---\n\n## 📘 Camada 1: Conhecimento Teórico & Conceitual (`knowledge/`)\n\n- [**Perfil nutricional da banana**](knowledge/01-banana-nutricional.md)\n  *Analisar calorias, carboidratos, fibras e micronutrientes da banana fresca.*\n- [**Adoçantes de baixa caloria para confeitaria**](knowledge/02-adocantes-baixa-caloria.md)\n  *Estudar tipos (stévia, eritritol, sucralose) e como usá‑los em bolos.*\n- [**Farinhas alternativas de baixo teor calórico**](knowledge/03-farinhas-alternativas.md)\n  *Comparar farinha de aveia, amêndoa, coco e outras quanto a calorias e propriedades de panificação.*\n- [**Redução de gorduras na massa de bolo**](knowledge/04-reducao-gordura-bolo.md)\n  *Explorar substitutos como purê de maçã, iogurte grego sem gordura e óleo de coco em menor quantidade.*\n- [**Formulação da receita: equilíbrio de umidade e textura**](knowledge/05-formula-receita.md)\n  *Como combinar banana, adoçante e farinha para obter massa leve e úmida sem excesso calórico.*\n- [**Cálculo de porções e valor calórico por fatia**](knowledge/06-calculo-porcoes.md)\n  *Métodos para dividir o bolo e estimar calorias individuais.*\n- [**Técnicas de assamento que preservam nutrientes**](knowledge/07-tecnicas-assamento.md)\n  *Temperatura, tempo e uso de formas que minimizam perda de vitaminas e reduzem necessidade de gordura extra.*\n- [**Avaliação sensorial e ajustes finais**](knowledge/08-avaliacao-sensorial.md)\n  *Testes de sabor, textura e aparência para otimizar a aceitação do bolo de baixa caloria.*\n\n## 🛠️ Camada 2: Especificações Práticas & Código (`actionable/`)\n\n*Nenhuma especificação prática catalogada.*\n\n---\n\n*Todos os arquivos acima estão conectados ao Grafo Neural 3D do projeto no AI Second Brain.*\n"
     },
     {
+      "id": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_OVERVIEW_md",
+      "path": "projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/OVERVIEW.md",
+      "name": "OVERVIEW.md",
+      "title": "🔬 criar um mp3 inteligente",
+      "category": "projects",
+      "icon": "🔬",
+      "size": 3944,
+      "mtime": 1791585474404.7559,
+      "outgoingLinks": [],
+      "content": "# 🔬 criar um mp3 inteligente\n\n> Pesquisa criada em 09/10/2026\n> Projeto: **teste_alfredo_22**\n\n## Definição\n\n**Definição de Pesquisa: “MP3 Inteligente”**  \n\n**Objetivo**  \nDesenvolver um componente ou serviço em Node.js/TypeScript que permita a manipulação, análise e enriquecimento de arquivos MP3 de forma automatizada, usando técnicas de IA para gerar funcionalidades “inteligentes” (ex.: classificação automática, geração de tags, detecção de conteúdo, recomendações, etc.).\n\n---\n\n### Focos de Pesquisa\n- **Bibliotecas de áudio para Node.js**\n  - `ffmpeg` (via `fluent-ffmpeg`) para leitura, transcodificação e extração de metadados.\n  - `music-metadata` e `node-id3` para manipulação de tags ID3.\n  - `wav-decoder` / `audio-decode` caso seja necessário converter MP3 para PCM antes de análise.\n\n- **Processamento de áudio e extração de características**\n  - Extração de MFCC, espectrogramas, BPM, tonalidade, energia.\n  - Ferramentas: `meyda`, `essentia.js`, ou bindings para `librosa` via `python-shell`.\n\n- **Integração de IA**\n  - Modelos de classificação de gênero, humor, instrumentos (ex.: TensorFlow.js, ONNX Runtime).\n  - APIs externas: Google Cloud Speech‑to‑Text (para transcrição), Azure Cognitive Services (análise de sentimento), OpenAI Whisper (para legendas).\n  - Estratégia de “AI Decision Gate” (ver `.agents/rules/01-ai-decision.md`) para decidir quando invocar IA.\n\n- **Enriquecimento de metadados**\n  - Busca automática em bases públicas (MusicBrainz, Discogs, Last.fm) para preencher tags ausentes.\n  - Geração de capas/artwork via APIs de imagens (Unsplash, Cover Art Archive).\n\n- **Arquitetura e integração**\n  - Design de micro‑serviço ou módulo NPM: API REST/GraphQL para upload, processamento e retorno de MP3 enriquecido.\n  - Persistência de resultados: banco de dados (PostgreSQL ou MongoDB) para armazenar metadados e resultados de IA.\n  - Cache de resultados (Redis) para evitar reprocessamento de arquivos idênticos.\n\n- **Performance & Escalabilidade**\n  - Processamento assíncrono com `worker_threads` ou filas (BullMQ, RabbitMQ).\n  - Limites de tamanho de arquivo, paralelismo máximo e fallback para processamento em lote.\n\n- **Segurança e conformidade**\n  - Validação de arquivos (tipo MIME, assinatura) para evitar uploads maliciosos.\n  - GDPR/CCPA: tratamento de dados pessoais extraídos de letras ou transcrições.\n\n- **Testes e qualidade**\n  - Testes unitários (Jest) e de integração (SuperTest) para rotas de upload e pipelines de IA.\n  - Benchmark de tempo de processamento por tamanho de arquivo (ex.: 1 MB, 10 MB, 100 MB).\n\n---\n\n### Edge Cases a Considerar\n- **Arquivos corrompidos ou com tags incompletas** – tratamento de falhas na leitura e fallback para re‑encode.\n- **Áudio sem licença clara** – necessidade de bloquear ou marcar arquivos que possam infringir direitos autorais.\n- **Variações de taxa de amostragem e bitrate** �� garantir que o pipeline normalize áudio antes da análise.\n- **Múltiplas trilhas ou arquivos concatenados** – detectar e separar faixas individuais, se necessário.\n- **Limite de taxa de chamadas a APIs externas** – implementação de back‑off e quota management.\n- **Ambientes de CI/CD** – scripts de teste que simulam uploads de arquivos grandes sem consumir muita banda.\n\n---\n\n### Excluir\n- Desenvolvimento de hardware de player MP3 físico.\n- Criação de músicas ou composição automática (geração de áudio).\n- Integração com streaming de serviços comerciais (Spotify, Apple Music) sem uso de APIs públicas.\n- Design de UI/UX avançado para aplicativos móveis (foco apenas no backend/serviço).\n- Pesquisa de algoritmos de compressão de áudio avançada (fora do escopo de “inteligência” de metadados).\n\n## Status: 🟡 Aguardando pesquisa\n\n---\n\n*Os arquivos de conhecimento serão gerados aqui conforme a pesquisa avançar.*\n"
+    },
+    {
       "id": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_actionable_02-elo-implementation-node-ts_md",
       "path": "projects/teste_alfredo_22/RESEARCH/sistema-de-ranking-elo-e-matchmaking/actionable/02-elo-implementation-node-ts.md",
       "name": "02-elo-implementation-node-ts.md",
@@ -1535,8 +1542,8 @@ window.VAULT_SNAPSHOT = {
           "isProject": true,
           "startCollapsed": true,
           "path": "projects/teste_alfredo_22/PROJECT.md",
-          "totalFilesCount": 33,
-          "childrenCount": 33,
+          "totalFilesCount": 34,
+          "childrenCount": 34,
           "children": [
             {
               "id": "projects_teste_alfredo_22_PROJECT_md",
@@ -1590,7 +1597,7 @@ window.VAULT_SNAPSHOT = {
               "isResearchRoot": true,
               "projectName": "teste_alfredo_22",
               "startCollapsed": true,
-              "childrenCount": 29,
+              "childrenCount": 30,
               "children": [
                 {
                   "id": "sub_teste_alfredo_22_res_bolo-de-banana",
@@ -1673,6 +1680,26 @@ window.VAULT_SNAPSHOT = {
                       "icon": "📘",
                       "path": "projects/teste_alfredo_22/RESEARCH/bolo-de-banana/knowledge/08-avaliacao-sensorial.md",
                       "size": 10740
+                    }
+                  ]
+                },
+                {
+                  "id": "sub_teste_alfredo_22_res_criar-um-mp3-inteligente",
+                  "label": "criar um mp3 inteligente",
+                  "icon": "🔬",
+                  "isGroup": true,
+                  "isSubfolder": true,
+                  "startCollapsed": true,
+                  "path": "projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/OVERVIEW.md",
+                  "childrenCount": 1,
+                  "children": [
+                    {
+                      "id": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_OVERVIEW_md",
+                      "label": "OVERVIEW.md (Visão Geral)",
+                      "title": "🔬 criar um mp3 inteligente (projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/OVERVIEW.md)",
+                      "icon": "📄",
+                      "path": "projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/OVERVIEW.md",
+                      "size": 3944
                     }
                   ]
                 },
@@ -2730,6 +2757,14 @@ window.VAULT_SNAPSHOT = {
       "path": "projects/teste_alfredo_22/RESEARCH/bolo-de-banana/OVERVIEW.md"
     },
     {
+      "id": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_OVERVIEW_md",
+      "label": "🔬 criar um mp3 inteligente",
+      "group": "projects",
+      "size": 12,
+      "icon": "🔬",
+      "path": "projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/OVERVIEW.md"
+    },
+    {
       "id": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_actionable_02-elo-implementation-node-ts_md",
       "label": "Implementação do Cálculo ELO em Node.js / TypeScript",
       "group": "projects",
@@ -3241,6 +3276,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "hub_proj_teste_alfredo_22",
+      "to": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_OVERVIEW_md"
+    },
+    {
+      "from": "hub_proj_teste_alfredo_22",
       "to": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_actionable_02-elo-implementation-node-ts_md"
     },
     {
@@ -3729,6 +3768,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_melhorias_research_lab_md",
+      "to": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_OVERVIEW_md"
+    },
+    {
+      "from": "docs_melhorias_research_lab_md",
       "to": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_OVERVIEW_md"
     },
     {
@@ -3762,6 +3805,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "docs_RESEARCH_LAB_md",
       "to": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_OVERVIEW_md"
+    },
+    {
+      "from": "docs_RESEARCH_LAB_md",
+      "to": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_OVERVIEW_md"
     },
     {
       "from": "docs_RESEARCH_LAB_md",
@@ -3974,6 +4021,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "memory_current-state_md",
       "to": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_OVERVIEW_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_OVERVIEW_md"
     },
     {
       "from": "memory_current-state_md",
@@ -4397,6 +4448,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
+      "to": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_OVERVIEW_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
       "to": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_actionable_02-elo-implementation-node-ts_md"
     },
     {
@@ -4516,6 +4571,10 @@ window.VAULT_SNAPSHOT = {
       "to": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_08-avaliacao-sensorial_md"
     },
     {
+      "from": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_OVERVIEW_md",
+      "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_actionable_02-elo-implementation-node-ts_md",
       "to": "projects_Alfredo_teste_ARCHITECTURE_md"
     },
@@ -4534,6 +4593,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_knowledge_05-k-factor-calibration_md",
       "to": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_OVERVIEW_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_knowledge_05-k-factor-calibration_md",
+      "to": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_OVERVIEW_md"
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_knowledge_05-k-factor-calibration_md",
@@ -4821,7 +4884,7 @@ window.VAULT_SNAPSHOT = {
     }
   },
   "stats": {
-    "totalFiles": 91,
+    "totalFiles": 92,
     "rulesCount": 5,
     "skillsCount": 8,
     "projectsCount": 2,
@@ -4830,7 +4893,7 @@ window.VAULT_SNAPSHOT = {
     "memoryCount": 3,
     "templatesCount": 4,
     "docsCount": 9,
-    "totalNodes": 103,
-    "totalEdges": 459
+    "totalNodes": 104,
+    "totalEdges": 466
   }
 };

@@ -1,11 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="title desc">
   <title id="title">Cérebro neural neon animado</title>
-  <desc id="desc">Ícone de cérebro em linhas ciano brilhantes, com pulsação suave sobre fundo verde-azulado escuro.</desc>
+  <desc id="desc">Ícone de cérebro em linhas ciano brilhantes, com pulsação suave sobre fundo transparente.</desc>
   <defs>
-    <radialGradient id="bg">
-      <stop offset="0" stop-color="#073536"/>
-      <stop offset="1" stop-color="#031c20"/>
-    </radialGradient>
     <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
       <feGaussianBlur stdDeviation="1.8" result="blur"/>
       <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.02  0 0 0 0 1  0 0 0 0 0.86  0 0 0 1 0" result="aquaGlow"/>
@@ -27,7 +23,6 @@
       @media (prefers-reduced-motion: reduce) { .brain,.fold,.pulse,.spark { animation:none } }
     </style>
   </defs>
-  <rect width="128" height="128" rx="12" fill="url(#bg)"/>
   <ellipse cx="64" cy="63" rx="31" ry="29" fill="#00f5df" opacity=".035">
     <animate attributeName="opacity" values=".025;.07;.025" dur="3.2s" repeatCount="indefinite"/>
   </ellipse>
