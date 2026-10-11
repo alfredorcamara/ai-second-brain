@@ -36,6 +36,7 @@ projects/<nome>/
 ├── PROJECT.md
 ├── ARCHITECTURE.md
 ├── CURRENT_STATE.md
+├── LESSONS_LEARNED.md
 ├── DECISIONS/
 ├── AI/
 ├── DATABASE/

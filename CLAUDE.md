@@ -18,10 +18,11 @@ Você opera dentro do **AI Second Brain**, um sistema estruturado que organiza c
    - `projects/<nome>/PROJECT.md` — Visão geral, objetivos de negócio, stack técnica e restrições.
    - `projects/<nome>/CURRENT_STATE.md` — O que está pronto, o que está em andamento e próximos passos.
    - `projects/<nome>/ARCHITECTURE.md` — Desenho técnico, diagrama de componentes e padrões.
+   - `projects/<nome>/LESSONS_LEARNED.md` — Lições aprendidas, armadilhas técnicas e erros a nunca repetir neste projeto.
    - `projects/<nome>/DECISIONS/` — Architecture Decision Records (ADRs) com o histórico de por que escolhas foram feitas.
 3. **Memória Persistente**:
    - Ao final de sessões significativas, registre o resumo em `projects/<nome>/MEMORY/sessions/` e atualize `CURRENT_STATE.md`.
-   - Consulte `memory/lessons-learned.md` antes de implementar ou modificar integrações de IA e arquitetura para não repetir erros documentados.
+   - Consulte o `LESSONS_LEARNED.md` do projeto e `memory/lessons-learned.md` antes de implementar ou modificar código, integrações de IA e arquitetura para não repetir erros documentados.
 
 ---
 
@@ -29,6 +30,6 @@ Você opera dentro do **AI Second Brain**, um sistema estruturado que organiza c
 
 1. **Zero Alucinação**: Se uma informação não estiver documentada, pergunte ou declare expressamente como "Não definido". Jamais invente especificações.
 2. **Catálogos 100% Dinâmicos**: NUNCA crie listas ou catálogos fixos/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API do provedor em tempo real.
-3. **Consulta Obrigatória à Memória**: SEMPRE consulte `memory/lessons-learned.md` antes de arquitetar código ou integrações de IA.
+3. **Consulta Obrigatória à Memória**: SEMPRE consulte o `LESSONS_LEARNED.md` do projeto e `memory/lessons-learned.md` antes de arquitetar código ou integrações de IA.
 4. **ADRs Obrigatórios**: Toda mudança arquitetural significativa deve gerar um novo arquivo em `projects/<nome>/DECISIONS/`.
 5. **Prioridade Determinística**: NUNCA utilize LLM quando código determinístico ou regras de negócio resolverem.

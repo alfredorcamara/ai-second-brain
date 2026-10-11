@@ -18,7 +18,7 @@ O objetivo deste ecossistema é garantir persistência de memória, governança 
 2. **Leia as regras aplicáveis** — Verifique `.agents/rules/` para restrições de qualidade, segurança e arquitetura.
 3. **Leia o estado atual** — Consulte `CURRENT_STATE.md` do projeto alvo e `memory/current-state.md`.
 4. **Consulte decisões anteriores** — Verifique a pasta `DECISIONS/` do projeto para respeitar escolhas consolidadas.
-5. **Leia as lições aprendidas** — Consulte `memory/lessons-learned.md` antes de arquitetar ou modificar integrações para não repetir erros documentados.
+5. **Leia as lições aprendidas** — Consulte o `LESSONS_LEARNED.md` do projeto em foco e `memory/lessons-learned.md` antes de arquitetar ou modificar código para não repetir erros documentados.
 6. **Classifique a tarefa** — Siga o Decision Gate (código determinístico primeiro, AIJev para decisões, LLM apenas para geração).
 
 ---
@@ -29,7 +29,7 @@ O objetivo deste ecossistema é garantir persistência de memória, governança 
 2. **NUNCA** invente contexto, regras, telas ou especificações que não existem na documentação oficial do projeto.
 3. **NUNCA** crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API do provedor em tempo real.
 4. **NUNCA** altere arquitetura sem consultar decisões existentes e registrar ADR em `DECISIONS/`.
-5. **SEMPRE** consulte `memory/lessons-learned.md` antes de arquitetar ou modificar integrações para não repetir erros já documentados.
+5. **SEMPRE** consulte o `LESSONS_LEARNED.md` do projeto e `memory/lessons-learned.md` antes de arquitetar ou modificar integrações para não repetir erros já documentados.
 6. **SEMPRE** mantenha o arquivo `CURRENT_STATE.md` e a memória do projeto atualizados ao concluir tarefas.
 7. **SEMPRE** valide o resultado de qualquer operação de IA.
 

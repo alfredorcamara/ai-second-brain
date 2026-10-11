@@ -46,6 +46,12 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
     - **Reflexo do AI Gateway Multi-Provedor**: Seção "Feito para não quebrar" atualizada destacando auto-descoberta dinâmica de modelos, suporte a OpenAI, Anthropic, Gemini, Groq, DeepSeek, OpenRouter e Ollama local, e recuperação inteligente de rate limit.
     - **Atualização do FAQ**: Perguntas e respostas enriquecidas para destacar o padrão aberto `AGENTS.md`, suporte multi-IA com pontes nativas, privacidade local com BYOK/Ollama e esclarecimento cristalino dos modos Cockpit Central vs Standalone.
     - **Paridade Bilíngue 100% no Dicionário i18n (`js/i18n.dict.js`)**: Todas as chaves sincronizadas em inglês, testadas via Chromium headless CDP com zero chaves de conteúdo ausentes.
+  - **Catálogo Dedicado de Lições Aprendidas por Projeto (`LESSONS_LEARNED.md`)**:
+    - **Separação Arquitetural Estrita de Escopo**: Eliminação da "Amnésia das Sessões Antigas" através de um arquivo dedicado por projeto para registrar pegadinhas técnicas, bugs de libs e contratos específicos de domínio sem poluir a governança global.
+    - **Novo Template Oficial**: Adicionado `templates/lessons-learned.md` e atualizado `templates/project.md`.
+    - **Automação nos Comandos CLI**: Atualizados `scripts/create-project.js` e `scripts/link-project.js` para inicializarem automaticamente `LESSONS_LEARNED.md` e pontes multi-IA completas em projetos novos ou vinculados.
+    - **Blindagem em Todas as Pontes de IA**: Atualizados `AGENTS.md`, `GEMINI.md`, `.cursorrules`, `CLAUDE.md`, `.windsurfrules`, `.clinerules` e `copilot-instructions.md` com regra mandatória de consultar o `LESSONS_LEARNED.md` local do projeto antes de alterar código.
+    - **Inicialização em Projetos Ativos**: Criados `projects/teste_alfredo_22/LESSONS_LEARNED.md` e `projects/Alfredo_teste/LESSONS_LEARNED.md` com validação de 100% dos links no linter `doctor`.
 
 - **Data**: 2026-10-10
   - **Refinamento do Modal BYOK e Feedback Reativo do Console Terminal**:

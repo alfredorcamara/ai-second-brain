@@ -110,3 +110,13 @@
 2. Para ferramentas com arquivos de configuração proprietários, deve haver pontes nativas (`.cursorrules`, `CLAUDE.md`, `.windsurfrules`, `.clinerules`, `.github/copilot-instructions.md`) que instruem o agente a seguir as mesmas regras absolutas e a consultar obrigatoriamente a memória antes de agir.
 3. A governança não pode se limitar ao Cockpit Central: os utilitários de criação e vinculação de projetos (`scripts/link-project.js` e `scripts/create-project.js`) devem injetar automaticamente as pontes de governança diretamente na raiz física do projeto vinculado. Assim, mesmo em modo Standalone, o agente respeita as regras e decisões arquiteturais.
 **Ação**: Sempre manter governança multiplataforma espelhada em todas as pontes e automatizar a geração de arquivos de ponte durante o vínculo de novos repositórios.
+
+### Lição 16: Dois Níveis de Lições Aprendidas — Prevenção da "Amnésia por Sessão Antiga"
+**Contexto**: Registrar aprendizados apenas em arquivos diários de sessões passadas (`MEMORY/sessions/`) fazia com que o agente esquecesse erros antigos quando o histórico acumulava dezenas de sessões, pois nenhuma IA relê todo o histórico passado a cada novo prompt.
+**Aprendizado**:
+1. Para manter a alta coesão e evitar estouro de tokens, as lições aprendidas devem ser divididas em dois níveis explícitos:
+   - **Nível 1 (Global/Framework)** em `memory/lessons-learned.md`: armazena regras universais de engenharia, arquitetura e integrações de IA que se aplicam a qualquer projeto.
+   - **Nível 2 (Local/Do Projeto)** em `projects/<projeto>/LESSONS_LEARNED.md`: armazena armadilhas técnicas, regras de negócio e bugs específicos daquela base de código (ex: peculiaridades de schemas de banco, rotas de webhooks, bibliotecas da stack).
+2. O arquivo local viaja junto com o repositório no Git do projeto, garantindo que mesmo ao abrir a pasta isoladamente em outro editor, o agente sempre leia os erros que nunca devem ser repetidos antes de gerar código.
+**Ação**: Todo projeto novo ou vinculado deve nascer com seu próprio `LESSONS_LEARNED.md`, e todas as pontes de IA devem instruir mandatoriamente a consulta deste arquivo antes de agir.
+

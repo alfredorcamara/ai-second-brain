@@ -73,6 +73,7 @@ Breve descrição sobre o que o projeto faz, o problema que resolve e o público
 ## Links & Documentação
 - Arquitetura: [ARCHITECTURE.md](ARCHITECTURE.md)
 - Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)
+- Lições Aprendidas: [LESSONS_LEARNED.md](LESSONS_LEARNED.md)
 - Decisões Arquiteturais: [DECISIONS/](DECISIONS/)
 - Memória de Sessões: [MEMORY/](MEMORY/)
 `;
@@ -114,10 +115,26 @@ Descreva como o projeto é organizado (camadas, módulos, serviços ou pacotes).
 - Se o projeto utilizar IA: aplicar o AI Decision Gate (\`.agents/rules/01-ai-decision.md\`).
 `;
 
-// Gravar arquivos
+// 7. Template: LESSONS_LEARNED.md (Local do Projeto)
+const lessonsLearnedMdContent = `# ${safeName} — Lições Aprendidas
+
+> Este documento registra erros, armadilhas técnicas e aprendizados específicos deste projeto.
+> Qualquer agente de IA ou desenvolvedor deve consultar este arquivo antes de alterar código neste repositório.
+
+## Histórico de Lições Aprendidas
+<!-- Registre novos aprendizados seguindo o formato: -->
+<!-- ### YYYY-MM-DD — Título do Aprendizado -->
+<!-- - Contexto: O que motivou o problema -->
+<!-- - Causa Raiz: Motivo técnico da falha -->
+<!-- - O que NÃO fazer: Padrão a evitar -->
+<!-- - Padrão Correto: Solução validada e obrigatória -->
+`;
+
+// Gravar arquivos contratuais do projeto
 fs.writeFileSync(path.join(projectFolder, 'PROJECT.md'), projectMdContent, 'utf-8');
 fs.writeFileSync(path.join(projectFolder, 'CURRENT_STATE.md'), currentStateMdContent, 'utf-8');
 fs.writeFileSync(path.join(projectFolder, 'ARCHITECTURE.md'), archMdContent, 'utf-8');
+fs.writeFileSync(path.join(projectFolder, 'LESSONS_LEARNED.md'), lessonsLearnedMdContent, 'utf-8');
 
 const bridgeContent = `# Governança de IA — ${safeName}
 
@@ -128,13 +145,19 @@ const bridgeContent = `# Governança de IA — ${safeName}
 1. Consulte o estado atual em: [CURRENT_STATE.md](CURRENT_STATE.md)
 2. Consulte os requisitos e visão geral em: [PROJECT.md](PROJECT.md)
 3. Consulte as decisões arquiteturais em: DECISIONS/
-4. Consulte as lições aprendidas em: \`${path.join(ROOT_DIR, 'memory', 'lessons-learned.md')}\`
-5. REGRAS ABSOLUTAS:
+4. Consulte as lições aprendidas deste projeto em: [LESSONS_LEARNED.md](LESSONS_LEARNED.md)
+5. Consulte as lições aprendidas globais em: \`${path.join(ROOT_DIR, 'memory', 'lessons-learned.md')}\`
+6. REGRAS ABSOLUTAS:
    - NUNCA crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API em tempo real.
    - Sempre utilize código determinístico antes de recorrer a LLMs.
    - NUNCA invente contexto ou regras especulativas sem solicitação expressa do desenvolvedor.
 `;
+
+// Injetar pontes agnósticas no projeto (para modo Cockpit ou Standalone)
 fs.writeFileSync(path.join(projectFolder, 'AGENTS.md'), bridgeContent, 'utf-8');
+fs.writeFileSync(path.join(projectFolder, 'GEMINI.md'), bridgeContent, 'utf-8');
+fs.writeFileSync(path.join(projectFolder, '.cursorrules'), bridgeContent, 'utf-8');
+fs.writeFileSync(path.join(projectFolder, 'CLAUDE.md'), bridgeContent, 'utf-8');
 
 // Atualização automática do Snapshot do Dashboard
 try {
@@ -153,7 +176,8 @@ console.log(`   📁 projects/${safeName}/`);
 console.log(`   ├── 📄 PROJECT.md`);
 console.log(`   ├── 📄 CURRENT_STATE.md`);
 console.log(`   ├── 📄 ARCHITECTURE.md`);
-console.log(`   ├── 📄 AGENTS.md (Ponte universal para agentes de IA)`);
+console.log(`   ├── 📄 LESSONS_LEARNED.md (Lições específicas do projeto)`);
+console.log(`   ├── 📄 AGENTS.md / GEMINI.md / .cursorrules / CLAUDE.md (Pontes Multi-IA)`);
 console.log(`   ├── 📁 DECISIONS/`);
 console.log(`   └── 📁 MEMORY/sessions/`);
 console.log('\n💡 Próximos Passos:');

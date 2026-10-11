@@ -19,7 +19,7 @@ memória e regras para todos os projetos.
 2. **Leia as regras aplicáveis** — Verifique `.agents/rules/` para restrições.
 3. **Leia o estado atual** — Consulte `CURRENT_STATE.md` do projeto e `memory/current-state.md`.
 4. **Leia decisões anteriores** — Verifique `DECISIONS/` do projeto.
-5. **Leia as lições aprendidas** — Consulte `memory/lessons-learned.md` para evitar repetir erros documentados.
+5. **Leia as lições aprendidas** — Consulte o `LESSONS_LEARNED.md` do projeto em foco e `memory/lessons-learned.md` para evitar repetir erros documentados.
 6. **Identifique o tipo da tarefa** — Classifique antes de agir.
 
 ---
@@ -88,7 +88,7 @@ NOVA TAREFA
 4. **NUNCA** execute ações destrutivas sem confirmação explícita.
 5. **NUNCA** altere arquitetura sem consultar decisões existentes.
 6. **NUNCA** crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API do provedor em tempo real.
-7. **SEMPRE** consulte `memory/lessons-learned.md` antes de arquitetar ou modificar integrações para não repetir erros já documentados.
+7. **SEMPRE** consulte o `LESSONS_LEARNED.md` do projeto e `memory/lessons-learned.md` antes de arquitetar ou modificar integrações para não repetir erros já documentados.
 8. **SEMPRE** valide o resultado de qualquer operação de IA.
 9. **SEMPRE** atualize a memória após implementações significativas.
 10. **SEMPRE** registre decisões arquiteturais relevantes.

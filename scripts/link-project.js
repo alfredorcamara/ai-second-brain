@@ -97,6 +97,7 @@ Projeto externo vinculado ao AI Second Brain.
 
 ## Links & Documentação
 - Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)
+- Lições Aprendidas: [LESSONS_LEARNED.md](LESSONS_LEARNED.md)
 `;
         fs.writeFileSync(projectMdPath, starterProjectMd, 'utf-8');
         console.log(`   + Criado: PROJECT.md`);
@@ -114,6 +115,26 @@ Projeto externo vinculado ao AI Second Brain.
         console.log(`   + Criado: CURRENT_STATE.md`);
     }
 
+    const lessonsLearnedMdPath = path.join(destLinkPath, 'LESSONS_LEARNED.md');
+    const hasLessonsLearnedMd = fs.existsSync(lessonsLearnedMdPath);
+    if (!hasLessonsLearnedMd) {
+        const starterLessonsLearnedMd = `# ${safeName} — Lições Aprendidas
+
+> Erros, armadilhas técnicas e aprendizados específicos deste projeto.
+> Qualquer agente de IA ou desenvolvedor deve consultar este arquivo antes de alterar código neste repositório.
+
+## Histórico de Lições Aprendidas
+<!-- Registre novos aprendizados seguindo o formato: -->
+<!-- ### YYYY-MM-DD — Título do Aprendizado -->
+<!-- - Contexto: O que motivou o problema -->
+<!-- - Causa Raiz: Motivo técnico da falha -->
+<!-- - O que NÃO fazer: Padrão a evitar -->
+<!-- - Padrão Correto: Solução validada e obrigatória -->
+`;
+        fs.writeFileSync(lessonsLearnedMdPath, starterLessonsLearnedMd, 'utf-8');
+        console.log(`   + Criado: LESSONS_LEARNED.md (Lições específicas do projeto)`);
+    }
+
     // Pontes de Governança Agnóstica (para desenvolvedores que abrirem a pasta em qualquer IDE/IA)
     const bridgeContent = `# Governança de IA — ${safeName}
 
@@ -124,8 +145,9 @@ Projeto externo vinculado ao AI Second Brain.
 1. Consulte o estado atual em: [CURRENT_STATE.md](CURRENT_STATE.md)
 2. Consulte os requisitos e visão geral em: [PROJECT.md](PROJECT.md)
 3. Consulte as decisões arquiteturais em: DECISIONS/ (se existente)
-4. Consulte as lições aprendidas em: \`${path.join(ROOT_DIR, 'memory', 'lessons-learned.md')}\`
-5. REGRAS ABSOLUTAS:
+4. Consulte as lições aprendidas deste projeto em: [LESSONS_LEARNED.md](LESSONS_LEARNED.md)
+5. Consulte as lições aprendidas globais em: \`${path.join(ROOT_DIR, 'memory', 'lessons-learned.md')}\`
+6. REGRAS ABSOLUTAS:
    - NUNCA crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API em tempo real.
    - Sempre utilize código determinístico antes de recorrer a LLMs.
    - NUNCA invente contexto ou regras especulativas sem solicitação expressa do desenvolvedor.
