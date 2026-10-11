@@ -6356,22 +6356,26 @@ function updateAiTerminalStatus(status, details = {}) {
 
     if (status === 'idle') {
         term.innerHTML = `<code><span class="t-dim">$</span> ENGINE: ${escapeHtml(providerUpper)} [STANDBY]
-<span class="t-amber">[IDLE]</span> Clique em "Testar" para validar a chave
-<span class="t-dim">LOCAL .ENV ENCRYPTION</span></code>`;
+<span class="t-amber">[IDLE]</span> Clique em "Testar" para validar a API Key
+<span class="t-dim">LOCAL .ENV ENCRYPTION · ISOLADO</span></code>`;
     } else if (status === 'testing') {
         term.innerHTML = `<code><span class="t-cyan">$</span> CONNECTING TO ${escapeHtml(providerUpper)} ENGINE...
-<span class="t-cyan">[WAIT]</span> Validando credenciais e descobrindo modelos...
+<span class="t-cyan">[WAIT]</span> Handshake HTTP e medição de latência...
+<span class="t-cyan">[SCAN]</span> Descobrindo catálogo de modelos na conta...
 <span class="t-dim">LOCAL .ENV ENCRYPTION</span></code>`;
     } else if (status === 'success') {
-        const latencyText = details.latencyMs ? `LATENCY: ${details.latencyMs}ms [OK]` : 'CHAT COMPLETION READY [ISOLATED]';
-        term.innerHTML = `<code><span class="t-matrix">$</span> CONNECTED TO ${escapeHtml(providerUpper)} ENGINE...
-<span class="t-matrix">[OK]</span> ${escapeHtml(latencyText)}
-<span class="t-matrix">LOCAL .ENV ENCRYPTION</span></code>`;
+        const latency = details.latencyMs ? `${details.latencyMs}ms` : 'sub-100ms';
+        const models = details.modelCount !== undefined ? details.modelCount : 0;
+        const modelsText = models > 0 ? `${models} modelo${models > 1 ? 's' : ''} compatíve${models > 1 ? 'is' : 'l'}` : 'Catálogo pronto';
+        term.innerHTML = `<code><span class="t-matrix">$</span> CONNECTED TO ${escapeHtml(providerUpper)} [AUTHENTICATED]
+<span class="t-matrix">[OK]</span> Conexão bem-sucedida · Latência: ${escapeHtml(latency)}
+<span class="t-matrix">[OK]</span> Modelos detectados · ${escapeHtml(modelsText)}
+<span class="t-matrix">LOCAL .ENV ENCRYPTION · PRONTO PARA ATIVAR</span></code>`;
     } else if (status === 'error') {
         const errorMsg = details.error || `Informe uma API Key para o provedor ${providerName}`;
-        term.innerHTML = `<code><span class="t-red">$</span> ERROR CONNECTING TO ${escapeHtml(providerUpper)}
+        term.innerHTML = `<code><span class="t-red">$</span> ERROR CONNECTING TO ${escapeHtml(providerUpper)} [FAILED]
 <span class="t-red">[FAIL]</span> ${escapeHtml(errorMsg)}
-<span class="t-red">LOCAL .ENV ENCRYPTION</span></code>`;
+<span class="t-red">LOCAL .ENV ENCRYPTION · VERIFIQUE A CHAVE</span></code>`;
     }
 }
 
@@ -6539,17 +6543,10 @@ async function testCurrentAiConnection() {
     const btn = document.getElementById('btnTestAiConnection');
     const btnIcon = document.getElementById('aiTestBtnIcon');
     const btnLabel = document.getElementById('aiTestBtnLabel');
-    const feedback = document.getElementById('aiTestFeedback');
 
     if (btn) btn.disabled = true;
     if (btnIcon) btnIcon.textContent = '⏳';
     if (btnLabel) btnLabel.textContent = 'Testando...';
-
-    if (feedback) {
-        feedback.style.display = 'block';
-        feedback.className = 'ai-test-feedback loading';
-        feedback.innerHTML = `<span class="pulse-dot"></span> Conectando à API do provedor <strong>${provider.toUpperCase()}</strong>...`;
-    }
 
     updateAiTerminalStatus('testing', { provider });
 
@@ -6563,10 +6560,8 @@ async function testCurrentAiConnection() {
         const data = await res.json();
 
         if (res.ok && data.success) {
-            feedback.className = 'ai-test-feedback success';
             const modelList = Array.isArray(data.models) ? data.models : [];
             const modelCount = modelList.length;
-            feedback.innerHTML = `<div>✓ <strong>Conexão bem-sucedida!</strong></div><div class="ai-feedback-sub">Latência: ${data.latencyMs || 0}ms · ${modelCount > 0 ? `${modelCount} modelos compatíveis` : 'Pronto para uso'}</div>`;
 
             updateAiTerminalStatus('success', {
                 provider,
@@ -6628,9 +6623,7 @@ async function testCurrentAiConnection() {
                 }
             }
         } else {
-            feedback.className = 'ai-test-feedback error';
             const errorMsg = data.error || (data.details ? data.details : `Informe uma API Key para o provedor ${providerPreset.name || provider.toUpperCase()}`);
-            feedback.innerHTML = `✕ <strong>Falha na conexão:</strong> ${escapeHtml(errorMsg)}`;
 
             updateAiTerminalStatus('error', {
                 provider,
@@ -6645,8 +6638,6 @@ async function testCurrentAiConnection() {
             }
         }
     } catch (err) {
-        feedback.className = 'ai-test-feedback error';
-        feedback.innerHTML = `✕ <strong>Erro de rede:</strong> ${escapeHtml(err.message)}`;
         updateAiTerminalStatus('error', {
             provider,
             error: err.message || 'Falha de rede ao conectar'

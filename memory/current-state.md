@@ -22,15 +22,16 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 ## Sessões Recentes
 - **Data**: 2026-10-10
   - **Refinamento do Modal BYOK e Feedback Reativo do Console Terminal**:
-    - **Interatividade Reativa do Terminal Console (`.ai-card-terminal` / `.ai-terminal-output`)**:
-      - Implementada a máquina de estados completa (`idle`, `testing`, `success`, `error`) no terminal ao vivo do modal de configurações de IA.
-      - **Reset Reativo ao Trocar de Provedor**: Ao alterar o dropdown de provedores (`onProviderSelectChange`), o terminal é imediatamente zerado para o estado standby (`$ ENGINE: <PROVEDOR> [STANDBY]`, `[IDLE] Clique em "Testar" para validar a chave`), limpando feedbacks anteriores e restaurando o seletor de modelos ao estado inicial não validado.
-      - **Feedback de Erro Monocromático Vermelho**: Borda e brilho em vermelho neon (`is-error`), com 100% do texto do terminal convertido para `#f87171` (`$ ERROR CONNECTING TO <PROVEDOR>`, `[FAIL] <mensagem>`, `LOCAL .ENV ENCRYPTION`).
-      - **Feedback de Sucesso Verde Matrix**: Borda em verde esmeralda (`is-success`), com textos e spans em `#00f59b` (`$ CONNECTED TO <PROVEDOR> ENGINE...`, `[OK] LATENCY: <ms> [OK]`).
-    - **Parâmetros de IA Reais (Cache & Tentativas) & Explicações na UI**:
-      - **Camada de Cache em Memória com Hash SHA-256 (`scripts/ai-gateway.js`)**: As respostas de consultas idênticas são armazenadas com expiração configurável baseada no parâmetro `cacheHours` (`AI_CACHE_TTL_HOURS`). Evita consumo desnecessário de cota/tokens e retorna com latência 0ms.
-      - **Resiliência e Retries Dinâmicos (`maxRetries` / `AI_MAX_RETRIES`)**: O motor de completions agora respeita diretamente o número de tentativas definido pelo desenvolvedor no modal, aplicando backoff exponencial em erros transitórios e Rate Limit (`HTTP 429`).
-      - **Cards Informativos de Parâmetros na Coluna Direita**: Adicionados `Card 3 (Cache TTL)` e `Card 4 (Tentativas & Resiliência)` na coluna de telemetria do modal, explicando de forma clara e elegante a utilidade prática de cada parâmetro para o dev.
+    - **Consolidação Total de Feedback no Terminal Console (`.ai-card-terminal` / `.ai-terminal-output`)**:
+      - **Remoção da Caixa Duplicada da Esquerda (`#aiTestFeedback`)**: Eliminada a antiga caixa verde/vermelha que aparecia abaixo do campo de chave. A coluna esquerda agora permanece limpa, contínua e sem saltos visuais.
+      - **Terminal Rico na Coluna Direita com Informações Completas**: O terminal ao vivo agora concentra 100% da telemetria de conexão em formato CLI avançado:
+        - `idle`: `$ ENGINE: <PROV> [STANDBY]` · `[IDLE] Clique em "Testar" para validar a API Key` · `LOCAL .ENV ENCRYPTION · ISOLADO`.
+        - `testing`: `$ CONNECTING TO <PROV> ENGINE...` · `[WAIT] Handshake HTTP e medição de latência...` · `[SCAN] Descobrindo catálogo de modelos na conta...`.
+        - `success`: `$ CONNECTED TO <PROV> [AUTHENTICATED]` · `[OK] Conexão bem-sucedida · Latência: <ms>ms` · `[OK] Modelos detectados · <n> modelos compatíveis` · `LOCAL .ENV ENCRYPTION · PRONTO PARA ATIVAR`.
+        - `error`: `$ ERROR CONNECTING TO <PROV> [FAILED]` · `[FAIL] <mensagem amigável de erro>` · `LOCAL .ENV ENCRYPTION · VERIFIQUE A CHAVE`.
+    - **Layout Balanceado e Parâmetros com Contexto Integrado**:
+      - Seção `4. Parâmetros de Execução` na coluna esquerda enriquecida com cards dedicados para `Cache TTL` e `Tentativas (Retries)` com inputs alinhados e explicações objetivas de impacto (0ms de latência e resiliência a HTTP 429).
+      - Coluna direita otimizada com cards de `Security & Privacidade` e `Scope & Governança` detalhados com bullets de segurança, garantindo altura simétrica e harmônica com a coluna esquerda sem espaços vazios.
     - **Padronização Visual com os Demais Modais do Sistema**:
       - Borda externa e sombras ajustadas com tonalidade azul-marinho escura (#0a101d / #111a2e / #1a253c), idêntica aos outros modais do AI Second Brain.
       - Botão fechar padronizado em formato circular arredondado (`.ai-card-close-btn`).
