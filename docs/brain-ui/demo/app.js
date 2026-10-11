@@ -6087,7 +6087,7 @@ const AI_PROVIDER_PRESETS = {
         name: 'Groq Cloud',
         icon: '🌐',
         tag: 'Gratuito & Ultra-rápido LPU',
-        placeholder: 'gsk_...',
+        placeholder: 'Cole sua chave aqui...',
         requiresKey: true,
         baseUrl: 'https://api.groq.com/openai/v1'
     },
@@ -6095,7 +6095,7 @@ const AI_PROVIDER_PRESETS = {
         name: 'OpenAI',
         icon: '🧠',
         tag: 'GPT & Raciocínio Avançado',
-        placeholder: 'sk-proj-...',
+        placeholder: 'Cole sua chave aqui...',
         requiresKey: true,
         baseUrl: 'https://api.openai.com/v1'
     },
@@ -6103,7 +6103,7 @@ const AI_PROVIDER_PRESETS = {
         name: 'Anthropic Claude',
         icon: '⚡',
         tag: 'Claude & Análise Profunda',
-        placeholder: 'sk-ant-...',
+        placeholder: 'Cole sua chave aqui...',
         requiresKey: true,
         baseUrl: 'https://api.anthropic.com/v1'
     },
@@ -6111,7 +6111,7 @@ const AI_PROVIDER_PRESETS = {
         name: 'OpenRouter',
         icon: '🚀',
         tag: 'Multi-modelos & Hub Unificado',
-        placeholder: 'sk-or-v1-...',
+        placeholder: 'Cole sua chave aqui...',
         requiresKey: true,
         baseUrl: 'https://openrouter.ai/api/v1'
     },
@@ -6127,7 +6127,7 @@ const AI_PROVIDER_PRESETS = {
         name: 'Endpoint Customizado',
         icon: '⚙️',
         tag: 'OpenAI-Compatible REST API',
-        placeholder: 'Chave de API (se necessária)...',
+        placeholder: 'Cole sua chave aqui (se necessária)...',
         requiresKey: false,
         baseUrl: 'http://localhost:8000/v1'
     }
@@ -6316,6 +6316,15 @@ async function openAiSettingsModal() {
     if (keyInput) {
         keyInput.value = cfg.apiKeyMasked || '';
         keyInput.dataset.isMasked = cfg.hasKey ? 'true' : 'false';
+        if (!keyInput.dataset.hasInputKeyReset) {
+            keyInput.dataset.hasInputKeyReset = 'true';
+            keyInput.addEventListener('input', () => {
+                keyInput.dataset.isMasked = 'false';
+                setAiTestButtonStatus('idle');
+                const prov = document.getElementById('aiProviderSelect')?.value || 'groq';
+                updateAiTerminalStatus('idle', { provider: prov });
+            });
+        }
     }
 
     if (feedback) {
@@ -6393,6 +6402,34 @@ async function openAiSettingsModal() {
 }
 
 /**
+ * Atualiza o estado visual do botão de teste de chave (ícone de chave com neon cintilante)
+ * @param {'idle' | 'testing' | 'success' | 'valid' | 'error' | 'invalid'} status
+ */
+function setAiTestButtonStatus(status) {
+    const btn = document.getElementById('btnTestAiConnection');
+    if (!btn) return;
+
+    btn.classList.remove('is-testing', 'is-valid', 'is-success', 'is-invalid', 'is-error');
+
+    if (status === 'testing') {
+        btn.classList.add('is-testing');
+        btn.disabled = true;
+        btn.title = 'Testando conexão e validando chave...';
+    } else if (status === 'success' || status === 'valid') {
+        btn.classList.add('is-valid');
+        btn.disabled = false;
+        btn.title = 'Provedor e chave validados com sucesso (Conectado)';
+    } else if (status === 'error' || status === 'invalid') {
+        btn.classList.add('is-invalid');
+        btn.disabled = false;
+        btn.title = 'Falha na validação da chave (Clique para tentar novamente)';
+    } else {
+        btn.disabled = false;
+        btn.title = 'Testar e validar chave da API';
+    }
+}
+
+/**
  * Atualiza o Console do Terminal ao Vivo no Modal de Configuração de IA
  * @param {'idle' | 'testing' | 'success' | 'error'} status 
  * @param {Object} details 
@@ -6400,6 +6437,9 @@ async function openAiSettingsModal() {
 function updateAiTerminalStatus(status, details = {}) {
     const term = document.getElementById('aiModalTerminalOutput');
     if (!term) return;
+
+    // Sincroniza o botão da chave com o status
+    setAiTestButtonStatus(status);
 
     const card = term.closest('.ai-card-terminal') || document.getElementById('aiModalTerminalCard');
     const providerRaw = details.provider || document.getElementById('aiProviderSelect')?.value || 'groq';
@@ -6418,7 +6458,7 @@ function updateAiTerminalStatus(status, details = {}) {
 
     if (status === 'idle') {
         term.innerHTML = `<code><span class="t-dim">$</span> ENGINE: ${escapeHtml(providerUpper)} [STANDBY]
-<span class="t-amber">[IDLE]</span> Clique em "Testar" para validar a API Key
+<span class="t-amber">[IDLE]</span> Clique no botão da chave para validar a API Key
 <span class="t-dim">LOCAL .ENV ENCRYPTION · ISOLADO</span></code>`;
     } else if (status === 'testing') {
         term.innerHTML = `<code><span class="t-cyan">$</span> CONNECTING TO ${escapeHtml(providerUpper)} ENGINE...
@@ -6516,7 +6556,7 @@ function onProviderSelectChange() {
             modelSelect.innerHTML = '';
             const opt = document.createElement('option');
             opt.value = '';
-            opt.textContent = 'Clique em "Testar" acima para listar os modelos disponíveis...';
+            opt.textContent = 'Clique no botão da chave acima para listar os modelos disponíveis...';
             modelSelect.appendChild(opt);
             if (customModelInput) customModelInput.value = '';
         }
@@ -6638,13 +6678,7 @@ async function testCurrentAiConnection() {
     }
 
     const btn = document.getElementById('btnTestAiConnection');
-    const btnIcon = document.getElementById('aiTestBtnIcon');
-    const btnLabel = document.getElementById('aiTestBtnLabel');
-
-    if (btn) btn.disabled = true;
-    if (btnIcon) btnIcon.textContent = '⏳';
-    if (btnLabel) btnLabel.textContent = 'Testando...';
-
+    setAiTestButtonStatus('testing');
     updateAiTerminalStatus('testing', { provider });
 
     try {
@@ -6730,9 +6764,9 @@ async function testCurrentAiConnection() {
             error: err.message || 'Falha de rede ao conectar'
         });
     } finally {
-        if (btn) btn.disabled = false;
-        if (btnIcon) btnIcon.textContent = '🔑';
-        if (btnLabel) btnLabel.textContent = 'Testar';
+        if (btn && !btn.classList.contains('is-testing')) {
+            btn.disabled = false;
+        }
     }
 }
 

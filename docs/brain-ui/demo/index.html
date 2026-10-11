@@ -1878,7 +1878,7 @@
                                         <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                                     </svg>
                                 </span>
-                                <input type="password" id="aiApiKeyInput" class="ai-key-input" placeholder="gsk_... ou cole sua chave de API"
+                                <input type="password" id="aiApiKeyInput" class="ai-key-input" placeholder="Cole sua chave aqui..."
                                     autocomplete="new-password" spellcheck="false">
                                 <button type="button" id="btnToggleAiKeyVisibility" class="btn-ai-key-eye"
                                     onclick="toggleAiKeyVisibility()" title="Mostrar/ocultar chave">
@@ -1891,9 +1891,12 @@
                                 </button>
                             </div>
                             <button type="button" id="btnTestAiConnection" class="btn-ai-test-key"
-                                onclick="testCurrentAiConnection()" title="Testar chave e carregar modelos disponíveis">
-                                <span class="btn-test-icon" id="aiTestBtnIcon" style="display:none">⏳</span>
-                                <span class="btn-test-label" id="aiTestBtnLabel">Testar</span>
+                                onclick="testCurrentAiConnection()" title="Testar e validar chave da API">
+                                <svg class="ai-key-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 2l-2 2m-1.5 1.5L14 9l4 4 1.5-1.5M10.5 12.5L2 21l3 1 1-3 2-2m-1-1 3-3"></path>
+                                    <circle cx="17.5" cy="6.5" r="3.5"></circle>
+                                </svg>
                             </button>
                         </div>
                     </div>
