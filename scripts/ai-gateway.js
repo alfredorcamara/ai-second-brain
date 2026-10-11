@@ -13,8 +13,12 @@ const https = require('https');
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const ENV_PATH = path.join(__dirname, '..', '.env');
+
+// Cache em memória para inferências de IA respeitando AI_CACHE_TTL_HOURS
+const completionCache = new Map();
 
 /**
  * Provedores suportados e metadados
@@ -457,8 +461,29 @@ async function chatCompletion(messages, options = {}) {
     }
     const temperature = options.temperature ?? config.temperature ?? 0.7;
     const maxTokens = options.maxTokens || config.maxTokens || 4096;
-    const maxRetries = options.maxRetries !== undefined ? options.maxRetries : 3;
+    const maxRetries = options.maxRetries !== undefined ? options.maxRetries : (config.maxRetries !== undefined ? config.maxRetries : 2);
+    const cacheHours = options.cacheHours !== undefined ? options.cacheHours : (config.cacheHours !== undefined ? config.cacheHours : 24);
     const retryCount = options._retryCount || 0;
+
+    // Verificação de Cache Local de Inferência baseado no TTL configurado
+    const cacheTtlMs = cacheHours * 3600 * 1000;
+    let cacheKey = null;
+    if (cacheHours > 0 && !options.skipCache) {
+        const hashContent = JSON.stringify({
+            provider: provider.id,
+            model: targetModel,
+            temperature,
+            messages
+        });
+        cacheKey = crypto.createHash('sha256').update(hashContent).digest('hex');
+        const cached = completionCache.get(cacheKey);
+        if (cached && (Date.now() - cached.timestamp < cacheTtlMs)) {
+            return {
+                ...cached.data,
+                cached: true
+            };
+        }
+    }
 
     // Caso Anthropic nativo (/messages)
     if (provider.id === 'anthropic') {
@@ -491,12 +516,17 @@ async function chatCompletion(messages, options = {}) {
             });
 
             const contentText = res.data.content?.map(c => c.text).join('\n') || '';
-            return {
+            const result = {
                 content: contentText,
                 usage: res.data.usage || {},
                 model: res.data.model || targetModel,
                 provider: provider.id
             };
+            if (cacheKey && contentText) {
+                if (completionCache.size > 200) completionCache.delete(completionCache.keys().next().value);
+                completionCache.set(cacheKey, { timestamp: Date.now(), data: result });
+            }
+            return result;
         } catch (err) {
             return handleChatError(err, messages, options, provider, retryCount, maxRetries);
         }
@@ -530,13 +560,17 @@ async function chatCompletion(messages, options = {}) {
 
         const choice = res.data.choices?.[0];
         const content = choice?.message?.content || choice?.text || '';
-
-        return {
+        const result = {
             content,
             usage: res.data.usage || {},
             model: res.data.model || targetModel,
             provider: provider.id
         };
+        if (cacheKey && content) {
+            if (completionCache.size > 200) completionCache.delete(completionCache.keys().next().value);
+            completionCache.set(cacheKey, { timestamp: Date.now(), data: result });
+        }
+        return result;
     } catch (err) {
         return handleChatError(err, messages, options, provider, retryCount, maxRetries);
     }

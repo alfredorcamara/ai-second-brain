@@ -69,3 +69,11 @@ realmente precisa de geração de texto ou raciocínio aberto.
 3. Trocas de contexto pelo usuário (ex: alterar o provedor no dropdown) devem reativamente zerar o estado para standby (`is-idle`), limpando feedbacks anteriores e informando o próximo passo (`[IDLE] Clique em "Testar" para validar a chave`).
 **Ação**: Centralizar a renderização de status de consoles em funções unificadas (`updateAiTerminalStatus`), forçar regras CSS com seletores descendentes defensivos (`.ai-terminal-output.is-error *`) e garantir que eventos `change` em selects sempre restaurem o estado para neutro/aguardando validação.
 
+### Lição 13: Transparência de Parâmetros de Gateway (Cache TTL e Retentativas) na UX e no Backend
+**Contexto**: No passo 4 do configurador BYOK existiam inputs para `Cache` (ex: `24h`) e `Tentativas` (ex: `2`). O desenvolvedor precisava de clareza sobre se esses valores tinham efeito real na execução das APIs e de contextualização visual imediata no modal para entender a finalidade de cada um.
+**Aprendizado**:
+1. Parâmetros de resiliência e otimização de custo (como retries e TTL de cache) só têm valor se forem ativamente honrados pelo engine: retries com backoff exponencial protegem contra rate limits (`429`) e oscilações de rede; enquanto o hashing (SHA-256) de prompts idênticos em cache em memória elimina chamadas redundantes, poupa tokens da cota do usuário e atinge latência de 0ms.
+2. Em interfaces técnicas (BYOK/DevTools), expor cards explicativos dedicados ao lado dos parâmetros reduz a carga cognitiva, esclarece trade-offs de desempenho e reforça a confiança na plataforma.
+**Ação**: Sempre acoplar parâmetros de configuração a camadas concretas de execução no engine de gateway e fornecer cards explicativos com métricas esperadas (ex: latência 0ms, tolerância a HTTP 429) na interface do usuário.
+
+

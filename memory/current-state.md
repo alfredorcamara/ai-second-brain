@@ -27,6 +27,10 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
       - **Reset Reativo ao Trocar de Provedor**: Ao alterar o dropdown de provedores (`onProviderSelectChange`), o terminal é imediatamente zerado para o estado standby (`$ ENGINE: <PROVEDOR> [STANDBY]`, `[IDLE] Clique em "Testar" para validar a chave`), limpando feedbacks anteriores e restaurando o seletor de modelos ao estado inicial não validado.
       - **Feedback de Erro Monocromático Vermelho**: Borda e brilho em vermelho neon (`is-error`), com 100% do texto do terminal convertido para `#f87171` (`$ ERROR CONNECTING TO <PROVEDOR>`, `[FAIL] <mensagem>`, `LOCAL .ENV ENCRYPTION`).
       - **Feedback de Sucesso Verde Matrix**: Borda em verde esmeralda (`is-success`), com textos e spans em `#00f59b` (`$ CONNECTED TO <PROVEDOR> ENGINE...`, `[OK] LATENCY: <ms> [OK]`).
+    - **Parâmetros de IA Reais (Cache & Tentativas) & Explicações na UI**:
+      - **Camada de Cache em Memória com Hash SHA-256 (`scripts/ai-gateway.js`)**: As respostas de consultas idênticas são armazenadas com expiração configurável baseada no parâmetro `cacheHours` (`AI_CACHE_TTL_HOURS`). Evita consumo desnecessário de cota/tokens e retorna com latência 0ms.
+      - **Resiliência e Retries Dinâmicos (`maxRetries` / `AI_MAX_RETRIES`)**: O motor de completions agora respeita diretamente o número de tentativas definido pelo desenvolvedor no modal, aplicando backoff exponencial em erros transitórios e Rate Limit (`HTTP 429`).
+      - **Cards Informativos de Parâmetros na Coluna Direita**: Adicionados `Card 3 (Cache TTL)` e `Card 4 (Tentativas & Resiliência)` na coluna de telemetria do modal, explicando de forma clara e elegante a utilidade prática de cada parâmetro para o dev.
     - **Padronização Visual com os Demais Modais do Sistema**:
       - Borda externa e sombras ajustadas com tonalidade azul-marinho escura (#0a101d / #111a2e / #1a253c), idêntica aos outros modais do AI Second Brain.
       - Botão fechar padronizado em formato circular arredondado (`.ai-card-close-btn`).
