@@ -1926,18 +1926,48 @@
                         </div>
                     </div>
 
-                    <!-- 4. Parâmetros -->
-                    <div class="ai-settings-section">
-                        <label class="ai-step-title">4. Parâmetros</label>
-                        <div class="ai-params-grid">
-                            <div class="ai-param-box">
-                                <span class="ai-param-label">Cache:</span>
-                                <input type="text" id="aiCacheHoursInput" class="ai-param-input" value="24h">
+                    <!-- 4. Parâmetros com Explicações Integradas -->
+                    <div class="ai-settings-section ai-params-section">
+                        <div class="ai-step-header-row">
+                            <label class="ai-step-title">4. Parâmetros de Execução</label>
+                            <span class="ai-params-badge">Performance &amp; Resiliência</span>
+                        </div>
+
+                        <div class="ai-params-detail-list">
+                            <!-- Parâmetro 1: Cache TTL -->
+                            <div class="ai-param-detail-card">
+                                <div class="ai-param-detail-top">
+                                    <div class="ai-param-detail-info">
+                                        <div class="ai-param-detail-title">
+                                            <span class="ai-param-dot cache"></span>
+                                            <strong>Cache TTL (Tempo de Vida)</strong>
+                                        </div>
+                                    </div>
+                                    <div class="ai-param-detail-input-wrap">
+                                        <input type="text" id="aiCacheHoursInput" class="ai-param-input" value="24h" placeholder="24h">
+                                    </div>
+                                </div>
+                                <p class="ai-param-detail-desc">
+                                    Respostas de prompts idênticos são guardadas em memória pelo período configurado. Poupa tokens da sua cota e entrega sínteses repetidas com latência zero (0ms).
+                                </p>
                             </div>
-                            <div class="ai-param-box">
-                                <span class="ai-param-label">Tentativas:</span>
-                                <input type="number" id="aiMaxRetriesInput" class="ai-param-input" value="2" min="1"
-                                    max="5">
+
+                            <!-- Parâmetro 2: Retries -->
+                            <div class="ai-param-detail-card">
+                                <div class="ai-param-detail-top">
+                                    <div class="ai-param-detail-info">
+                                        <div class="ai-param-detail-title">
+                                            <span class="ai-param-dot retries"></span>
+                                            <strong>Tentativas Automáticas (Retries)</strong>
+                                        </div>
+                                    </div>
+                                    <div class="ai-param-detail-input-wrap">
+                                        <input type="number" id="aiMaxRetriesInput" class="ai-param-input" value="2" min="1" max="5">
+                                    </div>
+                                </div>
+                                <p class="ai-param-detail-desc">
+                                    Em instabilidades de rede ou saturação momentânea (<code>HTTP 429</code>), o Gateway efetua tentativas adicionais com backoff exponencial antes de falhar.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -1954,7 +1984,7 @@
                 </form>
             </div>
 
-            <!-- Coluna Direita: Contexto, Confiança e Telemetria (4 Cards Empilhados) -->
+            <!-- Coluna Direita: Contexto, Confiança e Telemetria -->
             <div class="ai-split-col-info">
                 <!-- Card 1: Header Gateway -->
                 <div class="ai-card-gateway-header">
@@ -1974,7 +2004,7 @@
 <span class="t-dim">LOCAL .ENV ENCRYPTION</span></code></pre>
                 </div>
 
-                <!-- Card 3: Card 1 (Security) -->
+                <!-- Card 3: Card 1 (Security & Privacidade) -->
                 <div class="ai-card-security">
                     <div class="ai-card-tag">
                         <svg class="ai-card-tag-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -1982,16 +2012,20 @@
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                             <path d="m9 12 2 2 4-4" />
                         </svg>
-                        <span class="ai-card-tag-text sec">Card 1 (Security)</span>
+                        <span class="ai-card-tag-text sec">Card 1 (Security &amp; Privacidade)</span>
                     </div>
-                    <p class="ai-card-body-text">
-                        <strong>Segurança em Primeiro Lugar</strong> — Sua chave é gravada exclusivamente no
-                        <code>.env</code> local. Zero envio a servidores terceiros e protegida no
-                        <code>.gitignore</code>.
-                    </p>
+                    <div class="ai-card-body-content">
+                        <p class="ai-card-body-text">
+                            <strong>Armazenamento 100% Local &amp; Seguro</strong> — Sua chave de API é gravada exclusivamente no arquivo <code>.env</code> local na máquina. Zero envio a servidores intermediários e protegida no <code>.gitignore</code>.
+                        </p>
+                        <ul class="ai-card-features-list">
+                            <li><span>🛡️ Chaves blindadas sem telemetria em nuvem</span></li>
+                            <li><span>🔒 Validação em memória hot-swappable em tempo real</span></li>
+                        </ul>
+                    </div>
                 </div>
 
-                <!-- Card 4: Card 2 (Scope) -->
+                <!-- Card 4: Card 2 (Scope & Governança) -->
                 <div class="ai-card-scope">
                     <div class="ai-card-tag">
                         <svg class="ai-card-tag-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -2000,47 +2034,18 @@
                             <line x1="12" y1="16" x2="12" y2="12" />
                             <line x1="12" y1="8" x2="12.01" y2="8" />
                         </svg>
-                        <span class="ai-card-tag-text scope">Card 2 (Scope)</span>
+                        <span class="ai-card-tag-text scope">Card 2 (Scope &amp; Governança)</span>
                     </div>
-                    <p class="ai-card-body-text">
-                        <strong>O que a IA fará</strong> — Gera artigos e especificações no Research Lab. Nenhuma
-                        alteração destrutiva sem confirmação.
-                    </p>
-                </div>
-
-                <!-- Card 5: Card 3 (Cache TTL) -->
-                <div class="ai-card-cache">
-                    <div class="ai-card-tag">
-                        <svg class="ai-card-tag-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                            stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <ellipse cx="12" cy="5" rx="9" ry="3" />
-                            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
-                            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
-                        </svg>
-                        <span class="ai-card-tag-text cache">Card 3 (Cache TTL)</span>
+                    <div class="ai-card-body-content">
+                        <p class="ai-card-body-text">
+                            <strong>O que a IA fará no Workspace</strong> — Auxilia em pesquisas conceituais e síntese de especificações no Research Lab com rígido controle arquitetural.
+                        </p>
+                        <ul class="ai-card-features-list">
+                            <li><span>🔬 Geração autônoma de especificações e artigos técnicos</span></li>
+                            <li><span>⚡ Prioridade determinística: nunca usa LLM quando código resolve</span></li>
+                            <li><span>🛑 Nenhuma ação destrutiva sem confirmação explícita do dev</span></li>
+                        </ul>
                     </div>
-                    <p class="ai-card-body-text">
-                        <strong>Memória de Respostas</strong> — Respostas de consultas idênticas são retidas em memória
-                        pelo tempo definido (ex: <code>24h</code>). Economiza tokens da sua cota e entrega sínteses repetidas
-                        com latência zero (0ms).
-                    </p>
-                </div>
-
-                <!-- Card 6: Card 4 (Tentativas & Resiliência) -->
-                <div class="ai-card-retries">
-                    <div class="ai-card-tag">
-                        <svg class="ai-card-tag-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                            stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21.5 2v6h-6" />
-                            <path d="M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
-                        </svg>
-                        <span class="ai-card-tag-text retries">Card 4 (Tentativas &amp; Resiliência)</span>
-                    </div>
-                    <p class="ai-card-body-text">
-                        <strong>Tolerância a Falhas</strong> — Em picos de tráfego, oscilação de rede ou cota momentânea
-                        (<code>HTTP 429</code>), o Gateway efetua retentativas automáticas com backoff exponencial até o limite
-                        configurado (ex: <code>2x</code>).
-                    </p>
                 </div>
             </div>
 
