@@ -38,6 +38,14 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
       - Manutenção do título limpo `"3. Modelo de IA"`, deixando a contagem de modelos exclusivamente no console do terminal à direita.
     - **Resiliência do Servidor HTTP Local (`server.js`)**:
       - Tratamento para rotas de diretório estático (ex: `/demo/`), resolvendo automaticamente para `index.html` caso o caminho solicitado seja uma pasta.
+  - **Governança Agnóstica Universal e Blindagem Multi-IA**:
+    - **Criação do Padrão Universal Aberto `AGENTS.md`**: Implementado na raiz do workspace como padrão compatível com qualquer agente do mercado.
+    - **Extensão da Governança e Lições Aprendidas para Todas as Pontes**: Blindagem ativa e consulta mandatória à memória registradas em `GEMINI.md`, `AGENTS.md`, `.cursorrules`, `CLAUDE.md`, `.windsurfrules`, `.clinerules`, `.github/copilot-instructions.md`, `.agents/rules/00-core.md` e `.agents/rules/01-ai-decision.md`.
+    - **Automação de Pontes Standalone**: Os utilitários CLI `scripts/link-project.js` e `scripts/create-project.js` agora criam automaticamente as pontes de governança no repositório de destino, garantindo que o agente continue governado mesmo se o projeto for aberto de forma isolada fora do Segundo Cérebro.
+  - **Sincronização e Atualização da Landing Page (`docs/brain-ui/landing/`)**:
+    - **Reflexo do AI Gateway Multi-Provedor**: Seção "Feito para não quebrar" atualizada destacando auto-descoberta dinâmica de modelos, suporte a OpenAI, Anthropic, Gemini, Groq, DeepSeek, OpenRouter e Ollama local, e recuperação inteligente de rate limit.
+    - **Atualização do FAQ**: Perguntas e respostas enriquecidas para destacar o padrão aberto `AGENTS.md`, suporte multi-IA com pontes nativas, privacidade local com BYOK/Ollama e esclarecimento cristalino dos modos Cockpit Central vs Standalone.
+    - **Paridade Bilíngue 100% no Dicionário i18n (`js/i18n.dict.js`)**: Todas as chaves sincronizadas em inglês, testadas via Chromium headless CDP com zero chaves de conteúdo ausentes.
 
 - **Data**: 2026-10-10
   - **Refinamento do Modal BYOK e Feedback Reativo do Console Terminal**:

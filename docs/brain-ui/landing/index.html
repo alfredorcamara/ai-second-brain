@@ -360,9 +360,9 @@
       <div class="resil rv">
         <h3>Feito para não quebrar</h3>
         <ul>
-          <li><b>Recuperação de rate limit:</b> lê o tempo de espera informado pela Groq Cloud e tenta de novo com 2 s
-            de margem.</li>
-          <li><b>Cadência preventiva de 6 s</b> entre arquivos, para não esgotar o limite de tokens por minuto.</li>
+          <li><b>AI Gateway Multi-Provedor:</b> conecte Groq, OpenAI, Anthropic, Gemini, DeepSeek, OpenRouter ou Ollama local com auto-descoberta dinâmica de modelos.</li>
+          <li><b>Recuperação inteligente de rate limit:</b> lê o tempo de espera informado pelo provedor e retenta automaticamente com margem de segurança.</li>
+          <li><b>Cadência preventiva controlada</b> entre arquivos, para não esgotar o limite de tokens por minuto da sua chave.</li>
           <li><b>Retomada automática:</b> reconhece arquivos já gerados e não gasta tokens refazendo.</li>
           <li><b>Progresso em tempo real</b> (SSE) na interface durante toda a pesquisa.</li>
           <li><b>Fallback entre modelos</b> com retentativas exponenciais; decisões determinísticas seguem 100% locais.
@@ -385,8 +385,7 @@
         <div class="card rv">
           <div class="card-icon-wrap" style="--c:#38bdf8"><i>🔗</i></div>
           <h3>Vincular um projeto existente</h3>
-          <p>Conecta qualquer pasta ou repositório Git que você já tem, sem duplicar arquivos. No Windows usa junções
-            NTFS ou symlinks: seu código continua onde está.</p>
+          <p>Conecta qualquer pasta ou repositório Git sem duplicar arquivos. Cria automaticamente pontes de governança multi-IA (AGENTS.md, Cursor, Claude, Antigravity) no repositório vinculado.</p>
         </div>
         <div class="card rv">
           <div class="card-icon-wrap" style="--c:#c084fc"><i>💾</i></div>
@@ -487,8 +486,11 @@
         </details>
         <details class="rv">
           <summary>Funciona com qualquer agente de IA?</summary>
-          <p>Com qualquer agente que leia arquivos do projeto. Arquivos de entrada na raiz (como CLAUDE.md e GEMINI.md)
-            apontam o agente para as regras, a memória e as decisões.</p>
+          <p>Com qualquer agente. O sistema adota o padrão aberto universal <code>AGENTS.md</code> e gera pontes nativas para Cursor (<code>.cursorrules</code>), Claude Code (<code>CLAUDE.md</code>), Google Antigravity (<code>GEMINI.md</code>), Windsurf (<code>.windsurfrules</code>), Cline (<code>.clinerules</code>) e GitHub Copilot (<code>copilot-instructions.md</code>). Ao vincular ou criar projetos via CLI, essas pontes são geradas diretamente no repositório.</p>
+        </details>
+        <details class="rv">
+          <summary>E se eu abrir o projeto isoladamente em outro editor?</summary>
+          <p>Você pode trabalhar tanto pelo Cockpit Central do AI Second Brain quanto em modo Standalone. Os comandos de vínculo geram as pontes (AGENTS.md, .cursorrules, CLAUDE.md, etc.) no seu repositório físico, mantendo a governança ativa em qualquer editor.</p>
         </details>
         <details class="rv">
           <summary>Preciso de banco vetorial ou de alguma infraestrutura?</summary>
@@ -497,13 +499,11 @@
         </details>
         <details class="rv">
           <summary>Meus dados saem da minha máquina?</summary>
-          <p>O cérebro vive nos seus arquivos locais e no seu Git. O Research Lab é o recurso que chama um provedor de
-            IA em nuvem (Groq Cloud), e só quando você o usa. Tarefas determinísticas e decisões seguem locais.</p>
+          <p>O cérebro vive nos seus arquivos locais e no seu Git. As chamadas de IA ocorrem apenas se você usar o Research Lab com sua própria chave (BYOK) — suportando Groq, OpenAI, Anthropic, Gemini, DeepSeek, OpenRouter e até modelos locais via Ollama sem sair da máquina.</p>
         </details>
         <details class="rv">
-          <summary>O que acontece se a Groq Cloud ficar indisponível?</summary>
-          <p>O cliente HTTP tem fallback para outros modelos e retentativas exponenciais com backoff. Tarefas
-            determinísticas e decisões do portão de IA continuam funcionando com 100% de disponibilidade local.</p>
+          <summary>O que acontece se um provedor de IA oscilar ou ficar indisponível?</summary>
+          <p>O AI Gateway tem fallback entre modelos, retentativas automáticas e suporte a provedores locais. Tarefas determinísticas e decisões do portão de IA continuam funcionando com 100% de disponibilidade local.</p>
         </details>
         <details class="rv">
           <summary>Onde ficam os backups e dossiês de governança?</summary>
