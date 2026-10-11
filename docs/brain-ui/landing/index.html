@@ -191,8 +191,8 @@
 
         <div class="chat" data-mode="com" hidden>
           <div class="chat-banner success-banner">
-            <span>⚡ Memória conectada: <code>memory/estado.md</code>, <code>decisions/adr-003.md</code> e
-              <code>rules/seguranca.md</code> carregados no início da sessão.</span>
+            <span>⚡ Memória conectada: <code>memory/current-state.md</code>, <code>decisions/GLOBAL_DECISIONS.md</code> e
+              <code>.agents/rules/03-security.md</code> carregados no início da sessão.</span>
           </div>
           <div class="msg you">
             <div class="msg-author">Dev</div>
@@ -201,10 +201,10 @@
           <div class="msg ai ok">
             <div class="msg-author">Agente de IA (Com Segundo Cérebro)</div>
             <div class="msg-text">
-              Pronto! Li o <code>memory/estado.md</code> da sessão anterior e o <code>decisions/adr-003.md</code>. O
+              Pronto! Li o <code>memory/current-state.md</code> da sessão anterior e o <code>decisions/GLOBAL_DECISIONS.md</code>. O
               schema Prisma com refresh token já foi migrado ontem; falta apenas o middleware de validação JWT.
               <br><br>
-              Vou seguir o padrão de hashing seguro definido em <code>rules/seguranca.md</code> e documentar a alteração
+              Vou seguir o padrão de hashing seguro definido em <code>.agents/rules/03-security.md</code> e documentar a alteração
               na memória da sessão. Posso gerar o middleware?
             </div>
           </div>
@@ -214,8 +214,8 @@
           </div>
           <div class="msg ai ok">
             <div class="msg-author">Agente de IA (Com Segundo Cérebro)</div>
-            <div class="msg-text">Feito! Middleware criado e testado. Atualizei <code>memory/sessao-13.md</code> com os
-              próximos passos. Próximo agente assume sem perda de contexto.</div>
+            <div class="msg-text">Feito! Middleware criado e testado. Atualizei <code>memory/current-state.md</code> com os
+              próximos passos e aprendizados. Próximo agente assume sem perda de contexto.</div>
           </div>
           <div class="chat-footer-stat green-stat">
             <span>🟢 Impacto (exemplo ilustrativo): 0 tokens desperdiçados · Contexto 100% preservado · Início imediato
@@ -252,10 +252,10 @@
           <h3>Regras Inegociáveis</h3>
           <p>A constituição do projeto. As regras pétreas que qualquer agente deve obedecer antes de gerar uma única
             linha de código: segurança OWASP, quando usar IA vs código determinístico, e padrões de commit.</p>
-          <div class="step-files">
-            <span class="file-chip" data-doc="rules/nucleo">📄 nucleo.md</span>
-            <span class="file-chip" data-doc="rules/seguranca">📄 seguranca.md</span>
-            <span class="file-chip" data-doc="rules/decisao-ia">📄 decisao-ia.md</span>
+          <div class="step-files" data-no-i18n>
+            <span class="file-chip" data-doc="rules/00-core">📄 00-core.md</span>
+            <span class="file-chip" data-doc="rules/01-ai-decision">📄 01-ai-decision.md</span>
+            <span class="file-chip" data-doc="rules/03-security">📄 03-security.md</span>
           </div>
           <button class="step-focus-btn" data-k="rules">🎯 Focar Camada no Grafo 3D</button>
         </article>
@@ -268,10 +268,10 @@
           <h3>Skills & Protocolos de Ação</h3>
           <p>Roteiros prontos para tarefas recorrentes. Em vez de inventar na hora como investigar um bug ou arquitetar
             uma feature, o agente segue um playbook passo a passo de alta eficiência testado e validado.</p>
-          <div class="step-files">
-            <span class="file-chip" data-doc="skills/ai-decision-gate">⚡ ai-decision-gate.md</span>
-            <span class="file-chip" data-doc="skills/new-feature">⚡ new-feature.md</span>
-            <span class="file-chip" data-doc="skills/bug-investigation">⚡ bug-investigation.md</span>
+          <div class="step-files" data-no-i18n>
+            <span class="file-chip" data-doc="skills/ai-decision-gate">⚡ ai-decision-gate/SKILL.md</span>
+            <span class="file-chip" data-doc="skills/new-feature">⚡ new-feature/SKILL.md</span>
+            <span class="file-chip" data-doc="skills/bug-investigation">⚡ bug-investigation/SKILL.md</span>
           </div>
           <button class="step-focus-btn" data-k="skills">🎯 Focar Camada no Grafo 3D</button>
         </article>
@@ -284,10 +284,10 @@
           <h3>Memória & Continuidade</h3>
           <p>O estado atual da aplicação e os erros do passado que nunca mais serão repetidos. Cada sessão registra onde
             parou, o que funcionou e o que ficou pendente para o próximo agente continuar instantaneamente.</p>
-          <div class="step-files">
-            <span class="file-chip" data-doc="memory/estado">🧠 estado.md</span>
-            <span class="file-chip" data-doc="memory/licoes">🧠 licoes.md</span>
-            <span class="file-chip" data-doc="memory/sessao-13">🧠 sessao-13.md</span>
+          <div class="step-files" data-no-i18n>
+            <span class="file-chip" data-doc="memory/current-state">🧠 current-state.md</span>
+            <span class="file-chip" data-doc="memory/lessons-learned">🧠 lessons-learned.md</span>
+            <span class="file-chip" data-doc="memory/README">🧠 README.md</span>
           </div>
           <button class="step-focus-btn" data-k="memory">🎯 Focar Camada no Grafo 3D</button>
         </article>
@@ -300,10 +300,10 @@
           <h3>Decisões Arquiteturais (ADRs)</h3>
           <p>Cada escolha relevante vira um Architectural Decision Record imutável. Motivos, alternativas descartadas e
             trade-offs ficam registrados para que nenhum agente desfaça uma decisão deliberada.</p>
-          <div class="step-files">
-            <span class="file-chip" data-doc="decisions/adr-001">⚖️ adr-001.md</span>
-            <span class="file-chip" data-doc="decisions/adr-002">⚖️ adr-002.md</span>
-            <span class="file-chip" data-doc="decisions/adr-003">⚖️ adr-003.md</span>
+          <div class="step-files" data-no-i18n>
+            <span class="file-chip" data-doc="decisions/GLOBAL_DECISIONS">⚖️ GLOBAL_DECISIONS.md</span>
+            <span class="file-chip" data-doc="decisions/001-stack-inicial">⚖️ 001-stack-inicial.md</span>
+            <span class="file-chip" data-doc="decisions/decisao_groq_provider">⚖️ decisao_groq_provider.md</span>
           </div>
           <button class="step-focus-btn" data-k="decisions">🎯 Focar Camada no Grafo 3D</button>
         </article>
@@ -349,12 +349,12 @@
         <div class="layer rv" style="--c:#38bdf8"><b>1</b>
           <h3>Camada Knowledge</h3>
           <p>Arquivos conceituais com teoria de engenharia, arquitetura de sistemas, trade-offs e boas práticas de
-            mercado.</p><code>research/knowledge/</code>
+            mercado.</p><code>projects/&lt;projeto&gt;/RESEARCH/&lt;tema&gt;/knowledge/</code>
         </div>
         <div class="layer rv" style="--c:#ffc76b"><b>2</b>
           <h3>Camada Actionable</h3>
           <p>Especificações práticas: schemas SQL Server e Prisma, controllers TypeScript/Node.js e testes automatizados
-            prontos para uso.</p><code>research/actionable/</code>
+            prontos para uso.</p><code>projects/&lt;projeto&gt;/RESEARCH/&lt;tema&gt;/actionable/</code>
         </div>
       </div>
       <div class="resil rv">
@@ -379,8 +379,7 @@
         <div class="card rv">
           <div class="card-icon-wrap" style="--c:#a3e635"><i>🚀</i></div>
           <h3>Criar do zero</h3>
-          <p>Para ideias novas. Cria PROJECT.md e CURRENT_STATE.md, um template de ARCHITECTURE.md e o diretório de
-            decisões e de memória de sessões.</p>
+          <p>Para ideias novas. Cria PROJECT.md, CURRENT_STATE.md, LESSONS_LEARNED.md, template de ARCHITECTURE.md e os diretórios de decisões e sessões.</p>
         </div>
         <div class="card rv">
           <div class="card-icon-wrap" style="--c:#38bdf8"><i>🔗</i></div>

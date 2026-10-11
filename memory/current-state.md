@@ -21,6 +21,25 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 
 ## Sessões Recentes
 - **Data**: 2026-10-11
+  - **Auditoria e Fidelidade Estrita de Documentos na Landing Page (`docs/brain-ui/landing/`)**:
+    - **Eliminação de Referências a Arquivos Fictícios / Placeholders**:
+      - Em conformidade estrita com a regra universal de *Zero Fabricação*, eliminados todos os nomes de arquivos inexistentes que estavam exibidos na interface da landing page (`nucleo.md`, `seguranca.md`, `decisao-ia.md`, `ai-decision-gate.md`, `new-feature.md`, `bug-investigation.md`, `estado.md`, `licoes.md`, `sessao-13.md`, `adr-001.md`, etc.).
+    - **Mapeamento Preciso para Arquivos Reais do Workspace**:
+      - **Camada 01 (`rules/`)**: Substituído por `00-core.md`, `01-ai-decision.md` e `03-security.md`.
+      - **Camada 02 (`skills/`)**: Substituído por `ai-decision-gate/SKILL.md`, `new-feature/SKILL.md` e `bug-investigation/SKILL.md`.
+      - **Camada 03 (`memory/`)**: Substituído por `current-state.md`, `lessons-learned.md` e `README.md`.
+      - **Camada 04 (`decisions/`)**: Substituído por `GLOBAL_DECISIONS.md`, `001-stack-inicial.md` e `decisao_groq_provider.md`.
+      - **Terminal Chat Mockup**: Atualizado para ler e citar `memory/current-state.md`, `decisions/GLOBAL_DECISIONS.md` e `.agents/rules/03-security.md`.
+      - **Research Lab**: Caminhos atualizados para o padrão real `projects/<projeto>/RESEARCH/<tema>/knowledge/` e `actionable/`.
+      - **Quickstart Studio**: Card de estrutura atualizado incluindo `LESSONS_LEARNED.md`.
+    - **Correção Estrutural no Grafo Neural 3D e Leitor Lateral (`js/data.js`)**:
+      - Corrigido bug de renderização no Three.js (`CanvasGradient.addColorStop`) causado pela ausência de ícone/cor na pasta `templates`.
+      - Adicionado o atributo `realPath` em todos os nós do catálogo para exibir o caminho físico exato no cabeçalho do leitor Markdown lateral (`#reader`).
+      - Eventos de clique nos chips da landing page (`.chip[data-node]`) integrados para abrir diretamente o documento real correspondente no leitor.
+    - **Paridade i18n & Validação de Integridade**:
+      - Chaves do dicionário bilíngue `js/i18n.dict.js` sincronizadas.
+      - Validação com `npm run doctor`: 100% dos links e 98 arquivos Markdown verificados com sucesso (0 erros).
+
   - **Eliminação de Listas Fixas e Busca de Modelos 100% Dinâmica em Tempo Real com Gatilho Automático na Abertura**:
     - **Remoção Total de Hardcoding de Modelos**:
       - Eliminado o catálogo fixo `AI_DEFAULT_MODELS_BY_PROVIDER` em `docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js`.
