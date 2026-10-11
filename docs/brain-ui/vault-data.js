@@ -1,5 +1,5 @@
 window.VAULT_SNAPSHOT = {
-  "timestamp": 1791585475086,
+  "timestamp": 1791731267386,
   "files": [
     {
       "id": "_agents_rules_00-core_md",
@@ -8,10 +8,10 @@ window.VAULT_SNAPSHOT = {
       "title": "Regras Fundamentais do AI Second Brain",
       "category": "rules",
       "icon": "⚙️",
-      "size": 1911,
-      "mtime": 1790609679156.6394,
+      "size": 2234,
+      "mtime": 1791695628612.4695,
       "outgoingLinks": [],
-      "content": "# Regras Fundamentais do AI Second Brain\n\n> Estas regras são aplicadas a **todo** trabalho realizado neste workspace.\n\n## Identidade\n\n- Você opera dentro do **AI Second Brain** do Alfredo.\n- Seu objetivo é ser um parceiro de desenvolvimento, não um gerador de texto.\n- Você acumula conhecimento e respeita decisões anteriores.\n\n## Princípios\n\n1. **Context First** — Sempre leia o contexto antes de agir.\n2. **Decision Aware** — Consulte decisões anteriores antes de alterar arquitetura.\n3. **Memory Persistent** — Atualize a memória após trabalho significativo.\n4. **Quality Over Speed** — Prefira soluções robustas a soluções rápidas.\n5. **Explicit Over Implicit** — Documente premissas e decisões.\n6. **Zero Fabrication** — NUNCA invente contexto que não existe na documentação do projeto. Não gere arquivos, lore, telas ou especificações especulativas para preencher lacunas. Se algo não existe, declare expressamente como não definido.\n\n## Fluxo de Trabalho Obrigatório\n\n```\n1. ENTENDER → O que está sendo pedido?\n2. CONTEXTUALIZAR → Qual projeto? Qual estado atual?\n3. CLASSIFICAR → Que tipo de tarefa é?\n4. PLANEJAR → Qual a melhor abordagem?\n5. EXECUTAR → Implementar com qualidade.\n6. VALIDAR → Testar e verificar.\n7. DOCUMENTAR → Atualizar docs e memória.\n```\n\n## Convenções\n\n- O código deve seguir os padrões idiomáticos oficiais da linguagem e ecossistema adotados no projeto.\n- Commits seguem Conventional Commits (`feat:`, `fix:`, `docs:`, `refactor:`).\n- Documentação técnica em **Markdown** com formatação padronizada e links verificáveis.\n- Nomes de arquivos técnicos em inglês quando aplicável, conteúdo e documentação em português.\n\n## Comunicação\n\n- Responda em **português brasileiro** por padrão.\n- Use termos técnicos em inglês quando apropriado.\n- Seja direto e objetivo.\n- Cite referências quando relevante.\n"
+      "content": "# Regras Fundamentais do AI Second Brain\n\n> Estas regras são aplicadas a **todo** trabalho realizado neste workspace.\n\n## Identidade\n\n- Você opera dentro do **AI Second Brain** do Alfredo.\n- Seu objetivo é ser um parceiro de desenvolvimento, não um gerador de texto.\n- Você acumula conhecimento e respeita decisões anteriores.\n\n## Princípios\n\n1. **Context First** — Sempre leia o contexto antes de agir.\n2. **Decision Aware** — Consulte decisões anteriores antes de alterar arquitetura.\n3. **Memory Persistent** — Atualize a memória após trabalho significativo.\n4. **Quality Over Speed** — Prefira soluções robustas a soluções rápidas.\n5. **Explicit Over Implicit** — Documente premissas e decisões.\n6. **Zero Fabrication** — NUNCA invente contexto que não existe na documentação do projeto. Não gere arquivos, lore, telas ou especificações especulativas para preencher lacunas. Se algo não existe, declare expressamente como não definido.\n7. **Zero Hardcoded Models** — NUNCA crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API do provedor em tempo real.\n8. **Lessons Aware** — SEMPRE consulte `memory/lessons-learned.md` antes de arquitetar ou modificar integrações de IA e código.\n\n\n## Fluxo de Trabalho Obrigatório\n\n```\n1. ENTENDER → O que está sendo pedido?\n2. CONTEXTUALIZAR → Qual projeto? Qual estado atual?\n3. CLASSIFICAR → Que tipo de tarefa é?\n4. PLANEJAR → Qual a melhor abordagem?\n5. EXECUTAR → Implementar com qualidade.\n6. VALIDAR → Testar e verificar.\n7. DOCUMENTAR → Atualizar docs e memória.\n```\n\n## Convenções\n\n- O código deve seguir os padrões idiomáticos oficiais da linguagem e ecossistema adotados no projeto.\n- Commits seguem Conventional Commits (`feat:`, `fix:`, `docs:`, `refactor:`).\n- Documentação técnica em **Markdown** com formatação padronizada e links verificáveis.\n- Nomes de arquivos técnicos em inglês quando aplicável, conteúdo e documentação em português.\n\n## Comunicação\n\n- Responda em **português brasileiro** por padrão.\n- Use termos técnicos em inglês quando apropriado.\n- Seja direto e objetivo.\n- Cite referências quando relevante.\n"
     },
     {
       "id": "_agents_rules_01-ai-decision_md",
@@ -20,10 +20,10 @@ window.VAULT_SNAPSHOT = {
       "title": "Regras de Decisão com IA",
       "category": "rules",
       "icon": "🚦",
-      "size": 1584,
-      "mtime": 1790519724230.254,
+      "size": 1682,
+      "mtime": 1791694150552.3013,
       "outgoingLinks": [],
-      "content": "# Regras de Decisão com IA\n\n> Define quando e como utilizar diferentes tipos de IA nas tarefas.\n\n## Classificação Obrigatória\n\nAntes de utilizar qualquer recurso de IA, classifique a tarefa:\n\n### Nível 1: Determinístico\n- **Quando**: A resposta pode ser calculada ou derivada de regras.\n- **Ação**: Use código, queries SQL, ou regras de negócio.\n- **Exemplos**: Validação de dados, cálculos, formatação, CRUD.\n\n### Nível 2: Classificação/Decisão\n- **Quando**: Precisa categorizar, priorizar ou decidir entre alternativas.\n- **Ação**: Avalie AIJev/Jev antes de usar LLM.\n- **Exemplos**: Classificar severidade de incidentes, priorizar alertas, decidir ações.\n\n### Nível 3: Geração\n- **Quando**: Precisa criar conteúdo, explicar algo, ou raciocinar de forma aberta.\n- **Ação**: Use LLM com prompt estruturado e validação.\n- **Exemplos**: Explicar falhas, gerar relatórios, sugerir melhorias.\n\n### Nível 4: Composto\n- **Quando**: Tarefa combina decisão + geração.\n- **Ação**: AIJev para decidir → LLM para gerar → Validação.\n- **Exemplos**: Analisar Job falho e gerar explicação contextualizada.\n\n## Regra de Ouro\n\n```\nSE pode ser resolvido com código → CÓDIGO\nSE precisa decidir/classificar → AIJEV primeiro\nSE precisa gerar/explicar → LLM\nSEMPRE → VALIDAR resultado\n```\n\n## Proibições\n\n- ❌ Usar LLM para tarefas determinísticas\n- ❌ Chamar IA generativa para cada evento/Job\n- ❌ Ignorar AIJev quando a tarefa é de decisão\n- ❌ Aceitar resultado de IA sem validação\n- ❌ Hardcodar provider de IA (usar abstrações)\n"
+      "content": "# Regras de Decisão com IA\n\n> Define quando e como utilizar diferentes tipos de IA nas tarefas.\n\n## Classificação Obrigatória\n\nAntes de utilizar qualquer recurso de IA, classifique a tarefa:\n\n### Nível 1: Determinístico\n- **Quando**: A resposta pode ser calculada ou derivada de regras.\n- **Ação**: Use código, queries SQL, ou regras de negócio.\n- **Exemplos**: Validação de dados, cálculos, formatação, CRUD.\n\n### Nível 2: Classificação/Decisão\n- **Quando**: Precisa categorizar, priorizar ou decidir entre alternativas.\n- **Ação**: Avalie AIJev/Jev antes de usar LLM.\n- **Exemplos**: Classificar severidade de incidentes, priorizar alertas, decidir ações.\n\n### Nível 3: Geração\n- **Quando**: Precisa criar conteúdo, explicar algo, ou raciocinar de forma aberta.\n- **Ação**: Use LLM com prompt estruturado e validação.\n- **Exemplos**: Explicar falhas, gerar relatórios, sugerir melhorias.\n\n### Nível 4: Composto\n- **Quando**: Tarefa combina decisão + geração.\n- **Ação**: AIJev para decidir → LLM para gerar → Validação.\n- **Exemplos**: Analisar Job falho e gerar explicação contextualizada.\n\n## Regra de Ouro\n\n```\nSE pode ser resolvido com código → CÓDIGO\nSE precisa decidir/classificar → AIJEV primeiro\nSE precisa gerar/explicar → LLM\nSEMPRE → VALIDAR resultado\n```\n\n## Proibições\n\n- ❌ Usar LLM para tarefas determinísticas\n- ❌ Chamar IA generativa para cada evento/Job\n- ❌ Ignorar AIJev quando a tarefa é de decisão\n- ❌ Aceitar resultado de IA sem validação\n- ❌ Hardcodar provider de IA (usar abstrações)\n- ❌ Hardcodar listas ou catálogos de modelos de IA (catálogo deve ser 100% dinâmico via API)\n"
     },
     {
       "id": "_agents_rules_02-aijev_md",
@@ -158,16 +158,28 @@ window.VAULT_SNAPSHOT = {
       "content": "---\nname: session-memory\ndescription: >-\n  Gerencia a memória persistente entre sessões de trabalho. Use ao final de\n  uma sessão de trabalho para registrar o que foi feito, decisões tomadas,\n  e próximos passos. Também use no início de uma sessão para carregar\n  o contexto da sessão anterior.\n---\n\n# Session Memory\n\n## Ao Iniciar uma Sessão\n\n1. Leia `memory/current-state.md` para o estado global.\n2. Leia `projects/<projeto>/CURRENT_STATE.md` para o projeto em foco.\n3. Leia `projects/<projeto>/MEMORY/` para sessões anteriores.\n4. Leia `memory/lessons-learned.md` para lições relevantes.\n\n## Ao Finalizar uma Sessão\n\n### 1. Atualizar Estado Global\n\nEdite `memory/current-state.md` com mudanças relevantes.\n\n### 2. Criar Registro de Sessão\n\nCrie arquivo em `projects/<projeto>/MEMORY/sessions/`:\n\nNome: `YYYY-MM-DD-descricao-curta.md`\n\nConteúdo:\n\n```markdown\n# Sessão: YYYY-MM-DD — Descrição Curta\n\n## Contexto\nO que motivou esta sessão de trabalho.\n\n## O que foi feito\n- [ ] Item 1\n- [ ] Item 2\n\n## Decisões tomadas\n- Decisão 1: Motivo\n\n## Problemas encontrados\n- Problema 1: Como foi resolvido\n\n## Próximos passos\n1. Passo 1\n2. Passo 2\n\n## Aprendizados\n- Lição 1\n```\n\n### 3. Atualizar CURRENT_STATE.md do projeto\n\nReflita as mudanças no estado atual do projeto.\n\n### 4. Atualizar Lessons Learned (se aplicável)\n\nSe houve aprendizados significativos, adicione em `memory/lessons-learned.md`.\n\n## Regras\n\n- Seja conciso mas completo.\n- Registre decisões com o motivo.\n- Não omita problemas encontrados.\n- Próximos passos devem ser acionáveis.\n"
     },
     {
+      "id": "AGENTS_md",
+      "path": "AGENTS.md",
+      "name": "AGENTS.md",
+      "title": "AI SECOND BRAIN — UNIVERSAL AGENTS GOVERNANCE (AGENTS.md)",
+      "category": "agents",
+      "icon": "🤖",
+      "size": 2472,
+      "mtime": 1791699174860.6235,
+      "outgoingLinks": [],
+      "content": "# AI SECOND BRAIN — UNIVERSAL AGENTS GOVERNANCE (AGENTS.md)\n\n> Este arquivo é o padrão aberto universal para qualquer agente de IA (OpenAI, Cursor, Claude, Antigravity, Copilot, Windsurf, Cline).\n> Qualquer agente operando neste workspace deve seguir estas diretrizes obrigatórias.\n\n---\n\n## IDENTIDADE & PROPÓSITO\n\nVocê opera dentro do **AI Second Brain**, uma plataforma estruturada de desenvolvimento assistido por IA que organiza conhecimento, decisões arquiteturais (ADRs), memória contínua e regras de engenharia para múltiplos projetos.\n\n---\n\n## ANTES DE EXECUTAR QUALQUER TAREFA\n\n1. **Entenda o projeto alvo** — Leia o `PROJECT.md` do projeto relevante em `projects/<nome>/`.\n2. **Leia as regras aplicáveis** — Verifique `.agents/rules/` para restrições técnicas e de segurança.\n3. **Leia o estado atual** — Consulte `CURRENT_STATE.md` do projeto alvo e `memory/current-state.md`.\n4. **Consulte decisões anteriores** — Verifique a pasta `DECISIONS/` do projeto para respeitar escolhas consolidadas.\n5. **Leia as lições aprendidas** — Consulte o `LESSONS_LEARNED.md` do projeto (em `projects/<nome>/`) e `memory/lessons-learned.md` antes de arquitetar código ou integrações de IA para não repetir erros documentados.\n6. **Classifique a tarefa** — Aplique a prioridade determinística (código determinístico primeiro, AIJev para decisões/classificações, LLM apenas para geração textual aberta).\n\n---\n\n## REGRAS ABSOLUTAS (UNIVERSAIS)\n\n1. **Prioridade Determinística**: NUNCA utilize LLM quando código determinístico ou regras de negócio resolverem.\n2. **Zero Fabricação**: NUNCA invente contexto, bibliotecas, telas ou especificações que não existem na documentação oficial do projeto.\n3. **Catálogos 100% Dinâmicos**: NUNCA crie listas ou catálogos fixos/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API do provedor em tempo real.\n4. **Respeito a Decisões**: NUNCA altere arquitetura sem consultar decisões existentes e registrar um ADR em `DECISIONS/`.\n5. **Consulta à Memória**: SEMPRE consulte o `LESSONS_LEARNED.md` do projeto e `memory/lessons-learned.md` antes de arquitetar ou modificar código e integrações de IA.\n6. **Sincronização de Estado**: SEMPRE mantenha o arquivo `CURRENT_STATE.md` e a memória do projeto atualizados ao concluir tarefas significativas.\n7. **Validação**: SEMPRE valide o resultado de qualquer operação técnica ou de IA.\n"
+    },
+    {
       "id": "CLAUDE_md",
       "path": "CLAUDE.md",
       "name": "CLAUDE.md",
       "title": "AI SECOND BRAIN — INSTRUÇÕES PARA CLAUDE CODE",
       "category": "core",
       "icon": "📄",
-      "size": 1597,
-      "mtime": 1791132673347.6536,
+      "size": 2305,
+      "mtime": 1791699437305.4663,
       "outgoingLinks": [],
-      "content": "# AI SECOND BRAIN — INSTRUÇÕES PARA CLAUDE CODE\n\n> Este repositório é o cérebro central e cofre de governança para desenvolvimento assistido por IA.\n> Qualquer sessão do Claude Code neste workspace deve seguir estas diretrizes.\n\n---\n\n## IDENTIDADE & OBJETIVO\n\nVocê opera dentro do **AI Second Brain**, um sistema estruturado que organiza conhecimento, decisões arquiteturais, memória e regras para todos os projetos.\n\n---\n\n## FLUXO DE OPERAÇÃO\n\n1. **Localização dos Projetos**: Todos os projetos gerenciados residem em `projects/<nome-do-projeto>/`.\n2. **Contratos Vivos**:\n   - `projects/<nome>/PROJECT.md` — Visão geral, objetivos de negócio, stack técnica e restrições.\n   - `projects/<nome>/CURRENT_STATE.md` — O que está pronto, o que está em andamento e próximos passos.\n   - `projects/<nome>/ARCHITECTURE.md` — Desenho técnico, diagrama de componentes e padrões.\n   - `projects/<nome>/DECISIONS/` — Architecture Decision Records (ADRs) com o histórico de por que escolhas foram feitas.\n3. **Memória Persistente**: Ao final de sessões significativas, registre o resumo em `projects/<nome>/MEMORY/sessions/` e atualize `CURRENT_STATE.md`.\n\n---\n\n## DIRETRIZES FUNDAMENTAIS\n\n- **Zero Alucinação**: Se uma informação não estiver documentada, pergunte ou declare expressamente como \"Não definido\".\n- **ADRs Obrigatórios**: Toda mudança arquitetural significativa deve gerar um novo arquivo em `projects/<nome>/DECISIONS/`.\n- **Governança Agnostica**: Os contratos são em Markdown puro para serem compreendidos por qualquer inteligência artificial.\n"
+      "content": "# AI SECOND BRAIN — INSTRUÇÕES PARA CLAUDE CODE\n\n> Este repositório é o cérebro central e cofre de governança para desenvolvimento assistido por IA.\n> Qualquer sessão do Claude Code neste workspace deve seguir estas diretrizes.\n\n---\n\n## IDENTIDADE & OBJETIVO\n\nVocê opera dentro do **AI Second Brain**, um sistema estruturado que organiza conhecimento, decisões arquiteturais, memória e regras para todos os projetos.\n\n---\n\n## FLUXO DE OPERAÇÃO\n\n1. **Localização dos Projetos**: Todos os projetos gerenciados residem em `projects/<nome-do-projeto>/`.\n2. **Contratos Vivos**:\n   - `projects/<nome>/PROJECT.md` — Visão geral, objetivos de negócio, stack técnica e restrições.\n   - `projects/<nome>/CURRENT_STATE.md` — O que está pronto, o que está em andamento e próximos passos.\n   - `projects/<nome>/ARCHITECTURE.md` — Desenho técnico, diagrama de componentes e padrões.\n   - `projects/<nome>/LESSONS_LEARNED.md` — Lições aprendidas, armadilhas técnicas e erros a nunca repetir neste projeto.\n   - `projects/<nome>/DECISIONS/` — Architecture Decision Records (ADRs) com o histórico de por que escolhas foram feitas.\n3. **Memória Persistente**:\n   - Ao final de sessões significativas, registre o resumo em `projects/<nome>/MEMORY/sessions/` e atualize `CURRENT_STATE.md`.\n   - Consulte o `LESSONS_LEARNED.md` do projeto e `memory/lessons-learned.md` antes de implementar ou modificar código, integrações de IA e arquitetura para não repetir erros documentados.\n\n---\n\n## REGRAS ABSOLUTAS\n\n1. **Zero Alucinação**: Se uma informação não estiver documentada, pergunte ou declare expressamente como \"Não definido\". Jamais invente especificações.\n2. **Catálogos 100% Dinâmicos**: NUNCA crie listas ou catálogos fixos/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API do provedor em tempo real.\n3. **Consulta Obrigatória à Memória**: SEMPRE consulte o `LESSONS_LEARNED.md` do projeto e `memory/lessons-learned.md` antes de arquitetar código ou integrações de IA.\n4. **ADRs Obrigatórios**: Toda mudança arquitetural significativa deve gerar um novo arquivo em `projects/<nome>/DECISIONS/`.\n5. **Prioridade Determinística**: NUNCA utilize LLM quando código determinístico ou regras de negócio resolverem.\n"
     },
     {
       "id": "decisions_GLOBAL_DECISIONS_md",
@@ -212,10 +224,10 @@ window.VAULT_SNAPSHOT = {
       "title": "Como Utilizar o AI Second Brain na Prática",
       "category": "docs",
       "icon": "📝",
-      "size": 20058,
-      "mtime": 1791504916226.32,
+      "size": 24173,
+      "mtime": 1791695680175.3308,
       "outgoingLinks": [],
-      "content": "# Como Utilizar o AI Second Brain na Prática\n## Guia Definitivo: Criação de Novos Projetos e Integração de Projetos Existentes\n\n> **Este documento é o manual oficial de governança, onboarding e operação diária do AI Second Brain (Alfredo AI OS).**  \n> Ele orienta passo a passo como iniciar novos projetos do zero (*greenfield*) e como acoplar projetos existentes (*brownfield*), garantindo persistência de memória, governança de IA, padronização técnica e rastreabilidade total de decisões.\n\n---\n\n## 📑 Sumário\n\n1. [O Modelo Mental: Hub Central vs. Repositórios Satélites](#1-o-modelo-mental-hub-central-vs-repositórios-satélites)\n2. [Cenário A: Criação de um NOVO Projeto do Zero (Greenfield)](#2-cenário-a-criação-de-um-novo-projeto-do-zero-greenfield)\n3. [Cenário B: Integração de um Projeto JÁ EXISTENTE (Brownfield)](#3-cenário-b-integração-de-um-projeto-já-existente-brownfield)\n4. [Operação do Dia a Dia: O Ciclo de Vida de uma Sessão de Trabalho](#4-operação-do-dia-a-dia-o-ciclo-de-vida-de-uma-sessão-de-trabalho)\n5. [Governança e Roteamento de IA na Prática (AIJev First)](#5-governança-e-roteamento-de-ia-na-prática-aijev-first)\n6. [Catálogo de Prompts Prontos para o Desenvolvedor](#6-catálogo-de-prompts-prontos-para-o-desenvolvedor)\n7. [Checklists Operacionais de Consulta Rápida](#7-checklists-operacionais-de-consulta-rápida)\n\n---\n\n## 1. O Modelo Mental: Hub Central vs. Repositórios Satélites\n\nO maior erro no desenvolvimento assistido por IA é manter instruções isoladas em chats temporários ou arquivos soltos que se perdem. No **AI Second Brain**, adotamos a arquitetura de **Hub de Conhecimento Central & Repositórios de Implementação**:\n\n```mermaid\ngraph TD\n    subgraph AI_SECOND_BRAIN [\"🧠 HUB CENTRAL: AI_SECOND_BRAIN\"]\n        Rules[\".agents/rules/<br/>Regras Absolutas\"]\n        Skills[\".agents/skills/<br/>Fluxos Especializados\"]\n        Knowledge[\"knowledge/<br/>AIJev, Arquitetura, Gateway\"]\n        Memory[\"memory/<br/>Memória Persistente Global\"]\n        ProjectsMeta[\"projects/<br/>Documentação & Decisões dos Projetos\"]\n        Visualizer[\"docs/brain-ui/<br/>Grafo Neural 3D & Dashboard\"]\n    end\n\n    subgraph Repos [\"💻 REPOSITÓRIOS DE CÓDIGO (Satélites Físicos)\"]\n        Proj1[\"API / Backend<br/>(Repo Node / Go / .NET)\"]\n        Proj2[\"Game<br/>(Repo Unity / Godot)\"]\n        Proj3[\"App Mobile<br/>(Repo Flutter / React Native)\"]\n        ProjNew[\"Seu Novo Projeto<br/>(Repo Greenfield)\"]\n    end\n\n    ProjectsMeta -.-> Proj1\n    ProjectsMeta -.-> Proj2\n    ProjectsMeta -.-> Proj3\n    ProjectsMeta -.-> ProjNew\n    Rules ==> Repos\n    Knowledge ==> Repos\n```\n\n### Onde mora cada informação?\n\n| Tipo de Dado | Onde Fica? | Finalidade |\n| :--- | :--- | :--- |\n| **Código-Fonte Executável** | No repositório físico do projeto (ex: `C:\\Projetos\\SaaS\\MeuProjeto`) | Compilação, testes, Dockerfiles, builds de CI/CD. |\n| **Memória do Seu Projeto** | `AI_SECOND_BRAIN/projects/<nome>/CURRENT_STATE.md` & `MEMORY/` | O que foi feito, tarefas ativas, bloqueios e sessões do seu software. |\n| **Visão Geral e Stack do Projeto** | `AI_SECOND_BRAIN/projects/<nome>/PROJECT.md` | Contexto de negócio, regras e definições técnicas do seu software. |\n| **Decisões Arquiteturais (ADRs)** | `AI_SECOND_BRAIN/projects/<nome>/DECISIONS/` | Histórico imutável de por que certas escolhas foram feitas no seu projeto. |\n| **Mapeamento de Casos de IA** | `AI_SECOND_BRAIN/projects/<nome>/AI/` | Onde e como a IA é usada (AIJev, regras ou LLM) no seu software. |\n| **Memória Global do Framework** | `AI_SECOND_BRAIN/memory/` | Estado e histórico do próprio AI Second Brain (servidor, visualizador, motor de IA). |\n| **Regras Universais de Qualidade** | `AI_SECOND_BRAIN/.agents/rules/` | Padrões de C#, SQL Server, Segurança, etc. compartilhados por todos os projetos. |\n\n> 💡 **Nota de Isolamento:** A pasta raiz `memory/` registra o histórico da **plataforma** AI Second Brain como produto. Cada projeto que você criar ou conectar terá sua memória e decisões mantidas **estritamente isoladas** dentro de `projects/<nome>/`, garantindo zero poluição ou interferência entre projetos.\n\n---\n\n## 2. Cenário A: Criação de um NOVO Projeto do Zero (Greenfield)\n\nQuando você for criar um novo produto SaaS, aplicativo, automação ou jogo, siga este roteiro exato.\n\n### Fluxo Passo a Passo:\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Dev as Alfredo (Você)\n    participant Agent as Antigravity Agent\n    participant Brain as AI_SECOND_BRAIN\n    participant Repo as Novo Repositório de Código\n\n    Dev->>Agent: \"Quero criar um novo projeto chamado [Nome]. Ele faz [X].\"\n    Agent->>Brain: Ativa Skill project-onboarding\n    Agent->>Brain: Cria estrutura em projects/[Nome]/ a partir dos templates\n    Agent->>Dev: Solicita detalhes técnicos ou sugere arquitetura\n    Dev->>Agent: Aprova definições de Stack & Decisões Iniciais\n    Agent->>Brain: Grava PROJECT.md, ARCHITECTURE.md, CURRENT_STATE.md e ADR-001\n    Agent->>Brain: Atualiza README.md, GEMINI.md e Grafo Neural 3D\n    Agent->>Repo: Inicializa o repositório de código com instruções vinculadas\n    Agent->>Dev: Projeto pronto para desenvolvimento do MVP!\n```\n\n### Passo 1: Solicitar o Onboarding ao Agente no Antigravity\nNo chat do Antigravity, envie a seguinte mensagem:\n\n> *\"Quero criar um novo projeto chamado **BillingFlow**. É uma API .NET 9 de conciliação de pagamentos com SQL Server, mensageria RabbitMQ e validação de regras com AIJev. Execute o onboarding desse projeto no Second Brain.\"*\n\nO agente acionará a skill `project-onboarding`.\n\n### Passo 2: Estrutura que o Agente cria em `projects/BillingFlow/`\nO agente criará a pasta canônica do projeto dentro do Segundo Cérebro:\n\n```text\nprojects/BillingFlow/\n├── PROJECT.md                # Visão geral, objetivos de negócio, stack, restrições\n├── ARCHITECTURE.md           # Desenho arquitetural (Clean Arch, endpoints, banco)\n├── CURRENT_STATE.md          # Estado de partida (Fase: Concepção / Setup inicial)\n├── DECISIONS/                # Registro de Decisões Arquiteturais (ADRs)\n│   └── ADR-001-stack-inicial.md\n├── AI/                       # Governança de IA do projeto\n│   ├── AI_USE_CASES.md       # Classificação de cada caso (AIJev vs LLM)\n│   └── AI_ARCHITECTURE.md    # Como o AI Gateway será plugado\n├── DATABASE/                 # Schemas SQL, tabelas planejadas e índices\n├── API/                      # Contratos OpenAPI / Swagger / Endpoints\n├── TESTS/                    # Pirâmide de testes (Unitários, Integração)\n└── MEMORY/                   # Sessões diárias de trabalho deste projeto\n    └── sessions/\n```\n\n### Passo 3: Criar o Repositório Físico do Código\nNo diretório onde você armazena seus códigos (ex: `C:\\Projetos\\SaaS\\BillingFlow`):\n1. Crie o projeto ou rode o scaffolding do framework (ex: `dotnet new webapi -n BillingFlow`).\n2. Crie na raiz do repositório um arquivo `GEMINI.md` (ou `CLAUDE.md` / `.cursorrules`) apontando para o Segundo Cérebro:\n\n```markdown\n# BillingFlow — Instruções de Desenvolvimento\n\n> Este projeto é governado pelo **AI Second Brain** do Alfredo.\n> Antes de implementar código ou tomar decisões, consulte a documentação oficial em:\n> C:\\Projetos\\SaaS\\Google Antigravity\\Projetos\\AI_SECOND_BRAIN\\projects\\BillingFlow\\\n\n## Diretrizes Mandatórias\n1. Siga as regras globais de .NET em: `AI_SECOND_BRAIN/.agents/rules/04-dotnet.md`\n2. Siga as regras de banco de dados em: `AI_SECOND_BRAIN/.agents/rules/05-sql-server.md`\n3. Decisões de IA devem seguir: `AI_SECOND_BRAIN/knowledge/ai/AIJEV.md`\n4. Não altere arquitetura sem registrar um novo ADR em `AI_SECOND_BRAIN/projects/BillingFlow/DECISIONS/`.\n```\n\n### Passo 4: Registrar a Governança de IA (AI Decision Gate)\nSe o novo projeto for utilizar qualquer forma de inteligência:\n1. Abra `projects/BillingFlow/AI/AI_USE_CASES.md`.\n2. Para cada necessidade, preencha a tabela de decisão:\n   - *Exemplo 1:* \"Identificar divergência no valor do boleto\" → **Código Determinístico** (`Math.Abs(pago - esperado) > 0`).\n   - *Exemplo 2:* \"Classificar risco de chargeback por padrão de histórico\" → **AIJev / Jev Decision Tree**.\n   - *Exemplo 3:* \"Gerar e-mail amigável explicando a conciliação ao cliente\" → **LLM** (Gemini / Claude via AI Gateway com fallback).\n\n---\n\n## 3. Cenário B: Integração de um Projeto JÁ EXISTENTE (Brownfield)\n\nSe você já possui um projeto com repositório próprio, código em produção e anos de desenvolvimento (como uma API legado, um app existente ou qualquer outro sistema da sua empresa), **você não precisa reescrever o código nem mover a pasta física do repositório**. \n\nO objetivo do Segundo Cérebro é ser a **memória e inteligência governante** desse projeto.\n\n### Fluxo de Adoção para Projetos Existentes:\n\n```mermaid\ngraph LR\n    A[\"1. Varredura Não-Destrutiva<br/>(Ler código existente)\"] --> B[\"2. Criar Pasta Satélite<br/>(projects/NomeProjeto/)\"]\n    B --> C[\"3. Documentar Stack Real<br/>(PROJECT.md)\"]\n    C --> D[\"4. Mapear Decisões Passadas<br/>(ADRs Retroativos)\"]\n    D --> E[\"5. Registrar Estado Atual<br/>(CURRENT_STATE.md)\"]\n    E --> F[\"6. Adicionar Ponte GEMINI.md<br/>(No repo do projeto)\"]\n```\n\n### Passo 1: Executar a Varredura Inicial com o Agente\nAbra o repositório existente no Antigravity ou passe o caminho do projeto para o agente:\n\n> *\"Tenho um projeto existente em `C:\\Projetos\\SaaS\\MeuSistemaLegado`. Preciso que faça o onboarding dele no AI Second Brain. Analise a stack, o banco de dados, os endpoints e crie a documentação correspondente em `projects/MeuSistemaLegado/`.\"*\n\nO agente executará a skill `project-onboarding` em modo brownfield:\n1. Lê o `.csproj`, `package.json`, scripts SQL e Dockerfiles existentes.\n2. Identifica bibliotecas de ORM (ex: Dapper, EF Core), serviços externos e autenticação.\n3. Não modifica **nenhuma linha** de código do sistema legado.\n\n### Passo 2: Criar os ADRs Retroativos (Crucial!)\nUm dos maiores riscos ao usar IA em código legado é o agente tentar \"reescrever tudo\" usando padrões modernos que quebram o sistema em produção (por exemplo, querer substituir Dapper por EF Core ou trocar SQL Server por PostgreSQL).\n\nPara blindar o projeto contra isso, crie ADRs retroativos:\n- `DECISIONS/001-uso-de-dapper-e-procedures.md`:\n  > *\"Decisão: O projeto utiliza Dapper com Stored Procedures por requisitos de alta performance e compatibilidade com o legado. O agente de IA NUNCA deve tentar substituir Dapper por Entity Framework sem autorização expressa do Alfredo.\"*\n\n### Passo 3: Registrar Bloqueios e Débitos Técnicos em `CURRENT_STATE.md`\nNo arquivo `projects/<nome>/CURRENT_STATE.md`, liste exatamente o estado operacional real:\n- O que está 100% testado e funcionando.\n- Quais são os \"pontos sensíveis\" (onde mexer com cuidado).\n- Quais são os bugs conhecidos que ainda não foram corrigidos.\n- Qual é o próximo objetivo prioritário.\n\n---\n\n## 4. Operação do Dia a Dia: O Ciclo de Vida de uma Sessão de Trabalho\n\nPara que o Segundo Cérebro funcione como uma extensão real da sua memória, toda sessão de desenvolvimento deve seguir o ciclo de 3 fases:\n\n```\n┌─────────────────────────────────────────────────────────────┐\n│ 1. ENTRADA (Context Loading)                                │\n│ \"Vou trabalhar no [NomeDoProjeto] na feature de autenticação.│\n│ Carregue o estado atual e decisões pendentes.\"               │\n└──────────────────────────────┬──────────────────────────────┘\n                               │\n                               ▼\n┌─────────────────────────────────────────────────────────────┐\n│ 2. DESENVOLVIMENTO (Skills & Governança)                    │\n│ Implementação -> Testes -> Validação -> Revisão             │\n└──────────────────────────────┬──────────────────────────────┘\n                               │\n                               ▼\n┌─────────────────────────────────────────────────────────────┐\n│ 3. SAÍDA (Memory Flush & Sync)                              │\n│ \"Finalizamos por hoje. Atualize CURRENT_STATE.md e registre │\n│ a sessão na memória.\"                                       │\n└─────────────────────────────────────────────────────────────┘\n```\n\n### 1. Início da Sessão\nAntes de pedir código, peça o contexto:\n> *\"Vou trabalhar no [Nome do Projeto]. Me apresente o estado atual e os próximos passos.\"*\n\nO agente lê:\n- `projects/[Nome]/CURRENT_STATE.md`\n- As últimas 3 sessões em `projects/[Nome]/MEMORY/sessions/`\n- As decisões relevantes em `projects/[Nome]/DECISIONS/`\n\n### 2. Durante a Sessão\nO agente utiliza as skills adequadas para cada atividade:\n- **Vai criar endpoint ou serviço?** → Aciona a skill `new-feature`.\n- **Apareceu um erro/bug?** → Aciona a skill `bug-investigation`.\n- **Vai adicionar uma consulta SQL pesada?** → Aciona a skill `database-review`.\n- **A feature envolve inteligência ou decisão?** → Aciona a skill `ai-decision-gate`.\n\n### 3. Fim da Sessão (Memory Flush)\nNunca encerre o Antigravity sem registrar a sessão. Envie:\n> *\"Fechando os trabalhos de hoje no [Nome do Projeto]. Salve a memória da sessão e atualize o CURRENT_STATE.\"*\n\nO agente:\n1. Cria `projects/[Nome]/MEMORY/sessions/YYYY-MM-DD-resumo.md`.\n2. Atualiza `CURRENT_STATE.md` com os itens concluídos e o que ficou pendente.\n3. Se foi tomada uma decisão arquitetural relevante, cria o novo ADR correspondente.\n\n---\n\n## 5. Governança e Roteamento de IA na Prática (AIJev First)\n\nUma das diretrizes centrais do seu sistema é a **política AIJev First**. Quando um projeto precisa resolver um problema de decisão, classificação ou automação, o agente deve seguir rigorosamente a árvore de roteamento:\n\n```mermaid\nflowchart TD\n    Task([Nova Demanda do Projeto]) --> Q1{É 100% determinística?<br/>Matemática, lógica booleana?}\n    Q1 -- SIM --> Code[Implementar CÓDIGO PURO / REGRA DE NEGÓCIO<br/>Sem custo de IA, latência zero]\n    Q1 -- NÃO --> Q2{É uma Decisão ou Classificação?<br/>Ex: Aprovar/Recusar, Categorizar, Rotear?}\n    \n    Q2 -- SIM --> AIJev[Avaliar AIJev / Jev<br/>Árvore de decisão explicável, rápida e barata]\n    AIJev --> AIJevFit{AIJev atende os requisitos?}\n    AIJevFit -- SIM --> ImplAIJev[Implementar via AIJev Pattern]\n    AIJevFit -- NÃO --> AI_Gateway\n    \n    Q2 -- NÃO --> Q3{Precisa gerar texto, código ou sintetizar linguagem?}\n    Q3 -- SIM --> AI_Gateway[AI Gateway Pattern<br/>Provedor Primário: Claude / Gemini<br/>Fallback automático + Cache + Observabilidade]\n    Q3 -- NÃO --> Action[Execução de Script / Automação]\n```\n\n### Tabela Prática de Escolha Técnica:\n\n| Necessidade | Tecnologia Recomendada | Por quê? |\n| :--- | :--- | :--- |\n| Validação de formulários, cálculos tributários, regras de autenticação | **Código C# / TypeScript Puro** | Custo zero, sem falhas de interpretação, determinismo 100%. |\n| Classificação de severidade de erros de SQL Jobs | **AIJev / Jev First** | Muito mais rápido que LLM, sem custo de tokens, 100% auditável. |\n| Detecção de anomalias em volume de transações | **AIJev / Algoritmo Estatístico** | Latência em milissegundos e comportamento previsível. |\n| Diagnóstico detalhado em linguagem natural de por que um job falhou | **LLM (Claude 3.5 Sonnet / Gemini 1.5 Pro)** | Capacidade de raciocínio aberto e contextualização de stack traces. |\n| Chatbot de suporte ao usuário final | **LLM com RAG via AI Gateway** | Respostas conversacionais alimentadas pela base de conhecimento. |\n\n---\n\n## 6. Catálogo de Prompts Prontos para o Desenvolvedor\n\nGuarde esta seção para copiar e colar no Antigravity:\n\n### Para Iniciar um Novo Projeto:\n```text\nAtive a skill project-onboarding. Quero criar um novo projeto chamado [NOME].\nObjetivo: [Descreva em 2 frases o que ele faz].\nStack pretendida: [.NET / React / Python / SQL Server / etc.].\nEle utilizará IA para: [Descreva onde entra a inteligência, se houver].\nCrie a estrutura completa em projects/[NOME]/ com os templates preenchidos.\n```\n\n### Para Plugar um Projeto Existente:\n```text\nAtive a skill project-onboarding para um projeto existente localizado em [CAMINHO_DO_PROJETO].\nAnalise a estrutura atual sem alterar código, identifique a stack e crie a documentação\ncorrespondente em projects/[NOME_DO_PROJETO]/. Em seguida, extraia as 3 principais\ndecisões de arquitetura já consolidadas para salvar como ADRs iniciais.\n```\n\n### Para Iniciar o Dia de Trabalho:\n```text\nVou focar no projeto [NOME] hoje.\nLeia o CURRENT_STATE.md e as últimas decisões em DECISIONS/.\nMe apresente:\n1. O que foi feito recentemente.\n2. Quais são as tarefas prioritárias de hoje.\n3. Há algum bloqueio registrado?\n```\n\n### Para Implementar uma Nova Feature com IA:\n```text\nQuero adicionar a seguinte funcionalidade no projeto [NOME]:\n[Descreva a feature].\nPasse pela skill ai-decision-gate: analise se ela deve ser determinística, usar AIJev ou LLM.\nApresente a proposta de implementação antes de escrever o código.\n```\n\n### Para Encerrar a Sessão e Salvar a Memória:\n```text\nAtive a skill session-memory. Finalizamos a sessão de trabalho no projeto [NOME].\nO que fizemos: [Breve lista ou deixe o agente listar a partir do git diff].\nDecisões tomadas: [Liste se houver].\nPróximos passos: [Liste o que faremos amanhã].\nGrave o arquivo de sessão e atualize o CURRENT_STATE.md do projeto.\n```\n\n---\n\n## 7. Checklists Operacionais de Consulta Rápida\n\n### ✅ Checklist: Novo Projeto (Greenfield)\n- [ ] Criada a pasta `projects/<nome-do-projeto>/` no Second Brain.\n- [ ] Preenchido `PROJECT.md` com objetivo, stack e restrições.\n- [ ] Preenchido `ARCHITECTURE.md` com os diagramas de componentes.\n- [ ] Preenchido `CURRENT_STATE.md` com a milestone inicial.\n- [ ] Registrado `DECISIONS/001-stack-inicial.md`.\n- [ ] Se tiver IA, preenchido `AI/AI_USE_CASES.md` avaliando AIJev First.\n- [ ] Criado o repositório de código e adicionado `GEMINI.md` apontando para o Second Brain.\n- [ ] Adicionado o projeto à tabela de projetos em `README.md` e `GEMINI.md` raiz.\n- [ ] Visualizado e testado o novo nó no **Grafo Neural 3D** (`docs/brain-ui/`).\n\n### ✅ Checklist: Projeto Existente (Brownfield)\n- [ ] Mapeado repositório original sem modificar código.\n- [ ] Criada pasta satélite `projects/<nome-existente>/`.\n- [ ] Documentada a stack real em `PROJECT.md` (versões exatas de runtime e libs).\n- [ ] Registrados os ADRs retroativos das decisões que **não podem ser violadas**.\n- [ ] Registrados os débitos técnicos e pontos críticos em `CURRENT_STATE.md`.\n- [ ] Adicionado arquivo de contexto no repositório de código (`GEMINI.md` / `.cursorrules`).\n- [ ] Avaliadas oportunidades de melhoria de IA com AI Gateway.\n\n### ✅ Checklist: Fim de Turno / Manutenção Contínua\n- [ ] Código testado e com build verde no repositório.\n- [ ] Skill `session-memory` executada para gerar o arquivo diário.\n- [ ] `CURRENT_STATE.md` atualizado com o progresso real.\n- [ ] Nenhuma decisão arquitetural ficou \"apenas no chat\" — todas viraram ADR.\n- [ ] Commit e push realizados no repositório do projeto e no `AI_SECOND_BRAIN`.\n"
+      "content": "# Como Utilizar o AI Second Brain na Prática\n## Guia Definitivo: Criação de Novos Projetos e Integração de Projetos Existentes\n\n> **Este documento é o manual oficial de governança, onboarding e operação diária do AI Second Brain (Alfredo AI OS).**  \n> Ele orienta passo a passo como iniciar novos projetos do zero (*greenfield*) e como acoplar projetos existentes (*brownfield*), garantindo persistência de memória, governança de IA, padronização técnica e rastreabilidade total de decisões.\n\n---\n\n## 📑 Sumário\n\n1. [O Modelo Mental: Hub Central vs. Repositórios Satélites](#1-o-modelo-mental-hub-central-vs-repositórios-satélites)\n2. [Cenário A: Criação de um NOVO Projeto do Zero (Greenfield)](#2-cenário-a-criação-de-um-novo-projeto-do-zero-greenfield)\n3. [Cenário B: Integração de um Projeto JÁ EXISTENTE (Brownfield)](#3-cenário-b-integração-de-um-projeto-já-existente-brownfield)\n4. [Operação do Dia a Dia: O Ciclo de Vida de uma Sessão de Trabalho](#4-operação-do-dia-a-dia-o-ciclo-de-vida-de-uma-sessão-de-trabalho)\n5. [Governança e Roteamento de IA na Prática (AIJev First)](#5-governança-e-roteamento-de-ia-na-prática-aijev-first)\n6. [Catálogo de Prompts Prontos para o Desenvolvedor](#6-catálogo-de-prompts-prontos-para-o-desenvolvedor)\n7. [Checklists Operacionais de Consulta Rápida](#7-checklists-operacionais-de-consulta-rápida)\n\n---\n\n## 1. O Modelo Mental: Hub Central vs. Repositórios Satélites\n\nO maior erro no desenvolvimento assistido por IA é manter instruções isoladas em chats temporários ou arquivos soltos que se perdem. No **AI Second Brain**, adotamos a arquitetura de **Hub de Conhecimento Central & Repositórios de Implementação**:\n\n```mermaid\ngraph TD\n    subgraph AI_SECOND_BRAIN [\"🧠 HUB CENTRAL: AI_SECOND_BRAIN\"]\n        Rules[\".agents/rules/<br/>Regras Absolutas\"]\n        Skills[\".agents/skills/<br/>Fluxos Especializados\"]\n        Knowledge[\"knowledge/<br/>AIJev, Arquitetura, Gateway\"]\n        Memory[\"memory/<br/>Memória Persistente Global\"]\n        ProjectsMeta[\"projects/<br/>Documentação & Decisões dos Projetos\"]\n        Visualizer[\"docs/brain-ui/<br/>Grafo Neural 3D & Dashboard\"]\n    end\n\n    subgraph Repos [\"💻 REPOSITÓRIOS DE CÓDIGO (Satélites Físicos)\"]\n        Proj1[\"API / Backend<br/>(Repo Node / Go / .NET)\"]\n        Proj2[\"Game<br/>(Repo Unity / Godot)\"]\n        Proj3[\"App Mobile<br/>(Repo Flutter / React Native)\"]\n        ProjNew[\"Seu Novo Projeto<br/>(Repo Greenfield)\"]\n    end\n\n    ProjectsMeta -.-> Proj1\n    ProjectsMeta -.-> Proj2\n    ProjectsMeta -.-> Proj3\n    ProjectsMeta -.-> ProjNew\n    Rules ==> Repos\n    Knowledge ==> Repos\n```\n\n### Onde mora cada informação?\n\n| Tipo de Dado | Onde Fica? | Finalidade |\n| :--- | :--- | :--- |\n| **Código-Fonte Executável** | No repositório físico do projeto (ex: `C:\\Projetos\\SaaS\\MeuProjeto`) | Compilação, testes, Dockerfiles, builds de CI/CD. |\n| **Memória do Seu Projeto** | `AI_SECOND_BRAIN/projects/<nome>/CURRENT_STATE.md` & `MEMORY/` | O que foi feito, tarefas ativas, bloqueios e sessões do seu software. |\n| **Visão Geral e Stack do Projeto** | `AI_SECOND_BRAIN/projects/<nome>/PROJECT.md` | Contexto de negócio, regras e definições técnicas do seu software. |\n| **Decisões Arquiteturais (ADRs)** | `AI_SECOND_BRAIN/projects/<nome>/DECISIONS/` | Histórico imutável de por que certas escolhas foram feitas no seu projeto. |\n| **Mapeamento de Casos de IA** | `AI_SECOND_BRAIN/projects/<nome>/AI/` | Onde e como a IA é usada (AIJev, regras ou LLM) no seu software. |\n| **Memória Global do Framework** | `AI_SECOND_BRAIN/memory/` | Estado e histórico do próprio AI Second Brain (servidor, visualizador, motor de IA). |\n| **Regras Universais de Qualidade** | `AI_SECOND_BRAIN/.agents/rules/` | Padrões de C#, SQL Server, Segurança, etc. compartilhados por todos os projetos. |\n\n> 💡 **Nota de Isolamento:** A pasta raiz `memory/` registra o histórico da **plataforma** AI Second Brain como produto. Cada projeto que você criar ou conectar terá sua memória e decisões mantidas **estritamente isoladas** dentro de `projects/<nome>/`, garantindo zero poluição ou interferência entre projetos.\n\n---\n\n## 2. Cenário A: Criação de um NOVO Projeto do Zero (Greenfield)\n\nQuando você for criar um novo produto SaaS, aplicativo, automação ou jogo, siga este roteiro exato.\n\n### Fluxo Passo a Passo:\n\n```mermaid\nsequenceDiagram\n    autonumber\n    actor Dev as Alfredo (Você)\n    participant Agent as Antigravity Agent\n    participant Brain as AI_SECOND_BRAIN\n    participant Repo as Novo Repositório de Código\n\n    Dev->>Agent: \"Quero criar um novo projeto chamado [Nome]. Ele faz [X].\"\n    Agent->>Brain: Ativa Skill project-onboarding\n    Agent->>Brain: Cria estrutura em projects/[Nome]/ a partir dos templates\n    Agent->>Dev: Solicita detalhes técnicos ou sugere arquitetura\n    Dev->>Agent: Aprova definições de Stack & Decisões Iniciais\n    Agent->>Brain: Grava PROJECT.md, ARCHITECTURE.md, CURRENT_STATE.md e ADR-001\n    Agent->>Brain: Atualiza README.md, GEMINI.md e Grafo Neural 3D\n    Agent->>Repo: Inicializa o repositório de código com instruções vinculadas\n    Agent->>Dev: Projeto pronto para desenvolvimento do MVP!\n```\n\n### Passo 1: Solicitar o Onboarding ao Agente no Antigravity\nNo chat do Antigravity, envie a seguinte mensagem:\n\n> *\"Quero criar um novo projeto chamado **BillingFlow**. É uma API .NET 9 de conciliação de pagamentos com SQL Server, mensageria RabbitMQ e validação de regras com AIJev. Execute o onboarding desse projeto no Second Brain.\"*\n\nO agente acionará a skill `project-onboarding`.\n\n### Passo 2: Estrutura que o Agente cria em `projects/BillingFlow/`\nO agente criará a pasta canônica do projeto dentro do Segundo Cérebro:\n\n```text\nprojects/BillingFlow/\n├── PROJECT.md                # Visão geral, objetivos de negócio, stack, restrições\n├── ARCHITECTURE.md           # Desenho arquitetural (Clean Arch, endpoints, banco)\n├── CURRENT_STATE.md          # Estado de partida (Fase: Concepção / Setup inicial)\n├── DECISIONS/                # Registro de Decisões Arquiteturais (ADRs)\n│   └── ADR-001-stack-inicial.md\n├── AI/                       # Governança de IA do projeto\n│   ├── AI_USE_CASES.md       # Classificação de cada caso (AIJev vs LLM)\n│   └── AI_ARCHITECTURE.md    # Como o AI Gateway será plugado\n├── DATABASE/                 # Schemas SQL, tabelas planejadas e índices\n├── API/                      # Contratos OpenAPI / Swagger / Endpoints\n├── TESTS/                    # Pirâmide de testes (Unitários, Integração)\n└── MEMORY/                   # Sessões diárias de trabalho deste projeto\n    └── sessions/\n```\n\n### Passo 3: Criar o Repositório Físico do Código\nNo diretório onde você armazena seus códigos (ex: `C:\\Projetos\\SaaS\\BillingFlow`):\n1. Crie o projeto ou rode o scaffolding do framework (ex: `dotnet new webapi -n BillingFlow`).\n2. Crie na raiz do repositório um arquivo `GEMINI.md` (ou `CLAUDE.md` / `.cursorrules`) apontando para o Segundo Cérebro:\n\n```markdown\n# BillingFlow — Instruções de Desenvolvimento\n\n> Este projeto é governado pelo **AI Second Brain** do Alfredo.\n> Antes de implementar código ou tomar decisões, consulte a documentação oficial em:\n> C:\\Projetos\\SaaS\\Google Antigravity\\Projetos\\AI_SECOND_BRAIN\\projects\\BillingFlow\\\n\n## Diretrizes Mandatórias\n1. Siga as regras globais de .NET em: `AI_SECOND_BRAIN/.agents/rules/04-dotnet.md`\n2. Siga as regras de banco de dados em: `AI_SECOND_BRAIN/.agents/rules/05-sql-server.md`\n3. Decisões de IA devem seguir: `AI_SECOND_BRAIN/knowledge/ai/AIJEV.md`\n4. Não altere arquitetura sem registrar um novo ADR em `AI_SECOND_BRAIN/projects/BillingFlow/DECISIONS/`.\n```\n\n### Passo 4: Registrar a Governança de IA (AI Decision Gate)\nSe o novo projeto for utilizar qualquer forma de inteligência:\n1. Abra `projects/BillingFlow/AI/AI_USE_CASES.md`.\n2. Para cada necessidade, preencha a tabela de decisão:\n   - *Exemplo 1:* \"Identificar divergência no valor do boleto\" → **Código Determinístico** (`Math.Abs(pago - esperado) > 0`).\n   - *Exemplo 2:* \"Classificar risco de chargeback por padrão de histórico\" → **AIJev / Jev Decision Tree**.\n   - *Exemplo 3:* \"Gerar e-mail amigável explicando a conciliação ao cliente\" → **LLM** (Gemini / Claude via AI Gateway com fallback).\n\n---\n\n## 3. Cenário B: Integração de um Projeto JÁ EXISTENTE (Brownfield)\n\nSe você já possui um projeto com repositório próprio, código em produção e anos de desenvolvimento (como uma API legado, um app existente ou qualquer outro sistema da sua empresa), **você não precisa reescrever o código nem mover a pasta física do repositório**. \n\nO objetivo do Segundo Cérebro é ser a **memória e inteligência governante** desse projeto.\n\n### Fluxo de Adoção para Projetos Existentes:\n\n```mermaid\ngraph LR\n    A[\"1. Varredura Não-Destrutiva<br/>(Ler código existente)\"] --> B[\"2. Criar Pasta Satélite<br/>(projects/NomeProjeto/)\"]\n    B --> C[\"3. Documentar Stack Real<br/>(PROJECT.md)\"]\n    C --> D[\"4. Mapear Decisões Passadas<br/>(ADRs Retroativos)\"]\n    D --> E[\"5. Registrar Estado Atual<br/>(CURRENT_STATE.md)\"]\n    E --> F[\"6. Adicionar Ponte GEMINI.md<br/>(No repo do projeto)\"]\n```\n\n### Passo 1: Executar a Varredura Inicial com o Agente\nAbra o repositório existente no Antigravity ou passe o caminho do projeto para o agente:\n\n> *\"Tenho um projeto existente em `C:\\Projetos\\SaaS\\MeuSistemaLegado`. Preciso que faça o onboarding dele no AI Second Brain. Analise a stack, o banco de dados, os endpoints e crie a documentação correspondente em `projects/MeuSistemaLegado/`.\"*\n\nO agente executará a skill `project-onboarding` em modo brownfield:\n1. Lê o `.csproj`, `package.json`, scripts SQL e Dockerfiles existentes.\n2. Identifica bibliotecas de ORM (ex: Dapper, EF Core), serviços externos e autenticação.\n3. Não modifica **nenhuma linha** de código do sistema legado.\n\n### Passo 2: Criar os ADRs Retroativos (Crucial!)\nUm dos maiores riscos ao usar IA em código legado é o agente tentar \"reescrever tudo\" usando padrões modernos que quebram o sistema em produção (por exemplo, querer substituir Dapper por EF Core ou trocar SQL Server por PostgreSQL).\n\nPara blindar o projeto contra isso, crie ADRs retroativos:\n- `DECISIONS/001-uso-de-dapper-e-procedures.md`:\n  > *\"Decisão: O projeto utiliza Dapper com Stored Procedures por requisitos de alta performance e compatibilidade com o legado. O agente de IA NUNCA deve tentar substituir Dapper por Entity Framework sem autorização expressa do Alfredo.\"*\n\n### Passo 3: Registrar Bloqueios e Débitos Técnicos em `CURRENT_STATE.md`\nNo arquivo `projects/<nome>/CURRENT_STATE.md`, liste exatamente o estado operacional real:\n- O que está 100% testado e funcionando.\n- Quais são os \"pontos sensíveis\" (onde mexer com cuidado).\n- Quais são os bugs conhecidos que ainda não foram corrigidos.\n- Qual é o próximo objetivo prioritário.\n\n### Passo 4: Onde Abrir a IDE? Cockpit Central vs. Repositório Isolado (Ponto de Atenção Crucial)\n\nUma dúvida frequente de qualquer desenvolvedor ao clonar o projeto é:  \n**\"Se eu abrir a pasta do meu projeto de forma isolada em outro editor/janela, as regras do Segundo Cérebro continuam funcionando?\"**\n\nA resposta depende do modo de trabalho escolhido:\n\n#### Modo 1: AI Second Brain como Cockpit Central (RECOMENDADO ⭐)\nNeste modo, você abre a pasta raiz `AI_SECOND_BRAIN` na sua IDE (Google Antigravity, VS Code, Cursor).\n* **Como funciona:** Você acessa o seu código através do atalho/junção em `projects/<nome-do-projeto>/`.\n* **Por que é o modo ideal:**\n  * O agente de IA lê o `GEMINI.md` da raiz e todas as regras em `.agents/rules/` de forma nativa e automática.\n  * Todas as **REGRAS ABSOLUTAS** (zero listas fixas de modelos de IA, Decision Gate, AIJev first, proibição de inventar contexto) se aplicam instantaneamente ao seu projeto.\n  * Você mantém o Grafo Neural 3D, o Research Lab e as skills ativas no mesmo ambiente.\n  * As lições aprendidas globais (`memory/lessons-learned.md`) protegem o seu código contra erros já documentados no passado.\n\n#### Modo 2: Repositório Aberto Isoladamente em Outra Janela (Standalone)\nSe você fechar o AI Second Brain e abrir **apenas a pasta física original do seu projeto** (ex: `C:\\Projetos\\MeuProjeto`) em uma nova janela:\n* **O que acontece:** O agente de IA daquela nova janela **não** lerá o `GEMINI.md` da raiz do Segundo Cérebro por padrão, pois a IDE só enxerga as diretrizes da pasta raiz aberta naquele momento!\n* **Como resolver (Criando a Ponte de Governança Agnóstica):**\n  O **AI Second Brain é 100% agnóstico a qualquer IDE ou provedor de IA**. Ele não é exclusivo do Google Antigravity ou Gemini; ele oferece suporte nativo e idêntico para **Cursor AI, Claude Code, OpenAI Codex, Windsurf, GitHub Copilot e Cline**.\n\n  Para que o agente da sua ferramenta favorita continue respeitando as regras e a memória mesmo trabalhando na pasta isolada, basta manter uma **Ponte de Governança** na raiz do seu repositório:\n  \n  | Sua Ferramenta / IDE | Arquivo de Ponte Lido | O que faz |\n  | :--- | :--- | :--- |\n  | **Padrão Aberto Universal** | `AGENTS.md` | Padrão agnóstico lido por agentes modernos (OpenAI, Codex, etc.) |\n  | **Cursor AI** | `.cursorrules` | Injetado automaticamente no contexto do Cursor |\n  | **Claude Code** | `CLAUDE.md` | Injetado na inicialização das sessões do Claude Code |\n  | **Google Antigravity** | `GEMINI.md` | Injetado em todos os turnos de prompt no Antigravity |\n  | **Windsurf (Cascade)** | `.windsurfrules` | Injetado no contexto do Windsurf |\n  | **GitHub Copilot** | `.github/copilot-instructions.md` | Lidas pelo Copilot Chat no VS Code |\n  | **Cline / Roo Code** | `.clinerules` | Injetado nas sessões do Cline |\n\n  **Exemplo de Conteúdo da Ponte (`AGENTS.md` / `GEMINI.md` / `CLAUDE.md` / `.cursorrules`):**\n  ```markdown\n  # Governança de IA — Projeto Conectado ao AI Second Brain\n  \n  > Este projeto é governado pelas regras e decisões do AI Second Brain.\n  > Cérebro Central: <caminho_absoluto_da_pasta_AI_SECOND_BRAIN>\n  \n  ## ANTES DE EXECUTAR QUALQUER TAREFA\n  1. Consulte o estado atual em: CURRENT_STATE.md\n  2. Consulte a visão geral e arquitetura em: PROJECT.md\n  3. Consulte as decisões arquiteturais em: DECISIONS/\n  4. Consulte as lições aprendidas em: <caminho_absoluto>/memory/lessons-learned.md\n  5. REGRAS ABSOLUTAS:\n     - NUNCA crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML.\n     - Sempre utilize código determinístico antes de recorrer a LLMs.\n     - NUNCA invente contexto ou regras especulativas sem solicitação expressa do desenvolvedor.\n  ```\n\n> 💡 **Automação Nativa Total**: Ao executar `npm run project:link <nome> <caminho>`, o AI Second Brain cria a junção NTFS e **já gera automaticamente** as pontes contratuais (`AGENTS.md`, `GEMINI.md`, `.cursorrules`, `CLAUDE.md`) na raiz do seu repositório, garantindo conformidade imediata qualquer que seja a sua ferramenta de IA.\n\n---\n\n## 4. Operação do Dia a Dia: O Ciclo de Vida de uma Sessão de Trabalho\n\nPara que o Segundo Cérebro funcione como uma extensão real da sua memória, toda sessão de desenvolvimento deve seguir o ciclo de 3 fases:\n\n```\n┌─────────────────────────────────────────────────────────────┐\n│ 1. ENTRADA (Context Loading)                                │\n│ \"Vou trabalhar no [NomeDoProjeto] na feature de autenticação.│\n│ Carregue o estado atual e decisões pendentes.\"               │\n└──────────────────────────────┬──────────────────────────────┘\n                               │\n                               ▼\n┌─────────────────────────────────────────────────────────────┐\n│ 2. DESENVOLVIMENTO (Skills & Governança)                    │\n│ Implementação -> Testes -> Validação -> Revisão             │\n└──────────────────────────────┬──────────────────────────────┘\n                               │\n                               ▼\n┌─────────────────────────────────────────────────────────────┐\n│ 3. SAÍDA (Memory Flush & Sync)                              │\n│ \"Finalizamos por hoje. Atualize CURRENT_STATE.md e registre │\n│ a sessão na memória.\"                                       │\n└─────────────────────────────────────────────────────────────┘\n```\n\n### 1. Início da Sessão\nAntes de pedir código, peça o contexto:\n> *\"Vou trabalhar no [Nome do Projeto]. Me apresente o estado atual e os próximos passos.\"*\n\nO agente lê:\n- `projects/[Nome]/CURRENT_STATE.md`\n- As últimas 3 sessões em `projects/[Nome]/MEMORY/sessions/`\n- As decisões relevantes em `projects/[Nome]/DECISIONS/`\n\n### 2. Durante a Sessão\nO agente utiliza as skills adequadas para cada atividade:\n- **Vai criar endpoint ou serviço?** → Aciona a skill `new-feature`.\n- **Apareceu um erro/bug?** → Aciona a skill `bug-investigation`.\n- **Vai adicionar uma consulta SQL pesada?** → Aciona a skill `database-review`.\n- **A feature envolve inteligência ou decisão?** → Aciona a skill `ai-decision-gate`.\n\n### 3. Fim da Sessão (Memory Flush)\nNunca encerre o Antigravity sem registrar a sessão. Envie:\n> *\"Fechando os trabalhos de hoje no [Nome do Projeto]. Salve a memória da sessão e atualize o CURRENT_STATE.\"*\n\nO agente:\n1. Cria `projects/[Nome]/MEMORY/sessions/YYYY-MM-DD-resumo.md`.\n2. Atualiza `CURRENT_STATE.md` com os itens concluídos e o que ficou pendente.\n3. Se foi tomada uma decisão arquitetural relevante, cria o novo ADR correspondente.\n\n---\n\n## 5. Governança e Roteamento de IA na Prática (AIJev First)\n\nUma das diretrizes centrais do seu sistema é a **política AIJev First**. Quando um projeto precisa resolver um problema de decisão, classificação ou automação, o agente deve seguir rigorosamente a árvore de roteamento:\n\n```mermaid\nflowchart TD\n    Task([Nova Demanda do Projeto]) --> Q1{É 100% determinística?<br/>Matemática, lógica booleana?}\n    Q1 -- SIM --> Code[Implementar CÓDIGO PURO / REGRA DE NEGÓCIO<br/>Sem custo de IA, latência zero]\n    Q1 -- NÃO --> Q2{É uma Decisão ou Classificação?<br/>Ex: Aprovar/Recusar, Categorizar, Rotear?}\n    \n    Q2 -- SIM --> AIJev[Avaliar AIJev / Jev<br/>Árvore de decisão explicável, rápida e barata]\n    AIJev --> AIJevFit{AIJev atende os requisitos?}\n    AIJevFit -- SIM --> ImplAIJev[Implementar via AIJev Pattern]\n    AIJevFit -- NÃO --> AI_Gateway\n    \n    Q2 -- NÃO --> Q3{Precisa gerar texto, código ou sintetizar linguagem?}\n    Q3 -- SIM --> AI_Gateway[AI Gateway Pattern<br/>Provedor Primário: Claude / Gemini<br/>Fallback automático + Cache + Observabilidade]\n    Q3 -- NÃO --> Action[Execução de Script / Automação]\n```\n\n### Tabela Prática de Escolha Técnica:\n\n| Necessidade | Tecnologia Recomendada | Por quê? |\n| :--- | :--- | :--- |\n| Validação de formulários, cálculos tributários, regras de autenticação | **Código C# / TypeScript Puro** | Custo zero, sem falhas de interpretação, determinismo 100%. |\n| Classificação de severidade de erros de SQL Jobs | **AIJev / Jev First** | Muito mais rápido que LLM, sem custo de tokens, 100% auditável. |\n| Detecção de anomalias em volume de transações | **AIJev / Algoritmo Estatístico** | Latência em milissegundos e comportamento previsível. |\n| Diagnóstico detalhado em linguagem natural de por que um job falhou | **LLM (Claude 3.5 Sonnet / Gemini 1.5 Pro)** | Capacidade de raciocínio aberto e contextualização de stack traces. |\n| Chatbot de suporte ao usuário final | **LLM com RAG via AI Gateway** | Respostas conversacionais alimentadas pela base de conhecimento. |\n\n---\n\n## 6. Catálogo de Prompts Prontos para o Desenvolvedor\n\nGuarde esta seção para copiar e colar no Antigravity:\n\n### Para Iniciar um Novo Projeto:\n```text\nAtive a skill project-onboarding. Quero criar um novo projeto chamado [NOME].\nObjetivo: [Descreva em 2 frases o que ele faz].\nStack pretendida: [.NET / React / Python / SQL Server / etc.].\nEle utilizará IA para: [Descreva onde entra a inteligência, se houver].\nCrie a estrutura completa em projects/[NOME]/ com os templates preenchidos.\n```\n\n### Para Plugar um Projeto Existente:\n```text\nAtive a skill project-onboarding para um projeto existente localizado em [CAMINHO_DO_PROJETO].\nAnalise a estrutura atual sem alterar código, identifique a stack e crie a documentação\ncorrespondente em projects/[NOME_DO_PROJETO]/. Em seguida, extraia as 3 principais\ndecisões de arquitetura já consolidadas para salvar como ADRs iniciais.\n```\n\n### Para Iniciar o Dia de Trabalho:\n```text\nVou focar no projeto [NOME] hoje.\nLeia o CURRENT_STATE.md e as últimas decisões em DECISIONS/.\nMe apresente:\n1. O que foi feito recentemente.\n2. Quais são as tarefas prioritárias de hoje.\n3. Há algum bloqueio registrado?\n```\n\n### Para Implementar uma Nova Feature com IA:\n```text\nQuero adicionar a seguinte funcionalidade no projeto [NOME]:\n[Descreva a feature].\nPasse pela skill ai-decision-gate: analise se ela deve ser determinística, usar AIJev ou LLM.\nApresente a proposta de implementação antes de escrever o código.\n```\n\n### Para Encerrar a Sessão e Salvar a Memória:\n```text\nAtive a skill session-memory. Finalizamos a sessão de trabalho no projeto [NOME].\nO que fizemos: [Breve lista ou deixe o agente listar a partir do git diff].\nDecisões tomadas: [Liste se houver].\nPróximos passos: [Liste o que faremos amanhã].\nGrave o arquivo de sessão e atualize o CURRENT_STATE.md do projeto.\n```\n\n---\n\n## 7. Checklists Operacionais de Consulta Rápida\n\n### ✅ Checklist: Novo Projeto (Greenfield)\n- [ ] Criada a pasta `projects/<nome-do-projeto>/` no Second Brain.\n- [ ] Preenchido `PROJECT.md` com objetivo, stack e restrições.\n- [ ] Preenchido `ARCHITECTURE.md` com os diagramas de componentes.\n- [ ] Preenchido `CURRENT_STATE.md` com a milestone inicial.\n- [ ] Registrado `DECISIONS/001-stack-inicial.md`.\n- [ ] Se tiver IA, preenchido `AI/AI_USE_CASES.md` avaliando AIJev First.\n- [ ] Criado o repositório de código e adicionado `GEMINI.md` apontando para o Second Brain.\n- [ ] Adicionado o projeto à tabela de projetos em `README.md` e `GEMINI.md` raiz.\n- [ ] Visualizado e testado o novo nó no **Grafo Neural 3D** (`docs/brain-ui/`).\n\n### ✅ Checklist: Projeto Existente (Brownfield)\n- [ ] Mapeado repositório original sem modificar código.\n- [ ] Criada pasta satélite `projects/<nome-existente>/`.\n- [ ] Documentada a stack real em `PROJECT.md` (versões exatas de runtime e libs).\n- [ ] Registrados os ADRs retroativos das decisões que **não podem ser violadas**.\n- [ ] Registrados os débitos técnicos e pontos críticos em `CURRENT_STATE.md`.\n- [ ] Adicionado arquivo de contexto no repositório de código (`GEMINI.md` / `.cursorrules`).\n- [ ] Avaliadas oportunidades de melhoria de IA com AI Gateway.\n\n### ✅ Checklist: Fim de Turno / Manutenção Contínua\n- [ ] Código testado e com build verde no repositório.\n- [ ] Skill `session-memory` executada para gerar o arquivo diário.\n- [ ] `CURRENT_STATE.md` atualizado com o progresso real.\n- [ ] Nenhuma decisão arquitetural ficou \"apenas no chat\" — todas viraram ADR.\n- [ ] Commit e push realizados no repositório do projeto e no `AI_SECOND_BRAIN`.\n"
     },
     {
       "id": "docs_decisao_groq_provider_md",
@@ -298,10 +310,10 @@ window.VAULT_SNAPSHOT = {
       "title": "AI SECOND BRAIN — ALFREDO AI OS",
       "category": "core",
       "icon": "🧠",
-      "size": 4498,
-      "mtime": 1790609745196.535,
+      "size": 5283,
+      "mtime": 1791699283391.984,
       "outgoingLinks": [],
-      "content": "# AI SECOND BRAIN — ALFREDO AI OS\n\n> Este arquivo é o cérebro central do seu sistema de desenvolvimento com IA.\n> Qualquer agente que trabalhar neste workspace deve seguir estas instruções.\n\n---\n\n## IDENTIDADE\n\nVocê é o agente de desenvolvimento do Alfredo. Você opera dentro de um sistema\nestruturado chamado **AI Second Brain** que organiza conhecimento, decisões,\nmemória e regras para todos os projetos.\n\n---\n\n## ANTES DE EXECUTAR QUALQUER TAREFA\n\n1. **Entenda o projeto** — Leia o `PROJECT.md` do projeto relevante em `projects/`.\n2. **Leia as regras aplicáveis** — Verifique `.agents/rules/` para restrições.\n3. **Leia o estado atual** — Consulte `CURRENT_STATE.md` do projeto.\n4. **Leia decisões anteriores** — Verifique `DECISIONS/` do projeto.\n5. **Identifique o tipo da tarefa** — Classifique antes de agir.\n\n---\n\n## CLASSIFICAÇÃO DE TAREFAS\n\nToda tarefa deve ser classificada antes da execução:\n\n| Tipo | Descrição | Ação |\n|------|-----------|------|\n| **A. Determinística** | Lógica clara, sem ambiguidade | → Código/Regra |\n| **B. Classificação** | Categorizar dados/eventos | → Avaliar AIJev/Jev |\n| **C. Decisão** | Escolher entre alternativas | → Avaliar AIJev/Jev |\n| **D. Geração** | Criar conteúdo/texto/código | → LLM |\n| **E. Raciocínio aberto** | Análise exploratória | → LLM |\n| **F. Execução** | Rodar script/deploy/build | → Código |\n| **G. Investigação** | Debug/análise de logs | → Skill específica |\n\n---\n\n## REGRAS DE ROTEAMENTO DE IA\n\n```\nNOVA TAREFA\n    │\n    ▼\n┌─────────────────┐\n│ É determinística?│\n└────────┬────────┘\n         │\n    SIM ─┴──────► CÓDIGO/REGRA\n         │\n    NÃO\n         ▼\n  É DECISÃO/CLASSIFICAÇÃO?\n         │\n    ┌────┴────┐\n   SIM      NÃO\n    │         │\n    ▼         ▼\n  AIJEV     PRECISA GERAR?\n    │         │\n    ▼    ┌────┴────┐\n  REGRA SIM      NÃO\n  DE     │        │\n  NEGÓCIO▼        ▼\n        LLM      AÇÃO\n         │\n         ▼\n     VALIDAÇÃO\n         │\n         ▼\n       AÇÃO\n```\n\n---\n\n## REGRAS ABSOLUTAS\n\n1. **NUNCA** utilize LLM simplesmente porque ele está disponível.\n2. **NUNCA** utilize AIJev artificialmente quando código determinístico for suficiente.\n3. **NUNCA** invente contexto que não existe na documentação do projeto.\n   - Jamais crie arquivos, regras de negócio, telas, mecânicas ou especificações especulativas sem solicitação expressa do desenvolvedor.\n   - Se uma informação, documento ou projeto ainda não foi detalhado pelo Alfredo, declare expressamente como \"Não definido / Em conceituação\" ou pergunte antes de agir.\n   - O Segundo Cérebro serve para refletir a realidade dos projetos e decisões reais, NUNCA para fabricar conteúdo fictício ou preencher diretórios artificialmente.\n4. **NUNCA** execute ações destrutivas sem confirmação explícita.\n5. **NUNCA** altere arquitetura sem consultar decisões existentes.\n6. **SEMPRE** valide o resultado de qualquer operação de IA.\n7. **SEMPRE** atualize a memória após implementações significativas.\n8. **SEMPRE** registre decisões arquiteturais relevantes.\n\n---\n\n## ANTES DE CRIAR NOVA INTEGRAÇÃO DE IA\n\nAvalie cada item obrigatoriamente:\n\n- [ ] AIJev é aplicável? → Consulte `knowledge/ai/AIJEV.md`\n- [ ] Qual modelo é adequado? → Consulte `knowledge/ai/MODEL_SELECTION.md`\n- [ ] Custo estimado?\n- [ ] Latência aceitável?\n- [ ] Segurança dos dados? → Consulte `.agents/rules/03-security.md`\n- [ ] Fallback definido?\n- [ ] Validação implementada?\n- [ ] Observabilidade configurada?\n\n---\n\n## DEPOIS DA IMPLEMENTAÇÃO\n\n1. Testar\n2. Revisar\n3. Atualizar documentação do projeto\n4. Atualizar memória (`memory/`)\n5. Registrar decisões relevantes (`decisions/`)\n\n---\n\n## GESTÃO DE PROJETOS\n\nOs projetos conectados a este Segundo Cérebro residem em `projects/`. O workspace suporta qualquer tecnologia, linguagem ou domínio.\n\n- **Novos Projetos**: Crie a pasta em `projects/<nome>/` utilizando o template `templates/project.md`.\n- **Projetos Existentes**: Conecte repositórios externos via junções/symlinks conforme documentado em `docs/COMO_UTILIZAR_O_PROJETO.md`.\n\n---\n\n## REFERÊNCIAS\n\n- AIJev: https://aijev.org/pt/\n- Knowledge Base: `knowledge/`\n- Templates: `templates/`\n- Skills: `.agents/skills/`\n- Rules: `.agents/rules/`\n"
+      "content": "# AI SECOND BRAIN — ALFREDO AI OS\n\n> Este arquivo é o cérebro central do seu sistema de desenvolvimento com IA.\n> Qualquer agente que trabalhar neste workspace deve seguir estas instruções.\n\n---\n\n## IDENTIDADE\n\nVocê é o agente de desenvolvimento do Alfredo. Você opera dentro de um sistema\nestruturado chamado **AI Second Brain** que organiza conhecimento, decisões,\nmemória e regras para todos os projetos.\n\n---\n\n## ANTES DE EXECUTAR QUALQUER TAREFA\n\n1. **Entenda o projeto** — Leia o `PROJECT.md` do projeto relevante em `projects/`.\n2. **Leia as regras aplicáveis** — Verifique `.agents/rules/` para restrições.\n3. **Leia o estado atual** — Consulte `CURRENT_STATE.md` do projeto e `memory/current-state.md`.\n4. **Leia decisões anteriores** — Verifique `DECISIONS/` do projeto.\n5. **Leia as lições aprendidas** — Consulte o `LESSONS_LEARNED.md` do projeto em foco e `memory/lessons-learned.md` para evitar repetir erros documentados.\n6. **Identifique o tipo da tarefa** — Classifique antes de agir.\n\n---\n\n## CLASSIFICAÇÃO DE TAREFAS\n\nToda tarefa deve ser classificada antes da execução:\n\n| Tipo | Descrição | Ação |\n|------|-----------|------|\n| **A. Determinística** | Lógica clara, sem ambiguidade | → Código/Regra |\n| **B. Classificação** | Categorizar dados/eventos | → Avaliar AIJev/Jev |\n| **C. Decisão** | Escolher entre alternativas | → Avaliar AIJev/Jev |\n| **D. Geração** | Criar conteúdo/texto/código | → LLM |\n| **E. Raciocínio aberto** | Análise exploratória | → LLM |\n| **F. Execução** | Rodar script/deploy/build | → Código |\n| **G. Investigação** | Debug/análise de logs | → Skill específica |\n\n---\n\n## REGRAS DE ROTEAMENTO DE IA\n\n```\nNOVA TAREFA\n    │\n    ▼\n┌─────────────────┐\n│ É determinística?│\n└────────┬────────┘\n         │\n    SIM ─┴──────► CÓDIGO/REGRA\n         │\n    NÃO\n         ▼\n  É DECISÃO/CLASSIFICAÇÃO?\n         │\n    ┌────┴────┐\n   SIM      NÃO\n    │         │\n    ▼         ▼\n  AIJEV     PRECISA GERAR?\n    │         │\n    ▼    ┌────┴────┐\n  REGRA SIM      NÃO\n  DE     │        │\n  NEGÓCIO▼        ▼\n        LLM      AÇÃO\n         │\n         ▼\n     VALIDAÇÃO\n         │\n         ▼\n       AÇÃO\n```\n\n---\n\n## REGRAS ABSOLUTAS\n\n1. **NUNCA** utilize LLM simplesmente porque ele está disponível.\n2. **NUNCA** utilize AIJev artificialmente quando código determinístico for suficiente.\n3. **NUNCA** invente contexto que não existe na documentação do projeto.\n   - Jamais crie arquivos, regras de negócio, telas, mecânicas ou especificações especulativas sem solicitação expressa do desenvolvedor.\n   - Se uma informação, documento ou projeto ainda não foi detalhado pelo Alfredo, declare expressamente como \"Não definido / Em conceituação\" ou pergunte antes de agir.\n   - O Segundo Cérebro serve para refletir a realidade dos projetos e decisões reais, NUNCA para fabricar conteúdo fictício ou preencher diretórios artificialmente.\n4. **NUNCA** execute ações destrutivas sem confirmação explícita.\n5. **NUNCA** altere arquitetura sem consultar decisões existentes.\n6. **NUNCA** crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API do provedor em tempo real.\n7. **SEMPRE** consulte o `LESSONS_LEARNED.md` do projeto e `memory/lessons-learned.md` antes de arquitetar ou modificar integrações para não repetir erros já documentados.\n8. **SEMPRE** valide o resultado de qualquer operação de IA.\n9. **SEMPRE** atualize a memória após implementações significativas.\n10. **SEMPRE** registre decisões arquiteturais relevantes.\n\n---\n\n## ANTES DE CRIAR NOVA INTEGRAÇÃO DE IA\n\nAvalie cada item obrigatoriamente:\n\n- [ ] AIJev é aplicável? → Consulte `knowledge/ai/AIJEV.md`\n- [ ] Qual modelo é adequado? → Consulte `knowledge/ai/MODEL_SELECTION.md`\n- [ ] Custo estimado?\n- [ ] Latência aceitável?\n- [ ] Segurança dos dados? → Consulte `.agents/rules/03-security.md`\n- [ ] Fallback definido?\n- [ ] Validação implementada?\n- [ ] Observabilidade configurada?\n\n---\n\n## DEPOIS DA IMPLEMENTAÇÃO\n\n1. Testar\n2. Revisar\n3. Atualizar documentação do projeto (`PROJECT.md`, `ARCHITECTURE.md`)\n4. Atualizar memória do projeto (`projects/<projeto>/CURRENT_STATE.md` e `projects/<projeto>/MEMORY/sessions/`)\n5. Se houve aprendizado universal ou mudança no framework: atualizar `memory/` (`lessons-learned.md` / `current-state.md`)\n6. Registrar decisões relevantes em `projects/<projeto>/DECISIONS/`\n\n---\n\n## GESTÃO DE PROJETOS\n\nOs projetos conectados a este Segundo Cérebro residem em `projects/`. O workspace suporta qualquer tecnologia, linguagem ou domínio.\n\n- **Novos Projetos**: Crie a pasta em `projects/<nome>/` utilizando o template `templates/project.md`.\n- **Projetos Existentes**: Conecte repositórios externos via junções/symlinks conforme documentado em `docs/COMO_UTILIZAR_O_PROJETO.md`.\n\n---\n\n## REFERÊNCIAS\n\n- AIJev: https://aijev.org/pt/\n- Knowledge Base: `knowledge/`\n- Templates: `templates/`\n- Skills: `.agents/skills/`\n- Rules: `.agents/rules/`\n"
     },
     {
       "id": "knowledge_ai_AIJEV_md",
@@ -382,10 +394,10 @@ window.VAULT_SNAPSHOT = {
       "title": "Estado Atual do AI Second Brain",
       "category": "memory",
       "icon": "💾",
-      "size": 18772,
-      "mtime": 1791557527124.067,
+      "size": 34217,
+      "mtime": 1791730629010.1472,
       "outgoingLinks": [],
-      "content": "# Estado Atual do AI Second Brain\n\n> Última atualização: 2026-10-09\n\n## Status do Framework: 🟢 Operacional & Cockpit Avançado + 🔬 Research Lab + ⚡ AI Gateway Multi-Provedor (BYOK Ativo)\n\nO AI Second Brain está estruturado como uma plataforma universal de governança e desenvolvimento com IA, livre de acoplamento a projetos específicos e equipada com um portal web moderno, motor de pesquisa autônoma resiliente e AI Gateway multi-provedor (BYOK).\n\n## Estrutura do Workspace\n\n| Diretório | Papel | Estado |\n|---|---|---|\n| `.agents/rules/` | Regras universais de governança (IA, Segurança, Docs) | ✅ Agnósticas |\n| `.agents/skills/` | Workflows reutilizáveis para Antigravity | ✅ 8 skills ativas |\n| `knowledge/` | Base de conhecimento em IA, Arquitetura e Segurança | ✅ 100% universal |\n| `projects/` | Projetos conectados pelo desenvolvedor | 🟢 Suporta Greenfield & Brownfield + RESEARCH/ |\n| `memory/` | Memória de continuidade entre sessões | ✅ Operacional |\n| `templates/` | Modelos para novos projetos, specs e ADRs | ✅ Disponíveis |\n| `docs/brain-ui/` | Portal web interativo de visualização e governança | 🚀 UX/UI com Project Workspace, Grafo 3D & AI BYOK |\n| `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway Multi-Provedor, Research Engine) |\n\n## Sessões Recentes\n- **Data**: 2026-10-09\n  - **AI Gateway Multi-Provedor (BYOK — Bring Your Own Key)**:\n    - **Módulo Nativo Universal (`scripts/ai-gateway.js`)**: Cliente HTTP/HTTPS sem dependências externas, unificando os principais provedores de IA do mercado:\n      - **Groq Cloud**: Gratuito, ultra-rápido LPU (`openai/gpt-oss-120b` padrão, `openai/gpt-oss-20b` fallback, `qwen/qwen3.8-27b`).\n      - **OpenAI**: Flagship multimodal e raciocínio (`gpt-4o-mini`, `gpt-4o`, `o1-mini`).\n      - **Anthropic Claude**: Análise densa de código e arquitetura (`claude-3-5-sonnet-20241022`, `claude-3-5-haiku-20241022`).\n      - **OpenRouter**: Acesso a centenas de modelos abertos e proprietários (`deepseek/deepseek-chat`, `deepseek-r1`, `qwen-2.5-72b`).\n      - **Ollama Local**: 100% offline, privado na máquina do usuário, custo zero (`llama3.2`, `deepseek-r1`, `qwen2.5-coder`).\n      - **Endpoint Customizado**: Compatível com qualquer servidor local ou proxy corporativo OpenAI-Compatible.\n    - **Resiliência e Auto-Recuperação de Modelos Descontinuados**:\n      - Auto-fallback inteligente no `scripts/ai-gateway.js` quando o provedor retorna erro de modelo inexistente ou sem acesso (`does not exist or you do not have access to it` / 404). O gateway redireciona transparentemente a requisição para o modelo padrão ou de contingência sem abortar a síntese.\n      - Sincronização estrita de catálogo Groq com os modelos ativos da conta (`openai/gpt-oss-120b`, `openai/gpt-oss-20b`).\n    - **Endpoints REST no Backend (`server.js`)**:\n      - `GET /api/ai/config` e `GET /api/ai/status`: Retorna o provedor ativo, máscara segura da chave (ex: `gsk_••••••••Zvrf`), status de configuração e catálogo de provedores/modelos recomendados.\n      - `POST /api/ai/test`: Realiza ping em tempo real na API do provedor com a chave informada, mede a latência em milissegundos e retorna a lista viva de modelos disponíveis da conta do usuário.\n      - `POST /api/ai/save`: Gravação atômica das variáveis no arquivo `.env` físico e atualização imediata de `process.env` em memória sem necessidade de reiniciar o processo Node.js. Suporte a parâmetros avançados (`cacheHours`, `maxRetries`).\n      - **Interceptador de Cota 429**: Detecção de `Rate Limit / Quota Exceeded` propagando flag `quotaExceeded: true` para a interface gráfica.\n    - **Tríade de Modais UX de Alta Fidelidade no Cockpit (`docs/brain-ui/` e `docs/brain-ui/demo/`)**:\n      - **Pill Luminoso na Topbar (`#btnAiGatewayModal`)**: Exibe o status ao vivo da IA (`⚡ Groq Cloud • openai/gpt-oss-120b` com dot verde conectado; `✨ Conectar IA (BYOK)` em tom dourado quando não configurado; pulso vermelho em erro de cota).\n      - **Modal 1: Boas-Vindas & Onboarding (`#aiWelcomeModal`)**: Card escuro com robô neon pulsante convidando o desenvolvedor a conectar seu cérebro digital, acionado suavemente na primeira visita.\n      - **Modal 2: Central BYOK (`#aiSettingsModal`)**: Formulário em 4 etapas:\n        1. Seletor de provedor com ícones.\n        2. Input de chave com cadeado, botão de visibilidade olho (👁️), botão de teste (🔑) com feedback dinâmico de latência (ex: *✓ Conexão bem-sucedida! Latência: 355ms*).\n        3. Dropdown de modelos populado dinamicamente via ping da API.\n        4. Configurações avançadas (Expiração de cache em horas e tentativas máximas).\n        - **Card Verde de Privacidade**: Garante armazenamento 100% local no `.env` sob proteção do `.gitignore`.\n        - **Card Azul de Escopo**: Esclarece o raio de ação da IA (Research Lab, refinamento de briefing e grafo).\n        - **Botão \"Salvar e Ativar ⚡\"**: Salva a configuração e dispara evento no sistema.\n      - **Modal 3: Alerta de Cota Esgotada (`#aiQuotaModal`)**: Modal automático com cabeçalho de aviso, título dourado *\"Cota de IA Esgotada!\"*, caixa de recomendações (trocar para Groq gratuito, Claude ou Ollama local) e botão de redirecionamento para o configurador.\n    - **Efeito UAU: Pulso Sináptico no Grafo 3D Three.js**:\n      - Função `triggerSynapticPulse()` conectada a `graph.pulseSurge()` e `projectGraph.pulseSurge()` no `neuron-graph.js`, provocando uma aceleração visual nos impulsos elétricos das sinapses e nós ao ativar ou salvar uma chave.\n    - **Correção e Enriquecimento do Catálogo de Modelos Dinâmico (Modal BYOK)**:\n      - **Resolução do Bug de Modelos \"Undefined\"**: Identificado que o frontend esperava array de objetos `{ id, name }`, enquanto o gateway retornava array de strings. Implementado parsing polimórfico defensivo no frontend (`app.js` e `demo/app.js`) e normalização rica no backend (`scripts/ai-gateway.js`).\n      - **Filtragem Inteligente Universal de Modelos**: O backend agora descarta automaticamente modelos incompatíveis com chat/completions (áudio `whisper`, classificadores de moderação, guardrails, embeddings, imagem) garantindo que apenas modelos capazes de responder a prompts do Research Lab e síntese fiquem disponíveis.\n      - **Layout Limpo \\u0026 Alternador de Entrada Manual**: Removidos os chips redundantes abaixo do select. A interface agora conta com badge contextualizado (`#aiModelCountBadge`), dropdown enriquecido com janela de contexto (ex: `128k contexto`) e botão alternador para digitação manual do ID do modelo (`#btnToggleManualModel` / `#aiCustomModelWrap`) para suporte flexível a modelos customizados/beta.\n      - **Suporte ao Modo Demonstração (`demo-mode.js`)**: Interceptação de `/api/ai/test` no mock offline evitando erro 403 e populando o catálogo dinâmico mesmo em ambientes estáticos (GitHub Pages).\n      - **Eliminação de Modelos Hardcoded (Arquitetura 100% Dinâmica)**:\n        - Removidos presets fixos (`defaultModel`, `recommendedModels`, `fallbackModel`) de `scripts/ai-gateway.js`, `app.js` e `demo/app.js`. O configurador agora depende exclusivamente da resposta em tempo real da API do provedor ativo via teste de conexão.\n        - Se o usuário não testou a conexão ou não selecionou um modelo, o seletor exibe instrução amigável e impede inferências sem modelo válido.\n      - **Restauração e Isolamento do Vault de Demonstração (`demo-app`)**:\n        - Restaurado o arquivo `docs/brain-ui/demo/vault-data.js` via gerador isolado `build_demo_vault.py`, garantindo que a landing page pública exiba o projeto ilustrativo `demo-app` (35 arquivos de demonstração) e nunca exponha os projetos reais e locais do desenvolvedor (`teste_alfredo_22`, `Alfredo_teste`).\n  - **Refinamentos Visuais e Documentação**:\n    - **Dark Scrollbars**: Padronização dos scrollbars em tom escuro de luxo (#1e293b / #090d16) em todos os blocos de terminal e documentações.\n    - **Card do Criador**: Seção de autoria e comunidade valorizando a criação do projeto.\n    - **Internacionalização (i18n)**: Seletor de idioma PT/EN funcional em toda a landing page.\n    - **Licenciamento Open Source**: Inclusão de `LICENSE` MIT e `.env.example` sem expor segredos.\n\n- **Data**: 2026-10-08\n  - **Correção de Codificação do Terminal e Resiliência do Vault Manager**:\n    - **Terminal Windows (`start-brain.bat`)**: Inclusão de `chcp 65001 >nul` ativando UTF-8 nativo no CMD, eliminando a exibição de `ÔÇö` no lugar do travessão `—` e ícones.\n    - **Prioridade e Invalidação de Cache Local (`docs/brain-ui/vault.js`)**: Servidor local em `localhost` agora tem precedência estrita. Ao conectar com sucesso ao vivo, caches obsoletos no `localStorage` são limpos para evitar poluição visual.\n    - **Auto-Reconexão em Background**: Se o navegador carregar antes do Node.js concluir a subida do socket, o visualizador tenta auto-reconectar periodicamente e migra de forma transparente para `🟢 Ao Vivo (Disco)` sem necessidade de recarregar a página manualmente.\n    - **Árvore de Projetos Hierárquica em Modo Pasta**: Função `_buildVaultFromFiles` reescrita para espelhar a lógica de agrupamento do `scan-vault.js` (isolando projetos, contratos na raiz, subpastas `RESEARCH` e `BACKUPS`), eliminando a exibição plana de 34 arquivos avulsos sob `MEUS PROJETOS`.\n    - **Botão de Ação Rápida no Badge**: Disponibilizado botão `✕ Limpar Cache` diretamente no badge quando em modo de pasta em cache.\n- **Data**: 2026-10-02\n  - **Research Lab (Laboratório de Conhecimento Autônomo) — Etapa 3 (Motor de Execução Autônoma, Resiliência & Síntese Markdown)**:\n    - **Motor Autônomo (`scripts/research-engine.js`)**: Executa a varredura completa da taxonomia de subtópicos, gerando documentos `.md` profundos, estruturados com código, schemas SQL/Prisma e boas práticas.\n    - **Taxonomia de Duas Camadas**: Arquivos organizados automaticamente em `knowledge/` (fundamentos e padrões conceituais) e `actionable/` (código, implementação, schemas e testes).\n    - **Resiliência e Recuperação de Rate Limit no Groq Client (`scripts/groq-client.js`)**:\n      - Parser automático de cabeçalho e mensagens de erro (\"Please try again in X.XXs\").\n      - Backoff com tempo extra de segurança (+2s) e retentativas automáticas até 3x sem abortar o lote.\n      - Fallback inteligente de modelo para `openai/gpt-oss-20b` caso o modelo de 120b sature a cota TPM.\n      - Pausa estratégica de 6s entre arquivos para evitar saturação do bucket de tokens por minuto da camada gratuita.\n      - Resumabilidade inteligente: arquivos já existentes no disco são preservados e reaproveitados automaticamente caso uma execução seja retomada.\n    - **Consolidação em `OVERVIEW.md` e `_meta.json`**: Gera índice completo do laboratório com links markdown relativos clicáveis para cada documento e marca `status: \"completed\"`.\n    - **Integração com Grafo Neural 3D (`scripts/scan-vault.js`)**: Mapeamento de nós do laboratório com ícones dedicados (`🔬` para pastas/overview, `📘` para knowledge e `🛠️` para actionable) orbitando a estrela central do projeto.\n    - **Validação Prática Real**: Execução completa no projeto `teste_alfredo_22` gerando 9 arquivos técnicos completos (8 em `knowledge/` e 1 em `actionable/`) totalizando mais de 100KB de documentação técnica gerada autonomamente.\n    - **Catálogo de Subtópicos & Documentos Conectado ao Disco**:\n      - Corrigido o modal de subtópicos (`openDecomposeModal`): eliminado o gatilho redundante de consulta à IA quando a pesquisa já possui arquivos gerados no disco.\n      - O modal agora renderiza fielmente todos os arquivos reais existentes em `knowledge/` e `actionable/` (9 de 9 no caso do Bolo de Banana).\n      - Adicionados botões de ação direta em cada documento: `✏️ Editar / Ler` (abre no Live Markdown Editor para visualização e edição imediata com salvamento no disco via Ctrl+S) e `🗑️ Excluir` (remove o arquivo do disco, atualiza `_meta.json` e o `OVERVIEW.md`).\n      - Adicionado botão de exclusão completa do laboratório de pesquisa (`🗑️`) no cabeçalho de cada card de pesquisa.\n      - Novos endpoints backend: `POST /api/projects/:name/research/:slug/file/delete` e `POST /api/projects/:name/research/:slug/delete`.\n  - **Research Lab — Etapa 2 (UX/UI UAU no Brain Visualizer)**:\n    - **Aba Dedicada `🔬 Research Lab` no Project Workspace**: Integrada à navegação com pílula de contagem dinâmica (`#pwResearchTabBadge`).\n    - **Hero Banner com Glassmorphism Espacial**: Header com gradiente cósmico, badge pulsante verde de status da Groq Cloud (`openai/gpt-oss-120b`), latência média de inferência (~1.5s) e botão de ação primária `✨ Nova Pesquisa no Lab`.\n    - **Cards Métricos do Lab**: Mapeamento em tempo real do total de pesquisas ativas, documentos em `knowledge/`, especificações em `actionable/` e latência.\n    - **Empty State Futurista**: Orbe atômico pulsante em CSS, texto explicativo e botões de atalho para prompts rápidos de 1 clique (Microsserviços Event-Driven, Auth JWT, Cache & Redis).\n    - **Grid de Cards de Laboratório**: Cards com efeito hover 3D, indicador de status `🟢 Ativo`, caixa expansível do **Prompt Vivo** com tag de versão (`v1`, `v2`), badges das duas camadas (`knowledge/` e `actionable/`) e botões de ação (`▶️ Pesquisar Agora`, `🔮 Grafo 3D`, `🧩 Subtópicos`, `📄 OVERVIEW.md`, `📂 Abrir Pasta`).\n    - **Correção de Layout Responsivo**: Ajustado `.rl-card-title-text` com `word-break: break-word` e badge `🟢 Ativo` fixado à direita com `flex-shrink: 0`, eliminando qualquer sobreposição visual.\n    - **Modal de Criação \"Nova Pesquisa\" com Efeito UAU**:\n      - Campo de tema com chips de presets rápidos.\n      - Botão com faíscas animadas `✨ Melhorar com IA (Groq)`.\n      - **Split View Comparador \"Antes vs Depois\"**: Painel lado a lado contrastando a ideia bruta com o briefing estruturado pela IA.\n      - Painel de pré-visualização de decomposição temática com subtópicos categorizados em chips azuis (`knowledge`) e verdes (`actionable`).\n    - **Modal de \"Prompt Vivo\" & Histórico de Versões**: Interface de linha do tempo com todas as versões passadas do briefing (`definitionHistory`), data/hora e re-refinamento com IA.\n  - **Research Lab — Etapa 1 (Backend & IA Groq)**:\n    - **Módulo Nativo Groq (`scripts/groq-client.js`)**: Cliente HTTP nativo zero-dependência para a API do Groq Cloud (`api.groq.com`), com carregador próprio de `.env`, timeout de 60s, sanitização de markdown fences e parsing robusto de JSON.\n    - **Modelo Ativo**: Suporte para `openai/gpt-oss-120b`, `openai/gpt-oss-20b` e `qwen/qwen3.8-27b`.\n    - **Prompt Vivo & Refinamento Contextual (`refineResearchPrompt`)**: Algoritmo de enriquecimento que lê automaticamente os contratos do projeto (`PROJECT.md`, `ARCHITECTURE.md`) e transforma intenções livres do usuário em briefings de pesquisa estruturados de alto impacto.\n    - **Decomposição em Subtópicos (`decomposeResearchTopic`)**: Divisão do tema de pesquisa em sub-tópicos com taxonomia definida.\n    - **Endpoints REST Implementados no `server.js`**: `/api/ai/status`, `/api/ai/refine-prompt`, `/api/ai/decompose`, `/api/projects/:name/research`, `/api/projects/:name/research/:slug/definition`, `/api/projects/:name/research/:slug/run`.\n\n- **Data**: 2026-10-01 (Madrugada)\n  - **Gravação Física de Backups & Integração Nativa com Windows Explorer**:\n    - Backend grava fisicamente os arquivos gerados em `projects/<projeto>/BACKUPS/` (`dossie_governanca_<projeto>.md` e `backup_governanca_<projeto>.json`).\n    - Novos endpoints `/api/system/open-folder` e `/api/system/open-file` para abrir a pasta no Windows Explorer (`explorer.exe /select`) ou o arquivo no app padrão (`cmd /c start`).\n    - Correção do download do navegador mantendo o Blob URL ativo por 10s para permitir que o Chromium conclua a gravação sem abortar.\n    - Card enriquecido na aba *Backup & Exportação* com caminho absoluto no disco, botão direto para abrir no Explorer, botões para abrir cada arquivo, baixar e copiar caminhos.\n  - **Interatividade Total nos Cards do Project Workspace**:\n    - Edição rápida inline no card *Visão Geral & Contratos* para alterar Objetivo, Stack e Status com gravação direta no disco.\n    - Seletor de status do ciclo com pílulas luminosas conectadas ao `CURRENT_STATE.md`.\n    - Checklist interativo (*O que já foi definido*) com alternância, retorno ao roadmap e exclusão.\n    - Roadmap dinâmico (*Próximos Passos*) com botão \"✓ Concluir\" em 1 clique e input inline com tecla Enter.\n    - Sistema de Toast visual com glassmorphism para feedback instantâneo de gravação.\n  - **Contratos de Governança 100% Dinâmicos**:\n    - Backend inspeciona arquivos físicos reais no disco, exibindo apenas documentos existentes (`PROJECT.md`, `CURRENT_STATE.md`, etc.).\n    - Identificação de contratos recomendados ausentes (ex: `ARCHITECTURE.md`) com ação de inicialização com 1 clique (`+ Inicializar ARCHITECTURE.md`).\n    - Layout e botões dos chips de governança reformulados com `.btn-gov`, eliminando quebras de linha e desproporções.\n  - **Correções Estruturais & Backend**:\n    - Correção do aninhamento de modais no HTML que impedia a exibição do Live Markdown Editor.\n    - Correção na rota `GET /api/file` no `server.js` com verificação de método HTTP estrita, eliminando erro `400 Bad Request` no salvamento.\n- **Data**: 2026-09-30\n  - **Quickstart Studio (Modal de 3 Minutos)**: Onboarding guiado no portal web para criar projetos do zero ou vincular pastas existentes via junções NTFS sem terminal.\n  - **Sidebar \"Dois Mundos\"**: Reorganização visual clara separando \"MEUS PROJETOS\" no topo e \"CÉREBRO & GOVERNANÇA\" abaixo com divisor neon.\n  - **Project Workspace (Página Dedicada do Projeto)**: Hub com 5 abas (Visão Geral, Memória & Saúde, Grafo Neural 3D, Backup & Exportação de Dossiê, Gerenciamento & Desvinculação Segura).\n  - **Grafo Neural 3D (Three.js)**: Grafo orbital onde o projeto é o Sol Central conectado a seus arquivos locais e satélites de governança.\n  - **Grafo Global com Clusters Galácticos**: Projetos agrupados em clusters orbitais interligados por regras comuns.\n  - **APIs de Ciclo de Vida**: Endpoints backend para diagnóstico de memória, arquivamento seguro em `.archive/`, exportação de backup (.md e .json) e desvinculação não destrutiva.\n"
+      "content": "# Estado Atual do AI Second Brain\n\n> Última atualização: 2026-10-11\n\n## Status do Framework: 🟢 Operacional & Cockpit Avançado + 🔬 Research Lab + ⚡ AI Gateway Multi-Provedor (BYOK Ativo)\n\nO AI Second Brain está estruturado como uma plataforma universal de governança e desenvolvimento com IA, livre de acoplamento a projetos específicos e equipada com um portal web moderno, motor de pesquisa autônoma resiliente e AI Gateway multi-provedor (BYOK).\n\n## Estrutura do Workspace\n\n| Diretório | Papel | Estado |\n|---|---|---|\n| `.agents/rules/` | Regras universais de governança (IA, Segurança, Docs) | ✅ Agnósticas |\n| `.agents/skills/` | Workflows reutilizáveis para Antigravity | ✅ 8 skills ativas |\n| `knowledge/` | Base de conhecimento em IA, Arquitetura e Segurança | ✅ 100% universal |\n| `projects/` | Projetos conectados pelo desenvolvedor | 🟢 Suporta Greenfield & Brownfield + RESEARCH/ |\n| `memory/` | Memória de continuidade entre sessões | ✅ Operacional |\n| `templates/` | Modelos para novos projetos, specs e ADRs | ✅ Disponíveis |\n| `docs/brain-ui/` | Portal web interativo de visualização e governança | 🚀 UX/UI com Project Workspace, Grafo 3D & AI BYOK |\n| `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway Multi-Provedor, Research Engine) |\n\n## Sessões Recentes\n- **Data**: 2026-10-11\n  - **Sincronização Fiel dos Parâmetros do `.env`, Validação Estrita e Estilização Escura das Setas de Retries**:\n    - **Sincronização com `.env` na Abertura do Modal de IA**:\n      - Em `docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js` (`openAiSettingsModal`), os campos `#aiCacheHoursInput` e `#aiMaxRetriesInput` passam a ser populados fielmente a partir de `cfg.cacheHours` e `cfg.maxRetries` lidos em tempo real do `.env` via `/api/ai/config`.\n      - Em `scripts/ai-gateway.js` (`getConfig` e `saveConfig`), corrigido o fallback `|| 2` que impedia o valor legítimo `0` de retries; agora tratados com validação de número inteiro positivo (`>= 0`).\n    - **Validação Defensiva e Restrição de Digitação em Camadas**:\n      - **Frontend (Interatividade & Sanitização)**: Função `setupAiParamsInputValidation` bloqueia teclas proibidas (`-`, `+`, `e`, `.`, `,` em retries; letras espúrias em cache) via `keydown`, sanitiza colagem via `input` (clamp entre 0 e 5 para retries e formato `${hours}h` entre 1h e 720h para cache no `blur`).\n      - **Frontend (Pré-Salvamento)**: `handleSaveAiSettings` valida estritamente ambos os parâmetros antes de qualquer disparo de rede; se inválidos, exibe feedback no terminal, aplica classe de erro `.input-error` com animação de shake e impede a submissão.\n      - **Backend (API & Gateway)**: `saveConfig` em `scripts/ai-gateway.js` e `/api/ai/save` em `server.js` validam intervalos permitidos (Cache: 1 a 720 horas; Retries: 0 a 10 tentativas), retornando HTTP 400 com mensagem amigável caso haja inconsistência.\n    - **Estilização Escura das Setas (Spin Buttons) de Retries**:\n      - Adicionado `color-scheme: dark;` em `.ai-param-detail-input-wrap .ai-param-input[type=\"number\"]` em `docs/brain-ui/style.css` e `docs/brain-ui/demo/style.css`.\n      - Customizados `::-webkit-inner-spin-button` e `::-webkit-outer-spin-button` com filtros escuros harmônicos e transições suaves, integrando o controle nativo ao visual dark da interface e eliminando setas/fundos claros.\n    - **Restauração e Blindagem do Fundo Escuro na Caixa de API Key (`#aiApiKeyInput`)**:\n      - Corrigido o comportamento do Chromium em que campos `type=\"password\"` ativavam o gerenciador de credenciais do navegador e aplicavam `-webkit-autofill` com fundo claro (`rgb(232, 240, 254)`).\n      - Aplicada blindagem CSS com `-webkit-box-shadow: 0 0 0 1000px #060a13 inset !important`, `-webkit-text-fill-color: #f8fafc !important`, `color-scheme: dark !important` e `background: #060a13 !important` em `docs/brain-ui/style.css` e `docs/brain-ui/demo/style.css`.\n      - Atualizado o HTML (`docs/brain-ui/index.html` e `demo/index.html`) com `placeholder=\"gsk_... ou cole sua chave de API\"` e `autocomplete=\"new-password\"` evitando que o navegador trate como senha de login com fundo branco.\n    - **Validação End-to-End**:\n      - Testado no navegador via browser subagent com comprovação visual dos valores `24h` e `4`, setas escuras, caixa de API Key escura (#060a13) e validação em tempo real.\n      - `npm run doctor`: 100% dos links e arquivos íntegros (0 erros).\n\n  - **Correção Crítica no AI Gateway (BYOK), Eliminação de ReferenceError e Blindagem de Base URL**:\n    - **Resolução do `ReferenceError: cachedModelsByProvider is not defined`**:\n      - Restaurada a declaração explícita de `const cachedModelsByProvider = {}` no topo de `scripts/ai-gateway.js`, eliminando as respostas HTTP 500 em `/api/ai/config` e HTTP 400 em `/api/ai/test` e `/api/ai/save`.\n    - **Isolamento Estrito de `baseUrl` por Provedor**:\n      - Corrigido o vazamento de `AI_BASE_URL` entre provedores no `.env`: agora apenas provedores configuráveis (`ollama` e `custom`) herdam ou gravam URLs customizadas; provedores padrão de nuvem (`groq`, `openai`, `anthropic`, `openrouter`) utilizam estritamente suas URLs oficiais da API, prevenindo que requisições para a Groq fossem roteadas para a URL da Anthropic.\n    - **Propagação Fiel de Erros HTTP e Prevenção de Falsos Positivos**:\n      - O bloco `testConnection` não silencia mais erros de autenticação (401/403) ou cota (429) no endpoint `/models`.\n      - Se nenhum modelo de chat for detectado, o sistema rejeita o teste com erro amigável em vez de gerar estado falso de sucesso com \"Catálogo pronto\".\n    - **Validação Preventiva no Frontend (`docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js`)**:\n      - Se o usuário não digitou chave e o provedor não possui chave salva no `.env`, o clique em \"Testar\" ou \"Salvar\" exibe erro claro no terminal e foca no input sem disparar requisições inválidas de rede.\n      - Se nenhum modelo foi selecionado, o botão \"Salvar e Ativar\" orienta a testar e escolher um modelo compatível.\n      - Ao trocar de provedor no select, o input `baseUrl` é devidamente limpo para provedores de nuvem.\n    - **Hot-Reload de Módulo no Servidor (`server.js`)**:\n      - Implementada a função `getAiGateway()` com invalidação dinâmica de cache do Node.js (`delete require.cache`), permitindo que alterações nas regras do gateway sejam refletidas em tempo real sem crash.\n\n  - **Auditoria e Fidelidade Estrita de Documentos na Landing Page (`docs/brain-ui/landing/`)**:\n    - **Eliminação de Referências a Arquivos Fictícios / Placeholders**:\n      - Em conformidade estrita com a regra universal de *Zero Fabricação*, eliminados todos os nomes de arquivos inexistentes que estavam exibidos na interface da landing page (`nucleo.md`, `seguranca.md`, `decisao-ia.md`, `ai-decision-gate.md`, `new-feature.md`, `bug-investigation.md`, `estado.md`, `licoes.md`, `sessao-13.md`, `adr-001.md`, etc.).\n    - **Mapeamento Preciso para Arquivos Reais do Workspace**:\n      - **Camada 01 (`rules/`)**: Substituído por `00-core.md`, `01-ai-decision.md` e `03-security.md`.\n      - **Camada 02 (`skills/`)**: Substituído por `ai-decision-gate/SKILL.md`, `new-feature/SKILL.md` e `bug-investigation/SKILL.md`.\n      - **Camada 03 (`memory/`)**: Substituído por `current-state.md`, `lessons-learned.md` e `README.md`.\n      - **Camada 04 (`decisions/`)**: Substituído por `GLOBAL_DECISIONS.md`, `001-stack-inicial.md` e `decisao_groq_provider.md`.\n      - **Terminal Chat Mockup**: Atualizado para ler e citar `memory/current-state.md`, `decisions/GLOBAL_DECISIONS.md` e `.agents/rules/03-security.md`.\n      - **Research Lab**: Caminhos atualizados para o padrão real `projects/<projeto>/RESEARCH/<tema>/knowledge/` e `actionable/`.\n      - **Quickstart Studio**: Card de estrutura atualizado incluindo `LESSONS_LEARNED.md`.\n    - **Correção Estrutural no Grafo Neural 3D e Leitor Lateral (`js/data.js`)**:\n      - Corrigido bug de renderização no Three.js (`CanvasGradient.addColorStop`) causado pela ausência de ícone/cor na pasta `templates`.\n      - Adicionado o atributo `realPath` em todos os nós do catálogo para exibir o caminho físico exato no cabeçalho do leitor Markdown lateral (`#reader`).\n      - Eventos de clique nos chips da landing page (`.chip[data-node]`) integrados para abrir diretamente o documento real correspondente no leitor.\n    - **Paridade i18n & Validação de Integridade**:\n      - Chaves do dicionário bilíngue `js/i18n.dict.js` sincronizadas.\n      - Validação com `npm run doctor`: 100% dos links e 98 arquivos Markdown verificados com sucesso (0 erros).\n\n  - **Eliminação de Listas Fixas e Busca de Modelos 100% Dinâmica em Tempo Real com Gatilho Automático na Abertura**:\n    - **Remoção Total de Hardcoding de Modelos**:\n      - Eliminado o catálogo fixo `AI_DEFAULT_MODELS_BY_PROVIDER` em `docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js`.\n      - Eliminados `DEFAULT_MODELS_BY_PROVIDER` e `cachedModelsByProvider` em `scripts/ai-gateway.js`.\n      - Removidas as opções `<option>` fixas de modelo em `docs/brain-ui/index.html` e `docs/brain-ui/demo/index.html`, iniciando o `<select id=\"aiModelSelect\">` exclusivamente com o placeholder neutro orientativo (*\"Clique em 'Testar' acima para listar os modelos disponíveis...\"*).\n    - **Gatilho Reativo Automático ao Abrir o Modal (`openAiSettingsModal`)**:\n      - Ao abrir a tela de configurações de IA, se o usuário já possui chave salva no `.env` (ou for um provedor local sem chave como Ollama), o sistema agora dispara imediatamente `testCurrentAiConnection()` em tempo real.\n      - A interface executa a animação de terminal ao vivo (`testing` -> handshake HTTP e medição de latência), envia a requisição para a API do provedor (ou mock interceptor no demo), recebe os modelos vivos da conta e popula dinamicamente o `<select id=\"aiModelSelect\">`, selecionando o modelo ativo da configuração.\n      - Se o usuário não tiver chave configurada (ou mudar para provedor sem chave), o terminal permanece em estado `idle` amigável e o select aguarda o preenchimento da chave e clique em Testar.\n    - **Paridade Estrita entre Produção Local e Versão Demo**:\n      - O arquivo `demo-mode.js` intercepta requisições `fetch('/api/ai/test')` simulando latência realista (~142ms) e lista de modelos compatíveis. O mesmo código JavaScript de `app.js` roda de forma 100% idêntica nos dois ambientes, sem bifurcações de lógica nem catálogos estáticos no frontend.\n    - **Refinamentos de Interface do Modal BYOK**:\n      - Substituição do chip redundante abaixo do botão Testar pelo botão alternador `✏️ Digitar ID manualmente` (`#btnToggleManualModel`).\n      - Centralização vertical perfeita da seta customizada do select (`.ai-select-arrow`) via `top: 50%` e `transform: translateY(-50%)`.\n      - Manutenção do título limpo `\"3. Modelo de IA\"`, deixando a contagem de modelos exclusivamente no console do terminal à direita.\n    - **Resiliência do Servidor HTTP Local (`server.js`)**:\n      - Tratamento para rotas de diretório estático (ex: `/demo/`), resolvendo automaticamente para `index.html` caso o caminho solicitado seja uma pasta.\n  - **Governança Agnóstica Universal e Blindagem Multi-IA**:\n    - **Criação do Padrão Universal Aberto `AGENTS.md`**: Implementado na raiz do workspace como padrão compatível com qualquer agente do mercado.\n    - **Extensão da Governança e Lições Aprendidas para Todas as Pontes**: Blindagem ativa e consulta mandatória à memória registradas em `GEMINI.md`, `AGENTS.md`, `.cursorrules`, `CLAUDE.md`, `.windsurfrules`, `.clinerules`, `.github/copilot-instructions.md`, `.agents/rules/00-core.md` e `.agents/rules/01-ai-decision.md`.\n    - **Automação de Pontes Standalone**: Os utilitários CLI `scripts/link-project.js` e `scripts/create-project.js` agora criam automaticamente as pontes de governança no repositório de destino, garantindo que o agente continue governado mesmo se o projeto for aberto de forma isolada fora do Segundo Cérebro.\n  - **Sincronização e Atualização da Landing Page (`docs/brain-ui/landing/`)**:\n    - **Reflexo do AI Gateway Multi-Provedor**: Seção \"Feito para não quebrar\" atualizada destacando auto-descoberta dinâmica de modelos, suporte a OpenAI, Anthropic, Gemini, Groq, DeepSeek, OpenRouter e Ollama local, e recuperação inteligente de rate limit.\n    - **Atualização do FAQ**: Perguntas e respostas enriquecidas para destacar o padrão aberto `AGENTS.md`, suporte multi-IA com pontes nativas, privacidade local com BYOK/Ollama e esclarecimento cristalino dos modos Cockpit Central vs Standalone.\n    - **Paridade Bilíngue 100% no Dicionário i18n (`js/i18n.dict.js`)**: Todas as chaves sincronizadas em inglês, testadas via Chromium headless CDP com zero chaves de conteúdo ausentes.\n  - **Catálogo Dedicado de Lições Aprendidas por Projeto (`LESSONS_LEARNED.md`)**:\n    - **Separação Arquitetural Estrita de Escopo**: Eliminação da \"Amnésia das Sessões Antigas\" através de um arquivo dedicado por projeto para registrar pegadinhas técnicas, bugs de libs e contratos específicos de domínio sem poluir a governança global.\n    - **Novo Template Oficial**: Adicionado `templates/lessons-learned.md` e atualizado `templates/project.md`.\n    - **Automação nos Comandos CLI**: Atualizados `scripts/create-project.js` e `scripts/link-project.js` para inicializarem automaticamente `LESSONS_LEARNED.md` e pontes multi-IA completas em projetos novos ou vinculados.\n    - **Blindagem em Todas as Pontes de IA**: Atualizados `AGENTS.md`, `GEMINI.md`, `.cursorrules`, `CLAUDE.md`, `.windsurfrules`, `.clinerules` e `copilot-instructions.md` com regra mandatória de consultar o `LESSONS_LEARNED.md` local do projeto antes de alterar código.\n    - **Inicialização em Projetos Ativos**: Criados `projects/teste_alfredo_22/LESSONS_LEARNED.md` e `projects/Alfredo_teste/LESSONS_LEARNED.md` com validação de 100% dos links no linter `doctor`.\n\n- **Data**: 2026-10-10\n  - **Refinamento do Modal BYOK e Feedback Reativo do Console Terminal**:\n    - **Consolidação Total de Feedback no Terminal Console (`.ai-card-terminal` / `.ai-terminal-output`)**:\n      - **Remoção da Caixa Duplicada da Esquerda (`#aiTestFeedback`)**: Eliminada a antiga caixa verde/vermelha que aparecia abaixo do campo de chave. A coluna esquerda agora permanece limpa, contínua e sem saltos visuais.\n      - **Terminal Rico na Coluna Direita com Informações Completas**: O terminal ao vivo agora concentra 100% da telemetria de conexão em formato CLI avançado:\n        - `idle`: `$ ENGINE: <PROV> [STANDBY]` · `[IDLE] Clique em \"Testar\" para validar a API Key` · `LOCAL .ENV ENCRYPTION · ISOLADO`.\n        - `testing`: `$ CONNECTING TO <PROV> ENGINE...` · `[WAIT] Handshake HTTP e medição de latência...` · `[SCAN] Descobrindo catálogo de modelos na conta...`.\n        - `success`: `$ CONNECTED TO <PROV> [AUTHENTICATED]` · `[OK] Conexão bem-sucedida · Latência: <ms>ms` · `[OK] Modelos detectados · <n> modelos compatíveis` · `LOCAL .ENV ENCRYPTION · PRONTO PARA ATIVAR`.\n        - `error`: `$ ERROR CONNECTING TO <PROV> [FAILED]` · `[FAIL] <mensagem amigável de erro>` · `LOCAL .ENV ENCRYPTION · VERIFIQUE A CHAVE`.\n    - **Layout Balanceado e Parâmetros com Contexto Integrado**:\n      - Seção `4. Parâmetros de Execução` na coluna esquerda enriquecida com cards dedicados para `Cache TTL` e `Tentativas (Retries)` com inputs alinhados e explicações objetivas de impacto (0ms de latência e resiliência a HTTP 429).\n      - Coluna direita otimizada com cards de `Security & Privacidade` e `Scope & Governança` detalhados com bullets de segurança, garantindo altura simétrica e harmônica com a coluna esquerda sem espaços vazios.\n    - **Padronização Visual com os Demais Modais do Sistema**:\n      - Borda externa e sombras ajustadas com tonalidade azul-marinho escura (#0a101d / #111a2e / #1a253c), idêntica aos outros modais do AI Second Brain.\n      - Botão fechar padronizado em formato circular arredondado (`.ai-card-close-btn`).\n      - Inclusão do asset animado vetorial `assets/cerebro_neon_animado.svg` no card de cabeçalho do gateway.\n      - Alinhamento horizontal do rodapé (`.ai-settings-footer`) alinhado às margens dos inputs.\n    - **Paridade Absoluta 100% entre Local (`docs/brain-ui/`) e Demo Pública (`docs/brain-ui/demo/`)**:\n      - Replicação exata de todas as regras de CSS (`style.css`), lógica JavaScript (`app.js`), marcação HTML (`index.html`) e suporte a mock com validação realista no `demo-mode.js`.\n\n- **Data**: 2026-10-09\n  - **AI Gateway Multi-Provedor (BYOK — Bring Your Own Key)**:\n    - **Módulo Nativo Universal (`scripts/ai-gateway.js`)**: Cliente HTTP/HTTPS sem dependências externas, unificando os principais provedores de IA do mercado:\n      - **Groq Cloud**: Gratuito, ultra-rápido LPU (`openai/gpt-oss-120b` padrão, `openai/gpt-oss-20b` fallback, `qwen/qwen3.8-27b`).\n      - **OpenAI**: Flagship multimodal e raciocínio (`gpt-4o-mini`, `gpt-4o`, `o1-mini`).\n      - **Anthropic Claude**: Análise densa de código e arquitetura (`claude-3-5-sonnet-20241022`, `claude-3-5-haiku-20241022`).\n      - **OpenRouter**: Acesso a centenas de modelos abertos e proprietários (`deepseek/deepseek-chat`, `deepseek-r1`, `qwen-2.5-72b`).\n      - **Ollama Local**: 100% offline, privado na máquina do usuário, custo zero (`llama3.2`, `deepseek-r1`, `qwen2.5-coder`).\n      - **Endpoint Customizado**: Compatível com qualquer servidor local ou proxy corporativo OpenAI-Compatible.\n    - **Resiliência e Auto-Recuperação de Modelos Descontinuados**:\n      - Auto-fallback inteligente no `scripts/ai-gateway.js` quando o provedor retorna erro de modelo inexistente ou sem acesso (`does not exist or you do not have access to it` / 404). O gateway redireciona transparentemente a requisição para o modelo padrão ou de contingência sem abortar a síntese.\n      - Sincronização estrita de catálogo Groq com os modelos ativos da conta (`openai/gpt-oss-120b`, `openai/gpt-oss-20b`).\n    - **Endpoints REST no Backend (`server.js`)**:\n      - `GET /api/ai/config` e `GET /api/ai/status`: Retorna o provedor ativo, máscara segura da chave (ex: `gsk_••••••••Zvrf`), status de configuração e catálogo de provedores/modelos recomendados.\n      - `POST /api/ai/test`: Realiza ping em tempo real na API do provedor com a chave informada, mede a latência em milissegundos e retorna a lista viva de modelos disponíveis da conta do usuário.\n      - `POST /api/ai/save`: Gravação atômica das variáveis no arquivo `.env` físico e atualização imediata de `process.env` em memória sem necessidade de reiniciar o processo Node.js. Suporte a parâmetros avançados (`cacheHours`, `maxRetries`).\n      - **Interceptador de Cota 429**: Detecção de `Rate Limit / Quota Exceeded` propagando flag `quotaExceeded: true` para a interface gráfica.\n    - **Tríade de Modais UX de Alta Fidelidade no Cockpit (`docs/brain-ui/` e `docs/brain-ui/demo/`)**:\n      - **Pill Luminoso na Topbar (`#btnAiGatewayModal`)**: Exibe o status ao vivo da IA (`⚡ Groq Cloud • openai/gpt-oss-120b` com dot verde conectado; `✨ Conectar IA (BYOK)` em tom dourado quando não configurado; pulso vermelho em erro de cota).\n      - **Modal 1: Boas-Vindas & Onboarding (`#aiWelcomeModal`)**: Card escuro com robô neon pulsante convidando o desenvolvedor a conectar seu cérebro digital, acionado suavemente na primeira visita.\n      - **Modal 2: Central BYOK (`#aiSettingsModal`)**: Formulário em 4 etapas:\n        1. Seletor de provedor com ícones.\n        2. Input de chave com cadeado, botão de visibilidade olho (👁️), botão de teste (🔑) com feedback dinâmico de latência (ex: *✓ Conexão bem-sucedida! Latência: 355ms*).\n        3. Dropdown de modelos populado dinamicamente via ping da API.\n        4. Configurações avançadas (Expiração de cache em horas e tentativas máximas).\n        - **Card Verde de Privacidade**: Garante armazenamento 100% local no `.env` sob proteção do `.gitignore`.\n        - **Card Azul de Escopo**: Esclarece o raio de ação da IA (Research Lab, refinamento de briefing e grafo).\n        - **Botão \"Salvar e Ativar ⚡\"**: Salva a configuração e dispara evento no sistema.\n      - **Modal 3: Alerta de Cota Esgotada (`#aiQuotaModal`)**: Modal automático com cabeçalho de aviso, título dourado *\"Cota de IA Esgotada!\"*, caixa de recomendações (trocar para Groq gratuito, Claude ou Ollama local) e botão de redirecionamento para o configurador.\n    - **Efeito UAU: Pulso Sináptico no Grafo 3D Three.js**:\n      - Função `triggerSynapticPulse()` conectada a `graph.pulseSurge()` e `projectGraph.pulseSurge()` no `neuron-graph.js`, provocando uma aceleração visual nos impulsos elétricos das sinapses e nós ao ativar ou salvar uma chave.\n    - **Correção e Enriquecimento do Catálogo de Modelos Dinâmico (Modal BYOK)**:\n      - **Resolução do Bug de Modelos \"Undefined\"**: Identificado que o frontend esperava array de objetos `{ id, name }`, enquanto o gateway retornava array de strings. Implementado parsing polimórfico defensivo no frontend (`app.js` e `demo/app.js`) e normalização rica no backend (`scripts/ai-gateway.js`).\n      - **Filtragem Inteligente Universal de Modelos**: O backend agora descarta automaticamente modelos incompatíveis com chat/completions (áudio `whisper`, classificadores de moderação, guardrails, embeddings, imagem) garantindo que apenas modelos capazes de responder a prompts do Research Lab e síntese fiquem disponíveis.\n      - **Layout Limpo \\u0026 Alternador de Entrada Manual**: Removidos os chips redundantes abaixo do select. A interface agora conta com badge contextualizado (`#aiModelCountBadge`), dropdown enriquecido com janela de contexto (ex: `128k contexto`) e botão alternador para digitação manual do ID do modelo (`#btnToggleManualModel` / `#aiCustomModelWrap`) para suporte flexível a modelos customizados/beta.\n      - **Suporte ao Modo Demonstração (`demo-mode.js`)**: Interceptação de `/api/ai/test` no mock offline evitando erro 403 e populando o catálogo dinâmico mesmo em ambientes estáticos (GitHub Pages).\n      - **Eliminação de Modelos Hardcoded (Arquitetura 100% Dinâmica)**:\n        - Removidos presets fixos (`defaultModel`, `recommendedModels`, `fallbackModel`) de `scripts/ai-gateway.js`, `app.js` e `demo/app.js`. O configurador agora depende exclusivamente da resposta em tempo real da API do provedor ativo via teste de conexão.\n        - Se o usuário não testou a conexão ou não selecionou um modelo, o seletor exibe instrução amigável e impede inferências sem modelo válido.\n      - **Restauração e Isolamento do Vault de Demonstração (`demo-app`)**:\n        - Restaurado o arquivo `docs/brain-ui/demo/vault-data.js` via gerador isolado `build_demo_vault.py`, garantindo que a landing page pública exiba o projeto ilustrativo `demo-app` (35 arquivos de demonstração) e nunca exponha os projetos reais e locais do desenvolvedor (`teste_alfredo_22`, `Alfredo_teste`).\n  - **Refinamentos Visuais e Documentação**:\n    - **Dark Scrollbars**: Padronização dos scrollbars em tom escuro de luxo (#1e293b / #090d16) em todos os blocos de terminal e documentações.\n    - **Card do Criador**: Seção de autoria e comunidade valorizando a criação do projeto.\n    - **Internacionalização (i18n)**: Seletor de idioma PT/EN funcional em toda a landing page.\n    - **Licenciamento Open Source**: Inclusão de `LICENSE` MIT e `.env.example` sem expor segredos.\n\n- **Data**: 2026-10-08\n  - **Correção de Codificação do Terminal e Resiliência do Vault Manager**:\n    - **Terminal Windows (`start-brain.bat`)**: Inclusão de `chcp 65001 >nul` ativando UTF-8 nativo no CMD, eliminando a exibição de `ÔÇö` no lugar do travessão `—` e ícones.\n    - **Prioridade e Invalidação de Cache Local (`docs/brain-ui/vault.js`)**: Servidor local em `localhost` agora tem precedência estrita. Ao conectar com sucesso ao vivo, caches obsoletos no `localStorage` são limpos para evitar poluição visual.\n    - **Auto-Reconexão em Background**: Se o navegador carregar antes do Node.js concluir a subida do socket, o visualizador tenta auto-reconectar periodicamente e migra de forma transparente para `🟢 Ao Vivo (Disco)` sem necessidade de recarregar a página manualmente.\n    - **Árvore de Projetos Hierárquica em Modo Pasta**: Função `_buildVaultFromFiles` reescrita para espelhar a lógica de agrupamento do `scan-vault.js` (isolando projetos, contratos na raiz, subpastas `RESEARCH` e `BACKUPS`), eliminando a exibição plana de 34 arquivos avulsos sob `MEUS PROJETOS`.\n    - **Botão de Ação Rápida no Badge**: Disponibilizado botão `✕ Limpar Cache` diretamente no badge quando em modo de pasta em cache.\n- **Data**: 2026-10-02\n  - **Research Lab (Laboratório de Conhecimento Autônomo) — Etapa 3 (Motor de Execução Autônoma, Resiliência & Síntese Markdown)**:\n    - **Motor Autônomo (`scripts/research-engine.js`)**: Executa a varredura completa da taxonomia de subtópicos, gerando documentos `.md` profundos, estruturados com código, schemas SQL/Prisma e boas práticas.\n    - **Taxonomia de Duas Camadas**: Arquivos organizados automaticamente em `knowledge/` (fundamentos e padrões conceituais) e `actionable/` (código, implementação, schemas e testes).\n    - **Resiliência e Recuperação de Rate Limit no Groq Client (`scripts/groq-client.js`)**:\n      - Parser automático de cabeçalho e mensagens de erro (\"Please try again in X.XXs\").\n      - Backoff com tempo extra de segurança (+2s) e retentativas automáticas até 3x sem abortar o lote.\n      - Fallback inteligente de modelo para `openai/gpt-oss-20b` caso o modelo de 120b sature a cota TPM.\n      - Pausa estratégica de 6s entre arquivos para evitar saturação do bucket de tokens por minuto da camada gratuita.\n      - Resumabilidade inteligente: arquivos já existentes no disco são preservados e reaproveitados automaticamente caso uma execução seja retomada.\n    - **Consolidação em `OVERVIEW.md` e `_meta.json`**: Gera índice completo do laboratório com links markdown relativos clicáveis para cada documento e marca `status: \"completed\"`.\n    - **Integração com Grafo Neural 3D (`scripts/scan-vault.js`)**: Mapeamento de nós do laboratório com ícones dedicados (`🔬` para pastas/overview, `📘` para knowledge e `🛠️` para actionable) orbitando a estrela central do projeto.\n    - **Validação Prática Real**: Execução completa no projeto `teste_alfredo_22` gerando 9 arquivos técnicos completos (8 em `knowledge/` e 1 em `actionable/`) totalizando mais de 100KB de documentação técnica gerada autonomamente.\n    - **Catálogo de Subtópicos & Documentos Conectado ao Disco**:\n      - Corrigido o modal de subtópicos (`openDecomposeModal`): eliminado o gatilho redundante de consulta à IA quando a pesquisa já possui arquivos gerados no disco.\n      - O modal agora renderiza fielmente todos os arquivos reais existentes em `knowledge/` e `actionable/` (9 de 9 no caso do Bolo de Banana).\n      - Adicionados botões de ação direta em cada documento: `✏️ Editar / Ler` (abre no Live Markdown Editor para visualização e edição imediata com salvamento no disco via Ctrl+S) e `🗑️ Excluir` (remove o arquivo do disco, atualiza `_meta.json` e o `OVERVIEW.md`).\n      - Adicionado botão de exclusão completa do laboratório de pesquisa (`🗑️`) no cabeçalho de cada card de pesquisa.\n      - Novos endpoints backend: `POST /api/projects/:name/research/:slug/file/delete` e `POST /api/projects/:name/research/:slug/delete`.\n  - **Research Lab — Etapa 2 (UX/UI UAU no Brain Visualizer)**:\n    - **Aba Dedicada `🔬 Research Lab` no Project Workspace**: Integrada à navegação com pílula de contagem dinâmica (`#pwResearchTabBadge`).\n    - **Hero Banner com Glassmorphism Espacial**: Header com gradiente cósmico, badge pulsante verde de status da Groq Cloud (`openai/gpt-oss-120b`), latência média de inferência (~1.5s) e botão de ação primária `✨ Nova Pesquisa no Lab`.\n    - **Cards Métricos do Lab**: Mapeamento em tempo real do total de pesquisas ativas, documentos em `knowledge/`, especificações em `actionable/` e latência.\n    - **Empty State Futurista**: Orbe atômico pulsante em CSS, texto explicativo e botões de atalho para prompts rápidos de 1 clique (Microsserviços Event-Driven, Auth JWT, Cache & Redis).\n    - **Grid de Cards de Laboratório**: Cards com efeito hover 3D, indicador de status `🟢 Ativo`, caixa expansível do **Prompt Vivo** com tag de versão (`v1`, `v2`), badges das duas camadas (`knowledge/` e `actionable/`) e botões de ação (`▶️ Pesquisar Agora`, `🔮 Grafo 3D`, `🧩 Subtópicos`, `📄 OVERVIEW.md`, `📂 Abrir Pasta`).\n    - **Correção de Layout Responsivo**: Ajustado `.rl-card-title-text` com `word-break: break-word` e badge `🟢 Ativo` fixado à direita com `flex-shrink: 0`, eliminando qualquer sobreposição visual.\n    - **Modal de Criação \"Nova Pesquisa\" com Efeito UAU**:\n      - Campo de tema com chips de presets rápidos.\n      - Botão com faíscas animadas `✨ Melhorar com IA (Groq)`.\n      - **Split View Comparador \"Antes vs Depois\"**: Painel lado a lado contrastando a ideia bruta com o briefing estruturado pela IA.\n      - Painel de pré-visualização de decomposição temática com subtópicos categorizados em chips azuis (`knowledge`) e verdes (`actionable`).\n    - **Modal de \"Prompt Vivo\" & Histórico de Versões**: Interface de linha do tempo com todas as versões passadas do briefing (`definitionHistory`), data/hora e re-refinamento com IA.\n  - **Research Lab — Etapa 1 (Backend & IA Groq)**:\n    - **Módulo Nativo Groq (`scripts/groq-client.js`)**: Cliente HTTP nativo zero-dependência para a API do Groq Cloud (`api.groq.com`), com carregador próprio de `.env`, timeout de 60s, sanitização de markdown fences e parsing robusto de JSON.\n    - **Modelo Ativo**: Suporte para `openai/gpt-oss-120b`, `openai/gpt-oss-20b` e `qwen/qwen3.8-27b`.\n    - **Prompt Vivo & Refinamento Contextual (`refineResearchPrompt`)**: Algoritmo de enriquecimento que lê automaticamente os contratos do projeto (`PROJECT.md`, `ARCHITECTURE.md`) e transforma intenções livres do usuário em briefings de pesquisa estruturados de alto impacto.\n    - **Decomposição em Subtópicos (`decomposeResearchTopic`)**: Divisão do tema de pesquisa em sub-tópicos com taxonomia definida.\n    - **Endpoints REST Implementados no `server.js`**: `/api/ai/status`, `/api/ai/refine-prompt`, `/api/ai/decompose`, `/api/projects/:name/research`, `/api/projects/:name/research/:slug/definition`, `/api/projects/:name/research/:slug/run`.\n\n- **Data**: 2026-10-01 (Madrugada)\n  - **Gravação Física de Backups & Integração Nativa com Windows Explorer**:\n    - Backend grava fisicamente os arquivos gerados em `projects/<projeto>/BACKUPS/` (`dossie_governanca_<projeto>.md` e `backup_governanca_<projeto>.json`).\n    - Novos endpoints `/api/system/open-folder` e `/api/system/open-file` para abrir a pasta no Windows Explorer (`explorer.exe /select`) ou o arquivo no app padrão (`cmd /c start`).\n    - Correção do download do navegador mantendo o Blob URL ativo por 10s para permitir que o Chromium conclua a gravação sem abortar.\n    - Card enriquecido na aba *Backup & Exportação* com caminho absoluto no disco, botão direto para abrir no Explorer, botões para abrir cada arquivo, baixar e copiar caminhos.\n  - **Interatividade Total nos Cards do Project Workspace**:\n    - Edição rápida inline no card *Visão Geral & Contratos* para alterar Objetivo, Stack e Status com gravação direta no disco.\n    - Seletor de status do ciclo com pílulas luminosas conectadas ao `CURRENT_STATE.md`.\n    - Checklist interativo (*O que já foi definido*) com alternância, retorno ao roadmap e exclusão.\n    - Roadmap dinâmico (*Próximos Passos*) com botão \"✓ Concluir\" em 1 clique e input inline com tecla Enter.\n    - Sistema de Toast visual com glassmorphism para feedback instantâneo de gravação.\n  - **Contratos de Governança 100% Dinâmicos**:\n    - Backend inspeciona arquivos físicos reais no disco, exibindo apenas documentos existentes (`PROJECT.md`, `CURRENT_STATE.md`, etc.).\n    - Identificação de contratos recomendados ausentes (ex: `ARCHITECTURE.md`) com ação de inicialização com 1 clique (`+ Inicializar ARCHITECTURE.md`).\n    - Layout e botões dos chips de governança reformulados com `.btn-gov`, eliminando quebras de linha e desproporções.\n  - **Correções Estruturais & Backend**:\n    - Correção do aninhamento de modais no HTML que impedia a exibição do Live Markdown Editor.\n    - Correção na rota `GET /api/file` no `server.js` com verificação de método HTTP estrita, eliminando erro `400 Bad Request` no salvamento.\n- **Data**: 2026-09-30\n  - **Quickstart Studio (Modal de 3 Minutos)**: Onboarding guiado no portal web para criar projetos do zero ou vincular pastas existentes via junções NTFS sem terminal.\n  - **Sidebar \"Dois Mundos\"**: Reorganização visual clara separando \"MEUS PROJETOS\" no topo e \"CÉREBRO & GOVERNANÇA\" abaixo com divisor neon.\n  - **Project Workspace (Página Dedicada do Projeto)**: Hub com 5 abas (Visão Geral, Memória & Saúde, Grafo Neural 3D, Backup & Exportação de Dossiê, Gerenciamento & Desvinculação Segura).\n  - **Grafo Neural 3D (Three.js)**: Grafo orbital onde o projeto é o Sol Central conectado a seus arquivos locais e satélites de governança.\n  - **Grafo Global com Clusters Galácticos**: Projetos agrupados em clusters orbitais interligados por regras comuns.\n  - **APIs de Ciclo de Vida**: Endpoints backend para diagnóstico de memória, arquivamento seguro em `.archive/`, exportação de backup (.md e .json) e desvinculação não destrutiva.\n"
     },
     {
       "id": "memory_lessons-learned_md",
@@ -394,10 +406,10 @@ window.VAULT_SNAPSHOT = {
       "title": "Lições Aprendidas",
       "category": "memory",
       "icon": "💾",
-      "size": 7253,
-      "mtime": 1791555243816.4944,
+      "size": 19050,
+      "mtime": 1791730829864.363,
       "outgoingLinks": [],
-      "content": "# Lições Aprendidas\n\n## 2026-09-27 — Criação do AI Second Brain\n\n### Lição 1: Formato nativo importa\n**Contexto**: A versão 1 usava estrutura genérica (CLAUDE.md).\n**Aprendizado**: Cada ferramenta (Antigravity, Claude Code, Cursor) tem seu\nformato nativo de customização. Usar o formato nativo garante que as features\nda ferramenta funcionem corretamente (descoberta automática de skills, rules, etc).\n**Ação**: Sempre adapte o AI Second Brain para o formato da ferramenta em uso.\n\n### Lição 2: AIJev não substitui código determinístico\n**Contexto**: Tentação de usar AIJev para tudo que envolve decisão.\n**Aprendizado**: Se uma regra pode ser escrita em código (if/else, switch),\nnão precisa de AIJev. AIJev é para decisões que envolvem contexto complexo\nou probabilidades.\n**Ação**: Decision Gate obrigatório antes de integrar qualquer IA.\n\n### Lição 3: LLM não é a resposta para tudo\n**Contexto**: Tendência de chamar LLM para cada problema.\n**Aprendizado**: LLM é caro, lento e não-determinístico. Use apenas quando\nrealmente precisa de geração de texto ou raciocínio aberto.\n**Ação**: Sempre pergunte \"isso pode ser feito sem IA?\" antes de usar LLM.\n\n### Lição 4: Catálogos de modelos de IA são efêmeros\n**Contexto**: Ao configurar o Groq para o Research Lab, modelos consagrados como `llama-3.3-70b-versatile` já estavam descontinuados/deprecados no provedor.\n**Aprendizado**: Provedores de nuvem (especialmente inferência rápida como Groq) alteram IDs e disponibilidade de modelos com frequência. Consultar a API de modelos (`GET /openai/v1/models`) em tempo de diagnóstico ou adotar modelos com alta janela de contexto (ex: `openai/gpt-oss-120b`) previne erros `404 model_decommissioned`.\n**Ação**: Sempre incluir verificação de status e permitir parametrização do modelo via `.env` (`GROQ_MODEL`).\n\n### Lição 5: Parsing defensivo de JSON gerado por LLMs\n**Contexto**: A decomposição de tópicos exige retorno estritamente em JSON estruturado, mas LLMs frequentemente adicionam blocos ` ```json ... ``` ` ou texto introdutório.\n**Aprendizado**: Clientes HTTP nativos devem sanitizar markdown fences e extrair blocos `{...}` ou `[...]` antes do `JSON.parse`.\n**Ação**: Implementar regex de desempacotamento de markdown fence e fallback antes de falhar a requisição.\n\n### Lição 6: Precedência de cache em localStorage e codificação UTF-8 no Windows\n**Contexto**: O inicializador `.bat` exibia `ÔÇö` em vez de `—` no CMD, e o visualizador carregava um cache estático do `localStorage` mostrando 34 arquivos desordenados em vez de conectar ao servidor local ao vivo.\n**Aprendizado**: \n1. No Windows, o interpretador CMD roda por padrão em página de código OEM (CP850 / CP437). Scripts `.bat` contendo caracteres UTF-8 devem obrigatoriamente executar `chcp 65001 >nul` no topo.\n2. Em SPAs que suportam tanto servidor local quanto pasta offline, caches em `localStorage` não devem ter precedência sobre o servidor local em `localhost`. Race conditions durante a subida de processos exigem auto-reconexão com retentativas, e qualquer gerador offline deve manter paridade estrita de arquitetura de dados (árvore hierárquica) com o backend.\n**Ação**: Sempre forçar UTF-8 em scripts de console e implementar auto-reconexão e limpeza automática de caches obsoletos no cliente web.\n\n### Lição 7: Atualização atômica de variáveis de ambiente em tempo de execução\n**Contexto**: Ao salvar uma nova chave de API ou trocar de provedor via modal BYOK, reiniciar o servidor interromperia a sessão web do usuário.\n**Aprendizado**: É possível manter persistência física em arquivo `.env` (preservando comentários e adicionando chaves atômicas) e sincronizar imediatamente o objeto `process.env` em memória no mesmo tick de execução. Isso permite que rotas subsequentes utilizem as novas credenciais sem exigir restart do Node.js.\n**Ação**: Sempre sincronizar `fs.writeFileSync('.env')` com mutação direta em `process.env[key] = value` para configurações de infraestrutura hot-swappable.\n\n### Lição 8: Normalização de protocolos de IA (OpenAI vs Anthropic) sem dependências\n**Contexto**: Diferentes provedores utilizam convenções distintas: a maioria segue o padrão `/v1/chat/completions` da OpenAI, enquanto a Anthropic exige `/v1/messages` com cabeçalho `x-api-key` e `anthropic-version`.\n**Aprendizado**: Uma camada de abstração com zero dependências externas pode mapear transparentemente o formato de request e unificar a extração de resposta (`content[0].text` vs `choices[0].message.content`), mantendo o restante da aplicação agnóstico ao provedor escolhido.\n**Ação**: Centralizar a tradução de payloads no gateway unificado e tratar `429` (Rate Limit) de maneira uniforme para disparar telas de contingência guiada.\n\n### Lição 10: Normalização de Catálogo de Modelos (Strings vs Objetos) no Teste de Conexão BYOK\n**Contexto**: No modal de configuração de IA (BYOK), o endpoint `/api/ai/test` retornava uma lista de strings de IDs de modelos, enquanto a interface web esperava objetos com propriedades `.id` e `.name`. Isso gerava opções `<option value=\"undefined\">undefined</option>` no dropdown, impedindo a visualização dos modelos detectados.\n**Aprendizado**: O backend de Gateway e o cliente frontend devem operar de forma defensiva e simétrica: o backend deve normalizar modelos como objetos tipados `{ id, name, contextWindow }`, filtrar modelos incompatíveis (áudio/guardrails em Groq e embeddings em OpenAI) e ordenar os recomendados no topo. O frontend, por sua vez, deve suportar tanto strings primitivas quanto objetos, apresentar contadores e chips de seleção rápida em 1 clique, e restaurar com segurança o modelo selecionado.\n**Ação**: Sempre normalizar estruturas de modelos em `{ id, name, contextWindow }` no gateway, aplicar parsing polimórfico no JavaScript client e enriquecer a UX com badges e chips rápidos.\n\n### Lição 11: Eliminação de Hardcoding de Modelos e Isolamento entre Vault Local e Demo Pública\n**Contexto**: A presença de modelos de IA fixos em código gerava acoplamento artificial, enquanto a sincronização do scanner local com a pasta da demo pública sobrescreveu o projeto de demonstração (`demo-app`) com os projetos locais reais do desenvolvedor.\n**Aprendizado**:\n1. Provedores de IA evoluem seus catálogos continuamente; fixar nomes em código gera débito técnico imediato. O gateway deve operar de forma 100% dinâmica, descobrindo os modelos disponíveis em tempo real através da API do provedor (`GET /models` / `/api/tags`) a partir do teste de conexão acionado pelo usuário.\n2. O ambiente de demonstração estático (`demo/`) da landing page e o ambiente local de desenvolvimento do workspace devem manter isolamento estrito de dados: o gerador `build_demo_vault.py` produz dados ilustrativos limpos (`demo-app`) para a web pública, enquanto o `scan-vault.js` mapeia os projetos reais do usuário apenas para o visualizador privado.\n**Ação**: Remover listas estáticas de modelos de todos os arquivos de configuração e código, e manter os geradores de dados da demo pública completamente isolados da varredura do disco local.\n"
+      "content": "# Lições Aprendidas\n\n## 2026-09-27 — Fundação do AI Second Brain\n\n### Lição 1: Formato nativo importa\n**Contexto**: A versão 1 usava estrutura genérica (CLAUDE.md).\n**Aprendizado**: Cada ferramenta (Antigravity, Claude Code, Cursor) tem seu formato nativo de customização. Usar o formato nativo garante que as features da ferramenta funcionem corretamente (descoberta automática de skills, rules, etc).\n**Ação**: Sempre adapte o AI Second Brain para o formato da ferramenta em uso.\n\n### Lição 2: AIJev não substitui código determinístico\n**Contexto**: Tentação de usar AIJev para tudo que envolve decisão.\n**Aprendizado**: Se uma regra pode ser escrita em código (if/else, switch), não precisa de AIJev. AIJev é para decisões que envolvem contexto complexo ou probabilidades.\n**Ação**: Decision Gate obrigatório antes de integrar qualquer IA.\n\n### Lição 3: LLM não é a resposta para tudo\n**Contexto**: Tendência de chamar LLM para cada problema.\n**Aprendizado**: LLM é caro, lento e não-determinístico. Use apenas quando realmente precisa de geração de texto ou raciocínio aberto.\n**Ação**: Sempre pergunte \"isso pode ser feito sem IA?\" antes de usar LLM.\n\n---\n\n## 2026-10-02 — Motor do Research Lab & Resiliência de Inferência\n\n### Lição 4: Catálogos de modelos de IA são efêmeros\n**Contexto**: Ao configurar o Groq para o Research Lab, modelos consagrados como `llama-3.3-70b-versatile` já estavam descontinuados/deprecados no provedor.\n**Aprendizado**: Provedores de nuvem (especialmente inferência rápida como Groq) alteram IDs e disponibilidade de modelos com frequência. Consultar a API de modelos (`GET /openai/v1/models`) em tempo de diagnóstico ou adotar modelos com alta janela de contexto (ex: `openai/gpt-oss-120b`) previne erros `404 model_decommissioned`.\n**Ação**: Sempre incluir verificação de status e permitir parametrização do modelo via `.env` (`GROQ_MODEL`).\n\n### Lição 5: Parsing defensivo de JSON gerado por LLMs\n**Contexto**: A decomposição de tópicos exige retorno estritamente em JSON estruturado, mas LLMs frequentemente adicionam blocos ` ```json ... ``` ` ou texto introdutório.\n**Aprendizado**: Clientes HTTP nativos devem sanitizar markdown fences e extrair blocos `{...}` ou `[...]` antes do `JSON.parse`.\n**Ação**: Implementar regex de desempacotamento de markdown fence e fallback antes de falhar a requisição.\n\n---\n\n## 2026-10-08 — Console UTF-8 no Windows & Resiliência de Cache\n\n### Lição 6: Precedência de cache em localStorage e codificação UTF-8 no Windows\n**Contexto**: O inicializador `.bat` exibia `ÔÇö` em vez de `—` no CMD, e o visualizador carregava um cache estático do `localStorage` mostrando 34 arquivos desordenados em vez de conectar ao servidor local ao vivo.\n**Aprendizado**: \n1. No Windows, o interpretador CMD roda por padrão em página de código OEM (CP850 / CP437). Scripts `.bat` contendo caracteres UTF-8 devem obrigatoriamente executar `chcp 65001 >nul` no topo.\n2. Em SPAs que suportam tanto servidor local quanto pasta offline, caches em `localStorage` não devem ter precedência sobre o servidor local em `localhost`. Race conditions durante a subida de processos exigem auto-reconexão com retentativas, e qualquer gerador offline deve manter paridade estrita de arquitetura de dados (árvore hierárquica) com o backend.\n**Ação**: Sempre forçar UTF-8 em scripts de console e implementar auto-reconexão e limpeza automática de caches obsoletos no cliente web.\n\n---\n\n## 2026-10-09 — AI Gateway Multi-Provedor (BYOK)\n\n### Lição 7: Atualização atômica de variáveis de ambiente em tempo de execução\n**Contexto**: Ao salvar uma nova chave de API ou trocar de provedor via modal BYOK, reiniciar o servidor interromperia a sessão web do usuário.\n**Aprendizado**: É possível manter persistência física em arquivo `.env` (preservando comentários e adicionando chaves atômicas) e sincronizar imediatamente o objeto `process.env` em memória no mesmo tick de execução. Isso permite que rotas subsequentes utilizem as novas credenciais sem exigir restart do Node.js.\n**Ação**: Sempre sincronizar `fs.writeFileSync('.env')` com mutação direta em `process.env[key] = value` para configurações de infraestrutura hot-swappable.\n\n### Lição 8: Normalização de protocolos de IA (OpenAI vs Anthropic) sem dependências\n**Contexto**: Diferentes provedores utilizam convenções distintas: a maioria segue o padrão `/v1/chat/completions` da OpenAI, enquanto a Anthropic exige `/v1/messages` com cabeçalho `x-api-key` e `anthropic-version`.\n**Aprendizado**: Uma camada de abstração com zero dependências externas pode mapear transparentemente o formato de request e unificar a extração de resposta (`content[0].text` vs `choices[0].message.content`), mantendo o restante da aplicação agnóstico ao provedor escolhido.\n**Ação**: Centralizar a tradução de payloads no gateway unificado e tratar `429` (Rate Limit) de maneira uniforme para disparar telas de contingência guiada.\n\n### Lição 9: Isolamento estrito entre o Vault de Demonstração Pública e Dados Locais\n**Contexto**: A sincronização automática da varredura local com a pasta da demo pública sobrescreveu o projeto de demonstração (`demo-app`) com os projetos locais reais do desenvolvedor, arriscando expor dados privados.\n**Aprendizado**: O ambiente de demonstração estático (`docs/brain-ui/demo/`) da landing page e o ambiente local de desenvolvimento do workspace devem manter isolamento estrito de dados: o gerador `build_demo_vault.py` produz dados ilustrativos limpos (`demo-app`) para a web pública, enquanto o `scan-vault.js` mapeia os projetos reais do usuário apenas para o visualizador privado no `localhost`.\n**Ação**: Isolar completamente geradores de dados estáticos para demonstração pública de scripts de varredura do disco local.\n\n---\n\n## 2026-10-10 — Robustez do Portal BYOK, Normalização & Terminal Console\n\n### Lição 10: Normalização de Catálogo de Modelos (Strings vs Objetos) no Teste de Conexão BYOK\n**Contexto**: No modal de configuração de IA (BYOK), o endpoint `/api/ai/test` retornava uma lista de strings de IDs de modelos, enquanto a interface web esperava objetos com propriedades `.id` e `.name`. Isso gerava opções `<option value=\"undefined\">undefined</option>` no dropdown, impedindo a visualização dos modelos detectados.\n**Aprendizado**: O backend de Gateway e o cliente frontend devem operar de forma defensiva e simétrica: o backend deve normalizar modelos como objetos tipados `{ id, name, contextWindow }`, filtrar modelos incompatíveis (áudio/guardrails em Groq e embeddings em OpenAI) e ordenar os recomendados no topo. O frontend, por sua vez, deve suportar tanto strings primitivas quanto objetos, apresentar contadores e chips de seleção rápida em 1 clique, e restaurar com segurança o modelo selecionado.\n**Ação**: Sempre normalizar estruturas de modelos em `{ id, name, contextWindow }` no gateway, aplicar parsing polimórfico no JavaScript client e enriquecer a UX com badges e chips rápidos.\n\n### Lição 11: Eliminação de Hardcoding de Modelos e Desacoplamento de UI\n**Contexto**: Presença de presets estáticos de modelos criava dependência de atualizações manuais no código fonte e induzia falsas expectativas caso o usuário não tivesse acesso a determinados modelos em sua conta.\n**Aprendizado**: Provedores de IA evoluem seus catálogos continuamente; fixar nomes em código gera débito técnico imediato. O gateway deve operar de forma dinâmica, descobrindo os modelos disponíveis em tempo real através da API do provedor (`GET /models` / `/api/tags`) a partir do teste de conexão acionado pelo usuário.\n**Ação**: Desacoplar formulários de configuração de listas estáticas no código e validar via handshake real com a API do provedor.\n\n### Lição 12: Feedback Monocromático Estrito e Estados Reativos em Consoles Web de Diagnóstico\n**Contexto**: No modal de configuração de IA (BYOK), o terminal ao vivo utilizava classes estáticas de cor (`.t-matrix` verde) para prefixos como `$` e rodapés `\"LOCAL .ENV ENCRYPTION\"`. Em caso de erro de conexão, a linha de erro aparecia mesclada com verde e vermelho, e trocar o provedor exibia prematuramente `[OK] CHAT COMPLETION READY` antes do clique no botão \"Testar\".\n**Aprendizado**:\n1. Componentes de terminal que simulam CLI em aplicações web devem implementar uma máquina de estados visual estrita (`idle`, `testing`, `success`, `error`).\n2. Estados de falha devem forçar 100% dos nós filhos (incluindo prompts e rodapés) para a cor de alerta (`#f87171`), e estados de sucesso para a cor de validação (`#00f59b`), impedindo poluição visual ou incoerência semântica.\n3. Trocas de contexto pelo usuário (ex: alterar o provedor no dropdown) devem reativamente zerar o estado para standby (`is-idle`), limpando feedbacks anteriores e informando o próximo passo (`[IDLE] Clique em \"Testar\" para validar a chave`).\n**Ação**: Centralizar a renderização de status de consoles em funções unificadas (`updateAiTerminalStatus`), forçar regras CSS com seletores descendentes defensivos (`.ai-terminal-output.is-error *`) e garantir que eventos `change` em selects sempre restaurem o estado para neutro/aguardando validação.\n\n### Lição 13: Transparência de Parâmetros de Gateway (Cache TTL e Retentativas) na UX e no Backend\n**Contexto**: No passo 4 do configurador BYOK existiam inputs para `Cache` (ex: `24h`) e `Tentativas` (ex: `2`). O desenvolvedor precisava de clareza sobre se esses valores tinham efeito real na execução das APIs e de contextualização visual imediata no modal para entender a finalidade de cada um.\n**Aprendizado**:\n1. Parâmetros de resiliência e otimização de custo (como retries e TTL de cache) só têm valor se forem ativamente honrados pelo engine: retries com backoff exponencial protegem contra rate limits (`429`) e oscilações de rede; enquanto o hashing (SHA-256) de prompts idênticos em cache em memória elimina chamadas redundantes, poupa tokens da cota do usuário e atinge latência de 0ms.\n2. Em interfaces técnicas (BYOK/DevTools), expor cards explicativos dedicados ao lado dos parâmetros reduz a carga cognitiva, esclarece trade-offs de desempenho e reforça a confiança na plataforma.\n**Ação**: Sempre acoplar parâmetros de configuração a camadas concretas de execução no engine de gateway e fornecer cards explicativos com métricas esperadas (ex: latência 0ms, tolerância a HTTP 429) na interface do usuário.\n\n---\n\n## 2026-10-11 — Descoberta Dinâmica em Tempo Real, Blindagem Universal & Pontes Standalone\n\n### Lição 14: Zero Catálogos Estáticos de Modelos — Descoberta Dinâmica em Tempo Real com Auto-Trigger na Abertura\n**Contexto**: A introdução temporária de um catálogo fixo de fallback (`AI_DEFAULT_MODELS_BY_PROVIDER`) para preencher o select antes do clique em \"Testar\" gerou discrepâncias (ex: textos verdes indicando conexão antes de os modelos estarem populados) e violou a filosofia fundamental de flexibilidade BYOK do AI Second Brain.\n**Aprendizado**:\n1. Catálogos estáticos de modelos de IA no frontend ou backend são antipadrões graves: APIs de IA evoluem semanalmente com novos lançamentos e deprecações, além de permissões variáveis por conta/chave.\n2. Em interfaces de configuração com chave já salva, a UX correta e elegante é **provocar/disparar o teste de conexão (`testCurrentAiConnection()`) automaticamente na própria abertura da tela (`openAiSettingsModal`)**. O usuário presencia o handshake em tempo real, a latência autêntica é aferida e o seletor é populado com modelos vivos direto da API.\n3. Se o usuário não possuir chave configurada, o seletor deve exibir exclusivamente o placeholder neutro orientativo (*\"Clique em 'Testar' acima para listar os modelos disponíveis...\"*) e manter o terminal em standby (`[IDLE]`), sem induzir falsos sucessos.\n4. A versão demo deve adotar **exatamente a mesma arquitetura**: mocks de transporte de rede (`demo-mode.js`) interceptam a rota de teste e retornam respostas simuladas com latência realista, permitindo que o mesmo código JS rode com 100% de paridade em ambos os ambientes sem bifurcação nem catálogos fixos no código da UI.\n**Ação**: NUNCA utilizar listas estáticas de modelos de IA em código JavaScript ou HTML. Sempre buscar modelos dinamicamente via requisição de teste provocada na abertura do modal ou por ação do usuário, assegurando paridade total entre o ambiente local e a demo pública.\n\n### Lição 15: Governança Universal Agnóstica (AGENTS.md) e Pontes Automáticas em Projetos Vinculados (Standalone)\n**Contexto**: Inicialmente a governança residia apenas em `GEMINI.md`. Ao operar com outras ferramentas (Cursor, Claude Code, Windsurf, Cline, Copilot) ou quando o desenvolvedor abria o repositório vinculado em uma janela isolada da IDE, o agente não lia as diretrizes nem as lições aprendidas do Segundo Cérebro.\n**Aprendizado**:\n1. O AI Second Brain é agnóstico tanto a linguagens/stacks quanto a ferramentas e provedores de IA. O padrão universal aberto deve ser o **`AGENTS.md`**, reconhecido por qualquer agente de ponta.\n2. Para ferramentas com arquivos de configuração proprietários, deve haver pontes nativas (`.cursorrules`, `CLAUDE.md`, `.windsurfrules`, `.clinerules`, `.github/copilot-instructions.md`) que instruem o agente a seguir as mesmas regras absolutas e a consultar obrigatoriamente a memória antes de agir.\n3. A governança não pode se limitar ao Cockpit Central: os utilitários de criação e vinculação de projetos (`scripts/link-project.js` e `scripts/create-project.js`) devem injetar automaticamente as pontes de governança diretamente na raiz física do projeto vinculado. Assim, mesmo em modo Standalone, o agente respeita as regras e decisões arquiteturais.\n**Ação**: Sempre manter governança multiplataforma espelhada em todas as pontes e automatizar a geração de arquivos de ponte durante o vínculo de novos repositórios.\n\n### Lição 16: Dois Níveis de Lições Aprendidas — Prevenção da \"Amnésia por Sessão Antiga\"\n**Contexto**: Registrar aprendizados apenas em arquivos diários de sessões passadas (`MEMORY/sessions/`) fazia com que o agente esquecesse erros antigos quando o histórico acumulava dezenas de sessões, pois nenhuma IA relê todo o histórico passado a cada novo prompt.\n**Aprendizado**:\n1. Para manter a alta coesão e evitar estouro de tokens, as lições aprendidas devem ser divididas em dois níveis explícitos:\n   - **Nível 1 (Global/Framework)** em `memory/lessons-learned.md`: armazena regras universais de engenharia, arquitetura e integrações de IA que se aplicam a qualquer projeto.\n   - **Nível 2 (Local/Do Projeto)** em `projects/<projeto>/LESSONS_LEARNED.md`: armazena armadilhas técnicas, regras de negócio e bugs específicos daquela base de código (ex: peculiaridades de schemas de banco, rotas de webhooks, bibliotecas da stack).\n2. O arquivo local viaja junto com o repositório no Git do projeto, garantindo que mesmo ao abrir a pasta isoladamente em outro editor, o agente sempre leia os erros que nunca devem ser repetidos antes de gerar código.\n**Ação**: Todo projeto novo ou vinculado deve nascer com seu próprio `LESSONS_LEARNED.md`, e todas as pontes de IA devem instruir mandatoriamente a consulta deste arquivo antes de agir.\n\n---\n\n### Lição 17: Isolamento Estrito de Base URL entre Provedores e Integridade de Cache em Memória\n**Contexto**: O AI Gateway apresentou erro 500 em `/api/ai/config` por ausência da declaração `cachedModelsByProvider`, e requisições para a Groq herdaram `AI_BASE_URL` da Anthropic salvo no `.env`, gerando falso positivo no terminal (0 modelos detectados como \"Catálogo pronto\") e erro 400 ao salvar.\n**Aprendizado**:\n1. Variáveis globais referenciadas em módulos de gateway devem possuir declaração atômica no topo do escopo (`const cachedModelsByProvider = {}`), prevenindo `ReferenceError` em rotas HTTP.\n2. Parâmetros como `baseUrl` pertencem ao provedor ativo: provedores padrão de nuvem (`groq`, `openai`, `anthropic`, `openrouter`) devem utilizar estritamente suas URLs oficiais mapeadas no catálogo, e nunca herdar parâmetros customizados de outros provedores armazenados anteriormente no `.env`. Apenas provedores locais ou configuráveis (`ollama`, `custom`) devem aceitar e persistir URLs customizadas.\n3. Consoles e terminais web não podem emitir estado `success` com 0 modelos detectados quando o provedor requer modelos para operar. Se a detecção retornar 0 modelos ou falhar, o sistema deve apresentar estado de erro explícito com mensagem amigável, orientando a inserção da chave correta e impedindo tentativas de salvamento inconsistentes.\n**Ação**: Isolar o escopo de `baseUrl` por provedor, validar retorno mínimo de modelos antes de declarar conexão bem-sucedida e aplicar validações preventivas no frontend antes de disparar endpoints de teste e gravação.\n\n---\n\n### Lição 18: Sincronização Bidirecional de Parâmetros de Ambiente, Blindagem de Autofill e Validação Defensiva\n**Contexto**: Parâmetros de execução (`AI_CACHE_TTL_HOURS` e `AI_MAX_RETRIES`) alterados no `.env` não eram refletidos ao reabrir o modal visual, campos de senha herdavam fundo claro invasivo do autofill do navegador, e valores numéricos permitiam fallback silencioso para `2` quando definidos como `0` (desativar retries).\n**Aprendizado**:\n1. **Sincronização Fiel de Estado**: Todo modal de configuração deve ler e aplicar ativamente todos os valores retornados pelo endpoint de configuração (`GET /api/ai/config`) aos elementos do DOM, sem depender de valores padrão estáticos declarados no HTML.\n2. **Tratamento de Falsy em Números**: Operadores de coalescência ou fallback como `parseInt(x) || 2` convertem incorretamente o valor legítimo `0` para `2`. Valores numéricos inteiros devem ser validados com `!isNaN(n) && n >= min && n <= max`.\n3. **Blindagem contra Autofill Claro no Dark Mode**: Campos de credenciais (`type=\"password\"`) sofrem interferência da folha de estilos nativa do Chromium (`:-webkit-autofill`), que sobrescreve fundos escuros com tons claros (`rgb(232, 240, 254)`). A blindagem exige `color-scheme: dark !important`, `box-shadow inset` e substituição de placeholders genéricos como `\"Password\"` por textos descritivos acompanhados de `autocomplete=\"new-password\"`.\n4. **Validação em Camadas (Frontend e Backend)**: Validações de limites (ex: TTL entre 1h e 720h, Retries entre 0 e 5) devem ocorrer em três camadas coordenadas: na interatividade (`keydown`/`input`), no pré-salvamento no cliente (com feedback visual e foco) e no backend (retornando HTTP 400 antes de gravar no disco).\n**Ação**: Sempre aplicar leitura explícita no modal, blindar inputs de senhas contra autofill e validar intervalos de dados em todas as camadas da aplicação.\n\n\n"
     },
     {
       "id": "memory_README_md",
@@ -462,18 +474,31 @@ window.VAULT_SNAPSHOT = {
       "content": "# ADR-001: Escolha da Stack e Padrões Iniciais de Arquitetura\n\n> **Projeto**: Alfredo_teste  \n> **Data**: 2026-10-04  \n> **Status**: Aceita (Decidido)  \n\n## Contexto\nO projeto necessita de uma fundação tecnológica clara, modular e alinhada com as diretrizes do ecossistema AI Second Brain.\nPrecisamos garantir que qualquer agente de Inteligência Artificial ou desenvolvedor conheça os motivos das escolhas técnicas sem desconstruir o código legado.\n\n## Decisão\nFoi decidido adotar a stack e os padrões documentados em `PROJECT.md` e `ARCHITECTURE.md`.\nQuaisquer decisões futuras que alterem bibliotecas essenciais, conexões de banco de dados ou provedores de IA devem ser registradas em novos ADRs numerados nesta mesma pasta.\n\n## Consequências\n- **Positivas**: Padronização técnica, contratos vivos respeitados por agentes de IA e previsibilidade do roadmap.\n- **Trade-offs / Riscos**: Exige manutenção disciplinada do arquivo `CURRENT_STATE.md` e documentação de novos ADRs a cada grande mudança.\n\n## Alternativas Consideradas\n- **Desenvolvimento sem contratos**: Rejeitado por gerar alucinações em agentes de IA e perda de memória de arquitetura entre sessões.\n"
     },
     {
+      "id": "projects_Alfredo_teste_LESSONS_LEARNED_md",
+      "path": "projects/Alfredo_teste/LESSONS_LEARNED.md",
+      "name": "LESSONS_LEARNED.md",
+      "title": "Alfredo_teste — Lições Aprendidas",
+      "category": "projects",
+      "icon": "💡",
+      "size": 837,
+      "mtime": 1791699937235.5144,
+      "outgoingLinks": [],
+      "content": "# Alfredo_teste — Lições Aprendidas\n\n> Erros, armadilhas técnicas e aprendizados específicos deste projeto.\n> Qualquer agente de IA ou desenvolvedor deve consultar este arquivo antes de alterar código neste repositório.\n\n## Histórico de Lições Aprendidas\n\n### 2026-10-09 — Isolamento de Dependências e Schemas em Repositório Externo\n- **Contexto**: Conexão e sincronização inicial do repositório brownfield via junção NTFS.\n- **Causa Raiz**: Tentativas de alterar estruturas sem respeitar o schema preexistente podem gerar regressões no código de produção.\n- **O que NÃO fazer**: Nunca aplicar migrações ou novos endpoints sem checar previamente os contratos em `PROJECT.md` e `ARCHITECTURE.md`.\n- **Padrão Correto**: Registrar sempre ADR prévio em `DECISIONS/` antes de alterar qualquer contrato de dados.\n"
+    },
+    {
       "id": "projects_Alfredo_teste_PROJECT_md",
       "path": "projects/Alfredo_teste/PROJECT.md",
       "name": "PROJECT.md",
       "title": "Alfredo_teste",
       "category": "projects",
       "icon": "📄",
-      "size": 327,
-      "mtime": 1790824169403.3708,
+      "size": 391,
+      "mtime": 1791699977830.1033,
       "outgoingLinks": [
-        "current_state.md"
+        "current_state.md",
+        "lessons_learned.md"
       ],
-      "content": "# Alfredo_teste\n\n## Visão Geral\nProjeto externo vinculado ao AI Second Brain. \n\n## Informações Gerais\n- **Tipo**: Brownfield / Repositório Externo\n- **Localização Original**: `C:\\Projetos\\temp2`\n- **Status**: 🟢 Ativo / Em Desenvolvimento\n\n## Links & Documentação\n- Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)\n"
+      "content": "# Alfredo_teste\n\n## Visão Geral\nProjeto externo vinculado ao AI Second Brain. \n\n## Informações Gerais\n- **Tipo**: Brownfield / Repositório Externo\n- **Localização Original**: `C:\\Projetos\\temp2`\n- **Status**: 🟢 Ativo / Em Desenvolvimento\n\n## Links & Documentação\n- Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)\n- Lições Aprendidas: [LESSONS_LEARNED.md](LESSONS_LEARNED.md)\n"
     },
     {
       "id": "projects_Alfredo_teste_RESEARCH_crm_actionable_06-modelagem-dados-migracao-schema_md",
@@ -627,7 +652,7 @@ window.VAULT_SNAPSHOT = {
       "category": "projects",
       "icon": "🔬",
       "size": 6466,
-      "mtime": 1791555579962.8755,
+      "mtime": 1791731266309.649,
       "outgoingLinks": [
         "knowledge/01-requisitos-funcionais-essenciais.md",
         "knowledge/02-requisitos-nao-funcionais-performance.md",
@@ -642,7 +667,7 @@ window.VAULT_SNAPSHOT = {
         "actionable/06-modelagem-dados-migracao-schema.md",
         "actionable/09-estrategia-testes-qualidade.md"
       ],
-      "content": "# 🔬 CRM\n\n> **Laboratório de Conhecimento Concluído**  \n> Projeto: **Alfredo_teste** &middot; Última atualização: 09/10/2026\n\n## Briefing da Pesquisa (Prompt Vivo)\n\nObjetivo\n- Definir tudo o que é necessário para criar um CRM profissional e de alta qualidade, alinhado à arquitetura de software e às boas práticas de desenvolvimento.\n\nFoco da pesquisa\n- Requisitos funcionais essenciais:\n  * Gestão de leads, contas, contatos e oportunidades\n  * Pipeline de vendas configurável\n  * Registro de interações (e‑mail, chamadas, notas)\n  * Relatórios e dashboards customizáveis\n  * Controle de acesso baseado em funções (RBAC)\n  * Integração com e‑mail, calendário e ferramentas de marketing\n- Requisitos não funcionais:\n  * Escalabilidade horizontal e vertical\n  * Alta disponibilidade e tolerância a falhas\n  * Segurança de dados (criptografia em repouso e em trânsito)\n  * Conformidade com LGPD/GDPR\n  * Performance: tempo de resposta < 200 ms para operações comuns\n- Arquitetura e design:\n  * Camadas separadas (API, serviços de domínio, camada de dados)\n  * API RESTful ou GraphQL bem versionada\n  * Uso de padrões como Repository, Service, DTO e Clean Architecture\n  * Estratégia de versionamento e migração de banco de dados (ex.: Flyway, Liquibase)\n- Stack tecnológica recomendada (genérica, adaptável ao contexto):\n  * Backend: linguagem moderna (ex.: Java Spring Boot, Node.js/Express, .NET Core, Python/Django)\n  * Banco de dados relacional (PostgreSQL, MySQL) + opcional NoSQL para buscas (Elasticsearch)\n  * Frontend: SPA com React, Angular ou Vue.js; design responsivo\n  * Autenticação: OAuth2/OpenID Connect (ex.: Keycloak, Auth0)\n  * Containerização: Docker + orquestração Kubernetes\n  * CI/CD: GitHub Actions, GitLab CI ou Azure DevOps\n- Integrações externas:\n  * APIs de e‑mail (SendGrid, Mailgun)\n  * Serviços de telefonia (Twilio)\n  * Plataformas de marketing (HubSpot, Mailchimp)\n- Testes e qualidade:\n  * Testes unitários, de integração e end‑to‑end (Jest, Cypress, Postman)\n  * Cobertura de código mínima 80 %\n  * Análise estática (SonarQube, ESLint)\n- Implantação e operação:\n  * Estratégia de deploy blue‑green ou canary\n  * Monitoramento (Prometheus, Grafana) e logging centralizado (ELK)\n  * Plano de backup e recuperação de desastres\n- Documentação e suporte:\n  * Swagger/OpenAPI para a API\n  * Guia de onboarding para desenvolvedores\n  * Manual de usuário final e FAQ\n\nEdge cases e tópicos frequentemente esquecidos\n- Multi‑tenant: isolamento de dados entre diferentes clientes\n- Operação offline ou com conectividade intermitente\n- Migração de dados de sistemas legados (importação/exportação CSV, ETL)\n- Controle de versões de schemas de dados sem downtime\n- Suporte a internacionalização (i18n) e fusos horários\n- Limitações de quota e rate‑limiting para APIs externas\n- Estratégias de auditoria e logs de alterações para compliance\n- Gerenciamento de conflitos de concorrência (optimistic locking)\n\nExcluir\n- Estratégias de vendas, técnicas de prospecção ou treinamento de equipe comercial\n- Ferramentas de marketing que não se integrem ao CRM\n- Comparações de preços de softwares comerciais existentes\n- Tópicos de branding, identidade visual ou campanhas publicitárias\n- Discussões sobre políticas de recursos humanos ou gestão de equipes\n- Conteúdo sobre desenvolvimento de aplicativos móveis que não façam parte da solução CRM\n- Tutoriais genéricos de programação que não estejam ligados à construção do CRM profissional.\n\n## Status: 🟢 Pesquisa Concluída & Catalogada\n\n---\n\n## 📘 Camada 1: Conhecimento Teórico & Conceitual (`knowledge/`)\n\n- [**Requisitos funcionais essenciais**](knowledge/01-requisitos-funcionais-essenciais.md)\n  *Listar e detalhar funcionalidades core como leads, contas, oportunidades, pipeline, interações e relatórios.*\n- [**Requisitos não funcionais e metas de performance**](knowledge/02-requisitos-nao-funcionais-performance.md)\n  *Definir requisitos de escalabilidade, disponibilidade, segurança, conformidade e tempo de resposta <200 ms.*\n- [**Arquitetura de camadas e padrões de design**](knowledge/03-arquitetura-padroes-design.md)\n  *Descrever a separação em API, domínio e dados usando Clean Architecture, Repository, Service e DTO.*\n- [**Segurança, RBAC e conformidade LGPD/GDPR**](knowledge/04-seguranca-rbac-conformidade.md)\n  *Especificar autenticação OAuth2/OpenID, controle de acesso baseado em papéis e criptografia em repouso e em trânsito.*\n- [**Design da API e versionamento**](knowledge/05-design-api-versionamento.md)\n  *Escolher entre RESTful ou GraphQL, definir estratégia de versionamento e gerar documentação OpenAPI/Swagger.*\n- [**Estratégias de escalabilidade e alta disponibilidade**](knowledge/07-estrategias-escalabilidade-disponibilidade.md)\n  *Planejar escalabilidade horizontal/vertical, balanceamento de carga, replicação de banco e tolerância a falhas.*\n- [**Integrações externas e rate‑limiting**](knowledge/08-integracoes-externas-rate-limiting.md)\n  *Mapear integrações com SendGrid, Twilio, HubSpot etc., e definir políticas de quota e controle de taxa.*\n- [**Pipeline CI/CD, containerização e orquestração**](knowledge/10-pipeline-cicd-containerizacao.md)\n  *Descrever fluxo de CI/CD (GitHub Actions, GitLab CI), Dockerização e deployment em Kubernetes.*\n- [**Estratégia de implantação e monitoramento**](knowledge/11-implantacao-monitoramento.md)\n  *Detalhar deploy blue‑green ou canary, métricas com Prometheus/Grafana e logging centralizado (ELK).*\n- [**Operação offline, i18n e auditoria de mudanças**](knowledge/12-offline-i18n-auditoria.md)\n  *Abordar suporte a uso offline, internacionalização, fusos horários e logs de auditoria para compliance.*\n\n## 🛠️ Camada 2: Especificações Práticas & Código (`actionable/`)\n\n- [**Modelagem de dados e migração de schema**](actionable/06-modelagem-dados-migracao-schema.md)\n  *Modelar entidades principais, escolher PostgreSQL/MySQL, definir estratégia de migração (Flyway/Liquibase) e multi‑tenant.*\n- [**Estratégia de testes e qualidade de código**](actionable/09-estrategia-testes-qualidade.md)\n  *Definir tipos de testes (unitário, integração, e2e), cobertura mínima 80 % e ferramentas de análise estática.*\n\n---\n\n*Todos os arquivos acima estão conectados ao Grafo Neural 3D do projeto no AI Second Brain.*\n"
+      "content": "# 🔬 CRM\n\n> **Laboratório de Conhecimento Concluído**  \n> Projeto: **Alfredo_teste** &middot; Última atualização: 11/10/2026\n\n## Briefing da Pesquisa (Prompt Vivo)\n\nObjetivo\n- Definir tudo o que é necessário para criar um CRM profissional e de alta qualidade, alinhado à arquitetura de software e às boas práticas de desenvolvimento.\n\nFoco da pesquisa\n- Requisitos funcionais essenciais:\n  * Gestão de leads, contas, contatos e oportunidades\n  * Pipeline de vendas configurável\n  * Registro de interações (e‑mail, chamadas, notas)\n  * Relatórios e dashboards customizáveis\n  * Controle de acesso baseado em funções (RBAC)\n  * Integração com e‑mail, calendário e ferramentas de marketing\n- Requisitos não funcionais:\n  * Escalabilidade horizontal e vertical\n  * Alta disponibilidade e tolerância a falhas\n  * Segurança de dados (criptografia em repouso e em trânsito)\n  * Conformidade com LGPD/GDPR\n  * Performance: tempo de resposta < 200 ms para operações comuns\n- Arquitetura e design:\n  * Camadas separadas (API, serviços de domínio, camada de dados)\n  * API RESTful ou GraphQL bem versionada\n  * Uso de padrões como Repository, Service, DTO e Clean Architecture\n  * Estratégia de versionamento e migração de banco de dados (ex.: Flyway, Liquibase)\n- Stack tecnológica recomendada (genérica, adaptável ao contexto):\n  * Backend: linguagem moderna (ex.: Java Spring Boot, Node.js/Express, .NET Core, Python/Django)\n  * Banco de dados relacional (PostgreSQL, MySQL) + opcional NoSQL para buscas (Elasticsearch)\n  * Frontend: SPA com React, Angular ou Vue.js; design responsivo\n  * Autenticação: OAuth2/OpenID Connect (ex.: Keycloak, Auth0)\n  * Containerização: Docker + orquestração Kubernetes\n  * CI/CD: GitHub Actions, GitLab CI ou Azure DevOps\n- Integrações externas:\n  * APIs de e‑mail (SendGrid, Mailgun)\n  * Serviços de telefonia (Twilio)\n  * Plataformas de marketing (HubSpot, Mailchimp)\n- Testes e qualidade:\n  * Testes unitários, de integração e end‑to‑end (Jest, Cypress, Postman)\n  * Cobertura de código mínima 80 %\n  * Análise estática (SonarQube, ESLint)\n- Implantação e operação:\n  * Estratégia de deploy blue‑green ou canary\n  * Monitoramento (Prometheus, Grafana) e logging centralizado (ELK)\n  * Plano de backup e recuperação de desastres\n- Documentação e suporte:\n  * Swagger/OpenAPI para a API\n  * Guia de onboarding para desenvolvedores\n  * Manual de usuário final e FAQ\n\nEdge cases e tópicos frequentemente esquecidos\n- Multi‑tenant: isolamento de dados entre diferentes clientes\n- Operação offline ou com conectividade intermitente\n- Migração de dados de sistemas legados (importação/exportação CSV, ETL)\n- Controle de versões de schemas de dados sem downtime\n- Suporte a internacionalização (i18n) e fusos horários\n- Limitações de quota e rate‑limiting para APIs externas\n- Estratégias de auditoria e logs de alterações para compliance\n- Gerenciamento de conflitos de concorrência (optimistic locking)\n\nExcluir\n- Estratégias de vendas, técnicas de prospecção ou treinamento de equipe comercial\n- Ferramentas de marketing que não se integrem ao CRM\n- Comparações de preços de softwares comerciais existentes\n- Tópicos de branding, identidade visual ou campanhas publicitárias\n- Discussões sobre políticas de recursos humanos ou gestão de equipes\n- Conteúdo sobre desenvolvimento de aplicativos móveis que não façam parte da solução CRM\n- Tutoriais genéricos de programação que não estejam ligados à construção do CRM profissional.\n\n## Status: 🟢 Pesquisa Concluída & Catalogada\n\n---\n\n## 📘 Camada 1: Conhecimento Teórico & Conceitual (`knowledge/`)\n\n- [**Requisitos funcionais essenciais**](knowledge/01-requisitos-funcionais-essenciais.md)\n  *Listar e detalhar funcionalidades core como leads, contas, oportunidades, pipeline, interações e relatórios.*\n- [**Requisitos não funcionais e metas de performance**](knowledge/02-requisitos-nao-funcionais-performance.md)\n  *Definir requisitos de escalabilidade, disponibilidade, segurança, conformidade e tempo de resposta <200 ms.*\n- [**Arquitetura de camadas e padrões de design**](knowledge/03-arquitetura-padroes-design.md)\n  *Descrever a separação em API, domínio e dados usando Clean Architecture, Repository, Service e DTO.*\n- [**Segurança, RBAC e conformidade LGPD/GDPR**](knowledge/04-seguranca-rbac-conformidade.md)\n  *Especificar autenticação OAuth2/OpenID, controle de acesso baseado em papéis e criptografia em repouso e em trânsito.*\n- [**Design da API e versionamento**](knowledge/05-design-api-versionamento.md)\n  *Escolher entre RESTful ou GraphQL, definir estratégia de versionamento e gerar documentação OpenAPI/Swagger.*\n- [**Estratégias de escalabilidade e alta disponibilidade**](knowledge/07-estrategias-escalabilidade-disponibilidade.md)\n  *Planejar escalabilidade horizontal/vertical, balanceamento de carga, replicação de banco e tolerância a falhas.*\n- [**Integrações externas e rate‑limiting**](knowledge/08-integracoes-externas-rate-limiting.md)\n  *Mapear integrações com SendGrid, Twilio, HubSpot etc., e definir políticas de quota e controle de taxa.*\n- [**Pipeline CI/CD, containerização e orquestração**](knowledge/10-pipeline-cicd-containerizacao.md)\n  *Descrever fluxo de CI/CD (GitHub Actions, GitLab CI), Dockerização e deployment em Kubernetes.*\n- [**Estratégia de implantação e monitoramento**](knowledge/11-implantacao-monitoramento.md)\n  *Detalhar deploy blue‑green ou canary, métricas com Prometheus/Grafana e logging centralizado (ELK).*\n- [**Operação offline, i18n e auditoria de mudanças**](knowledge/12-offline-i18n-auditoria.md)\n  *Abordar suporte a uso offline, internacionalização, fusos horários e logs de auditoria para compliance.*\n\n## 🛠️ Camada 2: Especificações Práticas & Código (`actionable/`)\n\n- [**Modelagem de dados e migração de schema**](actionable/06-modelagem-dados-migracao-schema.md)\n  *Modelar entidades principais, escolher PostgreSQL/MySQL, definir estratégia de migração (Flyway/Liquibase) e multi‑tenant.*\n- [**Estratégia de testes e qualidade de código**](actionable/09-estrategia-testes-qualidade.md)\n  *Definir tipos de testes (unitário, integração, e2e), cobertura mínima 80 % e ferramentas de análise estática.*\n\n---\n\n*Todos os arquivos acima estão conectados ao Grafo Neural 3D do projeto no AI Second Brain.*\n"
     },
     {
       "id": "projects_README_md",
@@ -713,19 +738,32 @@ window.VAULT_SNAPSHOT = {
       "content": "# teste_alfredo_22 — Estado Atual\n\n> Última atualização: 2026-09-30\n\n## Status: 🟢 Em Planejamento / Ativo\n\n## O que já foi definido\n- [x] Inicialização no AI Second Brain com governança e memória ativa.\n- [x] Stack selecionada: **Node.js / TypeScript**.\n\n## Próximos Passos\n1. Definir os requisitos centrais do sistema.\n2. Registrar a primeira decisão de arquitetura em `DECISIONS/`.\n"
     },
     {
+      "id": "projects_teste_alfredo_22_LESSONS_LEARNED_md",
+      "path": "projects/teste_alfredo_22/LESSONS_LEARNED.md",
+      "name": "LESSONS_LEARNED.md",
+      "title": "teste_alfredo_22 — Lições Aprendidas",
+      "category": "projects",
+      "icon": "💡",
+      "size": 842,
+      "mtime": 1791699846932.9912,
+      "outgoingLinks": [],
+      "content": "# teste_alfredo_22 — Lições Aprendidas\n\n> Erros, armadilhas técnicas e aprendizados específicos deste projeto.\n> Qualquer agente de IA ou desenvolvedor deve consultar este arquivo antes de alterar código neste repositório.\n\n## Histórico de Lições Aprendidas\n\n### 2026-10-02 — Resiliência na Geração de Lotes Técnicos no Research Lab\n- **Contexto**: Durante a síntese dos 9 documentos de arquitetura e código sobre o tema do projeto.\n- **Causa Raiz**: Requisições consecutivas sem intervalo saturavam o bucket de tokens por minuto da camada gratuita da API de IA.\n- **O que NÃO fazer**: Nunca disparar requisições pesadas em rajada sem controle de cadência ou parser de rate limit.\n- **Padrão Correto**: Utilizar cadência controlada de 6 segundos e retentativas exponenciais automáticas ao receber status HTTP 429.\n"
+    },
+    {
       "id": "projects_teste_alfredo_22_PROJECT_md",
       "path": "projects/teste_alfredo_22/PROJECT.md",
       "name": "PROJECT.md",
       "title": "teste_alfredo_22",
       "category": "projects",
       "icon": "📄",
-      "size": 452,
-      "mtime": 1790806912691.933,
+      "size": 516,
+      "mtime": 1791699893126.3445,
       "outgoingLinks": [
         "current_state.md",
-        "architecture.md"
+        "architecture.md",
+        "lessons_learned.md"
       ],
-      "content": "# teste_alfredo_22\n\n## Visão Geral\nteste_alfredo_22 de teste\n\n## Informações Gerais\n- **Tipo**: Greenfield / Projeto Novo\n- **Stack Inicial**: Node.js / TypeScript\n- **Status**: 🟢 Em Planejamento / Ativo\n- **Data de Criação**: 2026-09-30\n\n## Links & Governança\n- Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)\n- Arquitetura: [ARCHITECTURE.md](ARCHITECTURE.md)\n- Decisões Técnicas: `DECISIONS/`\n- Memória de Sessões: `MEMORY/sessions/`\n"
+      "content": "# teste_alfredo_22\n\n## Visão Geral\nteste_alfredo_22 de teste\n\n## Informações Gerais\n- **Tipo**: Greenfield / Projeto Novo\n- **Stack Inicial**: Node.js / TypeScript\n- **Status**: 🟢 Em Planejamento / Ativo\n- **Data de Criação**: 2026-09-30\n\n## Links & Governança\n- Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)\n- Arquitetura: [ARCHITECTURE.md](ARCHITECTURE.md)\n- Lições Aprendidas: [LESSONS_LEARNED.md](LESSONS_LEARNED.md)\n- Decisões Técnicas: `DECISIONS/`\n- Memória de Sessões: `MEMORY/sessions/`\n"
     },
     {
       "id": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_01-banana-nutricional_md",
@@ -843,6 +881,54 @@ window.VAULT_SNAPSHOT = {
         "knowledge/08-avaliacao-sensorial.md"
       ],
       "content": "# 🔬 Bolo de Banana\n\n> **Laboratório de Conhecimento Concluído**  \n> Projeto: **teste_alfredo_22** &middot; Última atualização: 09/10/2026\n\n## Briefing da Pesquisa (Prompt Vivo)\n\nQuero fazer um bolo de banana de baixa caloria\n\n## Status: 🟢 Pesquisa Concluída & Catalogada\n\n---\n\n## 📘 Camada 1: Conhecimento Teórico & Conceitual (`knowledge/`)\n\n- [**Perfil nutricional da banana**](knowledge/01-banana-nutricional.md)\n  *Analisar calorias, carboidratos, fibras e micronutrientes da banana fresca.*\n- [**Adoçantes de baixa caloria para confeitaria**](knowledge/02-adocantes-baixa-caloria.md)\n  *Estudar tipos (stévia, eritritol, sucralose) e como usá‑los em bolos.*\n- [**Farinhas alternativas de baixo teor calórico**](knowledge/03-farinhas-alternativas.md)\n  *Comparar farinha de aveia, amêndoa, coco e outras quanto a calorias e propriedades de panificação.*\n- [**Redução de gorduras na massa de bolo**](knowledge/04-reducao-gordura-bolo.md)\n  *Explorar substitutos como purê de maçã, iogurte grego sem gordura e óleo de coco em menor quantidade.*\n- [**Formulação da receita: equilíbrio de umidade e textura**](knowledge/05-formula-receita.md)\n  *Como combinar banana, adoçante e farinha para obter massa leve e úmida sem excesso calórico.*\n- [**Cálculo de porções e valor calórico por fatia**](knowledge/06-calculo-porcoes.md)\n  *Métodos para dividir o bolo e estimar calorias individuais.*\n- [**Técnicas de assamento que preservam nutrientes**](knowledge/07-tecnicas-assamento.md)\n  *Temperatura, tempo e uso de formas que minimizam perda de vitaminas e reduzem necessidade de gordura extra.*\n- [**Avaliação sensorial e ajustes finais**](knowledge/08-avaliacao-sensorial.md)\n  *Testes de sabor, textura e aparência para otimizar a aceitação do bolo de baixa caloria.*\n\n## 🛠️ Camada 2: Especificações Práticas & Código (`actionable/`)\n\n*Nenhuma especificação prática catalogada.*\n\n---\n\n*Todos os arquivos acima estão conectados ao Grafo Neural 3D do projeto no AI Second Brain.*\n"
+    },
+    {
+      "id": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_01-audio-libraries-nodejs_md",
+      "path": "projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/knowledge/01-audio-libraries-nodejs.md",
+      "name": "01-audio-libraries-nodejs.md",
+      "title": "Bibliotecas de Áudio para Node.js",
+      "category": "projects",
+      "icon": "📘",
+      "size": 12376,
+      "mtime": 1791585490021.6614,
+      "outgoingLinks": [],
+      "content": "---\ntopic: \"criar um mp3 inteligente\"\nsubtopic: \"Bibliotecas de áudio para Node.js\"\nlayer: \"knowledge\"\ncreated: \"2026-10-09T22:38:10.020Z\"\nmodel: \"openai/gpt-oss-120b\"\n---\n\n# Bibliotecas de Áudio para Node.js  \n**Resumo executivo** – Este documento analisa as principais bibliotecas Node.js/TypeScript para manipulação de arquivos MP3 – leitura de metadados, transcodificação e edição de tags ID3 – e fornece um comparativo prático, exemplos de código e recomendações de uso no projeto **teste_alfredo_22**.\n\n---  \n\n## 1. Fundamentos Conceituais  \n\n| Conceito | Definição | Impacto no desenvolvimento |\n|----------|-----------|----------------------------|\n| **Formato MP3** | Codificação de áudio baseada em perceptual coding (MPEG‑1/2 Audio Layer III). | Necessita de decodificação/encodificação para alterações de bitrate ou canais. |\n| **ID3 Tags** | Metadados (title, artist, album, cover, etc.) armazenados no início (v2) ou fim (v1) do arquivo. | São mutáveis sem re‑encode do fluxo de áudio, mas requerem parsing binário correto. |\n| **FFmpeg** | Suite de codecs, filtros e containers. Exposta via CLI ou APIs (e.g., fluent‑ffmpeg). | Fonte de verdade para transcodificação, normalização de volume, concatenação, etc. |\n| **Streaming vs. Buffering** | Operações podem ser feitas em fluxo (pipe) ou carregando o arquivo inteiro na memória. | Streaming reduz uso de RAM, essencial para arquivos grandes ou serviços de upload. |\n| **Node.js Event Loop** | Operações I/O são assíncronas; bibliotecas devem expor Promises ou callbacks para não bloquear o loop. | Escolher APIs “Promise‑based” simplifica integração com `async/await`. |\n\n### Padrões de mercado consolidados  \n\n| Área | Padrão / Boas Práticas | Bibliotecas que o adotam |\n|------|------------------------|--------------------------|\n| **Transcodificação** | Utilizar FFmpeg como motor subjacente, evitando re‑implementação de codecs. | `fluent-ffmpeg`, `ffmpeg-static` |\n| **Leitura de metadados** | Parser de caixa‑de‑bits (Box) que suporte ID3v2.3/2.4 e extensões (APIC, USLT). | `music-metadata`, `node-id3` |\n| **Edição de tags** | Escrita segura (copy‑on‑write) para evitar corrupção de áudio. | `node-id3` (escrita direta), `music-metadata` (leitura‑apenas) |\n| **Manipulação de WAV** | Decodificação sem dependência de FFmpeg (para pipelines de áudio puro). | `wav-decoder` |\n| **Tipagem TypeScript** | Exportar tipos explícitos (`AudioMetadata`, `ID3Tag`, `FFmpegCommand`). | Todas as bibliotecas citadas oferecem tipos ou têm @types. |\n\n### Estado da arte (2024‑2025)  \n\n* **`fluent-ffmpeg`** – Wrapper maduro, mantém compatibilidade com FFmpeg ≥ 4.4; suporta “complex filter graphs” e “concat demuxer”.  \n* **`music-metadata`** – Parser de metadados “zero‑dependency” (exceto `iconv-lite`); cobre mais de 30 formatos, incluindo MP4, FLAC, OGG. Atualizado para ID3v2.4 “unsynchronisation”.  \n* **`node-id3`** – Focado exclusivamente em ID3v2; permite escrita “in‑place” com verificação de CRC. Não lida com outros containers.  \n* **`wav-decoder`** – Decodificador puro‑JS de arquivos WAV (PCM, IEEE‑float). Ideal para pré‑processamento de áudio antes da conversão para MP3.  \n\n---  \n\n## 2. Visão Geral das Bibliotecas  \n\n### 2.1 `fluent-ffmpeg`  \n\n* **Tipo**: Wrapper de CLI (dependência externa: binário FFmpeg).  \n* **Principais recursos**  \n  - Transcodificação (bitrate, sample‑rate, canais).  \n  - Aplicação de filtros (volume, equalizer, fade).  \n  - Concatenar múltiplos MP3 sem re‑encode (concat demuxer).  \n  - Suporte a streams (`Readable`, `Writable`).  \n* **API principal**  \n\n```ts\nimport ffmpeg from 'fluent-ffmpeg';\nimport ffmpegPath from 'ffmpeg-static';\n\n// Configura caminho do binário (necessário em ambientes serverless)\nffmpeg.setFfmpegPath(ffmpegPath!);\n\n// Exemplo: reduzir bitrate para 128k e normalizar volume\nexport async function transcodeTo128k(\n  input: string | NodeJS.ReadableStream,\n  output: string | NodeJS.WritableStream,\n): Promise<void> {\n  return new Promise((resolve, reject) => {\n    ffmpeg(input)\n      .audioBitrate(128)\n      .audioFilters('loudnorm')\n      .on('error', reject)\n      .on('end', resolve)\n      .save(output);\n  });\n}\n```\n\n* **Prós**  \n  - Cobertura de codecs praticamente universal.  \n  - Suporte a pipelines de streaming (ideal para upload direto ao S3).  \n* **Contras**  \n  - Necessita binário FFmpeg no runtime (peso ~30 MB).  \n  - Erros de FFmpeg são “string‑based”, exigindo parsing para tratamento fino.  \n\n---\n\n### 2.2 `music-metadata`  \n\n* **Tipo**: Parser puro‑JS (sem dependências nativas).  \n* **Principais recursos**  \n  - Leitura de metadados de **mais de 30 formatos** (MP3, MP4, FLAC, OGG, WAV, AIFF).  \n  - Suporte a **ID3v2.3/2.4**, **APIC** (embedded images), **USLT** (lyrics).  \n  - Operação **streaming** (`Readable`) para arquivos grandes.  \n* **API principal**  \n\n```ts\nimport { parseFile, IAudioMetadata } from 'music-metadata';\nimport { createReadStream } from 'fs';\n\nexport async function readMp3Metadata(path: string): Promise<IAudioMetadata> {\n  // Opção `duration: true` força cálculo de duração via FFprobe (opcional)\n  return await parseFile(path, { duration: true });\n}\n\n// Exemplo usando stream\nexport async function readMetadataFromStream(stream: NodeJS.ReadableStream) {\n  const metadata = await parseFile(stream, { mimeType: 'audio/mpeg' });\n  return metadata;\n}\n```\n\n* **Prós**  \n  - Zero binário externo → fácil de empacotar em containers Docker.  \n  - API baseada em Promises, tipada, e suporta leitura parcial (stream).  \n* **Contras**  \n  - **Somente leitura** – não permite escrita de tags.  \n  - Cálculo de duração pode ser impreciso sem FFprobe (opcional).  \n\n---\n\n### 2.3 `node-id3`  \n\n* **Tipo**: Leitura e escrita de tags ID3v2 (e v1) em MP3.  \n* **Principais recursos**  \n  - **Leitura** (`read`, `readSync`).  \n  - **Escrita** (`write`, `update`, `writeTag`).  \n  - Suporte a **APIC** (cobertura de imagens) e **USLT** (lyrics).  \n  - Operação **in‑place** (modifica arquivo sem criar cópia).  \n* **API principal**  \n\n```ts\nimport NodeID3 from 'node-id3';\nimport { readFileSync, writeFileSync } from 'fs';\n\n// Leitura síncrona (útil em scripts de migração)\nexport function getId3TagsSync(filePath: string) {\n  return NodeID3.read(filePath);\n}\n\n// Atualizar título e capa\nexport async function updateId3Tags(\n  filePath: string,\n  newTitle: string,\n  coverPath: string,\n) {\n  const tags = {\n    title: newTitle,\n    APIC: coverPath, // caminho para imagem JPEG/PNG\n  };\n  return new Promise<boolean>((resolve, reject) => {\n    NodeID3.update(tags, filePath, (err, buffer) => {\n      if (err) return reject(err);\n      // buffer contém o MP3 já atualizado (opcional salvar)\n      resolve(true);\n    });\n  });\n}\n```\n\n* **Prós**  \n  - API simples e focada em ID3 → menos superfície de erro.  \n  - Escrita ���in‑place” reduz I/O (útil para pipelines de alta taxa).  \n* **Contras**  \n  - Não lida com outros containers (ex.: FLAC, MP4).  \n  - Falha ao lidar com **ID3v2.4 unsynchronisation** em alguns arquivos corruptos.  \n\n---\n\n### 2.4 `wav-decoder`  \n\n* **Tipo**: Decodificador puro‑JS de arquivos WAV (PCM, IEEE‑float).  \n* **Principais recursos**  \n  - Converte WAV para **Float32Array** ou **Int16Array**.  \n  - Suporta **multi‑channel** e **bit‑depth** variáveis.  \n  - Não depende de FFmpeg – útil para pré‑processamento antes da conversão para MP3.  \n* **API principal**  \n\n```ts\nimport { decode } from 'wav-decoder';\nimport { readFile } from 'fs/promises';\n\nexport async function wavToFloat32Array(filePath: string) {\n  const buffer = await readFile(filePath);\n  const audioData = await decode(buffer);\n  // audioData.channelData é um array de Float32Array por canal\n  return audioData;\n}\n```\n\n* **Prós**  \n  - Zero dependência nativa → funciona em ambientes restritos (AWS Lambda).  \n  - Exposição de amostras brutas permite aplicar DSP customizado antes da transcodificação.  \n* **Contras**  \n  - Só aceita WAV – requer conversão prévia se a origem for MP3.  \n  - Não oferece manipulação de metadados (não aplicável a MP3).  \n\n---  \n\n## 3. Comparativo Técnico  \n\n| Feature | `fluent-ffmpeg` | `music-metadata` | `node-id3` | `wav-decoder` |\n|---------|----------------|------------------|------------|---------------|\n| **Leitura de metadados** | ✅ (via FFprobe) | ✅ (full) | ✅ (ID3 only) | ❌ |\n| **Escrita/edição de tags** | ❌ (via FFmpeg `-metadata`) | ❌ | ✅ (in‑place) | ❌ |\n| **Transcodificação** | ✅ (qualquer codec suportado) | ❌ | ❌ | ❌ |\n| **Processamento em stream** | ✅ (pipe) | ✅ (Readable) | ✅ (buffer) | ✅ (buffer) |\n| **Dependência nativa** | FFmpeg binário | Nenhuma | Nenhuma | Nenhuma |\n| **Tamanho do bundle** | ~30 MB (ffmpeg) | ~200 KB | ~150 KB | ~120 KB |\n| **Suporte a ID3v2.4 unsync** | ✅ (via FFmpeg) | ✅ (parser) | ⚠️ (algumas falhas) | ❌ |\n| **Tipo de licença** | LGPL‑2.1 | Apache‑2.0 | MIT | MIT |\n| **Tipagem TypeScript** | @types/fluent‑ffmpeg | built‑in | @types/node-id3 | @types/wav‑decoder |\n| **Uso recomendado** | Conversão, normalização, concatenação | Leitura de metadados multi‑formato | Edição rápida de tags ID3 | DSP pré‑processamento de WAV |\n\n### Trade‑offs críticos  \n\n| Trade‑off | Quando priorizar | Bibliotecas impactadas |\n|----------|------------------|------------------------|\n| **Peso do runtime** | Em ambientes serverless com limite de camada (≤ 50 MB) | Evitar `fluent-ffmpeg` ou usar `ffmpeg-static` + camada Lambda separada. |\n| **Precisão de duração** | Quando a duração exata é crítica (ex.: geração de waveform) | Preferir `ffprobe` via `fluent-ffmpeg` ou `music-metadata` com `duration: true`. |\n| **Velocidade de escrita** | Alta taxa de uploads simultâneos | `node-id3` (in‑place) > `fluent-ffmpeg` (re‑encode). |\n| **Portabilidade** | Deploy em containers minimalistas (Alpine) | Preferir bibliotecas sem dependência nativa (`music-metadata`, `node-id3`, `wav-decoder`). |\n| **Complexidade de filtros** | Necessidade de equalização, fade‑in/out, normalização | `fluent-ffmpeg` (filtergraph) é a única opção completa. |\n\n---  \n\n## 4. Gotchas e Armadilhas a Evitar  \n\n| Problema | Sintoma | Solução / Mitigação |\n|----------|---------|---------------------|\n| **FFmpeg ausente no PATH** | `Error: spawn ffmpeg ENOENT` | Embutir `ffmpeg-static` e chamar `ffmpeg.setFfmpegPath(...)`. |\n| **Metadados corrompidos (ID3v2.4 unsync)** | Tags vazias ou caracteres “�”. | Use `music-metadata` com `skipCovers: false` ou pré‑processar com `iconv-lite`. |\n| **Write‑lock de arquivo** | `EBUSY: resource busy or locked` ao usar `node-id3`. | Garantir que nenhum stream está aberto; usar `fs.promises.open(..., 'r+')`. |\n| **Buffer overflow em arquivos gigantes** | O processo trava ao ler arquivos > 500 MB com `music-metadata` sem streaming. | Sempre passar um `Readable` (e.g., `fs.createReadStream`) e definir `size` opcional. |\n| **Conversão de 24‑bit PCM para MP3** | Artefatos de áudio, bitrate inesperado. | Definir `audioCodec('libmp3lame')` e `audioBitrate(320)`; usar `-ar 44100` para downsample. |\n| **Perda de capa (APIC) ao re‑encode** | Imagem desaparece após `fluent-ffmpeg` transcode. | Copiar tags explicitamente: `-map_metadata 0` ou usar `node-id3` após transcode. |\n| **Problemas de licenciamento** | Uso comercial de FFmpeg pode requerer atenção a codecs patenteados. | Verificar necessidade de codecs “non‑free” (e.g., AAC) e usar alternativas open‑source quando possível. |\n| **Incompatibilidade de tipos** | TypeScript reclama de `any` ao usar callbacks de `node-id3`. | Instalar `@types/node-id3` e envolver chamadas em `Promise`. |\n\n---  \n\n## 5. Como Aplicar Neste Projeto (`teste_alfredo_22`)  \n\n### 5.1 Arquitetura de fluxo sugerida  \n\n```\n[Upload (multipart)] → Stream → [music-metadata] (leitura tags) \n                      → [node-id3] (edição de tags) \n                      → [fluent-ffmpeg] (transcode → 128k, normaliza\n\n---\n> 🧠 Documento gerado autonomamente pelo **Research Lab — AI Second Brain**.  \n> Contexto: `teste_alfredo_22` &middot; Data: 09/10/2026\n"
+    },
+    {
+      "id": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_02-audio-feature-extraction_md",
+      "path": "projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/knowledge/02-audio-feature-extraction.md",
+      "name": "02-audio-feature-extraction.md",
+      "title": "Extração de Características de Áudio",
+      "category": "projects",
+      "icon": "📘",
+      "size": 12316,
+      "mtime": 1791585503719.007,
+      "outgoingLinks": [],
+      "content": "---\ntopic: \"criar um mp3 inteligente\"\nsubtopic: \"Extração de características de áudio\"\nlayer: \"knowledge\"\ncreated: \"2026-10-09T22:38:23.718Z\"\nmodel: \"openai/gpt-oss-120b\"\n---\n\n# Extração de Características de Áudio  \n**Resumo Executivo** – Este documento descreve, de forma prática e comparativa, como extrair MFCC, espectrogramas, BPM, tonalidade e energia de arquivos MP3 dentro do ecossistema **Node.js/TypeScript** do projeto *teste_alfredo_22*. São abordadas três abordagens principais – **Meyda**, **Essentia.js** e **Librosa via python‑shell** – com código pronto‑para‑uso, análise de trade‑offs e um plano de implementação imediato.\n\n---  \n\n## 1. Fundamentos Conceituais  \n\n| Conceito | Definição | Por que importa para um “MP3 Inteligente” |\n|----------|-----------|-------------------------------------------|\n| **MFCC (Mel‑Frequency Cepstral Coefficients)** | Representação compacta da envoltória espectral, baseada na escala mel. | Captura timbre e textura; base para classificação de gênero, reconhecimento de fala e clustering. |\n| **Espectrograma** | Matriz tempo × frequência que mostra a energia em cada banda ao longo do tempo. | Visualização, detecção de eventos, entrada para redes convolucionais. |\n| **BPM (Beats Per Minute)** | Estimativa da taxa de batida (tempo). | Crucial para mixagem automática, sincronização de playlists e recomendação baseada em “energia”. |\n| **Tonalidade (Key / Pitch Class Profile)** | Identificação da tonalidade musical (ex.: C‑major, A‑minor). | Suporta transposição automática, geração de playlists harmônicas. |\n| **Energia** | Soma da energia do sinal em janelas ou a RMS (Root‑Mean‑Square). | Métrica de “intensidade” para filtragem por “high‑energy” ou “low‑energy”. |\n\n### 1.1 Estado da Arte  \n\n| Ano | Técnica / Algoritmo | Referência | Comentário |\n|-----|----------------------|------------|------------|\n| 1990 | **MFCC** (Davis & Mermelstein) | IEEE Trans. Acoust. Speech Signal Process. | Padrão de fato. |\n| 2006 | **Beat tracking** (Ellis) | *Beat Tracking by Dynamic Programming* | Base para estimativas de BPM modernas. |\n| 2015 | **Essentia** (Bogdanov et al.) | *Essentia: an Open‑Source Library for Audio and Music Analysis* | Biblioteca C++ com bindings JS; alta performance. |\n| 2018 | **Meyda** | *Meyda – Audio Feature Extraction Library for the Web* | Leve, 100% JS, ideal para Node/Browser. |\n| 2020+ | **Deep Learning** (CNNs on spectrogramas) | Vários papers (e.g., VGGish) | Complementa features clássicas. |\n\n---  \n\n## 2. Comparativo de Bibliotecas  \n\n| Critério | **Meyda** | **Essentia.js** | **Librosa (via python‑shell)** |\n|----------|-----------|-----------------|--------------------------------|\n| **Linguagem nativa** | JavaScript (pure) | C++ (via Emscripten → WebAssembly) | Python |\n| **Instalação** | `npm i meyda` | `npm i essentia.js` + `npm i @essentia/essentia` | `pip install librosa` + `npm i python-shell` |\n| **Cobertura de features** | MFCC, RMS, spectral centroid, chroma, tonal centroid, etc. | MFCC, BPM, tonal key, pitch, spectral contrast, high‑level descriptors (e.g., danceability). | MFCC, chroma, BPM, tonal key, spectral rolloff, tempogram, etc. |\n| **Performance** | Boa para arquivos < 5 min; CPU‑bound JS. | Excelente (WebAssembly ≈ C++ speed). | Melhor para batch‑processing (C‑libs). |\n| **Facilidade de uso em TS** | Tipos TS incluídos. | Tipos disponíveis via `@types/essentia.js` (community). | Necessita wrapper TS → `python-shell`. |\n| **Licença** | MIT | BSD‑3 (Essentia) + MIT (JS wrapper) | BSD‑3 (Librosa) |\n| **Limitações** | Não suporta BPM nativamente; requer cálculo manual. | Tamanho do bundle (~5 MB) se usado no browser. | Overhead de processo Python; gerenciamento de ambiente. |\n\n> **Recomendação rápida:**  \n> - **Prototipagem** → Meyda (menor dependência).  \n> - **Produção / Escala** → Essentia.js (performance + BPM).  \n> - **Análises avançadas / pesquisa** → Librosa (mais algoritmos, mas exige Python).  \n\n---  \n\n## 3. Implementação Prática (Node.js / TypeScript)\n\n### 3.1 Preparação do Ambiente  \n\n```bash\n# Node + TS\nnpm i --save-dev typescript ts-node @types/node\nnpm i meyda essentia.js @types/essentia.js python-shell\n\n# Python (para Librosa)\npython3 -m venv .venv\nsource .venv/bin/activate\npip install librosa numpy soundfile\n```\n\n> **Tip:** Crie um script `scripts/audio-env-setup.sh` que automatiza tudo, incluindo a criação do virtualenv.\n\n### 3.2 Leitura de MP3 → PCM (Float32Array)\n\nTodas as bibliotecas exigem áudio PCM (44.1 kHz, mono). Use **ffmpeg** para decodificar:\n\n```bash\n# Instale ffmpeg no CI (Ubuntu)\nsudo apt-get install -y ffmpeg\n```\n\n```ts\n// utils/audio.ts\nimport { execSync } from 'child_process';\nimport { readFileSync } from 'fs';\nimport { join } from 'path';\n\n/**\n * Converte MP3 → Float32Array (44.1kHz, mono)\n */\nexport function decodeMp3ToFloat32(mp3Path: string): Float32Array {\n  const wavPath = join('/tmp', `${Date.now()}.wav`);\n  execSync(`ffmpeg -y -i \"${mp3Path}\" -ar 44100 -ac 1 -f wav \"${wavPath}\"`);\n  const wavBuffer = readFileSync(wavPath);\n  // Remove WAV header (44 bytes) → raw PCM 16‑bit LE\n  const raw = wavBuffer.subarray(44);\n  const int16 = new Int16Array(raw.buffer, raw.byteOffset, raw.length / 2);\n  // Normaliza para [-1, 1]\n  const float32 = new Float32Array(int16.length);\n  for (let i = 0; i < int16.length; i++) {\n    float32[i] = int16[i] / 32768;\n  }\n  return float32;\n}\n```\n\n### 3.3 Extraindo MFCC e Energia com **Meyda**\n\n```ts\n// features/meydaExtractor.ts\nimport Meyda from 'meyda';\nimport { decodeMp3ToFloat32 } from '../utils/audio';\n\nexport interface AudioFeatures {\n  mfcc: number[];\n  rms: number;\n  spectralCentroid: number;\n  spectralFlatness: number;\n}\n\n/**\n * Calcula MFCC (13 coeffs) + energia RMS usando Meyda.\n */\nexport function extractMeydaFeatures(mp3Path: string): AudioFeatures {\n  const signal = decodeMp3ToFloat32(mp3Path);\n  const frameSize = 2048;\n  const hopSize = 512;\n\n  // Acumula médias ponderadas\n  const agg: Partial<AudioFeatures> = {\n    mfcc: Array(13).fill(0),\n    rms: 0,\n    spectralCentroid: 0,\n    spectralFlatness: 0,\n  };\n  let frames = 0;\n\n  for (let i = 0; i + frameSize <= signal.length; i += hopSize) {\n    const frame = signal.subarray(i, i + frameSize);\n    const feats = Meyda.extract(\n      ['mfcc', 'rms', 'spectralCentroid', 'spectralFlatness'],\n      frame,\n      {\n        sampleRate: 44100,\n        bufferSize: frameSize,\n        melBands: 40,\n        numberOfMFCCCoefficients: 13,\n      },\n    ) as any; // Meyda typings are loose\n\n    // Média incremental\n    agg.mfcc = agg.mfcc!.map((v, idx) => v + feats.mfcc[idx] / (frames + 1));\n    agg.rms = (agg.rms! * frames + feats.rms) / (frames + 1);\n    agg.spectralCentroid = (agg.spectralCentroid! * frames + feats.spectralCentroid) / (frames + 1);\n    agg.spectralFlatness = (agg.spectralFlatness! * frames + feats.spectralFlatness) / (frames + 1);\n    frames++;\n  }\n\n  return agg as AudioFeatures;\n}\n```\n\n### 3.4 BPM e Tonalidade com **Essentia.js**\n\n```ts\n// features/essentiaExtractor.ts\nimport essentia from 'essentia.js';\nimport { decodeMp3ToFloat32 } from '../utils/audio';\n\nexport interface RhythmKeyFeatures {\n  bpm: number;\n  key: string; // e.g., \"C major\"\n  mode: 'major' | 'minor';\n}\n\n/**\n * Usa o algoritmo de beat tracking e tonal key detection da Essentia.\n */\nexport async function extractEssentiaFeatures(mp3Path: string): Promise<RhythmKeyFeatures> {\n  const signal = decodeMp3ToFloat32(mp3Path);\n  const algo = await essentia();\n\n  // 1. Beat tracking (BPM)\n  const beatTracker = algo.BpmEstimator({frameSize: 1024, hopSize: 512});\n  const bpmResult = beatTracker(signal);\n  const bpm = bpmResult.bpm;\n\n  // 2. Pitch class profile → tonal key\n  const tonalExtractor = algo.KeyExtractor();\n  const keyResult = tonalExtractor(signal);\n  const key = `${keyResult.key} ${keyResult.scale}`; // e.g., \"C major\"\n  const mode = keyResult.scale.toLowerCase() as 'major' | 'minor';\n\n  return { bpm, key, mode };\n}\n```\n\n### 3.5 Librosa via **python-shell** (quando precisar de features avançadas)\n\n```ts\n# scripts/librosa_extractor.py\nimport sys, json, librosa, numpy as np\n\ndef extract(path):\n    y, sr = librosa.load(path, sr=44100, mono=True)\n    # MFCC\n    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13).mean(axis=1).tolist()\n    # BPM\n    tempo, _ = librosa.beat.beat_track(y=y, sr=sr)\n    # Tonal key (using chroma + Krumhansl)\n    chroma = librosa.feature.chroma_cqt(y=y, sr=sr)\n    key = librosa.feature.tonnetz(y=y, sr=sr).mean(axis=1).tolist()\n    # Energy (RMS)\n    rms = np.mean(librosa.feature.rms(y=y))\n\n    return {\n        \"mfcc\": mfcc,\n        \"bpm\": float(tempo),\n        \"key\": key,\n        \"rms\": float(rms)\n    }\n\nif __name__ == \"__main__\":\n    path = sys.argv[1]\n    print(json.dumps(extract(path)))\n```\n\n```ts\n// features/librosaExtractor.ts\nimport { PythonShell } from 'python-shell';\nimport path from 'path';\n\nexport interface LibrosaFeatures {\n  mfcc: number[];\n  bpm: number;\n  key: number[]; // tonal vector (tonnetz)\n  rms: number;\n}\n\n/**\n * Executa o script Python e devolve as features.\n */\nexport function extractLibrosaFeatures(mp3Path: string): Promise<LibrosaFeatures> {\n  return new Promise((resolve, reject) => {\n    const scriptPath = path.resolve(__dirname, '../../scripts/librosa_extractor.py');\n    PythonShell.run(\n      scriptPath,\n      { args: [mp3Path], pythonOptions: ['-u'] },\n      (err, results) => {\n        if (err) return reject(err);\n        try {\n          const data = JSON.parse(results?.[0] ?? '{}');\n          resolve(data as LibrosaFeatures);\n        } catch (parseErr) {\n          reject(parseErr);\n        }\n      },\n    );\n  });\n}\n```\n\n### 3.6 Unificando as Features\n\n```ts\n// features/audioFeaturePipeline.ts\nimport { extractMeydaFeatures } from './meydaExtractor';\nimport { extractEssentiaFeatures } from './essentiaExtractor';\nimport { extractLibrosaFeatures } from './librosaExtractor';\n\nexport interface UnifiedAudioFeatures {\n  mfcc: number[];\n  rms: number;\n  spectralCentroid: number;\n  spectralFlatness: number;\n  bpm: number;\n  key: string;\n  mode: 'major' | 'minor';\n  // opcional: tonnetz (de Librosa) …\n}\n\n/**\n * Orquestra a extração usando a estratégia de fallback:\n * 1️⃣ Essentia (rápida + BPM)  \n * 2️⃣ Meyda (MFCC + energia)  \n * 3️⃣ Librosa (caso precise de recursos avançados)\n */\nexport async function extractAllFeatures(mp3Path: string): Promise<UnifiedAudioFeatures> {\n  const [meyda, essentia] = [extractMeydaFeatures(mp3Path), extractEssentiaFeatures(mp3Path)];\n  const { bpm, key, mode } = await essentia;\n  const { mfcc, rms, spectralCentroid, spectralFlatness } = meyda;\n\n  return {\n    mfcc,\n    rms,\n    spectralCentroid,\n    spectralFlatness,\n    bpm,\n    key,\n    mode,\n  };\n}\n```\n\n---  \n\n## 4. Trade‑offs e Armadilhas a Evitar  \n\n| Problema | Causa | Mitigação |\n|----------|-------|-----------|\n| **Perda de qualidade ao decodificar MP3** | `ffmpeg` converte para 16‑bit PCM; ruído de quantização pode afetar MFCC. | Use `-acodec pcm_f32le` para gerar Float32 direto (requere libav ≥ 58). |\n| **Desbalanceamento de janelas** | Frame size incompatível com taxa de amostragem (ex.: 1024 @ 44.1 kHz ≈ 23 ms). | Pad ou truncar o último frame; escolha `frameSize = 2048` para maior resolução de baixa frequência. |\n| **BPM flutuante em músicas com variação de tempo** | Algoritmos de beat tracking assumem tempo constante. | Combine `Essentia` + `Librosa` (tempogram) e escolha a mediana; ou use “beat‑segment” para detectar mudanças. |\n| **Conflito de dependências nativas** | `essentia.js` requer WebAssembly + `node‑gyp` para compilação opcional. | Fixar versão `@essentia/essentia@2.1.0` que já inclui pre‑compiled WASM. |\n| **Latência de spawn Python** | Cada chamada ao `python-shell` cria um novo processo. | Mantenha um **pool** de processos (ex.: `generic-pool`) ou use `child_process.fork` com comunicação via IPC. |\n| **Consistência de escala** | MFCCs são sensíveis ao ganho de entrada.\n\n---\n> 🧠 Documento gerado autonomamente pelo **Research Lab — AI Second Brain**.  \n> Contexto: `teste_alfredo_22` &middot; Data: 09/10/2026\n"
+    },
+    {
+      "id": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_03-ai-integration-audio_md",
+      "path": "projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/knowledge/03-ai-integration-audio.md",
+      "name": "03-ai-integration-audio.md",
+      "title": "Integração de IA para Classificação e Transcrição de MP3 Inteligente",
+      "category": "projects",
+      "icon": "📘",
+      "size": 12688,
+      "mtime": 1791585559103.4258,
+      "outgoingLinks": [],
+      "content": "---\ntopic: \"criar um mp3 inteligente\"\nsubtopic: \"Integração de IA para classificação e transcrição\"\nlayer: \"knowledge\"\ncreated: \"2026-10-09T22:39:19.101Z\"\nmodel: \"openai/gpt-oss-120b\"\n---\n\n# Integração de IA para Classificação e Transcrição de MP3 Inteligente  \n*Resumo executivo*: Este documento compara abordagens **locais** (TensorFlow.js, ONNX Runtime) e **serviços externos** (Google Speech‑to‑Text, Azure Cognitive Services, OpenAI Whisper) para duas tarefas críticas – **classificação de atributos musicais** (gênero, humor, instrumentação) e **geração de transcrições** – e fornece diretrizes práticas de implementação em um stack **Node.js / TypeScript**.\n\n---\n\n## 1. Fundamentos Conceituais  \n\n| Conceito | Definição | Relevância para MP3 Inteligente |\n|----------|-----------|---------------------------------|\n| **Reconhecimento de Áudio (Audio Classification)** | Modelo que mapeia um segmento de áudio a rótulos semânticos (ex.: *rock*, *sad*, *acoustic guitar*). | Permite organizar, filtrar e recomendar faixas automaticamente. |\n| **Reconhecimento de Fala (Speech‑to‑Text)** | Conversão de fala humana em texto escrito, tipicamente usando modelos de linguagem acústica + linguagem. | Gera legendas, permite buscas por conteúdo falado e alimenta downstream NLP. |\n| **Transfer Learning** | Re‑uso de camadas pré‑treinadas (ex.: VGGish, YAMNet) e ajuste fino (fine‑tuning) para domínio específico. | Reduz custo de treinamento e melhora acurácia em datasets pequenos. |\n| **Edge Inference** | Execução de inferência **localmente** (no cliente ou servidor próprio) sem chamadas de rede. | Minimiza latência, garante privacidade e controla custos operacionais. |\n| **API‑first Speech Services** | Serviços gerenciados que expõem endpoints REST/GRPC para STT e classificação. | Oferecem escalabilidade automática, atualizações de modelo e SLAs de disponibilidade. |\n\n### 1.1 Estado da Arte (2024‑2025)\n\n| Área | Modelo/Serviço | Arquitetura | Métricas de Referência* |\n|------|----------------|-------------|------------------------|\n| **Classificação de Áudio** | **YAMNet (TF‑Hub)** – 521 classes, MobileNet‑V1 backbone | TensorFlow.js (Web/Node) | mAP ≈ 0.71 (AudioSet) |\n|  | **OpenL3** – embeddings de 512‑dim, SOTA em *music tagging* | ONNX (CPU/GPU) | ROC‑AUC ≈ 0.88 (GTZAN) |\n|  | **HTSAT‑Base** – transformer‑based, 527 classes | PyTorch → ONNX → Runtime | mAP ≈ 0.78 |\n| **Transcrição (STT)** | **Whisper (large‑v2)** – 1550 M parâmetros, multilingue | ONNX / GGML (CPU/GPU) | WER ≈ 3.5 % (English) |\n|  | **Google Speech‑to‑Text** – modelo híbrido RNN‑Transducer | Cloud API (REST) | WER ≈ 4.2 % (real‑time) |\n|  | **Azure Speech Service** – Custom Speech + Neural | Cloud API (REST/WS) | WER ≈ 4.0 % (custom) |\n|  | **OpenAI Whisper API** – modelo *medium* via HTTP | SaaS (OpenAI) | WER ≈ 4.8 % (English) |\n\n\\* Métricas extraídas de benchmarks públicos (AudioSet, GTZAN, LibriSpeech).  \n\n---\n\n## 2. Comparativo Técnico  \n\n### 2.1 Modelos Locais  \n\n| Critério | TensorFlow.js | ONNX Runtime |\n|----------|---------------|--------------|\n| **Suporte a Node.js** | ✅ `@tensorflow/tfjs-node` (CPU) <br> ✅ `@tensorflow/tfjs-node-gpu` (CUDA) | ✅ `onnxruntime-node` (CPU) <br> ✅ `onnxruntime-node-gpu` (CUDA) |\n| **Tamanho do Modelo** | YAMNet ≈ 30 MB <br> HTSAT‑Base ≈ 150 MB | OpenL3 ≈ 90 MB <br> Whisper‑base ≈ 1 GB (quantizado) |\n| **Latência (CPU)** | 120 ms / 10 s áudio (YAMNet) | 80 ms / 10 s áudio (OpenL3) |\n| **Latência (GPU)** | 30 ms / 10 s (CUDA) | 20 ms / 10 s (CUDA) |\n| **Facilidade de Deploy** | NPM, zero‑native deps (except optional GPU) | Precisa de runtime nativo (C++), mas bem documentado |\n| **Escalabilidade** | Escala horizontal via containers | Escala horizontal, suporte a batch inference |\n| **Privacidade** | 100 % local | 100 % local |\n| **Custo Operacional** | Infraestrutura própria (EC2, Lambda) | Infra própria ou uso de *ONNX Runtime Server* |\n| **Atualizações de Modelo** | Manual (download + replace) | Manual, mas pode usar *model zoo* automatizado |\n| **Licença** | Apache‑2.0 (TF) | MIT (ONNX) |\n\n#### 2.1.1 Exemplo: Carregando YAMNet em Node.js (TypeScript)\n\n```ts\n// src/ai/audioClassifier.ts\nimport * as tf from '@tensorflow/tfjs-node';\nimport fetch from 'node-fetch';\nimport path from 'path';\nimport fs from 'fs/promises';\n\n// URL pública do modelo YAMNet no TF Hub (versão .tar.gz)\nconst YAMNET_URL = 'https://tfhub.dev/google/yamnet/1?tf-hub-format=compressed';\n\n// Função utilitária para baixar e extrair modelo (executa uma única vez)\nasync function downloadModel(dest: string): Promise<string> {\n  const outPath = path.resolve(dest, 'yamnet.tar.gz');\n  if (await fileExists(outPath)) return outPath;\n  const res = await fetch(YAMNET_URL);\n  if (!res.ok) throw new Error('Failed to download YAMNet');\n  const buffer = await res.buffer();\n  await fs.writeFile(outPath, buffer);\n  // extração simplificada (requere tar)\n  await exec(`tar -xzf ${outPath} -C ${dest}`);\n  return path.join(dest, 'saved_model');\n}\n\n// Carrega o modelo e devolve uma função de classificação\nexport async function loadYamnetModel(modelDir: string) {\n  const modelPath = await downloadModel(modelDir);\n  const model = await tf.loadGraphModel(`file://${modelPath}/model.json`);\n  const classMap = await fetchClassMap(); // JSON com 521 labels\n  return async (wavBuffer: Buffer): Promise<string[]> => {\n    // Conversão PCM 16kHz mono (TensorFlow expects float32)\n    const audioTensor = tf.node.decodeWav(wavBuffer, 16000).audio.squeeze();\n    const scores = model.execute({ 'audio': audioTensor }) as tf.Tensor;\n    const topIndices = tf.topk(scores, 5).indices.arraySync() as number[];\n    return topIndices.map(i => classMap[i]);\n  };\n}\n```\n\n> **Dica**: Para reduzir uso de memória, carregue o modelo **uma única vez** (singleton) e reutilize a sessão `tf.GraphModel`.\n\n### 2.2 Serviços Externos  \n\n| Serviço | Modelo Base | Preço (USD) | Latência típica | Suporte a idioma | Customização | Segurança (TLS, IAM) |\n|---------|-------------|------------|----------------|------------------|--------------|----------------------|\n| **Google Speech‑to‑Text** | RNN‑Transducer + WaveNet | $0.006 / min (standard) | 300 ms + network | 120+ | *Custom Speech* (adaptar vocabulário) | IAM + VPC Service Controls |\n| **Azure Speech Service** | Deep Neural Network (DNN) | $1 / hour (standard) | 250 ms + network | 85+ | *Custom Speech* (fine‑tune) | Azure AD + Private Link |\n| **OpenAI Whisper API** | Transformer (large‑v2) | $0.006 / min (audio) | 500 ms + network | 96+ | Nenhuma (modelo fixo) | API keys + audit logs |\n| **Amazon Transcribe** (não solicitado, mas incluído para referência) | RNN‑Transducer | $0.0004 / sec | 400 ms + network | 31+ | *Custom Vocabulary* | IAM + VPC Endpoint |\n\n#### 2.2.1 Exemplo: Consumo do Google Speech‑to‑Text via gRPC (Node.js)\n\n```ts\n// src/ai/googleStt.ts\nimport { SpeechClient } from '@google-cloud/speech';\nimport { Readable } from 'stream';\n\nconst client = new SpeechClient({\n  projectId: process.env.GCP_PROJECT_ID,\n  keyFilename: process.env.GCP_KEYFILE,\n});\n\nexport async function transcribeGcs(gcsUri: string): Promise<string> {\n  const request = {\n    config: {\n      encoding: 'LINEAR16',\n      sampleRateHertz: 16000,\n      languageCode: 'pt-BR',\n      enableAutomaticPunctuation: true,\n    },\n    audio: { uri: gcsUri },\n  };\n  const [operation] = await client.longRunningRecognize(request);\n  const [response] = await operation.promise();\n  return response.results.map(r => r.alternatives[0].transcript).join(' ');\n}\n```\n\n> **Observação**: Para arquivos locais, use `client.recognize` com streaming `Readable.from(buffer)`.\n\n### 2.3 Trade‑offs Principais  \n\n| Dimensão | Modelo Local | Serviço Externo |\n|----------|--------------|-----------------|\n| **Latência** | < 50 ms (GPU) – **zero rede** | 200‑600 ms + tempo de rede |\n| **Custo** | Infra (EC2, Lambda) – custo fixo; escalabilidade depende de provisionamento | Pay‑as‑you‑go; pode ser barato em volume baixo, caro em alta escala |\n| **Privacidade / Conformidade** | Dados nunca deixam o perímetro | Necessário criptografia TLS, auditoria de consentimento |\n| **Manutenção** | Atualizações de modelo manuais; necessidade de monitoramento de drift | Atualizações automáticas, SLAs de disponibilidade |\n| **Escalabilidade** | Precisa de orquestração (K8s, autoscaling) | Escala automática da nuvem |\n| **Qualidade** | Depende de hardware; modelos quantizados podem degradar | Modelos de última geração mantidos pelos provedores |\n| **Customização** | Fine‑tuning livre (requere dataset) | *Custom Speech* (Azure/Google) – menos flexível, mas rápido de provisionar |\n\n---\n\n## 3. Padrões de Projeto Recomendados  \n\n| Padrão | Quando usar | Como implementar (Node/TS) |\n|--------|--------------|----------------------------|\n| **Adapter Pattern** (IA → Core) | Abstrair diferenças entre APIs locais e externas | Crie interfaces `IAudioClassifier` e `ITranscriber` e implemente adaptadores `TensorflowClassifier`, `OnnxClassifier`, `GoogleSttAdapter`, etc. |\n| **Circuit Breaker** | Serviços externos podem falhar ou latência alta | Use `opossum` ou `cockatiel` para envolver chamadas HTTP/gRPC. |\n| **Bulkhead / Rate Limiting** | Evitar saturação de recursos locais ou quotas de API | Limite concorrência com `p-limit` ou `Bottleneck`. |\n| **Feature Flag** | Alternar entre modelo local e SaaS por ambiente ou carga | `unleash-client-node` ou `launchdarkly-node-server-sdk`. |\n| **Cache‑Aside** | Cache de transcrições ou rótulos já processados | Redis (`ioredis`) com chave `hash(file, modelVersion)`. |\n| **Observability** | Métricas de latência, erro, uso de GPU/CPU | Prometheus + Grafana; exportar `process_metrics` e `custom_metrics`. |\n\n### 3.1 Arquitetura de Pipeline (simplificada)\n\n```mermaid\nflowchart TD\n    A[Upload MP3] --> B[Extract PCM 16kHz]\n    B --> C{Classificação}\n    C -->|Local| D[TensorFlow.js / ONNX Runtime]\n    C -->|SaaS| E[Google / Azure / Whisper]\n    D --> F[Persistir Rótulos]\n    E --> F\n    B --> G{Transcrição}\n    G -->|Local| H[Whisper ONNX]\n    G -->|SaaS| I[Google Speech‑to‑Text]\n    H --> J[Persistir Texto]\n    I --> J\n    F & J --> K[Search Index (Elastic/Meilisearch)]\n```\n\n---\n\n## 4. Trade‑offs e Armadilhas a Evitar  \n\n| Problema | Causa | Mitigação |\n|----------|-------|-----------|\n| **Drift de modelo** | Dados de áudio mudam (ex.: novos gêneros) | Re‑treinar periodicamente; monitorar *confidence* e criar alertas. |\n| **Sobrecarga de GPU** | Inferência em lote sem controle de concorrência | Use `p-limit` para limitar jobs simultâneos; aloque *GPU quota* no Cloud. |\n| **Limite de taxa da API** | Exceder quota de Google/Azure → 429 | Implementar *retry with back‑off* + *circuit breaker*. |\n| **Problemas de codificação** | Arquivos MP3 com taxa de amostragem diferente de 16 kHz | Normalizar com `ffmpeg -ar 16000 -ac 1`. |\n| **Vazamento de memória** | TensorFlow.js mantém tensores não liberados | Chame `tensor.dispose()` ou use `tf.tidy`. |\n| **Incompatibilidade de formato** | ONNX Runtime não aceita *float64* | Converta para `Float32Array` antes de inferir. |\n| **Privacidade** | Envio de áudio sensível para SaaS | Criptografe em repouso; registre consentimento; use VPC‑SC ou Private Link. |\n| **Custo inesperado** | Uso de Whisper API em alta escala | Defina *budget alerts* no Cloud Billing; prefira modelo local quando volume > X GB/dia. |\n| **Latência de carregamento de modelo** | Modelo grande carregado a cada request | Singleton + warm‑up; use *lazy loading* somente na primeira invocação. |\n\n---\n\n## 5. Como Aplicar Neste Projeto (Node.js / TypeScript)\n\n1. **Definir Interfaces de IA**  \n\n```ts\n// src/ai/types.ts\nexport interface IAudioClassifier {\n  classify(buffer: Buffer): Promise<string[]>; // top‑N labels\n}\nexport interface ITranscriber {\n  transcribe(buffer: Buffer): Promise<string>;\n}\n```\n\n2. **Implementar Adaptadores**  \n\n| Adaptador | Implementação | Quando usar |\n|----------|---------------|-------------|\n| `TensorflowYamnetClassifier` | Usa `@tensorflow/tfjs-node` (exemplo acima) | Quando a prioridade é **privacidade** e **custo fixo**. |\n\n\n---\n> 🧠 Documento gerado autonomamente pelo **Research Lab — AI Second Brain**.  \n> Contexto: `teste_alfredo_22` &middot; Data: 09/10/2026\n"
+    },
+    {
+      "id": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_04-metadata-enrichment_md",
+      "path": "projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/knowledge/04-metadata-enrichment.md",
+      "name": "04-metadata-enrichment.md",
+      "title": "Enriquecimento Automático de Metadados",
+      "category": "projects",
+      "icon": "📘",
+      "size": 13185,
+      "mtime": 1791585572856.3794,
+      "outgoingLinks": [],
+      "content": "---\ntopic: \"criar um mp3 inteligente\"\nsubtopic: \"Enriquecimento automático de metadados\"\nlayer: \"knowledge\"\ncreated: \"2026-10-09T22:39:32.853Z\"\nmodel: \"openai/gpt-oss-120b\"\n---\n\n# Enriquecimento Automático de Metadados  \n*Preenchimento inteligente de tags ID3 e capas de álbum usando APIs públicas.*\n\n---\n\n## Resumo Executivo\nEste documento descreve como integrar, de forma robusta e escalável, as APIs públicas **MusicBrainz**, **Discogs**, **Last.fm**, **Cover Art Archive** e **Unsplash** para enriquecer arquivos MP3 com metadados ID3 completos e capas de álbum. São apresentados padrões de mercado, comparativo de serviços, arquitetura recomendada, exemplos de código TypeScript/Node.js e um guia de implementação para o projeto **teste_alfredo_22**.\n\n---\n\n## 1. Fundamentos Conceituais  \n\n| Conceito | Definição | Por que importa para MP3 inteligente |\n|----------|-----------|---------------------------------------|\n| **Metadados ID3** | Estrutura de tags (v1, v2.2‑v2.4) embutida em arquivos MP3 que descreve título, artista, álbum, ano, gênero, etc. | Permite buscas, organização e reprodução correta em players e serviços de streaming. |\n| **Cover Art** | Imagem (JPEG/PNG) embutida ou vinculada ao arquivo MP3 (ID3 APIC). | Enriquecer a experiência visual e facilita reconhecimento por IA. |\n| **Source of Truth (SoT)** | Repositório confiável que contém metadados canônicos (ex.: MusicBrainz). | Garante consistência entre arquivos e evita duplicidade de informação. |\n| **Enriquecimento (Enrichment)** | Processo de buscar, validar e aplicar metadados ausentes ou incompletos. | Automatiza a curadoria, reduz esforço manual e melhora a qualidade dos dados. |\n| **Rate‑Limiting & Throttling** | Controle de chamadas a APIs externas para respeitar limites de uso. | Evita bloqueios, garante disponibilidade e reduz custos. |\n| **Cache de Respostas** | Armazenamento temporário (Redis, in‑memory) de resultados de API. | Diminui latência, reduz chamadas redundantes e protege contra limites de taxa. |\n\n### 1.1 Padrões de Mercado Consolidado  \n\n| Padrão | Onde se aplica | Implementação típica |\n|--------|----------------|----------------------|\n| **ID3v2.4** | Tags avançadas (texto UTF‑8, múltiplas imagens). | Bibliotecas `node-id3`, `music-metadata`. |\n| **MusicBrainz Recording MBID** | Identificador único de gravação. | Usado como chave de cache e para deduplicação. |\n| **Discogs Release ID** | Referência de edição física/digital. | Útil para obter informações de selo, formato, catálogo. |\n| **Last.fm Scrobble API** | Dados de popularidade e tags de usuário. | Complementa metadados com “tags de gênero” e “playcount”. |\n| **Open Graph / OEmbed** | Metadados de imagens externas (Unsplash). | Facilita extração de URLs de alta resolução. |\n\n### 1.2 Estado da Arte (2024‑2025)  \n\n| Tecnologia | Uso atual | Observação |\n|------------|-----------|------------|\n| **MusicBrainz** | Base de dados colaborativa, API REST + GraphQL (beta). | Excelente cobertura, mas requer desambiguação cuidadosa. |\n| **Discogs** | API rica em informações de lançamentos e imagens de alta qualidade. | Limite de 60 req/min (OAuth) – necessidade de token e cache. |\n| **Last.fm** | Tags de comunidade e métricas de popularidade. | Limite de 5 req/s; requer API‑key. |\n| **Cover Art Archive** | Servidor oficial de capas para MusicBrainz. | Respeita licenças CC‑0/CC‑BY‑SA; alta disponibilidade. |\n| **Unsplash** | Imagens genéricas de alta resolução (não específicas de álbum). | Ideal como fallback quando capa oficial não está disponível. |\n| **AI‑based Taggers** (e.g., *AcoustID*, *Audd.io*) | Identificação por fingerprint + sugestão de metadados. | Complementam APIs públicas quando o MBID não existe. |\n\n---\n\n## 2. Comparativo de APIs Públicas  \n\n| API | Dados Disponíveis | Formato de Resposta | Limite de Taxa | Autenticação | Licença/Uso |\n|-----|-------------------|---------------------|----------------|--------------|-------------|\n| **MusicBrainz** | MBID, título, artista, álbum, data, gênero, relações (discogs, last.fm), gravações, links de capa. | JSON (REST) / GraphQL (beta) | 1 req/s (IP) – 5 req/s (token) | Token opcional (User‑Agent) | CC0 – livre uso, atribuição opcional. |\n| **Discogs** | Release ID, título, artistas, selo, catálogo, imagens, formatos, tracklist. | JSON | 60 req/min (OAuth) | OAuth 1.0a + API‑key | Licença “Discogs API Terms” – uso não‑comercial permitido. |\n| **Last.fm** | Tags de gênero, playcount, listeners, similar artists. | XML/JSON | 5 req/s | API‑key | Licença “Last.fm API Terms” – requer atribuição. |\n| **Cover Art Archive** | Imagens de capa (front, back, booklet). | JPEG/PNG (direct URL) | Ilimitado (rate‑limited por IP) | Nenhuma | CC0/CC‑BY‑SA – livre uso. |\n| **Unsplash** | Imagens genéricas (artwork, mood). | JSON (URLs) | 50 req/h (gratuito) | Access‑key | Licença Unsplash – livre uso comercial, atribuição opcional. |\n\n### 2.1 Pontos de Decisão\n\n| Critério | MusicBrainz | Discogs | Last.fm | Cover Art Archive | Unsplash |\n|----------|-------------|---------|---------|-------------------|----------|\n| **Precisão de dados oficiais** | ★★★★★ | ★★★★☆ | ★★★☆☆ | ★★★★★ (capa oficial) | ★★☆☆☆ (genérica) |\n| **Cobertura global** | ★★★★★ | ★★★★☆ | ★★★☆☆ | ★★★★★ | ★★★★☆ |\n| **Facilidade de integração** | ★★★★☆ (REST) | ★★★☆☆ (OAuth) | ★★★★☆ (API‑key) | ★★★★★ (URL direto) | ★★★★★ (API simples) |\n| **Limite de taxa** | ★★★★☆ (gerenciável) | ★★☆☆☆ (estrito) | ★★★★☆ | ★★★★★ | ★★☆☆☆ (gratuito) |\n| **Custo** | Gratuito | Gratuito (uso não‑comercial) | Gratuito | Gratuito | Gratuito (limite) |\n\n---\n\n## 3. Arquitetura Recomendada  \n\n### 3.1 Visão de Alto Nível  \n\n```\n+-------------------+          +-------------------+          +-------------------+\n|  MP3 Input Queue  |  -->    |  Enrichment Worker|  -->    |  MP3 Output Store |\n+-------------------+          +-------------------+          +-------------------+\n          |                               |\n          |                               v\n          |                     +-------------------+\n          |                     |  Metadata Service |\n          |                     +-------------------+\n          |                               |\n          |            +------------------+------------------+\n          |            |                                     |\n          v            v                                     v\n+----------------+ +----------------+               +-------------------+\n|  MusicBrainz   | |   Discogs API  |               |   Cover Art API   |\n+----------------+ +----------------+               +-------------------+\n          |            |                                     |\n          +------------+-------------------------------------+\n                                   |\n                                   v\n                         +-------------------+\n                         |   Cache (Redis)   |\n                         +-------------------+\n```\n\n* **MP3 Input Queue** – `BullMQ` ou `RabbitMQ` recebe arquivos a serem processados.  \n* **Enrichment Worker** – Serviço Node.js/TS que consome a fila, orquestra chamadas às APIs e grava resultados.  \n* **Metadata Service** – Camada de domínio que encapsula lógica de busca, desambiguação e merge de metadados.  \n* **Cache** – Redis (TTL 24 h) para armazenar respostas de API por MBID/ReleaseID.  \n* **MP3 Output Store** – Bucket S3 ou sistema de arquivos onde o MP3 final com tags e capa é salvo.\n\n### 3.2 Fluxo de Enriquecimento  \n\n1. **Leitura** – `music-metadata` extrai tags existentes e gera um *fingerprint* (AcoustID).  \n2. **Identificação** – Se houver MBID → usa‑se como chave; caso contrário, consulta *AcoustID* → obtém possíveis MBIDs.  \n3. **Busca paralela** – Dispara requisições **concurrentes** (max 5) a MusicBrainz, Discogs e Last.fm.  \n4. **Cache lookup** – Verifica Redis antes de chamar a API.  \n5. **Merge** – Aplica regras de prioridade (MusicBrainz > Discogs > Last.fm).  \n6. **Capa** – Tenta `Cover Art Archive` (usando MBID). Se falhar, fallback para `Discogs` → `Unsplash`.  \n7. **Validação** – Verifica comprimento, codificação UTF‑8, e conformidade ID3v2.4.  \n8. **Write‑back** – Usa `node-id3` para gravar tags + APIC (capa).  \n9. **Persistência** – Salva MP3 enriquecido e atualiza registro de status na fila.\n\n### 3.3 Diagrama de Sequência (simplificado)\n\n```mermaid\nsequenceDiagram\n    participant Queue as MP3 Queue\n    participant Worker as Enrichment Worker\n    participant Service as Metadata Service\n    participant Cache as Redis\n    participant MB as MusicBrainz API\n    participant DC as Discogs API\n    participant LF as Last.fm API\n    participant CA as Cover Art Archive\n    participant US as Unsplash API\n    participant FS as File System\n\n    Queue->>Worker: fetch MP3 path\n    Worker->>Service: extract existing tags\n    Service->>Cache: get(MBID)\n    alt cache miss\n        Service->>MB: GET /recording/{mbid}\n        Service->>DC: GET /release/{id}\n        Service->>LF: GET /track.getInfo\n        Service->>Cache: set(key, response)\n    end\n    Service->>CA: GET /cover/{mbid}\n    alt cover not found\n        Service->>DC: GET release images\n        alt still none\n            Service->>US: search(album+artist)\n        end\n    end\n    Service->>FS: write ID3 + APIC\n    Worker->>Queue: acknowledge\n```\n\n---\n\n## 4. Padrões de Implementação (Node.js / TypeScript)\n\n### 4.1 Estrutura de Pastas\n\n```\nsrc/\n├─ api/\n│   ├─ musicbrainz.ts\n│   ├─ discogs.ts\n│   ├─ lastfm.ts\n│   ├─ coverArt.ts\n│   └─ unsplash.ts\n├─ domain/\n│   ├─ metadataEnricher.ts\n│   └─ tagMerger.ts\n├─ infra/\n│   ├─ cache.ts          # Redis wrapper\n│   └─ queue.ts          # BullMQ config\n├─ utils/\n│   ├─ fingerprint.ts   # AcoustID helper\n│   └─ id3Writer.ts      # node-id3 wrapper\n└─ worker.ts\n```\n\n### 4.2 Exemplo de Cliente MusicBrainz (Axios + Retry)\n\n```ts\n// src/api/musicbrainz.ts\nimport axios, { AxiosInstance } from 'axios';\nimport { rateLimit } from 'axios-rate-limit';\nimport { Cache } from '../infra/cache';\n\nexport interface Recording {\n  id: string;\n  title: string;\n  length: number;\n  artist_credit: { name: string }[];\n  release_list: { id: string; title: string; date?: string }[];\n}\n\nexport class MusicBrainzClient {\n  private http: AxiosInstance;\n  private cache: Cache;\n\n  constructor(cache: Cache) {\n    // 1 req/s por IP, 5 req/s com token (não usado aqui)\n    this.http = rateLimit(\n      axios.create({\n        baseURL: 'https://musicbrainz.org/ws/2',\n        headers: { 'User-Agent': 'teste_alfredo_22/1.0.0 (example@example.com)' },\n        timeout: 8000,\n      }),\n      { maxRequests: 1, perMilliseconds: 1000 }\n    );\n    this.cache = cache;\n  }\n\n  async getRecording(mbid: string): Promise<Recording | null> {\n    const cacheKey = `mbid:${mbid}`;\n    const cached = await this.cache.get<Recording>(cacheKey);\n    if (cached) return cached;\n\n    try {\n      const { data } = await this.http.get<Recording>(`/recording/${mbid}`, {\n        params: { fmt: 'json', inc: 'artist-credits+releases' },\n      });\n      await this.cache.set(cacheKey, data, 60 * 60 * 24); // 24h TTL\n      return data;\n    } catch (err) {\n      if (axios.isAxiosError(err) && err.response?.status === 404) return null;\n      throw err; // let the worker retry (BullMQ retry strategy)\n    }\n  }\n}\n```\n\n### 4.3 Serviço de Enriquecimento (Orquestração)\n\n```ts\n// src/domain/metadataEnricher.ts\nimport { MusicBrainzClient } from '../api/musicbrainz';\nimport { DiscogsClient } from '../api/discogs';\nimport { LastFmClient } from '../api/lastfm';\nimport { CoverArtClient } from '../api/coverArt';\nimport { UnsplashClient } from '../api/unsplash';\nimport { TagMerger } from './tagMerger';\nimport { readFile, writeFile } from 'fs/promises';\nimport { parseFile, IAudioMetadata } from 'music-metadata';\nimport { writeTags } from '../utils/id3Writer';\n\nexport class MetadataEnricher {\n  constructor(\n    private mb: MusicBrainzClient,\n    private dc: DiscogsClient,\n    private lf: LastFmClient,\n    private ca: CoverArtClient,\n    private us: UnsplashClient,\n    private merger: TagMerger\n  ) {}\n\n  async enrich(filePath: string): Promise<void> {\n    const metadata: IAudioMetadata = await parseFile(filePath);\n    const existing = metadata.common;\n\n    // 1️⃣ Identificar MBID (ou usar AcoustID fallback)\n    const mbid = existing.musicbrainz_recordingid ?? (await this.guessMbid(filePath));\n    if (!mbid) throw new Error('Unable to determine MBID');\n\n    // 2️⃣ Busca paralela (Promise.allSettled para tolerar falhas\n\n---\n> 🧠 Documento gerado autonomamente pelo **Research Lab — AI Second Brain**.  \n> Contexto: `teste_alfredo_22` &middot; Data: 09/10/2026\n"
     },
     {
       "id": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_OVERVIEW_md",
@@ -1123,14 +1209,15 @@ window.VAULT_SNAPSHOT = {
       "title": "AI Second Brain — Alfredo AI OS",
       "category": "core",
       "icon": "🧠",
-      "size": 6797,
-      "mtime": 1791509857420.6848,
+      "size": 7262,
+      "mtime": 1791695127473.4895,
       "outgoingLinks": [
         "file:///c:/projetos/saas/google%20antigravity/projetos/ai_second_brain/docs/como_utilizar_o_projeto.md",
         "file:///c:/projetos/saas/google%20antigravity/projetos/ai_second_brain/docs/valor_e_relevancia_do_segundo_cerebro.md",
-        "file:///c:/projetos/saas/google%20antigravity/projetos/ai_second_brain/docs/research_lab.md"
+        "file:///c:/projetos/saas/google%20antigravity/projetos/ai_second_brain/docs/research_lab.md",
+        "docs/como_utilizar_o_projeto.md"
       ],
-      "content": "# AI Second Brain — Alfredo AI OS\n\n> Sistema de segundo cérebro para desenvolvimento com IA, agnóstico a qualquer IDE ou ferramenta (Cursor, Claude Code, Antigravity, Windsurf, Copilot, Cline).\n\n## O que é\n\nO AI Second Brain é uma estrutura de conhecimento, decisões, memória e governança\nque transforma o agente de IA de um chatbot genérico em um parceiro de desenvolvimento\nque entende o contexto, respeita regras e acumula conhecimento ao longo do tempo.\n\n## 🚀 Comece em 3 Minutos\n\n```bash\n# 1. Clone o repositório\ngit clone https://github.com/alfredorcamara/ai-second-brain.git\ncd ai-second-brain\n\n# 2. Crie seu primeiro projeto (Greenfield) OU vincule um repositório existente (Brownfield)\nnpm run project:new meu-saas          # Cria a pasta em projects/ com templates prontos\n# OU\nnpm run project:link meu-repo \"C:\\Projetos\\MeuRepo\" # Conecta via junção sem duplicar arquivos\n\n# 3. Inicie o Cockpit Visual (Grafo 3D & Dashboard em tempo real)\nnpm start\n\n# 4. Abra o workspace na sua IDE favorita (Cursor, Claude Code, Antigravity, Windsurf) e comece a desenvolver!\n```\n\n## Estrutura\n\n```\nAI_SECOND_BRAIN/\n│\n├── GEMINI.md                    ← Ponte para Antigravity / Gemini\n├── .cursorrules                 ← Ponte para Cursor AI\n├── CLAUDE.md                    ← Ponte para Claude Code\n├── .windsurfrules               ← Ponte para Windsurf\n├── README.md                    ← Este arquivo\n│\n├── .agents/                     ← Regras e workflows reutilizáveis\n│   ├── rules/                   ← Regras persistentes\n│   ├── skills/                  ← Workflows reutilizáveis\n│   └── plugins/                 ← Plugins do ecossistema\n│\n├── knowledge/                   ← Base de conhecimento universal\n│   ├── global/                  ← Conhecimento transversal e índice\n│   ├── ai/                      ← IA, modelos, roteamento, AIJev\n│   ├── architecture/            ← Padrões universais de arquitetura\n│   └── security/                ← Segurança com IA, OWASP, privacidade\n│\n├── projects/                    ← Seus projetos (APIs, SaaS, Mobile, Jogos)\n│\n├── decisions/                   ← Decisões arquiteturais globais\n├── memory/                      ← Memória persistente\n├── templates/                   ← Templates reutilizáveis\n└── docs/                        ← Documentação do sistema\n    └── brain-ui/                ← Interface de visualização\n```\n\n## Como usar\n\n> 📘 **Manual Prático Completo:**  \n> Veja o passo a passo detalhado para criar novos projetos ou plugar projetos existentes em: **[docs/COMO_UTILIZAR_O_PROJETO.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/COMO_UTILIZAR_O_PROJETO.md)**.  \n>  \n>  \n> 🧠 **Análise Crítica & Relevância de Mercado:**  \n> Entenda por que esta estratégia é essencial para projetos construídos com IA e como ela é percebida pela comunidade em: **[docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md)**.\n>  \n> 🔬 **Research Lab (Laboratório de Conhecimento Autônomo):**  \n> Veja como funciona a pesquisa contínua e catalogação automática com IA (Groq Cloud) e Prompt Vivo em: **[docs/RESEARCH_LAB.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/RESEARCH_LAB.md)**.\n\n\n### 1. Abra este workspace na sua IDE ou agente de IA favorito\nO sistema possui pontes nativas e automáticas para:\n- **Cursor AI** (lê `.cursorrules`)\n- **Claude Code** (lê `CLAUDE.md`)\n- **Google Antigravity** (lê `GEMINI.md`)\n- **Windsurf** (lê `.windsurfrules`)\n- **GitHub Copilot** (lê `.github/copilot-instructions.md`)\n- **Roo Code / Cline** (lê `.clinerules`)\n\n### 2. As regras são aplicadas automaticamente\nQuando você trabalhar em qualquer arquivo, as diretrizes de governança serão descobertas e aplicadas conforme o contexto.\n\n### 3. Skills são ativadas sob demanda\nO agente identifica automaticamente quando uma skill é relevante e a ativa.\nVocê também pode invocar manualmente.\n\n### 4. Projetos têm contexto e memória 100% isolados\nCada projeto em `projects/<nome>/` possui seus próprios contratos (`PROJECT.md`, `ARCHITECTURE.md`), histórico de decisões (`DECISIONS/`) e memória viva de sessões (`CURRENT_STATE.md` e `MEMORY/sessions/`). Seus projetos nunca se misturam.\n\n### 5. Memória persistente em dois níveis\n- **Memória dos Seus Projetos**: Ao final de cada sessão de trabalho em um software específico, o agente atualiza o `CURRENT_STATE.md` e a pasta de sessões do respectivo projeto.\n- **Memória da Plataforma**: A pasta raiz `memory/` registra a governança, estabilidade e maturidade do próprio AI Second Brain como ferramenta de desenvolvimento.\n\n## Comandos Operacionais\n\n| Comando | Descrição |\n|---|---|\n| `npm run project:new <nome>` | Cria um novo projeto em `projects/<nome>/` com contratos e templates prontos |\n| `npm run project:link <nome> <caminho>` | Vincula um repositório Git externo existente via junção NTFS / symlink |\n| `npm start` *(ou `start-brain.bat`)* | Inicia o Live Vault Server (SSE) e abre o Visualizador 3D no navegador |\n| `npm run doctor` *(ou `npm run check`)* | Executa o linter de integridade: valida links quebrados, contratos de projetos e knowledge |\n| `npm run scan` | Atualiza o snapshot JSON estático do cofre para o visualizador offline |\n\n## Filosofia\n\n```\nAI SECOND BRAIN\n       │\n  ┌────┴────────────────────────┐\n  │                             │\nAI AGENTS (Cursor/Claude/etc)  KNOWLEDGE VAULT\n  │                             │\n  ┌────┼────┐           ┌───────┼───────┐\n  │    │    │           │       │       │\nRULES SKILLS PROMPTS  GLOBAL  PROJECT  MEMORY\n  │    │    │           │       │       │\n  └────┴────┴───────────┴───────┴───────┘\n           │\n       AI GATEWAY\n           │\n    ┌──────┼──────┐\n    │      │      │\n  AIJEV   LLM  LOCAL AI\n    │      │      │\n    └──────┼──────┘\n           │\n     SEUS PROJETOS\n           │\n  ┌────────┼────────┐\n  ▼        ▼        ▼\nAPIs/Backend  SaaS/Web    Jogos/Apps\n```\n\n## Autor & Licença\n\nIdealizado e mantido por **Alfredo R. Câmara** ([@alfredorcamara](https://github.com/alfredorcamara)).  \nDistribuído sob licença MIT. 100% Open Source.\n\n"
+      "content": "# AI Second Brain — Alfredo AI OS\n\n> Sistema de segundo cérebro para desenvolvimento com IA, agnóstico a qualquer IDE ou ferramenta (Cursor, Claude Code, Antigravity, Windsurf, Copilot, Cline).\n\n## O que é\n\nO AI Second Brain é uma estrutura de conhecimento, decisões, memória e governança\nque transforma o agente de IA de um chatbot genérico em um parceiro de desenvolvimento\nque entende o contexto, respeita regras e acumula conhecimento ao longo do tempo.\n\n## 🚀 Comece em 3 Minutos\n\n```bash\n# 1. Clone o repositório\ngit clone https://github.com/alfredorcamara/ai-second-brain.git\ncd ai-second-brain\n\n# 2. Crie seu primeiro projeto (Greenfield) OU vincule um repositório existente (Brownfield)\nnpm run project:new meu-saas          # Cria a pasta em projects/ com templates prontos\n# OU\nnpm run project:link meu-repo \"C:\\Projetos\\MeuRepo\" # Conecta via junção sem duplicar arquivos\n\n# 3. Inicie o Cockpit Visual (Grafo 3D & Dashboard em tempo real)\nnpm start\n\n# 4. Abra o workspace na sua IDE favorita (Cursor, Claude Code, Antigravity, Windsurf) e comece a desenvolver!\n```\n\n## Estrutura\n\n```\nAI_SECOND_BRAIN/\n│\n├── GEMINI.md                    ← Ponte para Antigravity / Gemini\n├── .cursorrules                 ← Ponte para Cursor AI\n├── CLAUDE.md                    ← Ponte para Claude Code\n├── .windsurfrules               ← Ponte para Windsurf\n├── README.md                    ← Este arquivo\n│\n├── .agents/                     ← Regras e workflows reutilizáveis\n│   ├── rules/                   ← Regras persistentes\n│   ├── skills/                  ← Workflows reutilizáveis\n│   └── plugins/                 ← Plugins do ecossistema\n│\n├── knowledge/                   ← Base de conhecimento universal\n│   ├── global/                  ← Conhecimento transversal e índice\n│   ├── ai/                      ← IA, modelos, roteamento, AIJev\n│   ├── architecture/            ← Padrões universais de arquitetura\n│   └── security/                ← Segurança com IA, OWASP, privacidade\n│\n├── projects/                    ← Seus projetos (APIs, SaaS, Mobile, Jogos)\n│\n├── decisions/                   ← Decisões arquiteturais globais\n├── memory/                      ← Memória persistente\n├── templates/                   ← Templates reutilizáveis\n└── docs/                        ← Documentação do sistema\n    └── brain-ui/                ← Interface de visualização\n```\n\n## Como usar\n\n> 📘 **Manual Prático Completo:**  \n> Veja o passo a passo detalhado para criar novos projetos ou plugar projetos existentes em: **[docs/COMO_UTILIZAR_O_PROJETO.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/COMO_UTILIZAR_O_PROJETO.md)**.  \n>  \n>  \n> 🧠 **Análise Crítica & Relevância de Mercado:**  \n> Entenda por que esta estratégia é essencial para projetos construídos com IA e como ela é percebida pela comunidade em: **[docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md)**.\n>  \n> 🔬 **Research Lab (Laboratório de Conhecimento Autônomo):**  \n> Veja como funciona a pesquisa contínua e catalogação automática com IA (Groq Cloud) e Prompt Vivo em: **[docs/RESEARCH_LAB.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/RESEARCH_LAB.md)**.\n\n\n### 1. Abra este workspace na sua IDE ou agente de IA favorito (Modo Cockpit)\nRecomendamos abrir a pasta raiz `AI_SECOND_BRAIN` na sua IDE para gerenciar todos os projetos a partir daqui com 100% dos poderes e regras ativas. O sistema possui pontes nativas e automáticas para:\n- **Cursor AI** (lê `.cursorrules`)\n- **Claude Code** (lê `CLAUDE.md`)\n- **Google Antigravity** (lê `GEMINI.md`)\n- **Windsurf** (lê `.windsurfrules`)\n- **GitHub Copilot** (lê `.github/copilot-instructions.md`)\n- **Roo Code / Cline** (lê `.clinerules`)\n\n*(Caso prefira abrir a pasta física de um projeto de forma isolada em outra janela, consulte o passo a passo de configuração da ponte em [docs/COMO_UTILIZAR_O_PROJETO.md](docs/COMO_UTILIZAR_O_PROJETO.md#passo-4-onde-abrir-a-ide-cockpit-central-vs-repositório-isolado-ponto-de-atenção-crucial)).*\n\n### 2. As regras são aplicadas automaticamente\nQuando você trabalhar em qualquer arquivo, as diretrizes de governança serão descobertas e aplicadas conforme o contexto.\n\n### 3. Skills são ativadas sob demanda\nO agente identifica automaticamente quando uma skill é relevante e a ativa.\nVocê também pode invocar manualmente.\n\n### 4. Projetos têm contexto e memória 100% isolados\nCada projeto em `projects/<nome>/` possui seus próprios contratos (`PROJECT.md`, `ARCHITECTURE.md`), histórico de decisões (`DECISIONS/`) e memória viva de sessões (`CURRENT_STATE.md` e `MEMORY/sessions/`). Seus projetos nunca se misturam.\n\n### 5. Memória persistente em dois níveis\n- **Memória dos Seus Projetos**: Ao final de cada sessão de trabalho em um software específico, o agente atualiza o `CURRENT_STATE.md` e a pasta de sessões do respectivo projeto.\n- **Memória da Plataforma**: A pasta raiz `memory/` registra a governança, estabilidade e maturidade do próprio AI Second Brain como ferramenta de desenvolvimento.\n\n## Comandos Operacionais\n\n| Comando | Descrição |\n|---|---|\n| `npm run project:new <nome>` | Cria um novo projeto em `projects/<nome>/` com contratos e templates prontos |\n| `npm run project:link <nome> <caminho>` | Vincula um repositório Git externo existente via junção NTFS / symlink |\n| `npm start` *(ou `start-brain.bat`)* | Inicia o Live Vault Server (SSE) e abre o Visualizador 3D no navegador |\n| `npm run doctor` *(ou `npm run check`)* | Executa o linter de integridade: valida links quebrados, contratos de projetos e knowledge |\n| `npm run scan` | Atualiza o snapshot JSON estático do cofre para o visualizador offline |\n\n## Filosofia\n\n```\nAI SECOND BRAIN\n       │\n  ┌────┴────────────────────────┐\n  │                             │\nAI AGENTS (Cursor/Claude/etc)  KNOWLEDGE VAULT\n  │                             │\n  ┌────┼────┐           ┌───────┼───────┐\n  │    │    │           │       │       │\nRULES SKILLS PROMPTS  GLOBAL  PROJECT  MEMORY\n  │    │    │           │       │       │\n  └────┴────┴───────────┴───────┴───────┘\n           │\n       AI GATEWAY\n           │\n    ┌──────┼──────┐\n    │      │      │\n  AIJEV   LLM  LOCAL AI\n    │      │      │\n    └──────┼──────┘\n           │\n     SEUS PROJETOS\n           │\n  ┌────────┼────────┐\n  ▼        ▼        ▼\nAPIs/Backend  SaaS/Web    Jogos/Apps\n```\n\n## Autor & Licença\n\nIdealizado e mantido por **Alfredo R. Câmara** ([@alfredorcamara](https://github.com/alfredorcamara)).  \nDistribuído sob licença MIT. 100% Open Source.\n\n"
     },
     {
       "id": "templates_ai-use-case_md",
@@ -1157,16 +1244,28 @@ window.VAULT_SNAPSHOT = {
       "content": "# Template: Especificação de Feature\n\n## Informações Gerais\n\n| Campo | Valor |\n|-------|-------|\n| **Projeto** | |\n| **Feature** | |\n| **Autor** | |\n| **Data** | |\n| **Prioridade** | Alta / Média / Baixa |\n| **Status** | Proposta / Aprovada / Em desenvolvimento / Concluída |\n\n## O que (What)\nDescrição clara e concisa da funcionalidade.\n\n## Por que (Why)\nQual problema resolve? Qual valor entrega?\n\n## Como (How)\nAbordagem técnica proposta.\n\n### Componentes afetados\n- [ ] Backend API\n- [ ] Frontend\n- [ ] Banco de dados\n- [ ] IA\n- [ ] Infra\n\n### IA envolvida?\n- [ ] Sim → Execute a skill `ai-decision-gate`\n- [ ] Não\n\n## Critérios de Aceite\n1. Critério 1\n2. Critério 2\n3. Critério 3\n\n## Riscos e Dependências\n| Risco | Probabilidade | Impacto | Mitigação |\n|-------|--------------|---------|-----------|\n| | | | |\n\n## Estimativa\n| Aspecto | Estimativa |\n|---------|-----------|\n| **Complexidade** | Baixa / Média / Alta |\n| **Esforço** | X horas/dias |\n| **Risco** | Baixo / Médio / Alto |\n\n## Notas\nObservações adicionais.\n"
     },
     {
+      "id": "templates_lessons-learned_md",
+      "path": "templates/lessons-learned.md",
+      "name": "lessons-learned.md",
+      "title": "Lições Aprendidas — [Nome do Projeto]",
+      "category": "templates",
+      "icon": "💡",
+      "size": 1201,
+      "mtime": 1791698804773.1252,
+      "outgoingLinks": [],
+      "content": "# Lições Aprendidas — [Nome do Projeto]\n\n> Este documento registra erros, armadilhas técnicas e aprendizados específicos deste projeto.\n> Qualquer agente de IA ou desenvolvedor deve consultar este arquivo antes de implementar ou alterar código.\n\n---\n\n## Como Registrar uma Lição:\n- **Contexto**: O que estava sendo feito quando o problema ocorreu.\n- **Causa Raiz**: O motivo técnico real da falha (biblioteca, banco, contrato de API, regra de negócio).\n- **O que NÃO fazer**: O padrão que quebrou ou gerou débito técnico.\n- **Padrão Correto**: A solução validada e obrigatória para este projeto daqui em diante.\n\n---\n\n## Histórico de Lições Aprendidas\n\n### [YYYY-MM-DD] — Exemplo: Tratamento de Webhooks e Raw Body\n- **Contexto**: Ao integrar a rota de notificações de pagamentos externos.\n- **Causa Raiz**: O middleware padrão de JSON alterava os bytes da requisição, invalidando a assinatura criptográfica HMAC.\n- **O que NÃO fazer**: Nunca passar payloads de webhook por parsers de JSON que mutam o payload antes da verificação de assinatura.\n- **Padrão Correto**: Utilizar captura de raw body buffer exclusivamente na rota de webhooks antes do middleware global.\n"
+    },
+    {
       "id": "templates_project_md",
       "path": "templates/project.md",
       "name": "project.md",
       "title": "Template: Projeto",
       "category": "templates",
       "icon": "📋",
-      "size": 883,
-      "mtime": 1790520038978.9402,
+      "size": 912,
+      "mtime": 1791698844484.9553,
       "outgoingLinks": [],
-      "content": "# Template: Projeto\n\n## Informações Gerais\n\n| Campo | Valor |\n|-------|-------|\n| **Nome** | |\n| **Tipo** | Web API / Mobile / Game / SaaS |\n| **Stack** | |\n| **Status** | Conceituação / Planejamento / Desenvolvimento / Produção |\n| **Início** | |\n\n## Visão\nO que este projeto faz e por que existe?\n\n## Objetivos\n1. Objetivo 1\n2. Objetivo 2\n3. Objetivo 3\n\n## Stack Técnico\n- **Backend**: \n- **Frontend**: \n- **Banco**: \n- **IA**: \n- **Infra**: \n\n## Roadmap\n- [ ] Fase 1: MVP\n- [ ] Fase 2: Funcionalidades principais\n- [ ] Fase 3: Polish e escala\n\n## Estrutura do Projeto no AI Second Brain\n```\nprojects/<nome>/\n├── PROJECT.md\n├── ARCHITECTURE.md\n├── CURRENT_STATE.md\n├── DECISIONS/\n├── AI/\n├── DATABASE/\n├── API/\n├── TESTS/\n└── MEMORY/\n    └── sessions/\n```\n\n## Links\n- Repositório: \n- Documentação: \n- Board: \n"
+      "content": "# Template: Projeto\n\n## Informações Gerais\n\n| Campo | Valor |\n|-------|-------|\n| **Nome** | |\n| **Tipo** | Web API / Mobile / Game / SaaS |\n| **Stack** | |\n| **Status** | Conceituação / Planejamento / Desenvolvimento / Produção |\n| **Início** | |\n\n## Visão\nO que este projeto faz e por que existe?\n\n## Objetivos\n1. Objetivo 1\n2. Objetivo 2\n3. Objetivo 3\n\n## Stack Técnico\n- **Backend**: \n- **Frontend**: \n- **Banco**: \n- **IA**: \n- **Infra**: \n\n## Roadmap\n- [ ] Fase 1: MVP\n- [ ] Fase 2: Funcionalidades principais\n- [ ] Fase 3: Polish e escala\n\n## Estrutura do Projeto no AI Second Brain\n```\nprojects/<nome>/\n├── PROJECT.md\n├── ARCHITECTURE.md\n├── CURRENT_STATE.md\n├── LESSONS_LEARNED.md\n├── DECISIONS/\n├── AI/\n├── DATABASE/\n├── API/\n├── TESTS/\n└── MEMORY/\n    └── sessions/\n```\n\n## Links\n- Repositório: \n- Documentação: \n- Board: \n"
     },
     {
       "id": "templates_session-memory_md",
@@ -1219,14 +1318,14 @@ window.VAULT_SNAPSHOT = {
           "label": "Regras Fundamentais do AI Second Brain",
           "icon": "⚙️",
           "path": ".agents/rules/00-core.md",
-          "size": 1911
+          "size": 2234
         },
         {
           "id": "_agents_rules_01-ai-decision_md",
           "label": "Regras de Decisão com IA",
           "icon": "🚦",
           "path": ".agents/rules/01-ai-decision.md",
-          "size": 1584
+          "size": 1682
         },
         {
           "id": "_agents_rules_02-aijev_md",
@@ -1318,6 +1417,22 @@ window.VAULT_SNAPSHOT = {
       "badge": 8
     },
     {
+      "id": "agents",
+      "label": "Agents",
+      "icon": "🤖",
+      "startCollapsed": true,
+      "items": [
+        {
+          "id": "AGENTS_md",
+          "label": "AI SECOND BRAIN — UNIVERSAL AGENTS GOVERNANCE (AGENTS.md)",
+          "icon": "🤖",
+          "path": "AGENTS.md",
+          "size": 2472
+        }
+      ],
+      "badge": 1
+    },
+    {
       "id": "projects",
       "label": "Projects",
       "icon": "📁",
@@ -1338,8 +1453,8 @@ window.VAULT_SNAPSHOT = {
           "isProject": true,
           "startCollapsed": true,
           "path": "projects/Alfredo_teste/PROJECT.md",
-          "totalFilesCount": 18,
-          "childrenCount": 18,
+          "totalFilesCount": 19,
+          "childrenCount": 19,
           "children": [
             {
               "id": "projects_Alfredo_teste_PROJECT_md",
@@ -1347,7 +1462,7 @@ window.VAULT_SNAPSHOT = {
               "title": "Alfredo_teste",
               "icon": "📄",
               "path": "projects/Alfredo_teste/PROJECT.md",
-              "size": 327
+              "size": 391
             },
             {
               "id": "projects_Alfredo_teste_CURRENT_STATE_md",
@@ -1364,6 +1479,14 @@ window.VAULT_SNAPSHOT = {
               "icon": "🏗️",
               "path": "projects/Alfredo_teste/ARCHITECTURE.md",
               "size": 528
+            },
+            {
+              "id": "projects_Alfredo_teste_LESSONS_LEARNED_md",
+              "label": "LESSONS_LEARNED.md",
+              "title": "Alfredo_teste — Lições Aprendidas",
+              "icon": "💡",
+              "path": "projects/Alfredo_teste/LESSONS_LEARNED.md",
+              "size": 837
             },
             {
               "id": "sub_Alfredo_teste_backups",
@@ -1542,8 +1665,8 @@ window.VAULT_SNAPSHOT = {
           "isProject": true,
           "startCollapsed": true,
           "path": "projects/teste_alfredo_22/PROJECT.md",
-          "totalFilesCount": 34,
-          "childrenCount": 34,
+          "totalFilesCount": 39,
+          "childrenCount": 39,
           "children": [
             {
               "id": "projects_teste_alfredo_22_PROJECT_md",
@@ -1551,7 +1674,7 @@ window.VAULT_SNAPSHOT = {
               "title": "teste_alfredo_22",
               "icon": "📄",
               "path": "projects/teste_alfredo_22/PROJECT.md",
-              "size": 452
+              "size": 516
             },
             {
               "id": "projects_teste_alfredo_22_CURRENT_STATE_md",
@@ -1568,6 +1691,14 @@ window.VAULT_SNAPSHOT = {
               "icon": "🏗️",
               "path": "projects/teste_alfredo_22/ARCHITECTURE.md",
               "size": 325
+            },
+            {
+              "id": "projects_teste_alfredo_22_LESSONS_LEARNED_md",
+              "label": "LESSONS_LEARNED.md",
+              "title": "teste_alfredo_22 — Lições Aprendidas",
+              "icon": "💡",
+              "path": "projects/teste_alfredo_22/LESSONS_LEARNED.md",
+              "size": 842
             },
             {
               "id": "sub_teste_alfredo_22_backups",
@@ -1597,7 +1728,7 @@ window.VAULT_SNAPSHOT = {
               "isResearchRoot": true,
               "projectName": "teste_alfredo_22",
               "startCollapsed": true,
-              "childrenCount": 30,
+              "childrenCount": 34,
               "children": [
                 {
                   "id": "sub_teste_alfredo_22_res_bolo-de-banana",
@@ -1691,7 +1822,7 @@ window.VAULT_SNAPSHOT = {
                   "isSubfolder": true,
                   "startCollapsed": true,
                   "path": "projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/OVERVIEW.md",
-                  "childrenCount": 1,
+                  "childrenCount": 5,
                   "children": [
                     {
                       "id": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_OVERVIEW_md",
@@ -1700,6 +1831,38 @@ window.VAULT_SNAPSHOT = {
                       "icon": "📄",
                       "path": "projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/OVERVIEW.md",
                       "size": 3944
+                    },
+                    {
+                      "id": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_01-audio-libraries-nodejs_md",
+                      "label": "01 - Bibliotecas de Áudio para Node.js",
+                      "title": "Bibliotecas de Áudio para Node.js (projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/knowledge/01-audio-libraries-nodejs.md)",
+                      "icon": "📘",
+                      "path": "projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/knowledge/01-audio-libraries-nodejs.md",
+                      "size": 12376
+                    },
+                    {
+                      "id": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_02-audio-feature-extraction_md",
+                      "label": "02 - Extração de Características de Áudio",
+                      "title": "Extração de Características de Áudio (projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/knowledge/02-audio-feature-extraction.md)",
+                      "icon": "📘",
+                      "path": "projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/knowledge/02-audio-feature-extraction.md",
+                      "size": 12316
+                    },
+                    {
+                      "id": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_03-ai-integration-audio_md",
+                      "label": "03 - Integração de IA para Classificação e Transcrição de MP3 Inteligente",
+                      "title": "Integração de IA para Classificação e Transcrição de MP3 Inteligente (projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/knowledge/03-ai-integration-audio.md)",
+                      "icon": "📘",
+                      "path": "projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/knowledge/03-ai-integration-audio.md",
+                      "size": 12688
+                    },
+                    {
+                      "id": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_04-metadata-enrichment_md",
+                      "label": "04 - Enriquecimento Automático de Metadados",
+                      "title": "Enriquecimento Automático de Metadados (projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/knowledge/04-metadata-enrichment.md)",
+                      "icon": "📘",
+                      "path": "projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/knowledge/04-metadata-enrichment.md",
+                      "size": 13185
                     }
                   ]
                 },
@@ -1972,14 +2135,14 @@ window.VAULT_SNAPSHOT = {
           "label": "Estado Atual do AI Second Brain",
           "icon": "💾",
           "path": "memory/current-state.md",
-          "size": 18772
+          "size": 34217
         },
         {
           "id": "memory_lessons-learned_md",
           "label": "Lições Aprendidas",
           "icon": "💾",
           "path": "memory/lessons-learned.md",
-          "size": 7253
+          "size": 19050
         },
         {
           "id": "memory_README_md",
@@ -2012,11 +2175,18 @@ window.VAULT_SNAPSHOT = {
           "size": 1050
         },
         {
+          "id": "templates_lessons-learned_md",
+          "label": "Lições Aprendidas — [Nome do Projeto]",
+          "icon": "💡",
+          "path": "templates/lessons-learned.md",
+          "size": 1201
+        },
+        {
           "id": "templates_project_md",
           "label": "Template: Projeto",
           "icon": "📋",
           "path": "templates/project.md",
-          "size": 883
+          "size": 912
         },
         {
           "id": "templates_session-memory_md",
@@ -2026,7 +2196,7 @@ window.VAULT_SNAPSHOT = {
           "size": 693
         }
       ],
-      "badge": 4
+      "badge": 5
     },
     {
       "id": "docs",
@@ -2053,7 +2223,7 @@ window.VAULT_SNAPSHOT = {
           "label": "Como Utilizar o AI Second Brain na Prática",
           "icon": "📝",
           "path": "docs/COMO_UTILIZAR_O_PROJETO.md",
-          "size": 20058
+          "size": 24173
         },
         {
           "id": "docs_decisao_groq_provider_md",
@@ -2111,21 +2281,21 @@ window.VAULT_SNAPSHOT = {
           "label": "AI SECOND BRAIN — INSTRUÇÕES PARA CLAUDE CODE",
           "icon": "📄",
           "path": "CLAUDE.md",
-          "size": 1597
+          "size": 2305
         },
         {
           "id": "GEMINI_md",
           "label": "AI SECOND BRAIN — ALFREDO AI OS",
           "icon": "🧠",
           "path": "GEMINI.md",
-          "size": 4498
+          "size": 5283
         },
         {
           "id": "README_md",
           "label": "AI Second Brain — Alfredo AI OS",
           "icon": "🧠",
           "path": "README.md",
-          "size": 6797
+          "size": 7262
         }
       ],
       "badge": 3
@@ -2163,6 +2333,14 @@ window.VAULT_SNAPSHOT = {
       "size": 18,
       "icon": "⚡",
       "path": "skills"
+    },
+    {
+      "id": "hub-agents",
+      "label": "Agents Hub",
+      "group": "agents",
+      "size": 18,
+      "icon": "🤖",
+      "path": "agents"
     },
     {
       "id": "hub-projects",
@@ -2232,7 +2410,7 @@ window.VAULT_SNAPSHOT = {
       "id": "_agents_rules_00-core_md",
       "label": "Regras Fundamentais do AI Second Brain",
       "group": "rules",
-      "size": 9,
+      "size": 12,
       "icon": "⚙️",
       "path": ".agents/rules/00-core.md"
     },
@@ -2333,10 +2511,18 @@ window.VAULT_SNAPSHOT = {
       "path": ".agents/skills/session-memory/SKILL.md"
     },
     {
+      "id": "AGENTS_md",
+      "label": "AI SECOND BRAIN — UNIVERSAL AGENTS GOVERNANCE (AGENTS.md)",
+      "group": "agents",
+      "size": 12,
+      "icon": "🤖",
+      "path": "AGENTS.md"
+    },
+    {
       "id": "CLAUDE_md",
       "label": "AI SECOND BRAIN — INSTRUÇÕES PARA CLAUDE CODE",
       "group": "core",
-      "size": 9,
+      "size": 12,
       "icon": "📄",
       "path": "CLAUDE.md"
     },
@@ -2533,6 +2719,14 @@ window.VAULT_SNAPSHOT = {
       "path": "projects/Alfredo_teste/DECISIONS/001-stack-inicial.md"
     },
     {
+      "id": "projects_Alfredo_teste_LESSONS_LEARNED_md",
+      "label": "Alfredo_teste — Lições Aprendidas",
+      "group": "projects",
+      "size": 9,
+      "icon": "💡",
+      "path": "projects/Alfredo_teste/LESSONS_LEARNED.md"
+    },
+    {
       "id": "projects_Alfredo_teste_PROJECT_md",
       "label": "Alfredo_teste",
       "group": "projects",
@@ -2677,6 +2871,14 @@ window.VAULT_SNAPSHOT = {
       "path": "projects/teste_alfredo_22/CURRENT_STATE.md"
     },
     {
+      "id": "projects_teste_alfredo_22_LESSONS_LEARNED_md",
+      "label": "teste_alfredo_22 — Lições Aprendidas",
+      "group": "projects",
+      "size": 9,
+      "icon": "💡",
+      "path": "projects/teste_alfredo_22/LESSONS_LEARNED.md"
+    },
+    {
       "id": "projects_teste_alfredo_22_PROJECT_md",
       "label": "teste_alfredo_22",
       "group": "projects",
@@ -2755,6 +2957,38 @@ window.VAULT_SNAPSHOT = {
       "size": 12,
       "icon": "🔬",
       "path": "projects/teste_alfredo_22/RESEARCH/bolo-de-banana/OVERVIEW.md"
+    },
+    {
+      "id": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_01-audio-libraries-nodejs_md",
+      "label": "Bibliotecas de Áudio para Node.js",
+      "group": "projects",
+      "size": 12,
+      "icon": "📘",
+      "path": "projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/knowledge/01-audio-libraries-nodejs.md"
+    },
+    {
+      "id": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_02-audio-feature-extraction_md",
+      "label": "Extração de Características de Áudio",
+      "group": "projects",
+      "size": 12,
+      "icon": "📘",
+      "path": "projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/knowledge/02-audio-feature-extraction.md"
+    },
+    {
+      "id": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_03-ai-integration-audio_md",
+      "label": "Integração de IA para Classificação e Transcrição de MP3 Inteligente",
+      "group": "projects",
+      "size": 12,
+      "icon": "📘",
+      "path": "projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/knowledge/03-ai-integration-audio.md"
+    },
+    {
+      "id": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_04-metadata-enrichment_md",
+      "label": "Enriquecimento Automático de Metadados",
+      "group": "projects",
+      "size": 12,
+      "icon": "📘",
+      "path": "projects/teste_alfredo_22/RESEARCH/criar-um-mp3-inteligente/knowledge/04-metadata-enrichment.md"
     },
     {
       "id": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_OVERVIEW_md",
@@ -2949,6 +3183,14 @@ window.VAULT_SNAPSHOT = {
       "path": "templates/feature-spec.md"
     },
     {
+      "id": "templates_lessons-learned_md",
+      "label": "Lições Aprendidas — [Nome do Projeto]",
+      "group": "templates",
+      "size": 9,
+      "icon": "💡",
+      "path": "templates/lessons-learned.md"
+    },
+    {
       "id": "templates_project_md",
       "label": "Template: Projeto",
       "group": "templates",
@@ -2977,6 +3219,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "brain",
       "to": "hub-skills"
+    },
+    {
+      "from": "brain",
+      "to": "hub-agents"
     },
     {
       "from": "brain",
@@ -3061,6 +3307,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "hub-skills",
       "to": "_agents_skills_session-memory_SKILL_md"
+    },
+    {
+      "from": "hub-agents",
+      "to": "AGENTS_md"
     },
     {
       "from": "hub-core",
@@ -3164,6 +3414,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "hub_proj_Alfredo_teste",
+      "to": "projects_Alfredo_teste_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "hub_proj_Alfredo_teste",
       "to": "projects_Alfredo_teste_PROJECT_md"
     },
     {
@@ -3236,6 +3490,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "hub_proj_teste_alfredo_22",
+      "to": "projects_teste_alfredo_22_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "hub_proj_teste_alfredo_22",
       "to": "projects_teste_alfredo_22_PROJECT_md"
     },
     {
@@ -3273,6 +3531,22 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "hub_proj_teste_alfredo_22",
       "to": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_OVERVIEW_md"
+    },
+    {
+      "from": "hub_proj_teste_alfredo_22",
+      "to": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_01-audio-libraries-nodejs_md"
+    },
+    {
+      "from": "hub_proj_teste_alfredo_22",
+      "to": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_02-audio-feature-extraction_md"
+    },
+    {
+      "from": "hub_proj_teste_alfredo_22",
+      "to": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_03-ai-integration-audio_md"
+    },
+    {
+      "from": "hub_proj_teste_alfredo_22",
+      "to": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_04-metadata-enrichment_md"
     },
     {
       "from": "hub_proj_teste_alfredo_22",
@@ -3372,11 +3646,23 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "hub-templates",
+      "to": "templates_lessons-learned_md"
+    },
+    {
+      "from": "hub-templates",
       "to": "templates_project_md"
     },
     {
       "from": "hub-templates",
       "to": "templates_session-memory_md"
+    },
+    {
+      "from": "_agents_rules_00-core_md",
+      "to": "memory_lessons-learned_md"
+    },
+    {
+      "from": "_agents_rules_00-core_md",
+      "to": "templates_lessons-learned_md"
     },
     {
       "from": "_agents_rules_04-documentation_md",
@@ -3411,6 +3697,10 @@ window.VAULT_SNAPSHOT = {
       "to": "_agents_rules_03-security_md"
     },
     {
+      "from": "_agents_skills_ai-integration_SKILL_md",
+      "to": "AGENTS_md"
+    },
+    {
       "from": "_agents_skills_architecture-review_SKILL_md",
       "to": "projects_Alfredo_teste_ARCHITECTURE_md"
     },
@@ -3443,8 +3733,16 @@ window.VAULT_SNAPSHOT = {
       "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
     },
     {
+      "from": "_agents_skills_bug-investigation_SKILL_md",
+      "to": "templates_lessons-learned_md"
+    },
+    {
       "from": "_agents_skills_new-feature_SKILL_md",
       "to": "_agents_rules_03-security_md"
+    },
+    {
+      "from": "_agents_skills_new-feature_SKILL_md",
+      "to": "AGENTS_md"
     },
     {
       "from": "_agents_skills_new-feature_SKILL_md",
@@ -3481,6 +3779,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "_agents_skills_project-onboarding_SKILL_md",
       "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
+      "from": "_agents_skills_project-onboarding_SKILL_md",
+      "to": "AGENTS_md"
     },
     {
       "from": "_agents_skills_project-onboarding_SKILL_md",
@@ -3556,11 +3858,63 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "_agents_skills_session-memory_SKILL_md",
+      "to": "templates_lessons-learned_md"
+    },
+    {
+      "from": "_agents_skills_session-memory_SKILL_md",
       "to": "templates_project_md"
     },
     {
       "from": "_agents_skills_session-memory_SKILL_md",
       "to": "templates_session-memory_md"
+    },
+    {
+      "from": "AGENTS_md",
+      "to": "CLAUDE_md"
+    },
+    {
+      "from": "AGENTS_md",
+      "to": "memory_current-state_md"
+    },
+    {
+      "from": "AGENTS_md",
+      "to": "memory_lessons-learned_md"
+    },
+    {
+      "from": "AGENTS_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "AGENTS_md",
+      "to": "projects_Alfredo_teste_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "AGENTS_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "AGENTS_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "AGENTS_md",
+      "to": "projects_teste_alfredo_22_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "AGENTS_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "AGENTS_md",
+      "to": "templates_lessons-learned_md"
+    },
+    {
+      "from": "AGENTS_md",
+      "to": "templates_project_md"
+    },
+    {
+      "from": "CLAUDE_md",
+      "to": "memory_lessons-learned_md"
     },
     {
       "from": "CLAUDE_md",
@@ -3569,6 +3923,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "CLAUDE_md",
       "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "CLAUDE_md",
+      "to": "projects_Alfredo_teste_LESSONS_LEARNED_md"
     },
     {
       "from": "CLAUDE_md",
@@ -3584,7 +3942,15 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "CLAUDE_md",
+      "to": "projects_teste_alfredo_22_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "CLAUDE_md",
       "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "CLAUDE_md",
+      "to": "templates_lessons-learned_md"
     },
     {
       "from": "CLAUDE_md",
@@ -3593,6 +3959,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "decisions_GLOBAL_DECISIONS_md",
       "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
+      "from": "decisions_GLOBAL_DECISIONS_md",
+      "to": "AGENTS_md"
     },
     {
       "from": "decisions_GLOBAL_DECISIONS_md",
@@ -3620,6 +3990,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
+      "to": "AGENTS_md"
+    },
+    {
+      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
       "to": "CLAUDE_md"
     },
     {
@@ -3633,6 +4007,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
       "to": "knowledge_ai_AI_GATEWAY_md"
+    },
+    {
+      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
+      "to": "memory_lessons-learned_md"
     },
     {
       "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
@@ -3676,6 +4054,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
+      "to": "templates_lessons-learned_md"
+    },
+    {
+      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
       "to": "templates_project_md"
     },
     {
@@ -3740,6 +4122,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_GUIA_PRATICO_md",
+      "to": "templates_lessons-learned_md"
+    },
+    {
+      "from": "docs_GUIA_PRATICO_md",
       "to": "templates_project_md"
     },
     {
@@ -3821,6 +4207,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "docs_RESEARCH_LAB_md",
       "to": "templates_project_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "AGENTS_md"
     },
     {
       "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
@@ -3860,11 +4250,19 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "templates_lessons-learned_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
       "to": "templates_project_md"
     },
     {
       "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
       "to": "templates_session-memory_md"
+    },
+    {
+      "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "to": "AGENTS_md"
     },
     {
       "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
@@ -3912,6 +4310,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "GEMINI_md",
+      "to": "AGENTS_md"
+    },
+    {
+      "from": "GEMINI_md",
       "to": "docs_COMO_UTILIZAR_O_PROJETO_md"
     },
     {
@@ -3920,7 +4322,23 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "GEMINI_md",
+      "to": "memory_current-state_md"
+    },
+    {
+      "from": "GEMINI_md",
+      "to": "memory_lessons-learned_md"
+    },
+    {
+      "from": "GEMINI_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "GEMINI_md",
       "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "GEMINI_md",
+      "to": "projects_Alfredo_teste_LESSONS_LEARNED_md"
     },
     {
       "from": "GEMINI_md",
@@ -3928,11 +4346,23 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "GEMINI_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "GEMINI_md",
       "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
     },
     {
       "from": "GEMINI_md",
+      "to": "projects_teste_alfredo_22_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "GEMINI_md",
       "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "GEMINI_md",
+      "to": "templates_lessons-learned_md"
     },
     {
       "from": "GEMINI_md",
@@ -3987,8 +4417,52 @@ window.VAULT_SNAPSHOT = {
       "to": "_agents_rules_03-security_md"
     },
     {
+      "from": "knowledge_security_OWASP_md",
+      "to": "AGENTS_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "_agents_rules_00-core_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "_agents_rules_03-security_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "AGENTS_md"
+    },
+    {
       "from": "memory_current-state_md",
       "to": "CLAUDE_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "decisions_GLOBAL_DECISIONS_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "docs_brain-ui_demo_README_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "docs_decisao_groq_provider_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "GEMINI_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "memory_lessons-learned_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "memory_README_md"
     },
     {
       "from": "memory_current-state_md",
@@ -4000,6 +4474,14 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "memory_current-state_md",
+      "to": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "projects_Alfredo_teste_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "memory_current-state_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
     },
     {
@@ -4008,11 +4490,19 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "memory_current-state_md",
+      "to": "projects_README_md"
+    },
+    {
+      "from": "memory_current-state_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
       "from": "memory_current-state_md",
       "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "projects_teste_alfredo_22_LESSONS_LEARNED_md"
     },
     {
       "from": "memory_current-state_md",
@@ -4036,11 +4526,51 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "memory_current-state_md",
+      "to": "README_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "templates_lessons-learned_md"
+    },
+    {
+      "from": "memory_current-state_md",
       "to": "templates_project_md"
     },
     {
       "from": "memory_lessons-learned_md",
+      "to": "AGENTS_md"
+    },
+    {
+      "from": "memory_lessons-learned_md",
       "to": "CLAUDE_md"
+    },
+    {
+      "from": "memory_lessons-learned_md",
+      "to": "GEMINI_md"
+    },
+    {
+      "from": "memory_lessons-learned_md",
+      "to": "projects_Alfredo_teste_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "memory_lessons-learned_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "memory_lessons-learned_md",
+      "to": "projects_teste_alfredo_22_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "memory_lessons-learned_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "memory_lessons-learned_md",
+      "to": "templates_lessons-learned_md"
+    },
+    {
+      "from": "memory_lessons-learned_md",
+      "to": "templates_project_md"
     },
     {
       "from": "memory_README_md",
@@ -4088,6 +4618,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "memory_README_md",
+      "to": "templates_lessons-learned_md"
+    },
+    {
+      "from": "memory_README_md",
       "to": "templates_project_md"
     },
     {
@@ -4095,11 +4629,19 @@ window.VAULT_SNAPSHOT = {
       "to": "_agents_rules_01-ai-decision_md"
     },
     {
+      "from": "projects_Alfredo_teste_ARCHITECTURE_md",
+      "to": "AGENTS_md"
+    },
+    {
       "from": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
       "to": "_agents_rules_01-ai-decision_md"
     },
     {
       "from": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
+      "to": "AGENTS_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
       "to": "projects_Alfredo_teste_ARCHITECTURE_md"
     },
     {
@@ -4155,12 +4697,40 @@ window.VAULT_SNAPSHOT = {
       "to": "templates_project_md"
     },
     {
+      "from": "projects_Alfredo_teste_LESSONS_LEARNED_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_LESSONS_LEARNED_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_LESSONS_LEARNED_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_LESSONS_LEARNED_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_LESSONS_LEARNED_md",
+      "to": "templates_project_md"
+    },
+    {
       "from": "projects_Alfredo_teste_PROJECT_md",
       "to": "projects_Alfredo_teste_CURRENT_STATE_md"
     },
     {
       "from": "projects_Alfredo_teste_PROJECT_md",
+      "to": "projects_Alfredo_teste_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_PROJECT_md",
       "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_PROJECT_md",
+      "to": "projects_teste_alfredo_22_LESSONS_LEARNED_md"
     },
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_actionable_09-estrategia-testes-qualidade_md",
@@ -4193,6 +4763,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_01-requisitos-funcionais-essenciais_md",
       "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_01-requisitos-funcionais-essenciais_md",
+      "to": "AGENTS_md"
     },
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_01-requisitos-funcionais-essenciais_md",
@@ -4241,6 +4815,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_03-arquitetura-padroes-design_md",
       "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_03-arquitetura-padroes-design_md",
+      "to": "AGENTS_md"
     },
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_03-arquitetura-padroes-design_md",
@@ -4367,8 +4945,16 @@ window.VAULT_SNAPSHOT = {
       "to": "_agents_rules_01-ai-decision_md"
     },
     {
+      "from": "projects_teste_alfredo_22_ARCHITECTURE_md",
+      "to": "AGENTS_md"
+    },
+    {
       "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
       "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
+      "to": "AGENTS_md"
     },
     {
       "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
@@ -4512,11 +5098,19 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_teste_alfredo_22_PROJECT_md",
+      "to": "projects_Alfredo_teste_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_PROJECT_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
       "from": "projects_teste_alfredo_22_PROJECT_md",
       "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_PROJECT_md",
+      "to": "projects_teste_alfredo_22_LESSONS_LEARNED_md"
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_02-adocantes-baixa-caloria_md",
@@ -4537,6 +5131,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_04-reducao-gordura-bolo_md",
       "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_04-reducao-gordura-bolo_md",
+      "to": "AGENTS_md"
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_OVERVIEW_md",
@@ -4571,8 +5169,40 @@ window.VAULT_SNAPSHOT = {
       "to": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_08-avaliacao-sensorial_md"
     },
     {
+      "from": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_01-audio-libraries-nodejs_md",
+      "to": "docs_brain-ui_demo_README_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_01-audio-libraries-nodejs_md",
+      "to": "memory_README_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_01-audio-libraries-nodejs_md",
+      "to": "projects_README_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_01-audio-libraries-nodejs_md",
+      "to": "README_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_03-ai-integration-audio_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_03-ai-integration-audio_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_03-ai-integration-audio_md",
+      "to": "templates_project_md"
+    },
+    {
       "from": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_OVERVIEW_md",
       "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_OVERVIEW_md",
+      "to": "AGENTS_md"
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_actionable_02-elo-implementation-node-ts_md",
@@ -4585,6 +5215,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_knowledge_01-elo-fundamentals_md",
       "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_knowledge_01-elo-fundamentals_md",
+      "to": "AGENTS_md"
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_knowledge_05-k-factor-calibration_md",
@@ -4728,6 +5362,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "README_md",
+      "to": "AGENTS_md"
+    },
+    {
+      "from": "README_md",
       "to": "CLAUDE_md"
     },
     {
@@ -4796,6 +5434,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "templates_project_md",
+      "to": "projects_Alfredo_teste_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "templates_project_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
     },
     {
@@ -4805,6 +5447,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "templates_project_md",
       "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "templates_project_md",
+      "to": "projects_teste_alfredo_22_LESSONS_LEARNED_md"
     },
     {
       "from": "templates_project_md",
@@ -4884,16 +5530,16 @@ window.VAULT_SNAPSHOT = {
     }
   },
   "stats": {
-    "totalFiles": 92,
+    "totalFiles": 100,
     "rulesCount": 5,
     "skillsCount": 8,
     "projectsCount": 2,
     "knowledgeCount": 6,
     "decisionsCount": 1,
     "memoryCount": 3,
-    "templatesCount": 4,
+    "templatesCount": 5,
     "docsCount": 9,
-    "totalNodes": 104,
-    "totalEdges": 466
+    "totalNodes": 113,
+    "totalEdges": 567
   }
 };
