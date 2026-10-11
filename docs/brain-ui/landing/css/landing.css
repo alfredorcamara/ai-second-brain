@@ -209,6 +209,7 @@ body {
   font-weight: 700;
   font-size: 28px;
   letter-spacing: -0.01em;
+  flex-shrink: 0;
 }
 
 .brand i {
@@ -222,15 +223,18 @@ body {
 }
 
 .brand-brain-img {
-  width: 60%;
+  height: 80px;
+  width: auto;
+  max-width: 100%;
   object-fit: contain;
   display: block;
-  filter: drop-shadow(0 0 8px rgba(84, 255, 240, 0.75));
-  transition: transform 0.3s ease;
+  filter: drop-shadow(0 0 10px rgba(63, 216, 255, 0.5));
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.3s ease;
 }
 
 .brand:hover .brand-brain-img {
-  transform: scale(1.1);
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 16px rgba(63, 216, 255, 0.8));
 }
 
 @keyframes pulse-dot {
@@ -249,6 +253,7 @@ body {
   display: flex;
   gap: 26px;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .links a {
@@ -1525,6 +1530,10 @@ footer {
 }
 
 @media (max-width: 640px) {
+  .brand-brain-img {
+    height: 38px;
+  }
+
   .links a:not(.btn) {
     display: none;
   }

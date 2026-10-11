@@ -26,9 +26,9 @@ main .pains,main .pain,main .diag-tabs,main .diagram-frame,main .diag-caps,main 
 .browser-bar .dots{display:flex;gap:6px}.browser-bar .dots i{width:11px;height:11px;border-radius:50%;background:#f87171}.browser-bar .dots i:nth-child(2){background:#fbbf24}.browser-bar .dots i:nth-child(3){background:#34d399}
 .browser-bar .url{flex:1;text-align:left;font:500 12px var(--font-mono);color:var(--mut);padding:5px 12px;border-radius:8px;background:#0006}
 .browser-bar a{color:var(--gold);font-size:13px;text-decoration:none;white-space:nowrap}.browser-bar a:hover{color:#fff}
-.browser-body{position:relative;aspect-ratio:16/10;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 40%,#10213a,#04060d 70%)}
-.browser-body iframe{position:absolute;inset:0;width:100%;height:100%;border:0;animation:fadeUp .8s both}
-.browser-body .unload{position:absolute;z-index:2;top:10px;right:10px;padding:6px 12px;border-radius:999px;border:1px solid var(--line-strong);background:#0a1122e6;color:var(--fg);font:500 12px var(--font-sans);cursor:pointer}
+.browser-body{position:relative;aspect-ratio:16/10;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 40%,#10213a,#04060d 70%);overflow:hidden}
+.browser-body iframe{position:absolute;top:0;left:0;width:133.333%;height:133.333%;border:0;transform:scale(0.75);transform-origin:0 0;animation:fadeUp .8s both}
+.browser-body .unload{position:absolute;z-index:10;top:10px;right:10px;padding:6px 12px;border-radius:999px;border:1px solid var(--line-strong);background:#0a1122e6;color:var(--fg);font:500 12px var(--font-sans);cursor:pointer;backdrop-filter:blur(8px)}
 .note{margin:16px 0 0;color:var(--mut);font-size:13.5px}
 .faq{display:grid;gap:12px;width:min(820px,100%);text-align:left}
 .faq details{border:1px solid var(--line);border-radius:16px;background:var(--glass-card);backdrop-filter:blur(12px);transition:border-color .3s,box-shadow .3s}
