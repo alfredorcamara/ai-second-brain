@@ -21,21 +21,19 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 
 ## Sessões Recentes
 - **Data**: 2026-10-11
-  - **Botão de Validação com Ícone de Chave e Efeitos Cintilantes (Verde / Vermelho Neon)**:
-    - **Substituição do Botão "Testar" pelo Botão da Chave**:
-      - Em `docs/brain-ui/index.html` e `docs/brain-ui/demo/index.html`, o antigo botão com texto "Testar" foi substituído pelo botão quadrado `#btnTestAiConnection.btn-ai-test-key` contendo o ícone outline Feather/Lucide de chave (`M21 2l-2 2... circle cx="17.5" cy="6.5"`), com dimensões exatas de 38x38px alinhado perfeitamente ao lado da caixa de API Key.
-      - Placeholder da chave de API atualizado para `Cole sua chave aqui...`, idêntico à imagem de referência fornecida pelo desenvolvedor.
-    - **Efeitos Cintilantes Neon Dinâmicos e Reativos**:
-      - Em `docs/brain-ui/style.css` e `docs/brain-ui/demo/style.css`, implementados os estilos com animações `@keyframes sparklingGreen` e `@keyframes sparklingRed`:
-        - **Sucesso (`.is-valid` / `.is-success`)**: Fundo em degradê radial verde esmeralda com pulso verde neon cintilante (`rgba(0, 245, 155, 0.95)`), borda verde e filtro de brilho na chave.
-        - **Falha (`.is-invalid` / `.is-error`)**: Fundo em degradê radial rubi com pulso vermelho neon cintilante (`rgba(239, 68, 68, 0.95)`), borda vermelha e filtro de brilho na chave.
-        - **Testando (`.is-testing`)**: Pulso ciano (`#38bdf8`) com micro-animação de rotação pendular na chave.
-    - **Controlador Reativo (`app.js` e `demo/app.js`)**:
-      - Criada a função `setAiTestButtonStatus(status)` (`idle`, `testing`, `success`, `error`), sincronizada automaticamente com `updateAiTerminalStatus` e com o ciclo de vida da requisição `testCurrentAiConnection()`.
-      - Reset automático para neutro/idle ao digitar ou colar no campo `#aiApiKeyInput` ou ao trocar o provedor no dropdown.
-      - Removidas referências a spans obsoletos (`aiTestBtnIcon`, `aiTestBtnLabel`).
-    - **Validação End-to-End**:
-      - Testado no navegador com browser subagent: capturados screenshots comprovando o estado verde cintilante após validação positiva da chave e o estado vermelho cintilante após inserção de chave inválida.
+  - **Refinamento do Botão de Validação com Ícone Fiel e Efeito Cintilante Suave**:
+    - **Ajuste da Geometria do Ícone à Referência do Usuário**:
+      - Substituída a geometria anterior pelo ícone oficial Heroicons v2 Outline Key (`M15.75 5.25a3 3...`) com traçado de 1.8px em `docs/brain-ui/index.html` e `docs/brain-ui/demo/index.html`, replicando com exatidão a haste diagonal, dentes escalonados e cabeça arredondada da imagem fornecida pelo desenvolvedor.
+    - **Suavização do Efeito Cintilante (Eliminação de Excessos)**:
+      - Em `docs/brain-ui/style.css` e `docs/brain-ui/demo/style.css`:
+        - Eliminados os halos exagerados de 32px e os fundos em gradiente radial que estouravam a interface.
+        - Preservado o fundo estritamente escuro `#060a13` do botão.
+        - Definido um brilho respiratório discreto e elegante:
+          - Sucesso (`.is-valid`): borda esmeralda (`rgba(16, 185, 129, 0.75)`), ícone `#10b981` e `box-shadow` suave entre 4px e 9px (`@keyframes sparklingGreen` em ciclo suave de 2.2s).
+          - Falha (`.is-invalid`): borda carmesim (`rgba(239, 68, 68, 0.75)`), ícone `#ef4444` e `box-shadow` suave entre 4px e 9px (`@keyframes sparklingRed` em ciclo suave de 2.2s).
+        - Estado hover neutro com borda suave translúcida, alinhado à estética dark do sistema.
+    - **Validação Visual & Integridade**:
+      - Comprovado visualmente no navegador com browser subagent: capturados screenshots dos estados de sucesso e erro demonstrando fidelidade à imagem de referência e suavidade do brilho.
       - `npm run doctor`: 100% dos links e arquivos íntegros (0 erros).
 
   - **Sincronização Fiel dos Parâmetros do `.env`, Validação Estrita e Estilização Escura das Setas de Retries**:
