@@ -6360,12 +6360,60 @@ async function openAiSettingsModal() {
     }
 
     // Inicializa o Mini Console do Terminal ao Vivo
+    if (cfg.hasKey && cfg.configured) {
+        updateAiTerminalStatus('success', {
+            provider: cfg.provider,
+            latencyMs: cfg.latencyMs
+        });
+    } else {
+        updateAiTerminalStatus('idle', {
+            provider: cfg.provider || 'groq'
+        });
+    }
+}
+
+/**
+ * Atualiza o Console do Terminal ao Vivo no Modal de Configuração de IA
+ * @param {'idle' | 'testing' | 'success' | 'error'} status 
+ * @param {Object} details 
+ */
+function updateAiTerminalStatus(status, details = {}) {
     const term = document.getElementById('aiModalTerminalOutput');
-    if (term) {
-        const prov = (cfg.provider || 'groq').toUpperCase();
-        term.innerHTML = `<code><span class="t-matrix">$</span> CONNECTING TO ${escapeHtml(prov)} LPU ENGINE...
-<span class="t-matrix">[OK]</span> CHAT COMPLETION READY [ISOLATED]
+    if (!term) return;
+
+    const card = term.closest('.ai-card-terminal') || document.getElementById('aiModalTerminalCard');
+    const providerRaw = details.provider || document.getElementById('aiProviderSelect')?.value || 'groq';
+    const providerPreset = (window.AI_PROVIDER_PRESETS && window.AI_PROVIDER_PRESETS[providerRaw]) || {};
+    const providerName = providerPreset.name || providerRaw.toUpperCase();
+    const providerUpper = providerRaw.toUpperCase();
+
+    // Remove todas as classes de estado anteriores
+    const stateClasses = ['is-idle', 'is-testing', 'is-success', 'is-error'];
+    if (card) {
+        card.classList.remove(...stateClasses);
+        card.classList.add(`is-${status}`);
+    }
+    term.classList.remove(...stateClasses);
+    term.classList.add(`is-${status}`);
+
+    if (status === 'idle') {
+        term.innerHTML = `<code><span class="t-dim">$</span> ENGINE: ${escapeHtml(providerUpper)} [STANDBY]
+<span class="t-amber">[IDLE]</span> Clique em "Testar" para validar a chave
+<span class="t-dim">LOCAL .ENV ENCRYPTION</span></code>`;
+    } else if (status === 'testing') {
+        term.innerHTML = `<code><span class="t-cyan">$</span> CONNECTING TO ${escapeHtml(providerUpper)} ENGINE...
+<span class="t-cyan">[WAIT]</span> Validando credenciais e descobrindo modelos...
+<span class="t-dim">LOCAL .ENV ENCRYPTION</span></code>`;
+    } else if (status === 'success') {
+        const latencyText = details.latencyMs ? `LATENCY: ${details.latencyMs}ms [OK]` : 'CHAT COMPLETION READY [ISOLATED]';
+        term.innerHTML = `<code><span class="t-matrix">$</span> CONNECTED TO ${escapeHtml(providerUpper)} ENGINE...
+<span class="t-matrix">[OK]</span> ${escapeHtml(latencyText)}
 <span class="t-matrix">LOCAL .ENV ENCRYPTION</span></code>`;
+    } else if (status === 'error') {
+        const errorMsg = details.error || `Informe uma API Key para o provedor ${providerName}`;
+        term.innerHTML = `<code><span class="t-red">$</span> ERROR CONNECTING TO ${escapeHtml(providerUpper)}
+<span class="t-red">[FAIL]</span> ${escapeHtml(errorMsg)}
+<span class="t-red">LOCAL .ENV ENCRYPTION</span></code>`;
     }
 }
 
@@ -6403,8 +6451,9 @@ function onProviderSelectChange() {
     const keySubtitle = document.getElementById('aiKeySubtitle');
     if (keyInput) {
         keyInput.placeholder = preset.placeholder;
-        if (keyInput.dataset.isMasked === 'true' && window.AI_GATEWAY_CONFIG && window.AI_GATEWAY_CONFIG.provider === providerId) {
+        if (window.AI_GATEWAY_CONFIG?.hasKey && window.AI_GATEWAY_CONFIG?.provider === providerId) {
             keyInput.value = window.AI_GATEWAY_CONFIG.apiKeyMasked || '';
+            keyInput.dataset.isMasked = 'true';
         } else {
             keyInput.value = '';
             keyInput.dataset.isMasked = 'false';
@@ -6428,51 +6477,33 @@ function onProviderSelectChange() {
         }
     }
 
-    // Popula modelos no Dropdown (100% dinâmico via API)
+    // Popula modelos no Dropdown (100% dinâmico via API) — Zerado para estado não validado
     const modelSelect = document.getElementById('aiModelSelect');
     const customModelInput = document.getElementById('aiCustomModelInput');
     if (modelSelect) {
         modelSelect.innerHTML = '';
-        const currentModel = window.AI_GATEWAY_CONFIG?.model;
-        if (currentModel && window.AI_GATEWAY_CONFIG?.provider === providerId) {
-            const opt = document.createElement('option');
-            opt.value = currentModel;
-            opt.textContent = currentModel === 'openai/gpt-oss-120b'
-                ? 'GPT OSS 120B (openai/gpt-oss-120b) — 128k contexto'
-                : `${currentModel} (Atual)`;
-            modelSelect.appendChild(opt);
-            modelSelect.value = currentModel;
-            if (customModelInput) customModelInput.value = currentModel;
-        } else {
-            const opt = document.createElement('option');
-            opt.value = '';
-            opt.textContent = 'Clique em "Testar" acima para listar os modelos disponíveis...';
-            modelSelect.appendChild(opt);
-        }
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.textContent = 'Clique em "Testar" acima para listar os modelos disponíveis...';
+        modelSelect.appendChild(opt);
+    }
+    if (customModelInput) {
+        customModelInput.value = '';
     }
 
-    // Se já estiver configurado com chave, preserva o feedback de conexão pronta
+    // Ao mudar o provedor, zera completamente os textos de feedback e contadores
     const feedback = document.getElementById('aiTestFeedback');
     if (feedback) {
-        if (window.AI_GATEWAY_CONFIG?.hasKey && window.AI_GATEWAY_CONFIG?.provider === providerId) {
-            feedback.style.display = 'block';
-            feedback.className = 'ai-test-feedback success';
-            feedback.innerHTML = `<div>✓ <strong>Conexão bem-sucedida!</strong></div><div class="ai-feedback-sub">Latência: ${window.AI_GATEWAY_CONFIG.latencyMs || 360}ms · 4 modelos compatíveis</div>`;
-        } else {
-            feedback.style.display = 'none';
-        }
+        feedback.style.display = 'none';
+        feedback.className = 'ai-test-feedback';
+        feedback.innerHTML = '';
     }
 
     const badge = document.getElementById('aiModelCountBadge');
     if (badge) badge.style.display = 'none';
 
-    // Atualiza status no Mini Console
-    const term = document.getElementById('aiModalTerminalOutput');
-    if (term) {
-        term.innerHTML = `<code><span class="t-matrix">$</span> CONNECTING TO ${escapeHtml(providerId.toUpperCase())} LPU ENGINE...
-<span class="t-matrix">[OK]</span> CHAT COMPLETION READY [ISOLATED]
-<span class="t-matrix">LOCAL .ENV ENCRYPTION</span></code>`;
-    }
+    // Zera o Mini Console para o estado IDLE / STANDBY do novo provedor
+    updateAiTerminalStatus('idle', { provider: providerId });
 }
 
 /**
@@ -6566,12 +6597,7 @@ async function testCurrentAiConnection() {
         feedback.innerHTML = `<span class="pulse-dot"></span> Conectando à API do provedor <strong>${provider.toUpperCase()}</strong>...`;
     }
 
-    const term = document.getElementById('aiModalTerminalOutput');
-    if (term) {
-        term.innerHTML = `<code><span class="t-matrix">$</span> CONNECTING TO ${escapeHtml(provider.toUpperCase())} LPU ENGINE...
-<span class="t-matrix">[PING]</span> DISCOVERING CHAT MODELS
-<span class="t-matrix">[WAIT]</span> MEASURING ROUND-TRIP LATENCY...</code>`;
-    }
+    updateAiTerminalStatus('testing', { provider });
 
     try {
         const res = await fetch('/api/ai/test', {
@@ -6588,11 +6614,11 @@ async function testCurrentAiConnection() {
             const modelCount = modelList.length;
             feedback.innerHTML = `<div>✓ <strong>Conexão bem-sucedida!</strong></div><div class="ai-feedback-sub">Latência: ${data.latencyMs || 0}ms · ${modelCount > 0 ? `${modelCount} modelos compatíveis` : 'Pronto para uso'}</div>`;
 
-            if (term) {
-                term.innerHTML = `<code><span class="t-matrix">$</span> CONNECTED TO ${escapeHtml(provider.toUpperCase())} LPU ENGINE...
-<span class="t-matrix">[OK]</span> LATENCY: ${data.latencyMs || 0}ms [ISOLATED]
-<span class="t-matrix">LOCAL .ENV ENCRYPTION</span></code>`;
-            }
+            updateAiTerminalStatus('success', {
+                provider,
+                latencyMs: data.latencyMs,
+                modelCount
+            });
 
             const badge = document.getElementById('aiModelCountBadge');
             if (badge) {
@@ -6651,13 +6677,13 @@ async function testCurrentAiConnection() {
             }
         } else {
             feedback.className = 'ai-test-feedback error';
-            feedback.innerHTML = `✕ <strong>Falha na conexão:</strong> ${escapeHtml(data.error || 'Não foi possível validar a chave.')}`;
+            const errorMsg = data.error || (data.details ? data.details : `Informe uma API Key para o provedor ${providerPreset.name || provider.toUpperCase()}`);
+            feedback.innerHTML = `✕ <strong>Falha na conexão:</strong> ${escapeHtml(errorMsg)}`;
 
-            if (term) {
-                term.innerHTML = `<code><span class="t-matrix">$</span> ERROR CONNECTING TO ${escapeHtml(provider.toUpperCase())}
-<span class="t-red">[FAIL]</span> ${escapeHtml(data.error || 'INVALID CREDENTIALS')}
-<span class="t-matrix">LOCAL .ENV ENCRYPTION</span></code>`;
-            }
+            updateAiTerminalStatus('error', {
+                provider,
+                error: errorMsg
+            });
 
             if (data.quotaExceeded || res.status === 429) {
                 setTimeout(() => {
@@ -6669,11 +6695,10 @@ async function testCurrentAiConnection() {
     } catch (err) {
         feedback.className = 'ai-test-feedback error';
         feedback.innerHTML = `✕ <strong>Erro de rede:</strong> ${escapeHtml(err.message)}`;
-        if (term) {
-            term.innerHTML = `<code><span class="t-matrix">$</span> NETWORK ERROR
-<span class="t-red">[FAIL]</span> ${escapeHtml(err.message)}
-<span class="t-matrix">LOCAL .ENV ENCRYPTION</span></code>`;
-        }
+        updateAiTerminalStatus('error', {
+            provider,
+            error: err.message || 'Falha de rede ao conectar'
+        });
     } finally {
         if (btn) btn.disabled = false;
         if (btnIcon) btnIcon.textContent = '🔑';
@@ -6837,6 +6862,7 @@ window.toggleAiKeyVisibility = toggleAiKeyVisibility;
 window.toggleManualModelMode = toggleManualModelMode;
 window.setManualModelMode = setManualModelMode;
 window.testCurrentAiConnection = testCurrentAiConnection;
+window.updateAiTerminalStatus = updateAiTerminalStatus;
 window.handleSaveAiSettings = handleSaveAiSettings;
 window.showQuotaExceededModal = showQuotaExceededModal;
 window.closeAiQuotaModal = closeAiQuotaModal;

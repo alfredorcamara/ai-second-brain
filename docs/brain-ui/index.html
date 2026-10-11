@@ -1944,12 +1944,12 @@
 
                     <!-- Rodapé de Ações Fixo e Sempre Visível -->
                     <div class="ai-settings-footer">
-                        <button type="button" class="btn-ai-footer-cancel"
-                            onclick="closeAiSettingsModal()">Cancelar</button>
                         <button type="submit" id="btnSaveAiSettings" class="btn-ai-footer-save">
                             <span class="btn-spinner" id="aiSaveSpinner" style="display:none"></span>
                             <span id="aiSaveBtnText">Salvar e Ativar ⚡</span>
                         </button>
+                        <button type="button" class="btn-ai-footer-cancel"
+                            onclick="closeAiSettingsModal()">Cancelar</button>
                     </div>
                 </form>
             </div>
@@ -1968,10 +1968,10 @@
                 </div>
 
                 <!-- Card 2: Terminal Console -->
-                <div class="ai-card-terminal">
-                    <pre class="ai-terminal-output" id="aiModalTerminalOutput"><code><span class="t-matrix">$</span> CONNECTING TO GROQ LPU ENGINE...
-<span class="t-matrix">[OK]</span> CHAT COMPLETION READY [ISOLATED]
-<span class="t-matrix">LOCAL .ENV ENCRYPTION</span></code></pre>
+                <div class="ai-card-terminal is-idle" id="aiModalTerminalCard">
+                    <pre class="ai-terminal-output is-idle" id="aiModalTerminalOutput"><code><span class="t-dim">$</span> ENGINE: GROQ [STANDBY]
+<span class="t-amber">[IDLE]</span> Clique em "Testar" para validar a chave
+<span class="t-dim">LOCAL .ENV ENCRYPTION</span></code></pre>
                 </div>
 
                 <!-- Card 3: Card 1 (Security) -->

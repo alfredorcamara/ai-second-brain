@@ -32,6 +32,15 @@
             let reqBody = {};
             try { reqBody = JSON.parse(opts?.body || '{}'); } catch(e) {}
             const prov = reqBody.provider || 'groq';
+            const requiresKey = !['ollama', 'custom'].includes(prov);
+            if (requiresKey && !reqBody.apiKey?.trim()) {
+                const provNames = { openai: 'OpenAI', groq: 'Groq', anthropic: 'Anthropic', openrouter: 'OpenRouter' };
+                const provName = provNames[prov] || prov.toUpperCase();
+                return Promise.resolve(json({
+                    success: false,
+                    error: `Informe uma API Key para o provedor ${provName}`
+                }, 400));
+            }
             const mockModelsByProv = {
                 groq: [
                     { id: 'openai/gpt-oss-120b', name: 'GPT OSS 120B', contextWindow: 131072 },

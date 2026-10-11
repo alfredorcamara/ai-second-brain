@@ -8876,7 +8876,7 @@ body::-webkit-scrollbar-thumb:hover {
 .ai-settings-section {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 8px;
 }
 
 .ai-step-title {
@@ -9042,7 +9042,7 @@ body::-webkit-scrollbar-thumb:hover {
 
 /* Card de Feedback do Teste (Exatamente como na Ilustração) */
 .ai-test-feedback {
-    margin-top: 6px;
+    margin-top: 10px;
     padding: 9px 12px;
     border-radius: 8px;
     font-size: 12px;
@@ -9194,8 +9194,8 @@ body::-webkit-scrollbar-thumb:hover {
     align-items: center;
     justify-content: flex-end;
     gap: 12px;
-    padding: 14px 24px;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 14px 0px;
+    border-top: 0px solid rgba(255, 255, 255, 0.06);
     background: #080d19;
     position: sticky;
     bottom: 0;
@@ -9353,7 +9353,7 @@ body::-webkit-scrollbar-thumb:hover {
     color: #94a3b8;
 }
 
-/* Card 2: Terminal Console (Sem bolinhas, texto verde matrix) */
+/* Card 2: Terminal Console (Interativo com status dinâmico: idle, testing, success, error) */
 .ai-card-terminal {
     background: #040711;
     border: 1px solid rgba(99, 102, 241, 0.22);
@@ -9361,21 +9361,95 @@ body::-webkit-scrollbar-thumb:hover {
     padding: 14px 18px;
     font-family: var(--font-mono, monospace);
     box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.7);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ai-card-terminal.is-idle {
+    border-color: rgba(99, 102, 241, 0.25);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.ai-card-terminal.is-testing {
+    border-color: rgba(56, 189, 248, 0.45);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.7), 0 0 16px rgba(56, 189, 248, 0.2);
+}
+
+.ai-card-terminal.is-success {
+    border-color: rgba(16, 185, 129, 0.45);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.7), 0 0 16px rgba(16, 185, 129, 0.2);
+}
+
+.ai-card-terminal.is-error {
+    border-color: rgba(239, 68, 68, 0.55);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.7), 0 0 18px rgba(239, 68, 68, 0.25);
 }
 
 .ai-terminal-output {
     margin: 0;
     font-size: 11.5px;
     line-height: 1.6;
-    color: #00f59b;
+    color: #94a3b8;
     white-space: pre-wrap;
     font-family: inherit;
     font-weight: 500;
+    transition: color 0.25s ease;
+}
+
+.ai-terminal-output.is-idle,
+.ai-terminal-output.is-idle code {
+    color: #94a3b8;
+}
+
+.ai-terminal-output.is-testing,
+.ai-terminal-output.is-testing code {
+    color: #38bdf8;
+}
+
+.ai-terminal-output.is-success,
+.ai-terminal-output.is-success code {
+    color: #00f59b;
+}
+
+.ai-terminal-output.is-error,
+.ai-terminal-output.is-error code {
+    color: #f87171;
+}
+
+.ai-terminal-output.is-error .t-matrix,
+.ai-terminal-output.is-error .t-dim,
+.ai-terminal-output.is-error .t-cyan,
+.ai-terminal-output.is-error .t-amber {
+    color: #f87171;
+}
+
+.ai-terminal-output.is-success .t-red,
+.ai-terminal-output.is-success .t-dim {
+    color: #00f59b;
 }
 
 .t-matrix {
     color: #00f59b;
     font-weight: 600;
+}
+
+.t-red {
+    color: #f87171;
+    font-weight: 600;
+}
+
+.t-cyan {
+    color: #38bdf8;
+    font-weight: 600;
+}
+
+.t-amber {
+    color: #fbbf24;
+    font-weight: 600;
+}
+
+.t-dim {
+    color: #64748b;
+    font-weight: 500;
 }
 
 /* Card 3: Card 1 (Security) */

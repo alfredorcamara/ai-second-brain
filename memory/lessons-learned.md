@@ -60,3 +60,12 @@ realmente precisa de geração de texto ou raciocínio aberto.
 1. Provedores de IA evoluem seus catálogos continuamente; fixar nomes em código gera débito técnico imediato. O gateway deve operar de forma 100% dinâmica, descobrindo os modelos disponíveis em tempo real através da API do provedor (`GET /models` / `/api/tags`) a partir do teste de conexão acionado pelo usuário.
 2. O ambiente de demonstração estático (`demo/`) da landing page e o ambiente local de desenvolvimento do workspace devem manter isolamento estrito de dados: o gerador `build_demo_vault.py` produz dados ilustrativos limpos (`demo-app`) para a web pública, enquanto o `scan-vault.js` mapeia os projetos reais do usuário apenas para o visualizador privado.
 **Ação**: Remover listas estáticas de modelos de todos os arquivos de configuração e código, e manter os geradores de dados da demo pública completamente isolados da varredura do disco local.
+
+### Lição 12: Feedback Monocromático Estrito e Estados Reativos em Consoles Web de Diagnóstico
+**Contexto**: No modal de configuração de IA (BYOK), o terminal ao vivo utilizava classes estáticas de cor (`.t-matrix` verde) para prefixos como `$` e rodapés `"LOCAL .ENV ENCRYPTION"`. Em caso de erro de conexão, a linha de erro aparecia mesclada com verde e vermelho, e trocar o provedor exibia prematuramente `[OK] CHAT COMPLETION READY` antes do clique no botão "Testar".
+**Aprendizado**:
+1. Componentes de terminal que simulam CLI em aplicações web devem implementar uma máquina de estados visual estrita (`idle`, `testing`, `success`, `error`).
+2. Estados de falha devem forçar 100% dos nós filhos (incluindo prompts e rodapés) para a cor de alerta (`#f87171`), e estados de sucesso para a cor de validação (`#00f59b`), impedindo poluição visual ou incoerência semântica.
+3. Trocas de contexto pelo usuário (ex: alterar o provedor no dropdown) devem reativamente zerar o estado para standby (`is-idle`), limpando feedbacks anteriores e informando o próximo passo (`[IDLE] Clique em "Testar" para validar a chave`).
+**Ação**: Centralizar a renderização de status de consoles em funções unificadas (`updateAiTerminalStatus`), forçar regras CSS com seletores descendentes defensivos (`.ai-terminal-output.is-error *`) e garantir que eventos `change` em selects sempre restaurem o estado para neutro/aguardando validação.
+

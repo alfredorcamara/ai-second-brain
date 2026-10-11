@@ -1,6 +1,6 @@
 # Estado Atual do AI Second Brain
 
-> Última atualização: 2026-10-09
+> Última atualização: 2026-10-10
 
 ## Status do Framework: 🟢 Operacional & Cockpit Avançado + 🔬 Research Lab + ⚡ AI Gateway Multi-Provedor (BYOK Ativo)
 
@@ -20,6 +20,21 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 | `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway Multi-Provedor, Research Engine) |
 
 ## Sessões Recentes
+- **Data**: 2026-10-10
+  - **Refinamento do Modal BYOK e Feedback Reativo do Console Terminal**:
+    - **Interatividade Reativa do Terminal Console (`.ai-card-terminal` / `.ai-terminal-output`)**:
+      - Implementada a máquina de estados completa (`idle`, `testing`, `success`, `error`) no terminal ao vivo do modal de configurações de IA.
+      - **Reset Reativo ao Trocar de Provedor**: Ao alterar o dropdown de provedores (`onProviderSelectChange`), o terminal é imediatamente zerado para o estado standby (`$ ENGINE: <PROVEDOR> [STANDBY]`, `[IDLE] Clique em "Testar" para validar a chave`), limpando feedbacks anteriores e restaurando o seletor de modelos ao estado inicial não validado.
+      - **Feedback de Erro Monocromático Vermelho**: Borda e brilho em vermelho neon (`is-error`), com 100% do texto do terminal convertido para `#f87171` (`$ ERROR CONNECTING TO <PROVEDOR>`, `[FAIL] <mensagem>`, `LOCAL .ENV ENCRYPTION`).
+      - **Feedback de Sucesso Verde Matrix**: Borda em verde esmeralda (`is-success`), com textos e spans em `#00f59b` (`$ CONNECTED TO <PROVEDOR> ENGINE...`, `[OK] LATENCY: <ms> [OK]`).
+    - **Padronização Visual com os Demais Modais do Sistema**:
+      - Borda externa e sombras ajustadas com tonalidade azul-marinho escura (#0a101d / #111a2e / #1a253c), idêntica aos outros modais do AI Second Brain.
+      - Botão fechar padronizado em formato circular arredondado (`.ai-card-close-btn`).
+      - Inclusão do asset animado vetorial `assets/cerebro_neon_animado.svg` no card de cabeçalho do gateway.
+      - Alinhamento horizontal do rodapé (`.ai-settings-footer`) alinhado às margens dos inputs.
+    - **Paridade Absoluta 100% entre Local (`docs/brain-ui/`) e Demo Pública (`docs/brain-ui/demo/`)**:
+      - Replicação exata de todas as regras de CSS (`style.css`), lógica JavaScript (`app.js`), marcação HTML (`index.html`) e suporte a mock com validação realista no `demo-mode.js`.
+
 - **Data**: 2026-10-09
   - **AI Gateway Multi-Provedor (BYOK — Bring Your Own Key)**:
     - **Módulo Nativo Universal (`scripts/ai-gateway.js`)**: Cliente HTTP/HTTPS sem dependências externas, unificando os principais provedores de IA do mercado:
