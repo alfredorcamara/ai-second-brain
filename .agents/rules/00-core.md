@@ -16,6 +16,9 @@
 4. **Quality Over Speed** — Prefira soluções robustas a soluções rápidas.
 5. **Explicit Over Implicit** — Documente premissas e decisões.
 6. **Zero Fabrication** — NUNCA invente contexto que não existe na documentação do projeto. Não gere arquivos, lore, telas ou especificações especulativas para preencher lacunas. Se algo não existe, declare expressamente como não definido.
+7. **Zero Hardcoded Models** — NUNCA crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API do provedor em tempo real.
+8. **Lessons Aware** — SEMPRE consulte `memory/lessons-learned.md` antes de arquitetar ou modificar integrações de IA e código.
+
 
 ## Fluxo de Trabalho Obrigatório
 

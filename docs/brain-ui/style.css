@@ -8925,11 +8925,21 @@ body::-webkit-scrollbar-thumb:hover {
 
 .ai-select-arrow {
     position: absolute;
-    right: 12px;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
     color: #64748b;
-    font-size: 13px;
     pointer-events: none;
-    font-family: system-ui, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    transition: color 0.2s ease;
+}
+
+.ai-select-wrap:hover .ai-select-arrow {
+    color: #94a3b8;
 }
 
 .ai-text-input {
@@ -9374,7 +9384,7 @@ body::-webkit-scrollbar-thumb:hover {
     padding: 13px 16px;
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
 }
 
 .ai-gateway-icon-wrap {
@@ -9396,8 +9406,8 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .ai-gateway-brain-img {
-    width: 56px;
-    height: 56px;
+    width: 80px;
+    height: 80px;
     object-fit: contain;
     display: block;
     filter: drop-shadow(0 0 6px rgba(84, 255, 240, 0.6));
@@ -9409,8 +9419,8 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .ai-gateway-title {
-    margin: 0 0 3px;
-    font-size: 13.5px;
+    margin: 0 0 6px;
+    font-size: 14px;
     font-weight: 700;
     color: #f8fafc;
     letter-spacing: -0.01em;
@@ -9544,7 +9554,7 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .ai-card-tag-text.sec {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     color: #10b981;
     letter-spacing: 0.1px;
@@ -9562,7 +9572,7 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .ai-card-tag-text.scope {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     color: #a5b4fc;
     letter-spacing: 0.1px;
@@ -9570,9 +9580,10 @@ body::-webkit-scrollbar-thumb:hover {
 
 /* Conteúdo Enriquecido nos Cards da Direita */
 .ai-card-body-content {
+    margin-top: 10px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 10px;
 }
 
 .ai-card-features-list {

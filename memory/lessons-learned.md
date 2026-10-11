@@ -76,4 +76,14 @@ realmente precisa de geração de texto ou raciocínio aberto.
 2. Em interfaces técnicas (BYOK/DevTools), expor cards explicativos dedicados ao lado dos parâmetros reduz a carga cognitiva, esclarece trade-offs de desempenho e reforça a confiança na plataforma.
 **Ação**: Sempre acoplar parâmetros de configuração a camadas concretas de execução no engine de gateway e fornecer cards explicativos com métricas esperadas (ex: latência 0ms, tolerância a HTTP 429) na interface do usuário.
 
+### Lição 14: Zero Catálogos Estáticos de Modelos — Descoberta Dinâmica em Tempo Real com Auto-Trigger na Abertura
+**Contexto**: A introdução temporária de um catálogo fixo de fallback (`AI_DEFAULT_MODELS_BY_PROVIDER`) para preencher o select antes do clique em "Testar" gerou discrepâncias (ex: textos verdes indicando conexão antes de os modelos estarem populados) e violou a filosofia fundamental de flexibilidade BYOK do AI Second Brain.
+**Aprendizado**:
+1. Catálogos estáticos de modelos de IA no frontend ou backend são antipadrões graves: APIs de IA evoluem semanalmente com novos lançamentos e deprecações, além de permissões variáveis por conta/chave.
+2. Em interfaces de configuração com chave já salva, a UX correta e elegante é **provocar/disparar o teste de conexão (`testCurrentAiConnection()`) automaticamente na própria abertura da tela (`openAiSettingsModal`)**. O usuário presencia o handshake em tempo real, a latência autêntica é aferida e o seletor é populado com modelos vivos direto da API.
+3. Se o usuário não possuir chave configurada, o seletor deve exibir exclusivamente o placeholder neutro orientativo (*"Clique em 'Testar' acima para listar os modelos disponíveis..."*) e manter o terminal em standby (`[IDLE]`), sem induzir falsos sucessos.
+4. A versão demo deve adotar **exatamente a mesma arquitetura**: mocks de transporte de rede (`demo-mode.js`) interceptam a rota de teste e retornam respostas simuladas com latência realista, permitindo que o mesmo código JS rode com 100% de paridade em ambos os ambientes sem bifurcação nem catálogos fixos no código da UI.
+**Ação**: NUNCA utilizar listas estáticas de modelos de IA em código JavaScript ou HTML. Sempre buscar modelos dinamicamente via requisição de teste provocada na abertura do modal ou por ação do usuário, assegurando paridade total entre o ambiente local e a demo pública.
+
+
 

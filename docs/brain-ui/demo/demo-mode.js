@@ -24,6 +24,14 @@
             hasKey: true,
             apiKeyMasked: 'gsk_••••••••Zvrf',
             model: 'openai/gpt-oss-120b',
+            models: [
+                { id: 'openai/gpt-oss-120b', name: 'GPT OSS 120B', contextWindow: 131072 },
+                { id: 'openai/gpt-oss-20b', name: 'GPT OSS 20B', contextWindow: 131072 },
+                { id: 'qwen/qwen3.8-27b', name: 'Qwen 3.8 27B', contextWindow: 131072 },
+                { id: 'allam-2-7b', name: 'ALLaM-2-7b', contextWindow: 4096 }
+            ],
+            modelCount: 4,
+            latencyMs: 380,
             baseUrl: 'https://api.groq.com/openai/v1',
             cacheHours: 24,
             maxRetries: 2
@@ -33,7 +41,8 @@
             try { reqBody = JSON.parse(opts?.body || '{}'); } catch(e) {}
             const prov = reqBody.provider || 'groq';
             const requiresKey = !['ollama', 'custom'].includes(prov);
-            if (requiresKey && !reqBody.apiKey?.trim()) {
+            const isSavedDemoKey = (prov === 'groq' && (!reqBody.apiKey || reqBody.apiKey.includes('••••')));
+            if (requiresKey && !reqBody.apiKey?.trim() && !isSavedDemoKey) {
                 const provNames = { openai: 'OpenAI', groq: 'Groq', anthropic: 'Anthropic', openrouter: 'OpenRouter' };
                 const provName = provNames[prov] || prov.toUpperCase();
                 return Promise.resolve(json({

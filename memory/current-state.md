@@ -1,6 +1,6 @@
 # Estado Atual do AI Second Brain
 
-> Última atualização: 2026-10-10
+> Última atualização: 2026-10-11
 
 ## Status do Framework: 🟢 Operacional & Cockpit Avançado + 🔬 Research Lab + ⚡ AI Gateway Multi-Provedor (BYOK Ativo)
 
@@ -20,6 +20,25 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 | `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway Multi-Provedor, Research Engine) |
 
 ## Sessões Recentes
+- **Data**: 2026-10-11
+  - **Eliminação de Listas Fixas e Busca de Modelos 100% Dinâmica em Tempo Real com Gatilho Automático na Abertura**:
+    - **Remoção Total de Hardcoding de Modelos**:
+      - Eliminado o catálogo fixo `AI_DEFAULT_MODELS_BY_PROVIDER` em `docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js`.
+      - Eliminados `DEFAULT_MODELS_BY_PROVIDER` e `cachedModelsByProvider` em `scripts/ai-gateway.js`.
+      - Removidas as opções `<option>` fixas de modelo em `docs/brain-ui/index.html` e `docs/brain-ui/demo/index.html`, iniciando o `<select id="aiModelSelect">` exclusivamente com o placeholder neutro orientativo (*"Clique em 'Testar' acima para listar os modelos disponíveis..."*).
+    - **Gatilho Reativo Automático ao Abrir o Modal (`openAiSettingsModal`)**:
+      - Ao abrir a tela de configurações de IA, se o usuário já possui chave salva no `.env` (ou for um provedor local sem chave como Ollama), o sistema agora dispara imediatamente `testCurrentAiConnection()` em tempo real.
+      - A interface executa a animação de terminal ao vivo (`testing` -> handshake HTTP e medição de latência), envia a requisição para a API do provedor (ou mock interceptor no demo), recebe os modelos vivos da conta e popula dinamicamente o `<select id="aiModelSelect">`, selecionando o modelo ativo da configuração.
+      - Se o usuário não tiver chave configurada (ou mudar para provedor sem chave), o terminal permanece em estado `idle` amigável e o select aguarda o preenchimento da chave e clique em Testar.
+    - **Paridade Estrita entre Produção Local e Versão Demo**:
+      - O arquivo `demo-mode.js` intercepta requisições `fetch('/api/ai/test')` simulando latência realista (~142ms) e lista de modelos compatíveis. O mesmo código JavaScript de `app.js` roda de forma 100% idêntica nos dois ambientes, sem bifurcações de lógica nem catálogos estáticos no frontend.
+    - **Refinamentos de Interface do Modal BYOK**:
+      - Substituição do chip redundante abaixo do botão Testar pelo botão alternador `✏️ Digitar ID manualmente` (`#btnToggleManualModel`).
+      - Centralização vertical perfeita da seta customizada do select (`.ai-select-arrow`) via `top: 50%` e `transform: translateY(-50%)`.
+      - Manutenção do título limpo `"3. Modelo de IA"`, deixando a contagem de modelos exclusivamente no console do terminal à direita.
+    - **Resiliência do Servidor HTTP Local (`server.js`)**:
+      - Tratamento para rotas de diretório estático (ex: `/demo/`), resolvendo automaticamente para `index.html` caso o caminho solicitado seja uma pasta.
+
 - **Data**: 2026-10-10
   - **Refinamento do Modal BYOK e Feedback Reativo do Console Terminal**:
     - **Consolidação Total de Feedback no Terminal Console (`.ai-card-terminal` / `.ai-terminal-output`)**:

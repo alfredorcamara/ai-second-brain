@@ -1778,10 +1778,19 @@ Projeto externo vinculado ao AI Second Brain.
     let relativeFile = pathname === '/' ? '/index.html' : pathname;
     let filePath = path.join(UI_DIR, relativeFile);
 
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
+        filePath = path.join(filePath, 'index.html');
+    }
+
     if (!fs.existsSync(filePath)) {
-        const rootCandidate = path.join(ROOT_DIR, relativeFile);
+        let rootCandidate = path.join(ROOT_DIR, relativeFile);
         if (fs.existsSync(rootCandidate) && rootCandidate.startsWith(ROOT_DIR)) {
-            filePath = rootCandidate;
+            if (fs.statSync(rootCandidate).isDirectory()) {
+                rootCandidate = path.join(rootCandidate, 'index.html');
+            }
+            if (fs.existsSync(rootCandidate)) {
+                filePath = rootCandidate;
+            }
         }
     }
 

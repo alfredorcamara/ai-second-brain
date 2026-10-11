@@ -1851,7 +1851,11 @@
                                 <option value="ollama">Ollama Local (100% Offline · Sem Nuvem · Zero Custo)</option>
                                 <option value="custom">Endpoint Customizado (OpenAI-Compatible)</option>
                             </select>
-                            <span class="ai-select-arrow">⌵</span>
+                            <span class="ai-select-arrow" aria-hidden="true">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </span>
                         </div>
                     </div>
 
@@ -1897,31 +1901,29 @@
                     <!-- 3. Modelo de IA -->
                     <div class="ai-settings-section">
                         <div class="ai-step-header-row">
-                            <label class="ai-step-title" for="aiModelSelect">3. Modelo de IA</label>
-                            <span id="aiModelCountBadge" class="ai-models-badge" style="display: none;"></span>
+                            <label class="ai-step-title" id="aiModelStepTitle" for="aiModelSelect">3. Modelo de IA</label>
+                            <button type="button" id="btnToggleManualModel" class="btn-ai-model-mode-link"
+                                onclick="toggleManualModelMode()">
+                                ✏️ Digitar ID manualmente
+                            </button>
                         </div>
 
                         <!-- Dropdown de seleção de modelos -->
                         <div id="aiModelSelectWrap" class="ai-select-wrap">
                             <select id="aiModelSelect" class="ai-select-input">
-                                <option value="openai/gpt-oss-120b">GPT OSS 120B (openai/gpt-oss-120b) — 128k contexto
-                                </option>
+                                <option value="">Clique em "Testar" acima para listar os modelos disponíveis...</option>
                             </select>
-                            <span class="ai-select-arrow">⌵</span>
+                            <span class="ai-select-arrow" aria-hidden="true">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </span>
                         </div>
 
                         <!-- Campo manual alternativo (oculto por padrão) -->
                         <div id="aiCustomModelWrap" class="ai-custom-model-wrap" style="display: none;">
                             <input type="text" id="aiCustomModelInput" class="ai-custom-model-input"
                                 placeholder="Ex: openai/gpt-oss-120b, gpt-4o, etc.">
-                        </div>
-
-                        <!-- Alternador entre Lista Dinâmica e Digitação Manual -->
-                        <div class="ai-model-mode-switch">
-                            <button type="button" id="btnToggleManualModel" class="btn-ai-model-mode-link"
-                                onclick="toggleManualModelMode()">
-                                ✏️ Digitar ID manualmente
-                            </button>
                         </div>
                     </div>
 

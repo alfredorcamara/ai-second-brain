@@ -6237,6 +6237,51 @@ function proceedFromWelcomeToSettings() {
 /**
  * Modal 2: Principal BYOK (Configuração de IA)
  */
+/**
+ * Popula e sincroniza as opções do dropdown de modelos de IA
+ */
+function populateAiModelSelect(modelList, selectedModelId) {
+    const modelSelect = document.getElementById('aiModelSelect');
+    const customInput = document.getElementById('aiCustomModelInput');
+    if (!modelSelect || !Array.isArray(modelList) || modelList.length === 0) return;
+
+    const previousVal = selectedModelId || (isManualModelMode && customInput?.value.trim() ? customInput.value.trim() : modelSelect.value);
+    modelSelect.innerHTML = '';
+
+    modelList.forEach(m => {
+        let id = '';
+        let label = '';
+        if (typeof m === 'string') {
+            id = m;
+            label = m;
+        } else if (m && typeof m === 'object') {
+            id = m.id || m.name || m.value || '';
+            const name = m.name || m.label || m.displayName || m.display_name || id;
+            const ctx = m.contextWindow ? ` — ${Math.round(m.contextWindow / 1024)}k contexto` : '';
+            label = (name && name !== id && !name.includes(id)) 
+                ? `${name} (${id})${ctx}` 
+                : `${id}${ctx}`;
+        }
+        if (!id) return;
+
+        const opt = document.createElement('option');
+        opt.value = id;
+        opt.textContent = label;
+        modelSelect.appendChild(opt);
+    });
+
+    const optionsArray = Array.from(modelSelect.options);
+    if (previousVal && optionsArray.some(o => o.value === previousVal)) {
+        modelSelect.value = previousVal;
+    } else if (modelSelect.options.length > 0) {
+        modelSelect.selectedIndex = 0;
+    }
+
+    if (customInput && (!customInput.value || !isManualModelMode)) {
+        customInput.value = modelSelect.value;
+    }
+}
+
 async function openAiSettingsModal() {
     const modal = document.getElementById('aiSettingsModal');
     if (!modal) return;
@@ -6273,10 +6318,15 @@ async function openAiSettingsModal() {
         keyInput.dataset.isMasked = cfg.hasKey ? 'true' : 'false';
     }
 
-    if (cfg.hasKey && feedback) {
-        feedback.style.display = 'block';
-        feedback.className = 'ai-test-feedback success';
-        feedback.innerHTML = `<div>✓ <strong>Conexão bem-sucedida!</strong></div><div class="ai-feedback-sub">Latência: ${cfg.latencyMs || 360}ms · 4 modelos compatíveis</div>`;
+    if (feedback) {
+        feedback.style.display = 'none';
+        feedback.className = 'ai-test-feedback';
+        feedback.innerHTML = '';
+    }
+
+    const modelStepTitle = document.getElementById('aiModelStepTitle');
+    if (modelStepTitle) {
+        modelStepTitle.textContent = '3. Modelo de IA';
     }
 
     const baseUrlInput = document.getElementById('aiBaseUrlInput');
@@ -6287,26 +6337,14 @@ async function openAiSettingsModal() {
     // Reseta modo de modelo para o padrão (dropdown dinâmico)
     setManualModelMode(false);
 
+    // Sincroniza mudanças no dropdown com o input manual alternativo
     const modelSelect = document.getElementById('aiModelSelect');
     const customModelInput = document.getElementById('aiCustomModelInput');
-    if (cfg.model) {
-        if (customModelInput) customModelInput.value = cfg.model;
-        if (modelSelect) {
-            let opt = Array.from(modelSelect.options).find(o => o.value === cfg.model);
-            const modelLabel = cfg.model === 'openai/gpt-oss-120b'
-                ? 'GPT OSS 120B (openai/gpt-oss-120b) — 128k contexto'
-                : `${cfg.model} (Atual)`;
-            if (!opt) {
-                opt = document.createElement('option');
-                opt.value = cfg.model;
-                modelSelect.appendChild(opt);
-            }
-            opt.textContent = modelLabel;
-            modelSelect.value = cfg.model;
-        }
+
+    if (customModelInput && cfg.model) {
+        customModelInput.value = cfg.model;
     }
 
-    // Sincroniza mudanças no dropdown com o input manual alternativo
     if (modelSelect && !modelSelect.dataset.hasInputSync) {
         modelSelect.dataset.hasInputSync = 'true';
         modelSelect.addEventListener('change', () => {
@@ -6317,12 +6355,14 @@ async function openAiSettingsModal() {
         });
     }
 
-    // Inicializa o Mini Console do Terminal ao Vivo
-    if (cfg.hasKey && cfg.configured) {
-        updateAiTerminalStatus('success', {
-            provider: cfg.provider,
-            latencyMs: cfg.latencyMs
-        });
+    // Ao abrir a tela: se já configurado com chave válida (ou provedor local sem chave),
+    // provoca automaticamente o botão testar para validar a conexão, medir a latência real
+    // e carregar os modelos disponíveis diretamente da API em tempo real (zero listas fixas)
+    const preset = AI_PROVIDER_PRESETS[cfg.provider] || AI_PROVIDER_PRESETS.groq;
+    const canAutoTest = (cfg.hasKey && cfg.configured) || (!preset.requiresKey && cfg.configured);
+
+    if (canAutoTest) {
+        testCurrentAiConnection();
     } else {
         updateAiTerminalStatus('idle', {
             provider: cfg.provider || 'groq'
@@ -6436,18 +6476,23 @@ function onProviderSelectChange() {
         }
     }
 
-    // Popula modelos no Dropdown (100% dinâmico via API) — Zerado para estado não validado
+    // Popula modelos no Dropdown (100% dinâmico via API) — Restaura modelos se já carregados para este provedor
     const modelSelect = document.getElementById('aiModelSelect');
     const customModelInput = document.getElementById('aiCustomModelInput');
+    const savedCfg = window.AI_GATEWAY_CONFIG;
+    const isCurrentActiveProvider = savedCfg && savedCfg.provider === providerId && Array.isArray(savedCfg.models) && savedCfg.models.length > 0;
+
     if (modelSelect) {
-        modelSelect.innerHTML = '';
-        const opt = document.createElement('option');
-        opt.value = '';
-        opt.textContent = 'Clique em "Testar" acima para listar os modelos disponíveis...';
-        modelSelect.appendChild(opt);
-    }
-    if (customModelInput) {
-        customModelInput.value = '';
+        if (isCurrentActiveProvider) {
+            populateAiModelSelect(savedCfg.models, savedCfg.model);
+        } else {
+            modelSelect.innerHTML = '';
+            const opt = document.createElement('option');
+            opt.value = '';
+            opt.textContent = 'Clique em "Testar" acima para listar os modelos disponíveis...';
+            modelSelect.appendChild(opt);
+            if (customModelInput) customModelInput.value = '';
+        }
     }
 
     // Ao mudar o provedor, zera completamente os textos de feedback e contadores
@@ -6458,11 +6503,24 @@ function onProviderSelectChange() {
         feedback.innerHTML = '';
     }
 
+    const modelStepTitle = document.getElementById('aiModelStepTitle');
+    if (modelStepTitle) {
+        modelStepTitle.textContent = '3. Modelo de IA';
+    }
+
     const badge = document.getElementById('aiModelCountBadge');
     if (badge) badge.style.display = 'none';
 
-    // Zera o Mini Console para o estado IDLE / STANDBY do novo provedor
-    updateAiTerminalStatus('idle', { provider: providerId });
+    // Atualiza o Mini Console: SUCCESS se é o provedor já autenticado, IDLE caso contrário
+    if (isCurrentActiveProvider && savedCfg.hasKey && savedCfg.configured) {
+        updateAiTerminalStatus('success', {
+            provider: providerId,
+            latencyMs: savedCfg.latencyMs,
+            modelCount: savedCfg.models.length
+        });
+    } else {
+        updateAiTerminalStatus('idle', { provider: providerId });
+    }
 }
 
 /**
@@ -6569,60 +6627,37 @@ async function testCurrentAiConnection() {
                 modelCount
             });
 
-            const badge = document.getElementById('aiModelCountBadge');
-            if (badge) {
-                if (modelCount > 0) {
-                    badge.textContent = `${modelCount} modelos de chat compatíveis`;
-                    badge.style.display = 'inline-flex';
-                } else {
-                    badge.style.display = 'none';
-                }
+            const modelStepTitle = document.getElementById('aiModelStepTitle');
+            if (modelStepTitle) {
+                modelStepTitle.textContent = '3. Modelo de IA';
             }
 
+            const badge = document.getElementById('aiModelCountBadge');
+            if (badge) badge.style.display = 'none';
+
+            // Atualiza cache de modelos e latência na sessão
+            if (window.AI_GATEWAY_CONFIG) {
+                window.AI_GATEWAY_CONFIG.models = modelList;
+                window.AI_GATEWAY_CONFIG.modelCount = modelCount;
+                window.AI_GATEWAY_CONFIG.latencyMs = data.latencyMs;
+            }
+
+            // Popula os modelos retornados pela API se disponíveis
             const modelSelect = document.getElementById('aiModelSelect');
             const customInput = document.getElementById('aiCustomModelInput');
             if (modelSelect && modelCount > 0) {
+                const configuredModel = window.AI_GATEWAY_CONFIG?.model || '';
                 const previousVal = isManualModelMode && customInput?.value.trim()
                     ? customInput.value.trim()
-                    : modelSelect.value;
-                modelSelect.innerHTML = '';
-
-                modelList.forEach(m => {
-                    let id = '';
-                    let label = '';
-                    if (typeof m === 'string') {
-                        id = m;
-                        label = m;
-                    } else if (m && typeof m === 'object') {
-                        id = m.id || m.name || m.value || '';
-                        const name = m.name || m.label || m.displayName || m.display_name || id;
-                        const ctx = m.contextWindow ? ` — ${Math.round(m.contextWindow / 1024)}k contexto` : '';
-                        label = (name && name !== id && !name.includes(id)) 
-                            ? `${name} (${id})${ctx}` 
-                            : `${id}${ctx}`;
-                    }
-                    if (!id) return;
-
-                    const opt = document.createElement('option');
-                    opt.value = id;
-                    opt.textContent = label;
-                    modelSelect.appendChild(opt);
-                });
-
-                const optionsArray = Array.from(modelSelect.options);
-                if (previousVal && optionsArray.some(o => o.value === previousVal)) {
-                    modelSelect.value = previousVal;
-                } else if (model && optionsArray.some(o => o.value === model)) {
-                    modelSelect.value = model;
-                } else if (modelSelect.options.length > 0) {
-                    modelSelect.selectedIndex = 0;
-                }
-
-                if (customInput && (!customInput.value || !isManualModelMode)) {
-                    customInput.value = modelSelect.value;
-                }
+                    : (modelSelect.value || configuredModel || model);
+                populateAiModelSelect(modelList, previousVal);
             }
         } else {
+            const modelStepTitle = document.getElementById('aiModelStepTitle');
+            if (modelStepTitle) {
+                modelStepTitle.textContent = '3. Modelo de IA';
+            }
+
             const errorMsg = data.error || (data.details ? data.details : `Informe uma API Key para o provedor ${providerPreset.name || provider.toUpperCase()}`);
 
             updateAiTerminalStatus('error', {
@@ -6638,6 +6673,11 @@ async function testCurrentAiConnection() {
             }
         }
     } catch (err) {
+        const modelStepTitle = document.getElementById('aiModelStepTitle');
+        if (modelStepTitle) {
+            modelStepTitle.textContent = '3. Modelo de IA';
+        }
+
         updateAiTerminalStatus('error', {
             provider,
             error: err.message || 'Falha de rede ao conectar'

@@ -11,6 +11,10 @@ Você é o assistente técnico do Alfredo e opera sob a governança do **AI Seco
 
 ### Regras de Operação:
 1. Sempre leia `projects/<nome>/PROJECT.md` e `CURRENT_STATE.md` antes de escrever código.
-2. Mudanças de arquitetura exigem criação de ADR em `projects/<nome>/DECISIONS/`.
-3. Nunca invente regras de negócio não especificadas.
-4. Mantenha os arquivos de memória e estado sincronizados.
+2. Consulte `memory/lessons-learned.md` antes de arquitetar ou modificar integrações de IA e código.
+3. NUNCA crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML (obrigatório 100% dinâmico via API).
+4. Mudanças de arquitetura exigem criação de ADR em `projects/<nome>/DECISIONS/`.
+5. NUNCA utilize LLM quando código determinístico ou regras de negócio resolverem.
+6. Nunca invente regras de negócio, telas ou especificações não solicitadas.
+7. Mantenha os arquivos de memória e estado sincronizados após tarefas significativas.
+

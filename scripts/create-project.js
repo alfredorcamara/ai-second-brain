@@ -119,6 +119,23 @@ fs.writeFileSync(path.join(projectFolder, 'PROJECT.md'), projectMdContent, 'utf-
 fs.writeFileSync(path.join(projectFolder, 'CURRENT_STATE.md'), currentStateMdContent, 'utf-8');
 fs.writeFileSync(path.join(projectFolder, 'ARCHITECTURE.md'), archMdContent, 'utf-8');
 
+const bridgeContent = `# Governança de IA — ${safeName}
+
+> Este projeto é governado pelo AI Second Brain.
+> Cérebro Central: \`${ROOT_DIR}\`
+
+## ANTES DE EXECUTAR QUALQUER TAREFA
+1. Consulte o estado atual em: [CURRENT_STATE.md](CURRENT_STATE.md)
+2. Consulte os requisitos e visão geral em: [PROJECT.md](PROJECT.md)
+3. Consulte as decisões arquiteturais em: DECISIONS/
+4. Consulte as lições aprendidas em: \`${path.join(ROOT_DIR, 'memory', 'lessons-learned.md')}\`
+5. REGRAS ABSOLUTAS:
+   - NUNCA crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API em tempo real.
+   - Sempre utilize código determinístico antes de recorrer a LLMs.
+   - NUNCA invente contexto ou regras especulativas sem solicitação expressa do desenvolvedor.
+`;
+fs.writeFileSync(path.join(projectFolder, 'AGENTS.md'), bridgeContent, 'utf-8');
+
 // Atualização automática do Snapshot do Dashboard
 try {
     const { scanVault } = require('./scan-vault');
@@ -136,6 +153,7 @@ console.log(`   📁 projects/${safeName}/`);
 console.log(`   ├── 📄 PROJECT.md`);
 console.log(`   ├── 📄 CURRENT_STATE.md`);
 console.log(`   ├── 📄 ARCHITECTURE.md`);
+console.log(`   ├── 📄 AGENTS.md (Ponte universal para agentes de IA)`);
 console.log(`   ├── 📁 DECISIONS/`);
 console.log(`   └── 📁 MEMORY/sessions/`);
 console.log('\n💡 Próximos Passos:');

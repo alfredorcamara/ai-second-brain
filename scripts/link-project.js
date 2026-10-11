@@ -113,6 +113,51 @@ Projeto externo vinculado ao AI Second Brain.
         fs.writeFileSync(currentStateMdPath, starterCurrentStateMd, 'utf-8');
         console.log(`   + Criado: CURRENT_STATE.md`);
     }
+
+    // Pontes de Governança Agnóstica (para desenvolvedores que abrirem a pasta em qualquer IDE/IA)
+    const bridgeContent = `# Governança de IA — ${safeName}
+
+> Este repositório está vinculado ao AI Second Brain.
+> Cérebro Central: \`${ROOT_DIR}\`
+
+## ANTES DE EXECUTAR QUALQUER TAREFA
+1. Consulte o estado atual em: [CURRENT_STATE.md](CURRENT_STATE.md)
+2. Consulte os requisitos e visão geral em: [PROJECT.md](PROJECT.md)
+3. Consulte as decisões arquiteturais em: DECISIONS/ (se existente)
+4. Consulte as lições aprendidas em: \`${path.join(ROOT_DIR, 'memory', 'lessons-learned.md')}\`
+5. REGRAS ABSOLUTAS:
+   - NUNCA crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API em tempo real.
+   - Sempre utilize código determinístico antes de recorrer a LLMs.
+   - NUNCA invente contexto ou regras especulativas sem solicitação expressa do desenvolvedor.
+`;
+
+    // 1. Padrão Aberto Universal (AGENTS.md)
+    const agentsMdPath = path.join(destLinkPath, 'AGENTS.md');
+    if (!fs.existsSync(agentsMdPath)) {
+        fs.writeFileSync(agentsMdPath, bridgeContent, 'utf-8');
+        console.log(`   + Criado: AGENTS.md (Ponte universal para qualquer agente de IA)`);
+    }
+
+    // 2. Google Antigravity (GEMINI.md)
+    const geminiMdPath = path.join(destLinkPath, 'GEMINI.md');
+    if (!fs.existsSync(geminiMdPath)) {
+        fs.writeFileSync(geminiMdPath, bridgeContent, 'utf-8');
+        console.log(`   + Criado: GEMINI.md (Ponte para Google Antigravity)`);
+    }
+
+    // 3. Cursor AI (.cursorrules)
+    const cursorRulesPath = path.join(destLinkPath, '.cursorrules');
+    if (!fs.existsSync(cursorRulesPath)) {
+        fs.writeFileSync(cursorRulesPath, bridgeContent, 'utf-8');
+        console.log(`   + Criado: .cursorrules (Ponte para Cursor AI)`);
+    }
+
+    // 4. Claude Code (CLAUDE.md)
+    const claudeMdPath = path.join(destLinkPath, 'CLAUDE.md');
+    if (!fs.existsSync(claudeMdPath)) {
+        fs.writeFileSync(claudeMdPath, bridgeContent, 'utf-8');
+        console.log(`   + Criado: CLAUDE.md (Ponte para Claude Code)`);
+    }
 }
 
 // 6. Atualização automática do Snapshot do Dashboard
@@ -129,4 +174,8 @@ try {
 
 console.log(`\n🎉 PROJETO CONECTADO COM SUCESSO!`);
 console.log(`   Agora o AI Second Brain monitora e governa este repositório sem duplicar arquivos.`);
-console.log(`   Inicie o servidor ('npm start') para ver o novo projeto no Dashboard.\n`);
+console.log(`   Inicie o servidor ('npm start') para ver o novo projeto no Dashboard.`);
+console.log(`\n💡 Dica de Operação:`);
+console.log(`   • Modo Cockpit (Recomendado): Mantenha o AI Second Brain aberto no editor e trabalhe via 'projects/${safeName}/'.`);
+console.log(`   • Modo Standalone: Se abrir a pasta original isolada em outro editor, a ponte 'GEMINI.md' manterá as diretrizes ativas.\n`);
+

@@ -1,0 +1,12 @@
+# AI SECOND BRAIN — DIRETRIZES PARA CLINE / ROO CODE
+
+> Este arquivo orienta o agente autônomo Cline / Roo Code dentro do AI Second Brain.
+
+## FLUXO DE TRABALHO OBRIGATÓRIO
+1. Identifique o projeto em `projects/<nome>/`.
+2. Leia `projects/<nome>/PROJECT.md` e `CURRENT_STATE.md` antes de qualquer edição.
+3. Consulte `DECISIONS/` para respeitar decisões arquiteturais já tomadas.
+4. Consulte `memory/lessons-learned.md` antes de arquitetar código ou integrações de IA.
+5. NUNCA utilize catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML (obrigatório ser 100% dinâmico via API em tempo real).
+6. Priorize sempre código determinístico antes de recorrer a chamadas de LLM.
+7. Mantenha `CURRENT_STATE.md` atualizado ao concluir tarefas.

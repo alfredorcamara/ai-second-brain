@@ -19,12 +19,16 @@ Você opera dentro do **AI Second Brain**, um sistema estruturado que organiza c
    - `projects/<nome>/CURRENT_STATE.md` — O que está pronto, o que está em andamento e próximos passos.
    - `projects/<nome>/ARCHITECTURE.md` — Desenho técnico, diagrama de componentes e padrões.
    - `projects/<nome>/DECISIONS/` — Architecture Decision Records (ADRs) com o histórico de por que escolhas foram feitas.
-3. **Memória Persistente**: Ao final de sessões significativas, registre o resumo em `projects/<nome>/MEMORY/sessions/` e atualize `CURRENT_STATE.md`.
+3. **Memória Persistente**:
+   - Ao final de sessões significativas, registre o resumo em `projects/<nome>/MEMORY/sessions/` e atualize `CURRENT_STATE.md`.
+   - Consulte `memory/lessons-learned.md` antes de implementar ou modificar integrações de IA e arquitetura para não repetir erros documentados.
 
 ---
 
-## DIRETRIZES FUNDAMENTAIS
+## REGRAS ABSOLUTAS
 
-- **Zero Alucinação**: Se uma informação não estiver documentada, pergunte ou declare expressamente como "Não definido".
-- **ADRs Obrigatórios**: Toda mudança arquitetural significativa deve gerar um novo arquivo em `projects/<nome>/DECISIONS/`.
-- **Governança Agnostica**: Os contratos são em Markdown puro para serem compreendidos por qualquer inteligência artificial.
+1. **Zero Alucinação**: Se uma informação não estiver documentada, pergunte ou declare expressamente como "Não definido". Jamais invente especificações.
+2. **Catálogos 100% Dinâmicos**: NUNCA crie listas ou catálogos fixos/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API do provedor em tempo real.
+3. **Consulta Obrigatória à Memória**: SEMPRE consulte `memory/lessons-learned.md` antes de arquitetar código ou integrações de IA.
+4. **ADRs Obrigatórios**: Toda mudança arquitetural significativa deve gerar um novo arquivo em `projects/<nome>/DECISIONS/`.
+5. **Prioridade Determinística**: NUNCA utilize LLM quando código determinístico ou regras de negócio resolverem.

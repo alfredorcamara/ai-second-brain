@@ -132,6 +132,7 @@ function getConfig() {
     const maxRetries = parseInt(process.env.AI_MAX_RETRIES, 10) || 2;
 
     const isConfigured = provider.requiresKey ? !!apiKey : true;
+    const models = (isConfigured || providerId === 'ollama') ? (cachedModelsByProvider[providerId] || []) : [];
 
     return {
         provider: provider.id,
@@ -140,6 +141,8 @@ function getConfig() {
         apiKeyMasked: maskKey(apiKey),
         hasKey: !!apiKey,
         model,
+        models,
+        modelCount: models.length,
         baseUrl,
         maxTokens,
         temperature,
@@ -426,6 +429,10 @@ async function testConnection({ provider, apiKey, baseUrl, model }) {
         if (typeof m === 'string') return { id: m, name: m };
         return { id: m.id || m.name, name: m.name || m.label || m.id, contextWindow: m.contextWindow || null };
     });
+
+    if (combinedModels.length > 0) {
+        cachedModelsByProvider[p.id] = combinedModels;
+    }
 
     return {
         success: true,

@@ -42,3 +42,4 @@ SEMPRE → VALIDAR resultado
 - ❌ Ignorar AIJev quando a tarefa é de decisão
 - ❌ Aceitar resultado de IA sem validação
 - ❌ Hardcodar provider de IA (usar abstrações)
+- ❌ Hardcodar listas ou catálogos de modelos de IA (catálogo deve ser 100% dinâmico via API)

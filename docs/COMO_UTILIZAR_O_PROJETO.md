@@ -186,6 +186,60 @@ No arquivo `projects/<nome>/CURRENT_STATE.md`, liste exatamente o estado operaci
 - Quais são os bugs conhecidos que ainda não foram corrigidos.
 - Qual é o próximo objetivo prioritário.
 
+### Passo 4: Onde Abrir a IDE? Cockpit Central vs. Repositório Isolado (Ponto de Atenção Crucial)
+
+Uma dúvida frequente de qualquer desenvolvedor ao clonar o projeto é:  
+**"Se eu abrir a pasta do meu projeto de forma isolada em outro editor/janela, as regras do Segundo Cérebro continuam funcionando?"**
+
+A resposta depende do modo de trabalho escolhido:
+
+#### Modo 1: AI Second Brain como Cockpit Central (RECOMENDADO ⭐)
+Neste modo, você abre a pasta raiz `AI_SECOND_BRAIN` na sua IDE (Google Antigravity, VS Code, Cursor).
+* **Como funciona:** Você acessa o seu código através do atalho/junção em `projects/<nome-do-projeto>/`.
+* **Por que é o modo ideal:**
+  * O agente de IA lê o `GEMINI.md` da raiz e todas as regras em `.agents/rules/` de forma nativa e automática.
+  * Todas as **REGRAS ABSOLUTAS** (zero listas fixas de modelos de IA, Decision Gate, AIJev first, proibição de inventar contexto) se aplicam instantaneamente ao seu projeto.
+  * Você mantém o Grafo Neural 3D, o Research Lab e as skills ativas no mesmo ambiente.
+  * As lições aprendidas globais (`memory/lessons-learned.md`) protegem o seu código contra erros já documentados no passado.
+
+#### Modo 2: Repositório Aberto Isoladamente em Outra Janela (Standalone)
+Se você fechar o AI Second Brain e abrir **apenas a pasta física original do seu projeto** (ex: `C:\Projetos\MeuProjeto`) em uma nova janela:
+* **O que acontece:** O agente de IA daquela nova janela **não** lerá o `GEMINI.md` da raiz do Segundo Cérebro por padrão, pois a IDE só enxerga as diretrizes da pasta raiz aberta naquele momento!
+* **Como resolver (Criando a Ponte de Governança Agnóstica):**
+  O **AI Second Brain é 100% agnóstico a qualquer IDE ou provedor de IA**. Ele não é exclusivo do Google Antigravity ou Gemini; ele oferece suporte nativo e idêntico para **Cursor AI, Claude Code, OpenAI Codex, Windsurf, GitHub Copilot e Cline**.
+
+  Para que o agente da sua ferramenta favorita continue respeitando as regras e a memória mesmo trabalhando na pasta isolada, basta manter uma **Ponte de Governança** na raiz do seu repositório:
+  
+  | Sua Ferramenta / IDE | Arquivo de Ponte Lido | O que faz |
+  | :--- | :--- | :--- |
+  | **Padrão Aberto Universal** | `AGENTS.md` | Padrão agnóstico lido por agentes modernos (OpenAI, Codex, etc.) |
+  | **Cursor AI** | `.cursorrules` | Injetado automaticamente no contexto do Cursor |
+  | **Claude Code** | `CLAUDE.md` | Injetado na inicialização das sessões do Claude Code |
+  | **Google Antigravity** | `GEMINI.md` | Injetado em todos os turnos de prompt no Antigravity |
+  | **Windsurf (Cascade)** | `.windsurfrules` | Injetado no contexto do Windsurf |
+  | **GitHub Copilot** | `.github/copilot-instructions.md` | Lidas pelo Copilot Chat no VS Code |
+  | **Cline / Roo Code** | `.clinerules` | Injetado nas sessões do Cline |
+
+  **Exemplo de Conteúdo da Ponte (`AGENTS.md` / `GEMINI.md` / `CLAUDE.md` / `.cursorrules`):**
+  ```markdown
+  # Governança de IA — Projeto Conectado ao AI Second Brain
+  
+  > Este projeto é governado pelas regras e decisões do AI Second Brain.
+  > Cérebro Central: <caminho_absoluto_da_pasta_AI_SECOND_BRAIN>
+  
+  ## ANTES DE EXECUTAR QUALQUER TAREFA
+  1. Consulte o estado atual em: CURRENT_STATE.md
+  2. Consulte a visão geral e arquitetura em: PROJECT.md
+  3. Consulte as decisões arquiteturais em: DECISIONS/
+  4. Consulte as lições aprendidas em: <caminho_absoluto>/memory/lessons-learned.md
+  5. REGRAS ABSOLUTAS:
+     - NUNCA crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML.
+     - Sempre utilize código determinístico antes de recorrer a LLMs.
+     - NUNCA invente contexto ou regras especulativas sem solicitação expressa do desenvolvedor.
+  ```
+
+> 💡 **Automação Nativa Total**: Ao executar `npm run project:link <nome> <caminho>`, o AI Second Brain cria a junção NTFS e **já gera automaticamente** as pontes contratuais (`AGENTS.md`, `GEMINI.md`, `.cursorrules`, `CLAUDE.md`) na raiz do seu repositório, garantindo conformidade imediata qualquer que seja a sua ferramenta de IA.
+
 ---
 
 ## 4. Operação do Dia a Dia: O Ciclo de Vida de uma Sessão de Trabalho

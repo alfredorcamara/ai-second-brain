@@ -70,14 +70,16 @@ AI_SECOND_BRAIN/
 > Veja como funciona a pesquisa contínua e catalogação automática com IA (Groq Cloud) e Prompt Vivo em: **[docs/RESEARCH_LAB.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/RESEARCH_LAB.md)**.
 
 
-### 1. Abra este workspace na sua IDE ou agente de IA favorito
-O sistema possui pontes nativas e automáticas para:
+### 1. Abra este workspace na sua IDE ou agente de IA favorito (Modo Cockpit)
+Recomendamos abrir a pasta raiz `AI_SECOND_BRAIN` na sua IDE para gerenciar todos os projetos a partir daqui com 100% dos poderes e regras ativas. O sistema possui pontes nativas e automáticas para:
 - **Cursor AI** (lê `.cursorrules`)
 - **Claude Code** (lê `CLAUDE.md`)
 - **Google Antigravity** (lê `GEMINI.md`)
 - **Windsurf** (lê `.windsurfrules`)
 - **GitHub Copilot** (lê `.github/copilot-instructions.md`)
 - **Roo Code / Cline** (lê `.clinerules`)
+
+*(Caso prefira abrir a pasta física de um projeto de forma isolada em outra janela, consulte o passo a passo de configuração da ponte em [docs/COMO_UTILIZAR_O_PROJETO.md](docs/COMO_UTILIZAR_O_PROJETO.md#passo-4-onde-abrir-a-ide-cockpit-central-vs-repositório-isolado-ponto-de-atenção-crucial)).*
 
 ### 2. As regras são aplicadas automaticamente
 Quando você trabalhar em qualquer arquivo, as diretrizes de governança serão descobertas e aplicadas conforme o contexto.

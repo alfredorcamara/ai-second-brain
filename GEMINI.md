@@ -17,9 +17,10 @@ memória e regras para todos os projetos.
 
 1. **Entenda o projeto** — Leia o `PROJECT.md` do projeto relevante em `projects/`.
 2. **Leia as regras aplicáveis** — Verifique `.agents/rules/` para restrições.
-3. **Leia o estado atual** — Consulte `CURRENT_STATE.md` do projeto.
+3. **Leia o estado atual** — Consulte `CURRENT_STATE.md` do projeto e `memory/current-state.md`.
 4. **Leia decisões anteriores** — Verifique `DECISIONS/` do projeto.
-5. **Identifique o tipo da tarefa** — Classifique antes de agir.
+5. **Leia as lições aprendidas** — Consulte `memory/lessons-learned.md` para evitar repetir erros documentados.
+6. **Identifique o tipo da tarefa** — Classifique antes de agir.
 
 ---
 
@@ -86,9 +87,11 @@ NOVA TAREFA
    - O Segundo Cérebro serve para refletir a realidade dos projetos e decisões reais, NUNCA para fabricar conteúdo fictício ou preencher diretórios artificialmente.
 4. **NUNCA** execute ações destrutivas sem confirmação explícita.
 5. **NUNCA** altere arquitetura sem consultar decisões existentes.
-6. **SEMPRE** valide o resultado de qualquer operação de IA.
-7. **SEMPRE** atualize a memória após implementações significativas.
-8. **SEMPRE** registre decisões arquiteturais relevantes.
+6. **NUNCA** crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API do provedor em tempo real.
+7. **SEMPRE** consulte `memory/lessons-learned.md` antes de arquitetar ou modificar integrações para não repetir erros já documentados.
+8. **SEMPRE** valide o resultado de qualquer operação de IA.
+9. **SEMPRE** atualize a memória após implementações significativas.
+10. **SEMPRE** registre decisões arquiteturais relevantes.
 
 ---
 
@@ -111,9 +114,10 @@ Avalie cada item obrigatoriamente:
 
 1. Testar
 2. Revisar
-3. Atualizar documentação do projeto
-4. Atualizar memória (`memory/`)
-5. Registrar decisões relevantes (`decisions/`)
+3. Atualizar documentação do projeto (`PROJECT.md`, `ARCHITECTURE.md`)
+4. Atualizar memória do projeto (`projects/<projeto>/CURRENT_STATE.md` e `projects/<projeto>/MEMORY/sessions/`)
+5. Se houve aprendizado universal ou mudança no framework: atualizar `memory/` (`lessons-learned.md` / `current-state.md`)
+6. Registrar decisões relevantes em `projects/<projeto>/DECISIONS/`
 
 ---
 
