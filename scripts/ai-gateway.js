@@ -20,6 +20,9 @@ const ENV_PATH = path.join(__dirname, '..', '.env');
 // Cache em memória para inferências de IA respeitando AI_CACHE_TTL_HOURS
 const completionCache = new Map();
 
+// Cache em memória de modelos descobertos dinamicamente por provedor (populado via testConnection em tempo real)
+const cachedModelsByProvider = {};
+
 /**
  * Provedores suportados e metadados
  */
@@ -125,11 +128,15 @@ function getConfig() {
     const model = process.env.AI_MODEL || 
                   (providerId === 'groq' ? process.env.GROQ_MODEL : '') || '';
 
-    const baseUrl = process.env.AI_BASE_URL || provider.baseUrl;
+    const baseUrl = (providerId === 'ollama' || providerId === 'custom')
+        ? (process.env.AI_BASE_URL || provider.baseUrl)
+        : provider.baseUrl;
     const maxTokens = parseInt(process.env.AI_MAX_TOKENS || process.env.GROQ_MAX_TOKENS, 10) || 4096;
     const temperature = parseFloat(process.env.AI_TEMPERATURE || process.env.GROQ_TEMPERATURE) || 0.7;
-    const cacheHours = parseInt(process.env.AI_CACHE_TTL_HOURS, 10) || 24;
-    const maxRetries = parseInt(process.env.AI_MAX_RETRIES, 10) || 2;
+    const rawCacheHours = parseInt(process.env.AI_CACHE_TTL_HOURS, 10);
+    const cacheHours = (!isNaN(rawCacheHours) && rawCacheHours >= 1 && rawCacheHours <= 720) ? rawCacheHours : 24;
+    const rawMaxRetries = parseInt(process.env.AI_MAX_RETRIES, 10);
+    const maxRetries = (!isNaN(rawMaxRetries) && rawMaxRetries >= 0 && rawMaxRetries <= 10) ? rawMaxRetries : 2;
 
     const isConfigured = provider.requiresKey ? !!apiKey : true;
     const models = (isConfigured || providerId === 'ollama') ? (cachedModelsByProvider[providerId] || []) : [];
@@ -167,18 +174,34 @@ function saveConfig({ provider, apiKey, model, baseUrl, maxTokens, temperature, 
         throw new Error(`Provedor desconhecido: "${provider}"`);
     }
 
+    // Validação estrita de parâmetros
+    const parsedCache = parseInt(cacheHours, 10);
+    if (isNaN(parsedCache) || parsedCache < 1 || parsedCache > 720) {
+        throw new Error('O parâmetro Cache TTL deve ser um número inteiro entre 1 e 720 horas.');
+    }
+
+    const parsedRetries = parseInt(maxRetries, 10);
+    if (isNaN(parsedRetries) || parsedRetries < 0 || parsedRetries > 10) {
+        throw new Error('O parâmetro Tentativas Automáticas (Retries) deve ser um número inteiro entre 0 e 10.');
+    }
+
     const p = PROVIDERS[provider];
     const current = fs.existsSync(ENV_PATH) ? fs.readFileSync(ENV_PATH, 'utf-8') : '';
     const lines = current.split('\n');
+    const customBaseUrl = (provider === 'ollama' || provider === 'custom') ? (baseUrl || p.baseUrl) : p.baseUrl;
     const updates = {
         AI_PROVIDER: provider,
         AI_MODEL: model || '',
-        AI_BASE_URL: baseUrl || p.baseUrl,
+        AI_BASE_URL: customBaseUrl,
         AI_MAX_TOKENS: String(maxTokens || 4096),
         AI_TEMPERATURE: String(temperature ?? 0.7),
-        AI_CACHE_TTL_HOURS: String(cacheHours || 24),
-        AI_MAX_RETRIES: String(maxRetries || 2)
+        AI_CACHE_TTL_HOURS: String(parsedCache),
+        AI_MAX_RETRIES: String(parsedRetries)
     };
+
+    if (provider === 'groq' && model) {
+        updates.GROQ_MODEL = model;
+    }
 
     if (apiKey) {
         updates.AI_API_KEY = apiKey;
@@ -290,11 +313,15 @@ function makeHttpRequest({ url, method = 'POST', headers = {}, body = null, time
  */
 async function testConnection({ provider, apiKey, baseUrl, model }) {
     const p = PROVIDERS[provider || 'groq'] || PROVIDERS.groq;
-    const finalBaseUrl = (baseUrl || p.baseUrl).replace(/\/+$/, '');
+    const finalBaseUrl = ((p.id === 'ollama' || p.id === 'custom')
+        ? (baseUrl || process.env.AI_BASE_URL || p.baseUrl)
+        : p.baseUrl).replace(/\/+$/, '');
     const finalKey = apiKey || (p.keyEnv ? process.env[p.keyEnv] : '') || process.env.AI_API_KEY || '';
 
     if (p.requiresKey && !finalKey) {
-        throw new Error(`Informe uma API Key para o provedor ${p.name}`);
+        const err = new Error(`Informe uma API Key para o provedor ${p.name}`);
+        err.statusCode = 400;
+        throw err;
     }
 
     const t0 = Date.now();
@@ -390,8 +417,19 @@ async function testConnection({ provider, apiKey, baseUrl, model }) {
                 return a.id.localeCompare(b.id);
             });
         }
-    } catch (_) {
-        // Alguns endpoints não suportam GET /models
+    } catch (modelsErr) {
+        if (modelsErr.statusCode === 401 || modelsErr.statusCode === 403) {
+            const err = new Error(`Chave de API inválida ou sem permissão para o provedor ${p.name}.`);
+            err.statusCode = 401;
+            throw err;
+        }
+        if (modelsErr.statusCode === 429) {
+            const err = new Error('Cota de IA esgotada ou limite de requisições atingido no provedor.');
+            err.statusCode = 429;
+            err.quotaExceeded = true;
+            throw err;
+        }
+        // Alguns endpoints customizados não suportam GET /models
     }
 
     // 2. Se não conseguiu listar modelos e foi informado um modelo específico, valida via mini-ping
@@ -416,12 +454,14 @@ async function testConnection({ provider, apiKey, baseUrl, model }) {
                 throw err;
             }
             if (pingErr.statusCode === 401 || pingErr.statusCode === 403) {
-                const err = new Error('Chave de API inválida ou sem permissão.');
+                const err = new Error(`Chave de API inválida ou sem permissão para o provedor ${p.name}.`);
                 err.statusCode = 401;
                 throw err;
             }
             throw pingErr;
         }
+    } else if (!fetchedModels.length && p.requiresKey) {
+        throw new Error(`Nenhum modelo de chat compatível foi retornado pelo provedor ${p.name}. Verifique a API Key.`);
     }
 
     const latencyMs = Date.now() - t0;

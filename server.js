@@ -1050,10 +1050,18 @@ Projeto externo vinculado ao AI Second Brain.
     // RESEARCH LAB — AI-Powered Knowledge Synthesis
     // ============================================================
 
+    // Utilitário para carregar dinamicamente o AI Gateway com hot-reload de módulo
+    function getAiGateway() {
+        try {
+            delete require.cache[require.resolve('./scripts/ai-gateway')];
+        } catch (_) {}
+        return require('./scripts/ai-gateway');
+    }
+
     // API: Check AI Configuration Status (compatível com /status e /config)
     if ((pathname === '/api/ai/status' || pathname === '/api/ai/config') && req.method === 'GET') {
         try {
-            const config = aiGateway.getConfig();
+            const config = getAiGateway().getConfig();
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({
                 success: true,
@@ -1072,7 +1080,7 @@ Projeto externo vinculado ao AI Second Brain.
     if (pathname === '/api/ai/test' && req.method === 'POST') {
         try {
             const body = await readJsonBody(req);
-            const result = await aiGateway.testConnection({
+            const result = await getAiGateway().testConnection({
                 provider: body.provider,
                 apiKey: body.apiKey,
                 baseUrl: body.baseUrl,
@@ -1097,7 +1105,7 @@ Projeto externo vinculado ao AI Second Brain.
     if (pathname === '/api/ai/save' && req.method === 'POST') {
         try {
             const body = await readJsonBody(req);
-            const updated = aiGateway.saveConfig({
+            const updated = getAiGateway().saveConfig({
                 provider: body.provider,
                 apiKey: body.apiKey,
                 model: body.model,

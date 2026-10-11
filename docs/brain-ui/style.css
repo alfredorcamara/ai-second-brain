@@ -8983,21 +8983,43 @@ body::-webkit-scrollbar-thumb:hover {
 
 .ai-key-input {
     width: 100%;
-    background: #060a13;
+    background: #060a13 !important;
+    background-color: #060a13 !important;
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 8px;
-    color: #f8fafc;
+    color: #f8fafc !important;
+    color-scheme: dark;
     font-size: 13px;
     padding: 10px 36px 10px 34px;
     outline: none;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
     font-family: var(--font-mono, monospace);
     letter-spacing: 0.5px;
+}
+
+.ai-key-input::placeholder {
+    color: #475569;
+    opacity: 1;
 }
 
 .ai-key-input:focus {
     border-color: #38bdf8;
     box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+    background: #060a13 !important;
+    background-color: #060a13 !important;
+}
+
+/* Blindagem contra autofill do navegador: mantém o fundo estritamente escuro */
+.ai-key-input:-webkit-autofill,
+.ai-key-input:-webkit-autofill:hover,
+.ai-key-input:-webkit-autofill:focus,
+.ai-key-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #060a13 inset !important;
+    -webkit-text-fill-color: #f8fafc !important;
+    box-shadow: 0 0 0 1000px #060a13 inset !important;
+    caret-color: #f8fafc !important;
+    transition: background-color 5000s ease-in-out 0s;
+    color-scheme: dark !important;
 }
 
 .btn-ai-key-eye {
@@ -9233,7 +9255,7 @@ body::-webkit-scrollbar-thumb:hover {
     padding: 3px 8px;
     display: flex;
     align-items: center;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .ai-param-detail-input-wrap:focus-within {
@@ -9241,16 +9263,50 @@ body::-webkit-scrollbar-thumb:hover {
     box-shadow: 0 0 8px rgba(56, 189, 248, 0.2);
 }
 
+.ai-param-detail-input-wrap.input-error {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.4) !important;
+    animation: aiShakeInput 0.35s ease;
+}
+
+@keyframes aiShakeInput {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-4px); }
+    40%, 80% { transform: translateX(4px); }
+}
+
 .ai-param-detail-input-wrap .ai-param-input {
     background: transparent;
     border: none;
     outline: none;
     color: #f8fafc;
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 700;
     width: 100%;
     text-align: center;
     font-family: var(--font-mono, monospace);
+}
+
+/* Força tema escuro nos controles nativos para o campo de Retries */
+.ai-param-detail-input-wrap .ai-param-input[type="number"] {
+    color-scheme: dark;
+}
+
+/* Setas nativas de incremento e decremento com cor escura integrada ao design dark */
+.ai-param-detail-input-wrap .ai-param-input[type="number"]::-webkit-inner-spin-button,
+.ai-param-detail-input-wrap .ai-param-input[type="number"]::-webkit-outer-spin-button {
+    opacity: 0.75;
+    cursor: pointer;
+    filter: invert(0.85) hue-rotate(180deg) brightness(0.6) contrast(1.2);
+    margin-left: 3px;
+    padding: 2px 0;
+    transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.ai-param-detail-input-wrap .ai-param-input[type="number"]::-webkit-inner-spin-button:hover,
+.ai-param-detail-input-wrap .ai-param-input[type="number"]::-webkit-outer-spin-button:hover {
+    opacity: 1;
+    filter: invert(0.85) hue-rotate(180deg) brightness(0.8) contrast(1.4);
 }
 
 .ai-param-detail-desc {

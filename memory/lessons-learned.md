@@ -120,3 +120,25 @@
 2. O arquivo local viaja junto com o repositório no Git do projeto, garantindo que mesmo ao abrir a pasta isoladamente em outro editor, o agente sempre leia os erros que nunca devem ser repetidos antes de gerar código.
 **Ação**: Todo projeto novo ou vinculado deve nascer com seu próprio `LESSONS_LEARNED.md`, e todas as pontes de IA devem instruir mandatoriamente a consulta deste arquivo antes de agir.
 
+---
+
+### Lição 17: Isolamento Estrito de Base URL entre Provedores e Integridade de Cache em Memória
+**Contexto**: O AI Gateway apresentou erro 500 em `/api/ai/config` por ausência da declaração `cachedModelsByProvider`, e requisições para a Groq herdaram `AI_BASE_URL` da Anthropic salvo no `.env`, gerando falso positivo no terminal (0 modelos detectados como "Catálogo pronto") e erro 400 ao salvar.
+**Aprendizado**:
+1. Variáveis globais referenciadas em módulos de gateway devem possuir declaração atômica no topo do escopo (`const cachedModelsByProvider = {}`), prevenindo `ReferenceError` em rotas HTTP.
+2. Parâmetros como `baseUrl` pertencem ao provedor ativo: provedores padrão de nuvem (`groq`, `openai`, `anthropic`, `openrouter`) devem utilizar estritamente suas URLs oficiais mapeadas no catálogo, e nunca herdar parâmetros customizados de outros provedores armazenados anteriormente no `.env`. Apenas provedores locais ou configuráveis (`ollama`, `custom`) devem aceitar e persistir URLs customizadas.
+3. Consoles e terminais web não podem emitir estado `success` com 0 modelos detectados quando o provedor requer modelos para operar. Se a detecção retornar 0 modelos ou falhar, o sistema deve apresentar estado de erro explícito com mensagem amigável, orientando a inserção da chave correta e impedindo tentativas de salvamento inconsistentes.
+**Ação**: Isolar o escopo de `baseUrl` por provedor, validar retorno mínimo de modelos antes de declarar conexão bem-sucedida e aplicar validações preventivas no frontend antes de disparar endpoints de teste e gravação.
+
+---
+
+### Lição 18: Sincronização Bidirecional de Parâmetros de Ambiente, Blindagem de Autofill e Validação Defensiva
+**Contexto**: Parâmetros de execução (`AI_CACHE_TTL_HOURS` e `AI_MAX_RETRIES`) alterados no `.env` não eram refletidos ao reabrir o modal visual, campos de senha herdavam fundo claro invasivo do autofill do navegador, e valores numéricos permitiam fallback silencioso para `2` quando definidos como `0` (desativar retries).
+**Aprendizado**:
+1. **Sincronização Fiel de Estado**: Todo modal de configuração deve ler e aplicar ativamente todos os valores retornados pelo endpoint de configuração (`GET /api/ai/config`) aos elementos do DOM, sem depender de valores padrão estáticos declarados no HTML.
+2. **Tratamento de Falsy em Números**: Operadores de coalescência ou fallback como `parseInt(x) || 2` convertem incorretamente o valor legítimo `0` para `2`. Valores numéricos inteiros devem ser validados com `!isNaN(n) && n >= min && n <= max`.
+3. **Blindagem contra Autofill Claro no Dark Mode**: Campos de credenciais (`type="password"`) sofrem interferência da folha de estilos nativa do Chromium (`:-webkit-autofill`), que sobrescreve fundos escuros com tons claros (`rgb(232, 240, 254)`). A blindagem exige `color-scheme: dark !important`, `box-shadow inset` e substituição de placeholders genéricos como `"Password"` por textos descritivos acompanhados de `autocomplete="new-password"`.
+4. **Validação em Camadas (Frontend e Backend)**: Validações de limites (ex: TTL entre 1h e 720h, Retries entre 0 e 5) devem ocorrer em três camadas coordenadas: na interatividade (`keydown`/`input`), no pré-salvamento no cliente (com feedback visual e foco) e no backend (retornando HTTP 400 antes de gravar no disco).
+**Ação**: Sempre aplicar leitura explícita no modal, blindar inputs de senhas contra autofill e validar intervalos de dados em todas as camadas da aplicação.
+
+

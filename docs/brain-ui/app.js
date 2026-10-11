@@ -6396,6 +6396,28 @@ async function openAiSettingsModal() {
         });
     }
 
+    // Sincroniza Parâmetros de Execução com a configuração real do .env
+    const cacheInput = document.getElementById('aiCacheHoursInput');
+    if (cacheInput) {
+        const hours = (cfg.cacheHours !== undefined && cfg.cacheHours !== null && !isNaN(cfg.cacheHours)) 
+            ? cfg.cacheHours 
+            : 24;
+        cacheInput.value = `${hours}h`;
+        cacheInput.closest('.ai-param-detail-input-wrap')?.classList.remove('input-error');
+    }
+
+    const retriesInput = document.getElementById('aiMaxRetriesInput');
+    if (retriesInput) {
+        const retries = (cfg.maxRetries !== undefined && cfg.maxRetries !== null && !isNaN(cfg.maxRetries)) 
+            ? cfg.maxRetries 
+            : 2;
+        retriesInput.value = retries;
+        retriesInput.closest('.ai-param-detail-input-wrap')?.classList.remove('input-error');
+    }
+
+    // Inicializa restrições de digitação e validação contínua nos parâmetros
+    setupAiParamsInputValidation();
+
     // Ao abrir a tela: se já configurado com chave válida (ou provedor local sem chave),
     // provoca automaticamente o botão testar para validar a conexão, medir a latência real
     // e carregar os modelos disponíveis diretamente da API em tempo real (zero listas fixas)
@@ -6447,7 +6469,7 @@ function updateAiTerminalStatus(status, details = {}) {
     } else if (status === 'success') {
         const latency = details.latencyMs ? `${details.latencyMs}ms` : 'sub-100ms';
         const models = details.modelCount !== undefined ? details.modelCount : 0;
-        const modelsText = models > 0 ? `${models} modelo${models > 1 ? 's' : ''} compatíve${models > 1 ? 'is' : 'l'}` : 'Catálogo pronto';
+        const modelsText = models > 0 ? `${models} modelo${models > 1 ? 's' : ''} compatíve${models > 1 ? 'is' : 'l'}` : '0 modelos detectados';
         term.innerHTML = `<code><span class="t-matrix">$</span> CONNECTED TO ${escapeHtml(providerUpper)} [AUTHENTICATED]
 <span class="t-matrix">[OK]</span> Conexão bem-sucedida · Latência: ${escapeHtml(latency)}
 <span class="t-matrix">[OK]</span> Modelos detectados · ${escapeHtml(modelsText)}
@@ -6515,8 +6537,12 @@ function onProviderSelectChange() {
     if (baseUrlGroup) {
         const showUrl = providerId === 'ollama' || providerId === 'custom';
         baseUrlGroup.style.display = showUrl ? 'flex' : 'none';
-        if (baseUrlInput && (!baseUrlInput.value || providerId === 'ollama')) {
-            baseUrlInput.value = preset.baseUrl || '';
+        if (baseUrlInput) {
+            if (showUrl) {
+                baseUrlInput.value = (window.AI_GATEWAY_CONFIG?.provider === providerId ? window.AI_GATEWAY_CONFIG.baseUrl : '') || preset.baseUrl || '';
+            } else {
+                baseUrlInput.value = '';
+            }
         }
     }
 
@@ -6638,9 +6664,20 @@ async function testCurrentAiConnection() {
     const model = document.getElementById('aiModelSelect')?.value || '';
     const providerPreset = AI_PROVIDER_PRESETS[provider] || AI_PROVIDER_PRESETS.groq;
 
-    // Se o campo ainda tem a máscara de bolinhas, significa que queremos testar com a chave já salva no .env
-    if (keyInput && keyInput.dataset.isMasked === 'true' && apiKey.includes('••••')) {
+    const isCurrentProvSaved = !!(window.AI_GATEWAY_CONFIG?.hasKey && window.AI_GATEWAY_CONFIG?.provider === provider);
+
+    // Se o campo ainda tem a máscara de bolinhas ou se está vazio mas a chave já está salva no .env
+    if ((keyInput && keyInput.dataset.isMasked === 'true' && apiKey.includes('••••')) || (!apiKey && isCurrentProvSaved)) {
         apiKey = ''; // O backend lerá a chave salva do process.env
+    }
+
+    if (providerPreset.requiresKey && !apiKey && !isCurrentProvSaved) {
+        updateAiTerminalStatus('error', {
+            provider,
+            error: `Informe uma API Key para o provedor ${providerPreset.name || provider.toUpperCase()}`
+        });
+        keyInput?.focus();
+        return;
     }
 
     const btn = document.getElementById('btnTestAiConnection');
@@ -6665,6 +6702,14 @@ async function testCurrentAiConnection() {
         if (res.ok && data.success) {
             const modelList = Array.isArray(data.models) ? data.models : [];
             const modelCount = modelList.length;
+
+            if (modelCount === 0) {
+                updateAiTerminalStatus('error', {
+                    provider,
+                    error: `Conectado, mas nenhum modelo de chat compatível foi detectado para ${providerPreset.name || provider.toUpperCase()}.`
+                });
+                return;
+            }
 
             updateAiTerminalStatus('success', {
                 provider,
@@ -6735,6 +6780,113 @@ async function testCurrentAiConnection() {
 }
 
 /**
+ * Configura restrição de digitação, sanitização e normalização para os parâmetros de IA
+ */
+function setupAiParamsInputValidation() {
+    const cacheInput = document.getElementById('aiCacheHoursInput');
+    const retriesInput = document.getElementById('aiMaxRetriesInput');
+
+    if (cacheInput && !cacheInput.dataset.hasValidation) {
+        cacheInput.dataset.hasValidation = 'true';
+
+        // Previne caracteres inválidos na digitação (permite apenas 0-9, h, H e teclas de navegação)
+        cacheInput.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey || e.altKey) return;
+            const allowedControlKeys = [
+                'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Home', 'End', 'Enter', 'Escape'
+            ];
+            if (allowedControlKeys.includes(e.key)) return;
+
+            // Permite 'h' ou 'H' se ainda não houver 'h' no campo
+            if ((e.key === 'h' || e.key === 'H') && !cacheInput.value.toLowerCase().includes('h')) {
+                return;
+            }
+
+            // Permite dígitos de 0 a 9
+            if (/^[0-9]$/.test(e.key)) {
+                return;
+            }
+
+            e.preventDefault();
+        });
+
+        // Limpa erros e caracteres espúrios no input (ex: colar via clipboard)
+        cacheInput.addEventListener('input', () => {
+            cacheInput.closest('.ai-param-detail-input-wrap')?.classList.remove('input-error');
+            let val = cacheInput.value.replace(/[^0-9hH]/g, '');
+            const digits = val.replace(/\D/g, '');
+            const hasH = /h/i.test(val);
+            cacheInput.value = hasH ? `${digits}h` : digits;
+        });
+
+        // No blur, normaliza o formato para ${horas}h e assegura intervalo permitido (1h a 720h)
+        cacheInput.addEventListener('blur', () => {
+            const wrap = cacheInput.closest('.ai-param-detail-input-wrap');
+            const digits = cacheInput.value.replace(/\D/g, '');
+            let hours = parseInt(digits, 10);
+            if (isNaN(hours) || hours < 1) {
+                hours = 1;
+            } else if (hours > 720) {
+                hours = 720;
+            }
+            cacheInput.value = `${hours}h`;
+            wrap?.classList.remove('input-error');
+        });
+    }
+
+    if (retriesInput && !retriesInput.dataset.hasValidation) {
+        retriesInput.dataset.hasValidation = 'true';
+
+        // Bloqueia teclas proibidas em input number: '-', '+', 'e', 'E', '.', ','
+        retriesInput.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey || e.altKey) return;
+            const allowedControlKeys = [
+                'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab', 'Home', 'End', 'Enter', 'Escape'
+            ];
+            if (allowedControlKeys.includes(e.key)) return;
+
+            // Bloqueia expressamente sinais e notação científica
+            if (['-', '+', 'e', 'E', '.', ','].includes(e.key)) {
+                e.preventDefault();
+                return;
+            }
+
+            // Permite dígitos de 0 a 9
+            if (/^[0-9]$/.test(e.key)) {
+                return;
+            }
+
+            e.preventDefault();
+        });
+
+        // Garante que o valor digitado fique estritamente entre 0 e 5
+        retriesInput.addEventListener('input', () => {
+            retriesInput.closest('.ai-param-detail-input-wrap')?.classList.remove('input-error');
+            let val = retriesInput.value.replace(/\D/g, '');
+            if (val !== '') {
+                let n = parseInt(val, 10);
+                if (n > 5) n = 5;
+                if (n < 0) n = 0;
+                retriesInput.value = n;
+            }
+        });
+
+        retriesInput.addEventListener('blur', () => {
+            const wrap = retriesInput.closest('.ai-param-detail-input-wrap');
+            if (retriesInput.value === '' || isNaN(parseInt(retriesInput.value, 10))) {
+                retriesInput.value = '2';
+            } else {
+                let n = parseInt(retriesInput.value, 10);
+                if (n > 5) n = 5;
+                if (n < 0) n = 0;
+                retriesInput.value = n;
+            }
+            wrap?.classList.remove('input-error');
+        });
+    }
+}
+
+/**
  * Salvar e Ativar Configurações de IA
  */
 async function handleSaveAiSettings(e) {
@@ -6753,9 +6905,60 @@ async function handleSaveAiSettings(e) {
     if (!model) {
         model = (document.getElementById('aiModelSelect')?.value || document.getElementById('aiCustomModelInput')?.value || '').trim();
     }
-    const cacheHoursRaw = String(document.getElementById('aiCacheHoursInput')?.value || '24');
-    const cacheHours = parseInt(cacheHoursRaw.replace(/\D/g, ''), 10) || 24;
-    const maxRetries = parseInt(document.getElementById('aiMaxRetriesInput')?.value, 10) || 2;
+    const preset = AI_PROVIDER_PRESETS[provider] || AI_PROVIDER_PRESETS.groq;
+    const isCurrentProvSaved = !!(window.AI_GATEWAY_CONFIG?.hasKey && window.AI_GATEWAY_CONFIG?.provider === provider);
+
+    if (preset.requiresKey && !apiKey && !isCurrentProvSaved) {
+        updateAiTerminalStatus('error', {
+            provider,
+            error: `Informe uma API Key para o provedor ${preset.name || provider.toUpperCase()}`
+        });
+        keyInput?.focus();
+        return;
+    }
+
+    if (!model) {
+        updateAiTerminalStatus('error', {
+            provider,
+            error: 'Selecione ou informe um modelo de IA antes de salvar e ativar.'
+        });
+        const select = document.getElementById('aiModelSelect');
+        select?.focus();
+        return;
+    }
+
+    // Validação defensiva mandatória de Cache TTL (1h a 720h)
+    const cacheInput = document.getElementById('aiCacheHoursInput');
+    const cacheWrap = cacheInput?.closest('.ai-param-detail-input-wrap');
+    const cacheDigits = (cacheInput?.value || '').replace(/\D/g, '');
+    const cacheHours = parseInt(cacheDigits, 10);
+
+    if (!cacheDigits || isNaN(cacheHours) || cacheHours < 1 || cacheHours > 720) {
+        cacheWrap?.classList.add('input-error');
+        updateAiTerminalStatus('error', {
+            provider,
+            error: 'Parâmetro inválido: Cache TTL deve ser um número inteiro entre 1h e 720h (máx. 30 dias).'
+        });
+        cacheInput?.focus();
+        return;
+    }
+
+    // Validação defensiva mandatória de Retries (0 a 5)
+    const retriesInput = document.getElementById('aiMaxRetriesInput');
+    const retriesWrap = retriesInput?.closest('.ai-param-detail-input-wrap');
+    const retriesRaw = (retriesInput?.value || '').trim();
+    const retriesDigits = retriesRaw.replace(/\D/g, '');
+    const maxRetries = parseInt(retriesDigits, 10);
+
+    if (retriesRaw === '' || isNaN(maxRetries) || maxRetries < 0 || maxRetries > 5) {
+        retriesWrap?.classList.add('input-error');
+        updateAiTerminalStatus('error', {
+            provider,
+            error: 'Parâmetro inválido: Tentativas Automáticas (Retries) deve ser um número entre 0 e 5.'
+        });
+        retriesInput?.focus();
+        return;
+    }
 
     // Se estiver com máscara, não sobrepõe no .env
     if (keyInput && keyInput.dataset.isMasked === 'true' && apiKey.includes('••••')) {

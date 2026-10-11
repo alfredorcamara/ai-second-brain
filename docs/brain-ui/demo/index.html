@@ -1878,8 +1878,8 @@
                                         <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                                     </svg>
                                 </span>
-                                <input type="password" id="aiApiKeyInput" class="ai-key-input" placeholder="Password"
-                                    autocomplete="off">
+                                <input type="password" id="aiApiKeyInput" class="ai-key-input" placeholder="gsk_... ou cole sua chave de API"
+                                    autocomplete="new-password" spellcheck="false">
                                 <button type="button" id="btnToggleAiKeyVisibility" class="btn-ai-key-eye"
                                     onclick="toggleAiKeyVisibility()" title="Mostrar/ocultar chave">
                                     <svg id="aiEyeIconSvg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -1945,7 +1945,7 @@
                                         </div>
                                     </div>
                                     <div class="ai-param-detail-input-wrap">
-                                        <input type="text" id="aiCacheHoursInput" class="ai-param-input" value="24h" placeholder="24h">
+                                        <input type="text" id="aiCacheHoursInput" class="ai-param-input" value="24h" placeholder="24h" maxlength="5" autocomplete="off" spellcheck="false" title="Tempo de vida do cache em horas (ex: 24h, mín. 1h, máx. 720h)">
                                     </div>
                                 </div>
                                 <p class="ai-param-detail-desc">
@@ -1963,7 +1963,7 @@
                                         </div>
                                     </div>
                                     <div class="ai-param-detail-input-wrap">
-                                        <input type="number" id="aiMaxRetriesInput" class="ai-param-input" value="2" min="1" max="5">
+                                        <input type="number" id="aiMaxRetriesInput" class="ai-param-input" value="2" min="0" max="5" step="1" autocomplete="off" title="Tentativas automáticas em caso de erro 429 (0 a 5)">
                                     </div>
                                 </div>
                                 <p class="ai-param-detail-desc">

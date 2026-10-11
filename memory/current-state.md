@@ -21,6 +21,40 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 
 ## Sessões Recentes
 - **Data**: 2026-10-11
+  - **Sincronização Fiel dos Parâmetros do `.env`, Validação Estrita e Estilização Escura das Setas de Retries**:
+    - **Sincronização com `.env` na Abertura do Modal de IA**:
+      - Em `docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js` (`openAiSettingsModal`), os campos `#aiCacheHoursInput` e `#aiMaxRetriesInput` passam a ser populados fielmente a partir de `cfg.cacheHours` e `cfg.maxRetries` lidos em tempo real do `.env` via `/api/ai/config`.
+      - Em `scripts/ai-gateway.js` (`getConfig` e `saveConfig`), corrigido o fallback `|| 2` que impedia o valor legítimo `0` de retries; agora tratados com validação de número inteiro positivo (`>= 0`).
+    - **Validação Defensiva e Restrição de Digitação em Camadas**:
+      - **Frontend (Interatividade & Sanitização)**: Função `setupAiParamsInputValidation` bloqueia teclas proibidas (`-`, `+`, `e`, `.`, `,` em retries; letras espúrias em cache) via `keydown`, sanitiza colagem via `input` (clamp entre 0 e 5 para retries e formato `${hours}h` entre 1h e 720h para cache no `blur`).
+      - **Frontend (Pré-Salvamento)**: `handleSaveAiSettings` valida estritamente ambos os parâmetros antes de qualquer disparo de rede; se inválidos, exibe feedback no terminal, aplica classe de erro `.input-error` com animação de shake e impede a submissão.
+      - **Backend (API & Gateway)**: `saveConfig` em `scripts/ai-gateway.js` e `/api/ai/save` em `server.js` validam intervalos permitidos (Cache: 1 a 720 horas; Retries: 0 a 10 tentativas), retornando HTTP 400 com mensagem amigável caso haja inconsistência.
+    - **Estilização Escura das Setas (Spin Buttons) de Retries**:
+      - Adicionado `color-scheme: dark;` em `.ai-param-detail-input-wrap .ai-param-input[type="number"]` em `docs/brain-ui/style.css` e `docs/brain-ui/demo/style.css`.
+      - Customizados `::-webkit-inner-spin-button` e `::-webkit-outer-spin-button` com filtros escuros harmônicos e transições suaves, integrando o controle nativo ao visual dark da interface e eliminando setas/fundos claros.
+    - **Restauração e Blindagem do Fundo Escuro na Caixa de API Key (`#aiApiKeyInput`)**:
+      - Corrigido o comportamento do Chromium em que campos `type="password"` ativavam o gerenciador de credenciais do navegador e aplicavam `-webkit-autofill` com fundo claro (`rgb(232, 240, 254)`).
+      - Aplicada blindagem CSS com `-webkit-box-shadow: 0 0 0 1000px #060a13 inset !important`, `-webkit-text-fill-color: #f8fafc !important`, `color-scheme: dark !important` e `background: #060a13 !important` em `docs/brain-ui/style.css` e `docs/brain-ui/demo/style.css`.
+      - Atualizado o HTML (`docs/brain-ui/index.html` e `demo/index.html`) com `placeholder="gsk_... ou cole sua chave de API"` e `autocomplete="new-password"` evitando que o navegador trate como senha de login com fundo branco.
+    - **Validação End-to-End**:
+      - Testado no navegador via browser subagent com comprovação visual dos valores `24h` e `4`, setas escuras, caixa de API Key escura (#060a13) e validação em tempo real.
+      - `npm run doctor`: 100% dos links e arquivos íntegros (0 erros).
+
+  - **Correção Crítica no AI Gateway (BYOK), Eliminação de ReferenceError e Blindagem de Base URL**:
+    - **Resolução do `ReferenceError: cachedModelsByProvider is not defined`**:
+      - Restaurada a declaração explícita de `const cachedModelsByProvider = {}` no topo de `scripts/ai-gateway.js`, eliminando as respostas HTTP 500 em `/api/ai/config` e HTTP 400 em `/api/ai/test` e `/api/ai/save`.
+    - **Isolamento Estrito de `baseUrl` por Provedor**:
+      - Corrigido o vazamento de `AI_BASE_URL` entre provedores no `.env`: agora apenas provedores configuráveis (`ollama` e `custom`) herdam ou gravam URLs customizadas; provedores padrão de nuvem (`groq`, `openai`, `anthropic`, `openrouter`) utilizam estritamente suas URLs oficiais da API, prevenindo que requisições para a Groq fossem roteadas para a URL da Anthropic.
+    - **Propagação Fiel de Erros HTTP e Prevenção de Falsos Positivos**:
+      - O bloco `testConnection` não silencia mais erros de autenticação (401/403) ou cota (429) no endpoint `/models`.
+      - Se nenhum modelo de chat for detectado, o sistema rejeita o teste com erro amigável em vez de gerar estado falso de sucesso com "Catálogo pronto".
+    - **Validação Preventiva no Frontend (`docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js`)**:
+      - Se o usuário não digitou chave e o provedor não possui chave salva no `.env`, o clique em "Testar" ou "Salvar" exibe erro claro no terminal e foca no input sem disparar requisições inválidas de rede.
+      - Se nenhum modelo foi selecionado, o botão "Salvar e Ativar" orienta a testar e escolher um modelo compatível.
+      - Ao trocar de provedor no select, o input `baseUrl` é devidamente limpo para provedores de nuvem.
+    - **Hot-Reload de Módulo no Servidor (`server.js`)**:
+      - Implementada a função `getAiGateway()` com invalidação dinâmica de cache do Node.js (`delete require.cache`), permitindo que alterações nas regras do gateway sejam refletidas em tempo real sem crash.
+
   - **Auditoria e Fidelidade Estrita de Documentos na Landing Page (`docs/brain-ui/landing/`)**:
     - **Eliminação de Referências a Arquivos Fictícios / Placeholders**:
       - Em conformidade estrita com a regra universal de *Zero Fabricação*, eliminados todos os nomes de arquivos inexistentes que estavam exibidos na interface da landing page (`nucleo.md`, `seguranca.md`, `decisao-ia.md`, `ai-decision-gate.md`, `new-feature.md`, `bug-investigation.md`, `estado.md`, `licoes.md`, `sessao-13.md`, `adr-001.md`, etc.).
