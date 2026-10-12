@@ -1,5 +1,10 @@
+// ═══════════════════════════════════════════════════
+// AI SECOND BRAIN — Dynamic Vault Snapshot
+// Auto-generated: 2026-10-12T17:00:28.239Z
+// ═══════════════════════════════════════════════════
+
 window.VAULT_SNAPSHOT = {
-  "timestamp": 1791819470011,
+  "timestamp": 1791824428239,
   "files": [
     {
       "id": "_agents_rules_00-core_md",
@@ -188,10 +193,10 @@ window.VAULT_SNAPSHOT = {
       "title": "Decisões Globais",
       "category": "decisions",
       "icon": "⚖️",
-      "size": 4912,
-      "mtime": 1791817592898.1604,
+      "size": 6711,
+      "mtime": 1791824361255.2998,
       "outgoingLinks": [],
-      "content": "# Decisões Globais\n\n> Decisões que afetam todos os projetos do AI Second Brain.\n\n## ADR-G001: Adoção do AI Decision Gate Pattern\n- **Status**: Aceita\n- **Data**: 2026-09-27\n- **Descrição**: Todo projeto que utilizar IA deve passar pelo Decision Gate\n  para determinar se a tarefa é determinística, classificação/decisão, ou geração.\n- **Detalhes**: Ver `.agents/rules/01-ai-decision.md` e `knowledge/ai/AIJEV.md`\n\n## ADR-G002: AI Gateway como abstração unificada\n- **Status**: Aceita\n- **Data**: 2026-09-27\n- **Descrição**: Todo acesso a IA deve ser feito através de interfaces abstratas\n  (`IDecisionProvider`, `IGenerativeAIProvider`) para desacoplar de providers.\n- **Detalhes**: Ver `knowledge/ai/AI_GATEWAY.md`\n\n## ADR-G003: Formato Antigravity nativo para AI Second Brain\n- **Status**: Aceita\n- **Data**: 2026-09-27\n- **Descrição**: O AI Second Brain utiliza o formato nativo do Antigravity\n  (Rules, Skills, Plugins) em vez de formatos genéricos.\n- **Motivo**: Garante descoberta automática e funcionamento correto das features.\n\n## ADR-G004: Documentação como código\n- **Status**: Aceita\n- **Data**: 2026-09-27\n- **Descrição**: Toda documentação vive no repositório, versionada com Git,\n  em formato Markdown.\n\n## ADR-G005: Research Lab Engine com Groq Cloud & Prompt Vivo\n- **Status**: Aceita\n- **Data**: 2026-10-02\n- **Descrição**: O Research Lab é adotado como subsistema do AI Second Brain para pesquisa autônoma e catalogação de conhecimento de projetos em Markdown. A inferência de refinamento de briefing e decomposição de temas utiliza o Groq Cloud via módulo HTTP nativo sem dependências npm (`scripts/groq-client.js`). O conceito de \"Prompt Vivo\" é estabelecido: o usuário pode refinar e alterar a intenção a qualquer momento, mantendo versionamento em `_meta.json` (`definitionHistory`) para permitir re-pesquisa incremental.\n- **Detalhes**: Ver `docs/RESEARCH_LAB.md` e artefatos de decisão do Research Lab.\n\n## ADR-G006: AI Gateway Multi-Provedor com Arquitetura BYOK (Bring Your Own Key)\n- **Status**: Aceita\n- **Data**: 2026-10-09\n- **Descrição**: O AI Second Brain desacopla a camada cognitiva de qualquer fornecedor de IA exclusivo, implementando uma arquitetura universal BYOK (`Bring Your Own Key`) no cliente nativo `scripts/ai-gateway.js`.\n- **Motivo**: \n  1. **Soberania e Liberdade do Desenvolvedor**: Permitir alternar livremente entre Groq Cloud (gratuito e veloz), OpenAI (GPT-4o), Anthropic (Claude 3.5 Sonnet), OpenRouter (+300 modelos), Ollama Local (100% offline e sem custos) e endpoints customizados.\n  2. **Privacidade e Segurança**: As credenciais nunca transitam para nuvens externas de telemetria; são gravadas atomicamente no arquivo `.env` local na máquina do usuário e protegidas no `.gitignore`.\n  3. **Zero Dependências**: Toda a comunicação HTTP/HTTPS com APIs OpenAI-compatible e Anthropic `/v1/messages` utiliza exclusivamente as bibliotecas nativas `http` e `https` do Node.js.\n  4. **Resiliência a Falhas e Cota (429)**: Ping ao vivo de latência e detecção automática de esgotamento de créditos com interceptador gráfico guiando a troca de provedor sem interromper o fluxo de trabalho.\n- **Detalhes**: Ver `scripts/ai-gateway.js`, `server.js` e modais em `docs/brain-ui/index.html`.\n\n## ADR-G007: Captura de Sessão Assistida por IA com Revisão Humana Obrigatória (Session Capture)\n- **Status**: Aceita\n- **Data**: 2026-10-12\n- **Descrição**: A captura de memória diária de projetos conectados passa a ser assistida por IA através de um pipeline em duas etapas coordenadas:\n  1. **Coleta Determinística & Rascunho IA (Somente Leitura)**: `POST /api/projects/:name/session/draft` lê dados de telemetria Git (commits, nomes de arquivos modificados, diffstat com censura de arquivos sensíveis como `.env`), snapshot de contratos (`PROJECT.md`, `CURRENT_STATE.md`, `LESSONS_LEARNED.md`) e notas opcionais do desenvolvedor. A IA atua exclusivamente na redação e estruturação em JSON tipado. **Nada é gravado no disco nesta etapa**.\n  2. **Revisão Humana Interativa & Gravação Atômica**: O desenvolvedor revisa título, markdown de resumo, checkboxes de passos concluídos, novos passos e lições aprendidas sugeridas. Apenas sob clique explícito em \"Gravar na memória\", o endpoint `POST /api/projects/:name/session/commit` realiza gravação física no disco (`MEMORY/sessions/AAAA-MM-DD-titulo.md`), atualiza cirurgicamente `CURRENT_STATE.md` (remanejando itens concluídos e preservando seções adicionais e estilo CRLF) e anexa novas lições a `LESSONS_LEARNED.md`.\n- **Motivo**: Elimina o atrito do registro manual de sessões e a amnésia de contexto entre agentes sem risco de alucinação ou perda de controle, respeitando o princípio de *Zero Fabricação*.\n- **Detalhes**: Ver `scripts/session-capture.js`, `scripts/ai-gateway.js` e interface em `docs/brain-ui/`.\n\n\n\n"
+      "content": "# Decisões Globais\n\n> Decisões que afetam todos os projetos do AI Second Brain.\n\n## ADR-G001: Adoção do AI Decision Gate Pattern\n- **Status**: Aceita\n- **Data**: 2026-09-27\n- **Descrição**: Todo projeto que utilizar IA deve passar pelo Decision Gate\n  para determinar se a tarefa é determinística, classificação/decisão, ou geração.\n- **Detalhes**: Ver `.agents/rules/01-ai-decision.md` e `knowledge/ai/AIJEV.md`\n\n## ADR-G002: AI Gateway como abstração unificada\n- **Status**: Aceita\n- **Data**: 2026-09-27\n- **Descrição**: Todo acesso a IA deve ser feito através de interfaces abstratas\n  (`IDecisionProvider`, `IGenerativeAIProvider`) para desacoplar de providers.\n- **Detalhes**: Ver `knowledge/ai/AI_GATEWAY.md`\n\n## ADR-G003: Formato Antigravity nativo para AI Second Brain\n- **Status**: Aceita\n- **Data**: 2026-09-27\n- **Descrição**: O AI Second Brain utiliza o formato nativo do Antigravity\n  (Rules, Skills, Plugins) em vez de formatos genéricos.\n- **Motivo**: Garante descoberta automática e funcionamento correto das features.\n\n## ADR-G004: Documentação como código\n- **Status**: Aceita\n- **Data**: 2026-09-27\n- **Descrição**: Toda documentação vive no repositório, versionada com Git,\n  em formato Markdown.\n\n## ADR-G005: Research Lab Engine com Groq Cloud & Prompt Vivo\n- **Status**: Aceita\n- **Data**: 2026-10-02\n- **Descrição**: O Research Lab é adotado como subsistema do AI Second Brain para pesquisa autônoma e catalogação de conhecimento de projetos em Markdown. A inferência de refinamento de briefing e decomposição de temas utiliza o Groq Cloud via módulo HTTP nativo sem dependências npm (`scripts/groq-client.js`). O conceito de \"Prompt Vivo\" é estabelecido: o usuário pode refinar e alterar a intenção a qualquer momento, mantendo versionamento em `_meta.json` (`definitionHistory`) para permitir re-pesquisa incremental.\n- **Detalhes**: Ver `docs/RESEARCH_LAB.md` e artefatos de decisão do Research Lab.\n\n## ADR-G006: AI Gateway Multi-Provedor com Arquitetura BYOK (Bring Your Own Key)\n- **Status**: Aceita\n- **Data**: 2026-10-09\n- **Descrição**: O AI Second Brain desacopla a camada cognitiva de qualquer fornecedor de IA exclusivo, implementando uma arquitetura universal BYOK (`Bring Your Own Key`) no cliente nativo `scripts/ai-gateway.js`.\n- **Motivo**: \n  1. **Soberania e Liberdade do Desenvolvedor**: Permitir alternar livremente entre Groq Cloud (gratuito e veloz), OpenAI (GPT-4o), Anthropic (Claude 3.5 Sonnet), OpenRouter (+300 modelos), Ollama Local (100% offline e sem custos) e endpoints customizados.\n  2. **Privacidade e Segurança**: As credenciais nunca transitam para nuvens externas de telemetria; são gravadas atomicamente no arquivo `.env` local na máquina do usuário e protegidas no `.gitignore`.\n  3. **Zero Dependências**: Toda a comunicação HTTP/HTTPS com APIs OpenAI-compatible e Anthropic `/v1/messages` utiliza exclusivamente as bibliotecas nativas `http` e `https` do Node.js.\n  4. **Resiliência a Falhas e Cota (429)**: Ping ao vivo de latência e detecção automática de esgotamento de créditos com interceptador gráfico guiando a troca de provedor sem interromper o fluxo de trabalho.\n- **Detalhes**: Ver `scripts/ai-gateway.js`, `server.js` e modais em `docs/brain-ui/index.html`.\n\n## ADR-G007: Captura de Sessão Assistida por IA com Revisão Humana Obrigatória (Session Capture)\n- **Status**: Aceita\n- **Data**: 2026-10-12\n- **Descrição**: A captura de memória diária de projetos conectados passa a ser assistida por IA através de um pipeline em duas etapas coordenadas:\n  1. **Coleta Determinística & Rascunho IA (Somente Leitura)**: `POST /api/projects/:name/session/draft` lê dados de telemetria Git (commits, nomes de arquivos modificados, diffstat com censura de arquivos sensíveis como `.env`), snapshot de contratos (`PROJECT.md`, `CURRENT_STATE.md`, `LESSONS_LEARNED.md`) e notas opcionais do desenvolvedor. A IA atua exclusivamente na redação e estruturação em JSON tipado. **Nada é gravado no disco nesta etapa**.\n  2. **Revisão Humana Interativa & Gravação Atômica**: O desenvolvedor revisa título, markdown de resumo, checkboxes de passos concluídos, novos passos e lições aprendidas sugeridas. Apenas sob clique explícito em \"Gravar na memória\", o endpoint `POST /api/projects/:name/session/commit` realiza gravação física no disco (`MEMORY/sessions/AAAA-MM-DD-titulo.md`), atualiza cirurgicamente `CURRENT_STATE.md` (remanejando itens concluídos e preservando seções adicionais e estilo CRLF) e anexa novas lições a `LESSONS_LEARNED.md`.\n- **Motivo**: Elimina o atrito do registro manual de sessões e a amnésia de contexto entre agentes sem risco de alucinação ou perda de controle, respeitando o princípio de *Zero Fabricação*.\n- **Detalhes**: Ver `scripts/session-capture.js`, `scripts/ai-gateway.js` e interface em `docs/brain-ui/`.\n\n## ADR-G008: Otimizações Práticas de Usabilidade e Conexão com IDEs no Ciclo de Vida do Desenvolvedor\n- **Status**: Aceita\n- **Data**: 2026-10-12\n- **Descrição**: Consolidação de 5 melhorias essenciais de usabilidade identificadas na simulação prática de onboarding de projeto:\n  1. **Inicialização Automática de Repositório Git (`git init`)**: O modal Quickstart oferece opção de disparar `git init`, gerando o `.gitignore` padrão e vinculando os contratos de governança desde o primeiro segundo.\n  2. **Stack Tecnológica Flexível com Sugestões Rápidas**: O campo de Stack Tecnológica no Quickstart torna-se um input de texto livre editável, mantendo chips clicáveis como atalhos para preenchimento ágil.\n  3. **Disparadores Nativos de IDE (`open-ide`)**: O cabeçalho do Project Workspace ganha botões diretos para abrir o projeto no VS Code, Cursor AI ou Explorador de Arquivos local com fallback seguro.\n  4. **Prompt Bootstrap de Início de Sessão em 1 Clique**: Botão \"Copiar Prompt para Agente\" gera e copia para o clipboard uma instrução parametrizada contendo o caminho do projeto, contratos e regras absolutas para alimentar qualquer agente de IA sem amnésia.\n  5. **Feedback Visual Ativo de Inferência com Mensagens Rotativas**: O modal de Session Capture exibe etapas sincronizadas e animação contínua durante o tempo de resposta da IA, eliminando a sensação de travamento e aumentando a previsibilidade operacional.\n- **Motivo**: Reduz drasticamente o atrito entre o Cockpit Visual do Second Brain e o fluxo real de codificação na IDE, garantindo que o desenvolvedor comece e feche sessões com velocidade máxima.\n- **Detalhes**: Ver `server.js`, `docs/brain-ui/app.js`, `docs/brain-ui/demo/app.js` e `docs/relatorio_usabilidade_dev_journey.md`.\n"
     },
     {
       "id": "docs_analise_prompt_refinement_md",
@@ -266,6 +271,18 @@ window.VAULT_SNAPSHOT = {
       "mtime": 1790953138413.0107,
       "outgoingLinks": [],
       "content": "# 🔧 Melhorias Propostas para o Research Lab\n\n> O que eu mudaria na ideia original e **por quê**.\n\n---\n\n## O Problema Central da Ideia Original\n\nA ideia como está é: **\"dê um tópico → IA pesquisa → gera .md organizados\"**. \n\nIsso é essencialmente um **gerador de documentação de pesquisa**. Funciona, mas é **passivo e genérico**. É o equivalente a pedir para um estagiário \"pesquise sobre xadrez e me entregue um relatório\". Você vai receber um relatório... mas provavelmente vai ter que refazer boa parte do trabalho para que ele seja **útil de verdade** para o seu projeto específico.\n\nAs melhorias que proponho transformam o Research Lab de um **gerador de relatórios** em um **laboratório de conhecimento vivo e contextualizado**.\n\n---\n\n## Melhoria 1: Pesquisa Consciente do Projeto (não genérica)\n\n### ❌ Como está\n> \"Pesquise sobre regras de xadrez\" → gera conteúdo genérico sobre xadrez.\n\n### ✅ Como deveria ser\n> \"Pesquise sobre regras de xadrez **no contexto de um jogo digital 2D em JavaScript**\" → gera conteúdo filtrado pelo que importa para **esse** projeto.\n\n### Por quê?\n\nSe você está fazendo um **jogo de xadrez**, não precisa saber a história do xadrez na Pérsia no século VI. Precisa saber:\n- Quais regras precisam ser codificadas\n- Quais são os edge cases de movimentação\n- Como representar o tabuleiro em memória\n- Quais regras são frequentemente esquecidas por devs (en passant, promoção, empate por repetição)\n\nA pesquisa deveria **ler o `PROJECT.md` e o `ARCHITECTURE.md`** antes de pesquisar e usar o contexto do projeto para **filtrar e priorizar** o que buscar.\n\n### Exemplo Concreto\n\n```\nSem contexto (genérico):\n  📄 historia-do-xadrez.md          ← irrelevante\n  📄 campeonatos-mundiais.md        ← irrelevante\n  📄 regras-basicas.md              ← útil mas superficial\n  📄 aberturas-famosas.md           ← irrelevante para MVP\n\nCom contexto do projeto (JS, jogo 2D):\n  📄 regras-como-logica.md          ← regras escritas como pseudo-código\n  📄 movimentacao-por-peca.md       ← cada peça com validação de movimento\n  📄 regras-especiais-edge-cases.md ← en passant, roque, promoção, empate\n  📄 representacao-tabuleiro.md     ← arrays, bitboards, FEN notation\n  📄 validacao-de-check.md          ← algoritmos para detectar xeque/xeque-mate\n```\n\nA segunda lista é **10x mais útil** porque sabe para quê a pesquisa serve.\n\n---\n\n## Melhoria 2: Camada \"E Daí?\" — Da Pesquisa à Ação\n\n### ❌ Como está\nA pesquisa gera **conhecimento**. Ponto. O desenvolvedor depois tem que traduzir esse conhecimento em código, entidades, regras de negócio.\n\n### ✅ Como deveria ser\nCada pesquisa gera dois tipos de output:\n\n| Camada | O que é | Exemplo |\n|--------|---------|---------|\n| **📚 Knowledge** | Conhecimento puro, factual | \"O roque só pode ser feito se o rei e a torre nunca se moveram, não há peças entre eles, e o rei não está em xeque.\" |\n| **⚡ Actionable** | Spec técnica derivada do conhecimento | \"Implementar flag `hasMoved` em `King` e `Rook`. Método `canCastle(side)` deve verificar: `!king.hasMoved && !rook.hasMoved && pathClear(king, rook) && !isInCheck(king)`\" |\n\n### Por quê?\n\nPorque o objetivo final não é **saber** sobre xadrez. É **construir** o jogo. Se a pesquisa já entrega specs acionáveis, o tempo entre \"pesquisar\" e \"implementar\" cai drasticamente.\n\n### Estrutura de Pasta\n\n```\nRESEARCH/chess-rules/\n├── OVERVIEW.md                    ← Mapa geral\n├── knowledge/                     ← 📚 Camada de Conhecimento\n│   ├── pieces-and-movement.md\n│   ├── special-rules.md\n│   └── game-end-conditions.md\n├── actionable/                    ← ⚡ Camada Acionável\n│   ├── entities-and-models.md     ← \"Você vai precisar dessas classes/tipos\"\n│   ├── validation-rules.md        ← \"Regras como pseudo-código\"\n│   ├── edge-cases-checklist.md    ← \"Não esqueça de implementar isso\"\n│   └── suggested-tests.md        ← \"Casos de teste derivados da pesquisa\"\n└── SOURCES.md\n```\n\n---\n\n## Melhoria 3: Reutilização Cross-Project\n\n### ❌ Como está\nCada pesquisa é isolada dentro do projeto. Se o Projeto A pesquisou \"WebSocket protocols\" e o Projeto B precisa da mesma coisa, pesquisa do zero.\n\n### ✅ Como deveria ser\nO sistema mantém um **índice global de pesquisas** em `knowledge/research-index.md`. Quando uma nova pesquisa é solicitada, antes de sair buscando na internet, ele verifica:\n\n1. Já existe pesquisa sobre este tópico em outro projeto?\n2. Qual o grau de sobreposição?\n3. O que pode ser reutilizado vs. o que precisa ser contextualizado?\n\n### Por quê?\n\nPorque conhecimento factual é **universal**. As regras do xadrez não mudam entre projetos. O que muda é a **camada acionável** (Melhoria 2). Então o sistema poderia:\n\n- **Copiar** a camada knowledge de outro projeto\n- **Gerar nova** camada actionable específica para o projeto atual\n\nIsso economiza tempo, tokens e custo de API.\n\n### Fluxo\n\n```mermaid\ngraph TD\n    A[\"Nova pesquisa solicitada\"] --> B{\"Existe pesquisa similar<br/>em outro projeto?\"}\n    B -->|Sim| C[\"Mostrar pesquisa existente<br/>ao usuário\"]\n    C --> D{\"Reutilizar?\"}\n    D -->|Sim| E[\"Copiar camada knowledge<br/>Gerar nova camada actionable\"]\n    D -->|Não| F[\"Pesquisar do zero\"]\n    B -->|Não| F\n    F --> G[\"Indexar no catálogo global\"]\n```\n\n---\n\n## Melhoria 4: Detecção de Contradições\n\n### ❌ Como está\nO sistema sintetiza informação e entrega como verdade única. Se duas fontes discordam, ele silenciosamente escolhe uma.\n\n### ✅ Como deveria ser\nQuando o sistema encontra informação conflitante, ele deve **explicitar a contradição** em vez de escondê-la.\n\n### Por quê?\n\nPorque contradições são **informação valiosa**. Elas revelam:\n- Regras que variam entre contextos (xadrez FIDE vs. xadrez online rápido)\n- Padrões de design que têm trade-offs legítimos\n- Áreas onde a decisão é do desenvolvedor, não de uma \"verdade objetiva\"\n\n### Exemplo\n\n```markdown\n## ⚠️ Contradição Detectada: Empate por Repetição\n\n**Fonte A** (FIDE Official Rules):\n> O empate por repetição ocorre quando a MESMA POSIÇÃO se repete 3 vezes,\n> considerando o mesmo jogador na vez, mesmas possibilidades de roque,\n> e mesmo estado de en passant.\n\n**Fonte B** (Chess.com FAQ):\n> O empate acontece automaticamente na terceira repetição da posição.\n\n**Análise**: \nA regra FIDE exige que o jogador REIVINDIQUE o empate (não é automático).\nNo Chess.com, é aplicado automaticamente por simplicidade.\n\n**Decisão necessária**: \n→ Registrada em `DECISIONS/` como pendente.\n→ Seu jogo vai aplicar empate automaticamente ou exigir que o jogador reivindique?\n```\n\nIsso é **muito** mais valioso do que o sistema silenciosamente escolher uma das versões.\n\n---\n\n## Melhoria 5: Pesquisa como Documento Vivo\n\n### ❌ Como está\nA pesquisa é gerada uma vez e fica estática. Se o usuário descobre algo novo, ou se informação fica desatualizada, os `.md` não refletem isso.\n\n### ✅ Como deveria ser\nCada pesquisa tem um **ciclo de vida**:\n\n```mermaid\nstateDiagram-v2\n    [*] --> Rascunho: Pesquisa iniciada\n    Rascunho --> EmRevisão: Geração completa\n    EmRevisão --> Aprovado: Usuário valida\n    EmRevisão --> Refinando: Usuário pede ajustes\n    Refinando --> EmRevisão: Novo conteúdo gerado\n    Aprovado --> Ativo: Integrado ao projeto\n    Ativo --> Desatualizado: Tempo ou trigger\n    Desatualizado --> Refinando: Re-pesquisa parcial\n```\n\n### Por quê?\n\nPorque conhecimento **envelhece**. Uma pesquisa sobre \"melhores práticas de React\" feita em janeiro pode estar desatualizada em junho. O sistema deveria:\n\n- Marcar pesquisas com data de validade estimada (tecnologia = curta, regras de xadrez = longa)\n- Permitir anotações do usuário sem sobrescrever o conteúdo gerado\n- Suportar **re-pesquisa incremental** (atualizar só o que mudou, não recriar tudo)\n\n### Metadado no frontmatter\n\n```yaml\n---\ntopic: \"Regras do Xadrez - Movimentação de Peças\"\ncreated: 2026-10-02\nlastVerified: 2026-10-02\nestimatedShelfLife: \"long\"  # long | medium | short\nstatus: \"active\"            # draft | review | active | stale\nconfidence: 92\nsources: 3\nuserAnnotations: 0\nproject: \"meu-jogo-xadrez\"\n---\n```\n\n---\n\n## Melhoria 6: Análise de Landscape — \"O Que Já Existe?\"\n\n### ❌ Como está\nA pesquisa foca apenas no **conhecimento do domínio** (regras do xadrez). Ignora completamente o que já existe como solução implementada.\n\n### ✅ Como deveria ser\nToda pesquisa deveria incluir uma seção (opcional) de **análise de landscape**:\n\n- Que soluções open-source já existem para isso?\n- Que bibliotecas/pacotes resolvem parte do problema?\n- O que concorrentes/similares fizeram?\n\n### Por quê?\n\nPorque antes de implementar do zero, o desenvolvedor precisa saber **se vale a pena**. Talvez já exista uma lib `chess.js` que implementa todas as regras e o projeto deveria usá-la em vez de recodificar.\n\n### Exemplo de output\n\n```markdown\n## 🌍 Landscape: Engines e Bibliotecas de Xadrez\n\n| Projeto | Linguagem | Stars | Cobre regras? | Cobre IA? | Licença |\n|---------|-----------|-------|---------------|-----------|---------|\n| chess.js | JavaScript | 3.2k | ✅ Completo | ❌ Não | BSD |\n| stockfish.js | C++/WASM | 1.8k | ✅ Completo | ✅ Sim | GPL |\n| chessboard.js | JavaScript | 2.1k | ❌ Só UI | ❌ Não | MIT |\n\n### Recomendação\nPara um jogo 2D em JS, considere usar `chess.js` para lógica de regras\ne focar o desenvolvimento na UI e experiência do jogador.\nIsso economizaria ~40h de implementação de regras.\n```\n\nIsso pode **evitar semanas de trabalho** desnecessário.\n\n---\n\n## Resumo das Melhorias\n\n| # | Melhoria | Impacto | Complexidade |\n|---|----------|---------|--------------|\n| 1 | Pesquisa consciente do projeto | 🔴 Alto — muda a qualidade de tudo | 🟡 Média |\n| 2 | Camada \"E Daí?\" (knowledge + actionable) | 🔴 Alto — ponte entre saber e fazer | 🟡 Média |\n| 3 | Reutilização cross-project | 🟡 Médio — economia de tempo/custo | 🟢 Baixa |\n| 4 | Detecção de contradições | 🟡 Médio — evita bugs silenciosos | 🟡 Média |\n| 5 | Documento vivo com ciclo de vida | 🟡 Médio — mantém relevância | 🔴 Alta |\n| 6 | Análise de landscape | 🔴 Alto — pode evitar trabalho inútil | 🟢 Baixa |\n\n### Ordem de implementação sugerida\n\n```\nFase 1 (MVP):  Melhoria 1 (contexto do projeto) + Melhoria 6 (landscape)\nFase 2:        Melhoria 2 (knowledge + actionable) + Melhoria 4 (contradições)\nFase 3:        Melhoria 3 (cross-project) + Melhoria 5 (documento vivo)\n```\n\n> As melhorias 1 e 6 são as que dão mais valor com menos esforço.\n> A melhoria 2 é a que transforma o sistema de \"útil\" para \"indispensável\".\n"
+    },
+    {
+      "id": "docs_relatorio_usabilidade_dev_journey_md",
+      "path": "docs/relatorio_usabilidade_dev_journey.md",
+      "name": "relatorio_usabilidade_dev_journey.md",
+      "title": "Relatório de Avaliação de Usabilidade e Experiência do Desenvolvedor (Dev Journey)",
+      "category": "docs",
+      "icon": "📝",
+      "size": 11394,
+      "mtime": 1791820299602.5686,
+      "outgoingLinks": [],
+      "content": "# Relatório de Avaliação de Usabilidade e Experiência do Desenvolvedor (Dev Journey)\n\n> **Projeto Simulado**: `FinTrack_SaaS` (SaaS B2B de Gestão de Fluxo de Caixa e Conciliação Bancária)  \n> **Perfil Testado**: Desenvolvedor Fullstack Sênior utilizando a plataforma pela primeira vez  \n> **Data da Avaliação**: 2026-10-12  \n> **Ambiente**: Cockpit Web Local (`localhost:3333`) · Google Antigravity IDE · Chrome Headless / Chromium  \n\n---\n\n## 1. Resumo Executivo & Veredito Geral\n\nO teste simulou a jornada completa de um desenvolvedor recém-chegado ao ecossistema: desde o onboarding no **Quickstart Studio** criando o projeto `FinTrack_SaaS`, passando pela exploração dos contratos de governança, edição do roadmap em tempo real, experimentação do **Research Lab**, uso da nova funcionalidade de **Session Capture com IA** e inspeção no **Grafo Neural 3D**.\n\n### Nota Geral de Valor: **9.2 / 10**\n\n| Dimensão | Nota | Diagnóstico Sintético |\n|---|:---:|---|\n| **Usabilidade & UX Visual** | 9.5 | Estética dark futurista impecável, tipografia legível, feedback visual em toasts e animações de sinapse transmitem sofisticação imediata (\"Efeito UAU\"). |\n| **Interação & Ergonomia** | 8.8 | Navegação fluida por abas no Project Workspace. Edição inline ágil no roadmap. Alguns modais exigem cliques extras de confirmação que poderiam ser agilizados. |\n| **Resolução de Problemas Reais** | 9.6 | Resolve com maestria a maior dor da engenharia com IA: **amnésia entre sessões, desvios de arquitetura e falta de memória técnica persistente**. |\n| **Utilidade Prática no Dia a Dia** | 9.0 | O cockpit centraliza o que antes ficava espalhado em dezenas de prompts soltos no chat. Transforma o trabalho com IA em um processo de engenharia governado. |\n\n---\n\n## 2. A Jornada Passo a Passo (Dev Journey Simulation)\n\n### Etapa 1: Onboarding no Quickstart Studio (Criação de `FinTrack_SaaS`)\n- **Ação**: O desenvolvedor clicou em `+ Novo Projeto` no Dashboard, escolheu *Criar Novo Projeto (Greenfield)*, definiu o nome `FinTrack_SaaS`, a stack `Node.js / TS` e a descrição do produto.\n- **Resultado no Disco**:\n  - `projects/FinTrack_SaaS/PROJECT.md` (Visão geral, stack e governança)\n  - `projects/FinTrack_SaaS/CURRENT_STATE.md` (Estado de partida e roadmap inicial)\n  - `projects/FinTrack_SaaS/ARCHITECTURE.md` (Princípios arquiteturais e AI Decision Gate)\n  - Pastas `DECISIONS/` e `MEMORY/sessions/` inicializadas atomicamente.\n- **Experiência do Dev**: A criação levou menos de 300ms. O modal de sucesso exibiu o caminho do disco e opções diretas para ir ao workspace ou explorar o grafo.\n\n```mermaid\njourney\n    title Jornada do Novo Desenvolvedor no AI Second Brain\n    section Onboarding\n      Abrir Dashboard: 5: Dev\n      Criar FinTrack_SaaS no Quickstart: 5: Dev\n      Estrutura gerada no disco: 5: Dev\n    section Exploração & Governança\n      Ver contratos em Visão Geral: 4: Dev\n      Adicionar passo no Roadmap: 5: Dev\n      Testar Research Lab: 4: Dev\n    section Memória com IA\n      Abrir Registrar Sessão: 5: Dev\n      Escrever notas e Gerar Rascunho: 5: Dev\n      Revisão item a item: 5: Dev\n      Gravação atômica na memória: 5: Dev\n    section Navegação 3D\n      Interagir com Grafo Orbital: 5: Dev\n```\n\n---\n\n### Etapa 2: Exploração dos Contratos & Roadmap Ativo\n- **Ação**: Na aba *Visão Geral & Contratos*, o dev visualizou os 3 contratos centrais, alterou status e adicionou uma nova tarefa ao roadmap:\n  > *\"Modelar tabelas Prisma de transações financeiras e contas\"*\n- **Sensação de Uso**:\n  - A adição inline com a tecla `Enter` ou clique em `+ Adicionar` gravou instantaneamente no arquivo físico `CURRENT_STATE.md` sem recarregar a página.\n  - O sistema de toasts no canto inferior confirmou a persistência de imediato.\n  - O checklist interativo permite marcar conclusões com 1 clique.\n\n---\n\n### Etapa 3: Sessão de Memória Assistida por IA (Session Capture)\n- **Ação**: O dev acessou a aba *Memória & Saúde* e acionou o botão `🧠 Registrar Sessão`.\n- **Interação**:\n  - O modal exibiu o status das 3 fontes (Git, Contratos, Notas). Como o projeto ainda não tinha commits, informou claramente que usaria as notas informadas.\n  - O dev colou o resumo de trabalho: *\"Inicializamos o projeto FinTrack_SaaS. Definimos a stack Fastify + TypeScript com PostgreSQL e Prisma ORM. Desenhamos o fluxo de conciliação bancária multi-tenant e decidimos usar Redis para cache de cotações.\"*\n  - Clicou em `✨ Gerar rascunho`.\n- **Comportamento da IA**:\n  - Em ~1.9s, a IA Groq (`openai/gpt-oss-120b`) gerou um rascunho completo: título conciso, markdown de seções sem cabeçalho duplicado, sugestão de mover a tarefa concluída para *Já definido*, novos passos sugeridos e uma lição aprendida técnica para `LESSONS_LEARNED.md`.\n  - **Revisão Humana**: O desenvolvedor pôde desmarcar ou editar qualquer texto antes de confirmar.\n  - Ao clicar em `💾 Gravar na memória`, o backend gravou atomicamente `MEMORY/sessions/2026-10-12-sessao.md`, atualizou `CURRENT_STATE.md` e anexou a lição aprendida.\n\n---\n\n### Etapa 4: Grafo Neural 3D & Backup\n- **Ação**: O dev alternou para a aba *Grafo Neural 3D*.\n- **Sensação de Uso**:\n  - O projeto `FinTrack_SaaS` orbita como um astro central com nós orbitais esmeralda e violeta representando contratos, decisões e memórias.\n  - A rotação de câmera e o zoom com OrbitControls funcionam a 60fps sem engasgos.\n  - Na aba *Backup*, a geração do dossiê consolidado gera um único arquivo Markdown pronto para auditoria.\n\n---\n\n## 3. O que Realmente Faz a Diferença (Pontos Fortes)\n\n1. **Eliminação da \"Amnésia do Agente\"**:\n   - Em projetos tradicionais, cada nova conversa no Cursor, Claude ou Antigravity começa do zero ou depende de prompts gigantescos.\n   - O AI Second Brain padroniza a leitura de `PROJECT.md`, `CURRENT_STATE.md` e `LESSONS_LEARNED.md`, garantindo continuidade perfeita.\n2. **Revisão Humana Obrigatória (Segurança)**:\n   - A IA nunca altera o disco silenciosamente. O modal de *Session Capture* apresenta uma tela de revisão clara antes de qualquer escrita.\n3. **Soberania e Privacidade (BYOK 100% Local)**:\n   - Chaves salvas estritamente no `.env` do desenvolvedor, suporte a Ollama local offline e zero envio de código para servidores de telemetria da ferramenta.\n4. **Resolução de Burocracia**:\n   - O desenvolvedor odeia escrever documentação manual. A IA atua como **escriba**, transformando 2 frases soltas do dev em contratos técnicos estruturados.\n\n---\n\n## 4. Oportunidades de Melhoria & Fricções Identificadas\n\nApesar da alta qualidade do produto, o teste revelou 5 pontos práticos onde um desenvolvedor iniciante pode encontrar dúvidas ou fricção:\n\n### ⚠️ Fricção 1: Quickstart Greenfield com Stack e Detalhes Limitados\n- **Problema**: No modal de criação rápida, a stack é escolhida apenas por botões fixos (`Node.js/TS`, `C#`, `Python`, etc.) e a descrição aceita uma única linha curta. Se o desenvolvedor digita Fastify, PostgreSQL e Prisma, esses detalhes acabam não sendo enriquecidos no `PROJECT.md` gerado.\n- **Impacto no Dev**: O dev precisa abrir o editor markdown logo após criar para detalhar a stack real.\n- **Recomendação de Melhoria**:\n  - Adicionar um campo expansível opcional *\"Bibliotecas, Banco e Detalhes da Stack\"* no Quickstart Studio, ou permitir um botão *\"✨ Enriquecer Contratos Iniciais com IA\"* que transforma o objetivo em um `PROJECT.md` e `ARCHITECTURE.md` completos desde o minuto 1.\n\n---\n\n### ⚠️ Fricção 2: Integração de Repositório Git em Projetos Novos\n- **Problema**: Ao criar um projeto novo pelo portal web em `projects/Nome/`, a pasta não nasce inicializada como repositório Git (`git init`). Por conta disso, na primeira sessão o *Session Capture* indica \"Git indisponível\".\n- **Impacto no Dev**: O dev precisa abrir o terminal e rodar `git init` manualmente se quiser histórico de commits.\n- **Recomendação de Melhoria**:\n  - Oferecer uma checkbox no Quickstart: `[x] Inicializar Git automaticamente nesta pasta`.\n\n---\n\n### ⚠️ Fricção 3: Facilidade de Abertura na IDE Externa (Ponte de 1 Clique)\n- **Problema**: O dev cria o projeto no portal web, mas quando quer começar a codar, precisa descobrir como abrir a pasta física na sua IDE favorita (VS Code, Cursor, Antigravity) e como ativar a ponte de governança.\n- **Impacto no Dev**: Carga cognitiva desnecessária para quem está começando.\n- **Recomendação de Melhoria**:\n  - Na aba *Visão Geral* do Project Workspace, adicionar um grupo de botões de 1 clique:\n    - `📂 Abrir no VS Code / Cursor` (chamando endpoint `/api/system/open-ide` com `code <caminho>`)\n    - `📋 Copiar Prompt de Início de Sessão` (copia para o clipboard o texto pronto para colar no chat da IDE).\n\n---\n\n### ⚠️ Fricção 4: Indicador de Progresso Vivo durante Inferência da IA\n- **Problema**: No *Session Capture*, enquanto a IA gera o rascunho (~1.8s a 3.5s dependendo do modelo), o orbe neon pulsa no modal, mas alguns desenvolvedores ansiosos podem achar que a tela travou se não houver um contador de segundos ou mensagens de progresso dinâmicas.\n- **Recomendação de Melhoria**:\n  - Adicionar pequenas mensagens rotativas abaixo do orbe: *\"Lendo contratos do projeto...\"*, *\"Cruzando pendências do roadmap...\"*, *\"Formatando resumo em Markdown...\"*.\n\n---\n\n### ⚠️ Fricção 5: Busca Global de Conteúdo (\"Pergunte ao Cérebro\")\n- **Problema**: A busca atual na barra lateral apenas filtra nomes de arquivos e títulos de projetos na árvore. Se o dev quiser perguntar *\"onde definimos a regra de conciliação?\"* ou *\"qual foi a decisão sobre banco de dados?\"*, precisa abrir pasta por pasta.\n- **Recomendação de Melhoria**:\n  - Implementar a funcionalidade **\"Pergunte ao Cérebro\"** (Item 2 do relatório arquitetural), permitindo busca em linguagem natural sobre o acervo do vault com citações clicáveis.\n\n---\n\n## 5. Matriz de Priorização de Melhorias\n\n| Melhoria | Impacto na UX | Esforço Técnico | Prioridade |\n|---|:---:|:---:|:---:|\n| **1. Botões de 1 Clique \"Copiar Prompt de Início\" e \"Abrir na IDE\"** | 🔥 Muito Alto | Baixo | **P1 (Imediata)** |\n| **2. Checkbox `git init` automático no Quickstart Greenfield** | Alto | Muito Baixo | **P1 (Imediata)** |\n| **3. Enriquecimento de Stack Detalhada no Quickstart Studio** | Alto | Baixo | **P2 (Próxima)** |\n| **4. Mensagens rotativas de progresso na geração de IA** | Médio | Muito Baixo | **P2 (Próxima)** |\n| **5. Pergunte ao Cérebro (Busca Global Semântica no Vault)** | 🔥 Revolucionário | Médio | **P3 (Estratégica)** |\n\n---\n\n## 6. Conclusão da Avaliação\n\nO **AI Second Brain** entrega uma experiência muito superior à média de ferramentas de desenvolvimento assistido por IA. Ele **transforma o caos de prompts efêmeros em um ativo corporativo duradouro** com arquitetura, decisões e memória auditáveis.\n\nA adição do **Session Capture com IA** reduziu drasticamente o atrito de manter a memória atualizada: o que antes levava 10 minutos de escrita burocrática agora é resolvido em **15 segundos com 1 clique de aprovação**. Com os pequenos ajustes recomendados (atalho para abrir na IDE e enriquecimento da stack no Quickstart), a ferramenta atinge um nível de fricção quase zero para novos desenvolvedores.\n"
     },
     {
       "id": "docs_RESEARCH_LAB_md",
@@ -394,10 +411,10 @@ window.VAULT_SNAPSHOT = {
       "title": "Estado Atual do AI Second Brain",
       "category": "memory",
       "icon": "💾",
-      "size": 38879,
-      "mtime": 1791817619114.9165,
+      "size": 41109,
+      "mtime": 1791824407022.2717,
       "outgoingLinks": [],
-      "content": "# Estado Atual do AI Second Brain\n\n> Última atualização: 2026-10-12\n\n## Status do Framework: 🟢 Operacional & Cockpit Avançado + 🔬 Research Lab + ⚡ AI Gateway Multi-Provedor (BYOK Ativo) + 🧠 Session Capture com IA\n\nO AI Second Brain está estruturado como uma plataforma universal de governança e desenvolvimento com IA, livre de acoplamento a projetos específicos e equipada com um portal web moderno, motor de pesquisa autônoma resiliente, AI Gateway multi-provedor (BYOK) e captura inteligente de sessões.\n\n## Estrutura do Workspace\n\n| Diretório | Papel | Estado |\n|---|---|---|\n| `.agents/rules/` | Regras universais de governança (IA, Segurança, Docs) | ✅ Agnósticas |\n| `.agents/skills/` | Workflows reutilizáveis para Antigravity | ✅ 8 skills ativas |\n| `knowledge/` | Base de conhecimento em IA, Arquitetura e Segurança | ✅ 100% universal |\n| `projects/` | Projetos conectados pelo desenvolvedor | 🟢 Suporta Greenfield & Brownfield + RESEARCH/ |\n| `memory/` | Memória de continuidade entre sessões | ✅ Operacional |\n| `templates/` | Modelos para novos projetos, specs e ADRs | ✅ Disponíveis |\n| `docs/brain-ui/` | Portal web interativo de visualização e governança | 🚀 UX/UI com Project Workspace, Grafo 3D, AI BYOK & Session Capture |\n| `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway, Research Engine, Session Capture) |\n\n## Sessões Recentes\n- **Data**: 2026-10-12\n  - **Implementação Profissional do Session Capture (Registrar Sessão com IA)**:\n    - **Módulo Nativo de Captura (`scripts/session-capture.js`)**:\n      - Coleta determinística de dados do projeto: commits desde a última sessão registrada, arquivos modificados não commitados, diffstat com censura mandatória de arquivos confidenciais (`.env`, chaves privadas, secrets).\n      - Leitura e estruturação dos contratos (`PROJECT.md`, `CURRENT_STATE.md`, `LESSONS_LEARNED.md` e sessões recentes).\n      - Algoritmo de normalização e validação defensiva contra o estado real do projeto, impedindo duplicações ou inclusão de itens especulativos.\n      - Gravação física atômica: cria `MEMORY/sessions/AAAA-MM-DD-titulo.md` (nunca sobrescreve sessões existentes do mesmo dia), atualiza cirurgicamente `CURRENT_STATE.md` (remanejando itens concluídos de \"Próximos Passos\" para \"O que já foi definido\", adicionando novas pendências e preservando quebras de linha CRLF/LF) e anexa aprendizados em `LESSONS_LEARNED.md`.\n    - **Extensão do AI Gateway (`scripts/ai-gateway.js`)**:\n      - Nova função `summarizeSession(contextText, options)` com prompt especializado (`SYSTEM_PROMPTS.sessionCapture`) governado pelas regras de *Zero Fabricação*.\n      - Suporte à opção `skipCache: true` para o botão \"🔄 Regenerar\" na interface de revisão.\n      - Correção preventiva da variável `isModelNotFound` no manipulador de erros do gateway.\n    - **Endpoints REST no Backend (`server.js`)**:\n      - `POST /api/projects/:name/session/draft`: Coleta determinística + inferência com IA para gerar o rascunho. Nada é gravado em disco nesta etapa.\n      - `POST /api/projects/:name/session/commit`: Gravação atômica após aprovação e ajustes do usuário. Dispara invalidação de snapshot do vault e evento SSE em tempo real.\n    - **Interface de Alta Fidelidade no Cockpit e Modal de Revisão (`docs/brain-ui/`)**:\n      - Card promocional destacado na aba **Memória & Saúde** do Project Workspace com botão `🧠 Registrar Sessão`.\n      - Modal interativo (`#sessionCaptureModal`) em 3 etapas fluidas: Entrada (informações Git + notas do usuário) → Carregamento (orbe neon animado) → Revisão completa item a item com checkboxes e campos editáveis.\n      - Paridade absoluta com a demonstração pública em `docs/brain-ui/demo/` através de mocks no `demo-mode.js`.\n  - **Correção da Numeração Sequencial de Decisões Arquiteturais (ADRs)**:\n    - Em `docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js`, função `createNewDecisionRecord` atualizada para inspecionar os ADRs existentes do projeto e calcular o próximo número sequencial (`NNN-nova-decisao.md`), eliminando a sobrescrita do arquivo `001-stack-inicial.md`.\n\n- **Data**: 2026-10-11\n  - **Refinamento do Botão de Validação com Ícone Fiel e Efeito Cintilante Suave**:\n    - **Ajuste da Geometria do Ícone à Referência do Usuário**:\n      - Substituída a geometria anterior pelo ícone oficial Heroicons v2 Outline Key (`M15.75 5.25a3 3...`) com traçado de 1.8px em `docs/brain-ui/index.html` e `docs/brain-ui/demo/index.html`, replicando com exatidão a haste diagonal, dentes escalonados e cabeça arredondada da imagem fornecida pelo desenvolvedor.\n    - **Suavização do Efeito Cintilante (Eliminação de Excessos)**:\n      - Em `docs/brain-ui/style.css` e `docs/brain-ui/demo/style.css`:\n        - Eliminados os halos exagerados de 32px e os fundos em gradiente radial que estouravam a interface.\n        - Preservado o fundo estritamente escuro `#060a13` do botão.\n        - Definido um brilho respiratório calibrado (+20% de ganho luminoso):\n          - Sucesso (`.is-valid`): borda esmeralda (`rgba(16, 185, 129, 0.8)`), ícone `#10b981` com `drop-shadow(0 0 3px rgba(16, 185, 129, 0.72))` e `box-shadow` pulsando entre 5px e 11px (`@keyframes sparklingGreen` em ciclo ágil de 1.9s).\n          - Falha (`.is-invalid`): borda carmesim (`rgba(239, 68, 68, 0.8)`), ícone `#ef4444` com `drop-shadow(0 0 3px rgba(239, 68, 68, 0.72))` e `box-shadow` pulsando entre 5px e 11px (`@keyframes sparklingRed` em ciclo ágil de 1.9s).\n        - Estado hover neutro com borda suave translúcida, alinhado à estética dark do sistema.\n    - **Validação Visual & Integridade**:\n      - Comprovado visualmente no navegador com browser subagent: capturados screenshots dos estados de sucesso e erro demonstrando fidelidade à imagem de referência e a calibração de +20% no brilho.\n      - `npm run doctor`: 100% dos links e arquivos íntegros (0 erros).\n\n  - **Sincronização Fiel dos Parâmetros do `.env`, Validação Estrita e Estilização Escura das Setas de Retries**:\n    - **Sincronização com `.env` na Abertura do Modal de IA**:\n      - Em `docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js` (`openAiSettingsModal`), os campos `#aiCacheHoursInput` e `#aiMaxRetriesInput` passam a ser populados fielmente a partir de `cfg.cacheHours` e `cfg.maxRetries` lidos em tempo real do `.env` via `/api/ai/config`.\n      - Em `scripts/ai-gateway.js` (`getConfig` e `saveConfig`), corrigido o fallback `|| 2` que impedia o valor legítimo `0` de retries; agora tratados com validação de número inteiro positivo (`>= 0`).\n    - **Validação Defensiva e Restrição de Digitação em Camadas**:\n      - **Frontend (Interatividade & Sanitização)**: Função `setupAiParamsInputValidation` bloqueia teclas proibidas (`-`, `+`, `e`, `.`, `,` em retries; letras espúrias em cache) via `keydown`, sanitiza colagem via `input` (clamp entre 0 e 5 para retries e formato `${hours}h` entre 1h e 720h para cache no `blur`).\n      - **Frontend (Pré-Salvamento)**: `handleSaveAiSettings` valida estritamente ambos os parâmetros antes de qualquer disparo de rede; se inválidos, exibe feedback no terminal, aplica classe de erro `.input-error` com animação de shake e impede a submissão.\n      - **Backend (API & Gateway)**: `saveConfig` em `scripts/ai-gateway.js` e `/api/ai/save` em `server.js` validam intervalos permitidos (Cache: 1 a 720 horas; Retries: 0 a 10 tentativas), retornando HTTP 400 com mensagem amigável caso haja inconsistência.\n    - **Estilização Escura das Setas (Spin Buttons) de Retries**:\n      - Adicionado `color-scheme: dark;` em `.ai-param-detail-input-wrap .ai-param-input[type=\"number\"]` em `docs/brain-ui/style.css` e `docs/brain-ui/demo/style.css`.\n      - Customizados `::-webkit-inner-spin-button` e `::-webkit-outer-spin-button` com filtros escuros harmônicos e transições suaves, integrando o controle nativo ao visual dark da interface e eliminando setas/fundos claros.\n    - **Restauração e Blindagem do Fundo Escuro na Caixa de API Key (`#aiApiKeyInput`)**:\n      - Corrigido o comportamento do Chromium em que campos `type=\"password\"` ativavam o gerenciador de credenciais do navegador e aplicavam `-webkit-autofill` com fundo claro (`rgb(232, 240, 254)`).\n      - Aplicada blindagem CSS com `-webkit-box-shadow: 0 0 0 1000px #060a13 inset !important`, `-webkit-text-fill-color: #f8fafc !important`, `color-scheme: dark !important` e `background: #060a13 !important` em `docs/brain-ui/style.css` e `docs/brain-ui/demo/style.css`.\n      - Atualizado o HTML (`docs/brain-ui/index.html` e `demo/index.html`) com `placeholder=\"gsk_... ou cole sua chave de API\"` e `autocomplete=\"new-password\"` evitando que o navegador trate como senha de login com fundo branco.\n    - **Validação End-to-End**:\n      - Testado no navegador via browser subagent com comprovação visual dos valores `24h` e `4`, setas escuras, caixa de API Key escura (#060a13) e validação em tempo real.\n      - `npm run doctor`: 100% dos links e arquivos íntegros (0 erros).\n\n  - **Correção Crítica no AI Gateway (BYOK), Eliminação de ReferenceError e Blindagem de Base URL**:\n    - **Resolução do `ReferenceError: cachedModelsByProvider is not defined`**:\n      - Restaurada a declaração explícita de `const cachedModelsByProvider = {}` no topo de `scripts/ai-gateway.js`, eliminando as respostas HTTP 500 em `/api/ai/config` e HTTP 400 em `/api/ai/test` e `/api/ai/save`.\n    - **Isolamento Estrito de `baseUrl` por Provedor**:\n      - Corrigido o vazamento de `AI_BASE_URL` entre provedores no `.env`: agora apenas provedores configuráveis (`ollama` e `custom`) herdam ou gravam URLs customizadas; provedores padrão de nuvem (`groq`, `openai`, `anthropic`, `openrouter`) utilizam estritamente suas URLs oficiais da API, prevenindo que requisições para a Groq fossem roteadas para a URL da Anthropic.\n    - **Propagação Fiel de Erros HTTP e Prevenção de Falsos Positivos**:\n      - O bloco `testConnection` não silencia mais erros de autenticação (401/403) ou cota (429) no endpoint `/models`.\n      - Se nenhum modelo de chat for detectado, o sistema rejeita o teste com erro amigável em vez de gerar estado falso de sucesso com \"Catálogo pronto\".\n    - **Validação Preventiva no Frontend (`docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js`)**:\n      - Se o usuário não digitou chave e o provedor não possui chave salva no `.env`, o clique em \"Testar\" ou \"Salvar\" exibe erro claro no terminal e foca no input sem disparar requisições inválidas de rede.\n      - Se nenhum modelo foi selecionado, o botão \"Salvar e Ativar\" orienta a testar e escolher um modelo compatível.\n      - Ao trocar de provedor no select, o input `baseUrl` é devidamente limpo para provedores de nuvem.\n    - **Hot-Reload de Módulo no Servidor (`server.js`)**:\n      - Implementada a função `getAiGateway()` com invalidação dinâmica de cache do Node.js (`delete require.cache`), permitindo que alterações nas regras do gateway sejam refletidas em tempo real sem crash.\n\n  - **Auditoria e Fidelidade Estrita de Documentos na Landing Page (`docs/brain-ui/landing/`)**:\n    - **Eliminação de Referências a Arquivos Fictícios / Placeholders**:\n      - Em conformidade estrita com a regra universal de *Zero Fabricação*, eliminados todos os nomes de arquivos inexistentes que estavam exibidos na interface da landing page (`nucleo.md`, `seguranca.md`, `decisao-ia.md`, `ai-decision-gate.md`, `new-feature.md`, `bug-investigation.md`, `estado.md`, `licoes.md`, `sessao-13.md`, `adr-001.md`, etc.).\n    - **Mapeamento Preciso para Arquivos Reais do Workspace**:\n      - **Camada 01 (`rules/`)**: Substituído por `00-core.md`, `01-ai-decision.md` e `03-security.md`.\n      - **Camada 02 (`skills/`)**: Substituído por `ai-decision-gate/SKILL.md`, `new-feature/SKILL.md` e `bug-investigation/SKILL.md`.\n      - **Camada 03 (`memory/`)**: Substituído por `current-state.md`, `lessons-learned.md` e `README.md`.\n      - **Camada 04 (`decisions/`)**: Substituído por `GLOBAL_DECISIONS.md`, `001-stack-inicial.md` e `decisao_groq_provider.md`.\n      - **Terminal Chat Mockup**: Atualizado para ler e citar `memory/current-state.md`, `decisions/GLOBAL_DECISIONS.md` e `.agents/rules/03-security.md`.\n      - **Research Lab**: Caminhos atualizados para o padrão real `projects/<projeto>/RESEARCH/<tema>/knowledge/` e `actionable/`.\n      - **Quickstart Studio**: Card de estrutura atualizado incluindo `LESSONS_LEARNED.md`.\n    - **Correção Estrutural no Grafo Neural 3D e Leitor Lateral (`js/data.js`)**:\n      - Corrigido bug de renderização no Three.js (`CanvasGradient.addColorStop`) causado pela ausência de ícone/cor na pasta `templates`.\n      - Adicionado o atributo `realPath` em todos os nós do catálogo para exibir o caminho físico exato no cabeçalho do leitor Markdown lateral (`#reader`).\n      - Eventos de clique nos chips da landing page (`.chip[data-node]`) integrados para abrir diretamente o documento real correspondente no leitor.\n    - **Paridade i18n & Validação de Integridade**:\n      - Chaves do dicionário bilíngue `js/i18n.dict.js` sincronizadas.\n      - Validação com `npm run doctor`: 100% dos links e 98 arquivos Markdown verificados com sucesso (0 erros).\n\n  - **Eliminação de Listas Fixas e Busca de Modelos 100% Dinâmica em Tempo Real com Gatilho Automático na Abertura**:\n    - **Remoção Total de Hardcoding de Modelos**:\n      - Eliminado o catálogo fixo `AI_DEFAULT_MODELS_BY_PROVIDER` em `docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js`.\n      - Eliminados `DEFAULT_MODELS_BY_PROVIDER` e `cachedModelsByProvider` em `scripts/ai-gateway.js`.\n      - Removidas as opções `<option>` fixas de modelo em `docs/brain-ui/index.html` e `docs/brain-ui/demo/index.html`, iniciando o `<select id=\"aiModelSelect\">` exclusivamente com o placeholder neutro orientativo (*\"Clique em 'Testar' acima para listar os modelos disponíveis...\"*).\n    - **Gatilho Reativo Automático ao Abrir o Modal (`openAiSettingsModal`)**:\n      - Ao abrir a tela de configurações de IA, se o usuário já possui chave salva no `.env` (ou for um provedor local sem chave como Ollama), o sistema agora dispara imediatamente `testCurrentAiConnection()` em tempo real.\n      - A interface executa a animação de terminal ao vivo (`testing` -> handshake HTTP e medição de latência), envia a requisição para a API do provedor (ou mock interceptor no demo), recebe os modelos vivos da conta e popula dinamicamente o `<select id=\"aiModelSelect\">`, selecionando o modelo ativo da configuração.\n      - Se o usuário não tiver chave configurada (ou mudar para provedor sem chave), o terminal permanece em estado `idle` amigável e o select aguarda o preenchimento da chave e clique em Testar.\n    - **Paridade Estrita entre Produção Local e Versão Demo**:\n      - O arquivo `demo-mode.js` intercepta requisições `fetch('/api/ai/test')` simulando latência realista (~142ms) e lista de modelos compatíveis. O mesmo código JavaScript de `app.js` roda de forma 100% idêntica nos dois ambientes, sem bifurcações de lógica nem catálogos estáticos no frontend.\n    - **Refinamentos de Interface do Modal BYOK**:\n      - Substituição do chip redundante abaixo do botão Testar pelo botão alternador `✏️ Digitar ID manualmente` (`#btnToggleManualModel`).\n      - Centralização vertical perfeita da seta customizada do select (`.ai-select-arrow`) via `top: 50%` e `transform: translateY(-50%)`.\n      - Manutenção do título limpo `\"3. Modelo de IA\"`, deixando a contagem de modelos exclusivamente no console do terminal à direita.\n    - **Resiliência do Servidor HTTP Local (`server.js`)**:\n      - Tratamento para rotas de diretório estático (ex: `/demo/`), resolvendo automaticamente para `index.html` caso o caminho solicitado seja uma pasta.\n  - **Governança Agnóstica Universal e Blindagem Multi-IA**:\n    - **Criação do Padrão Universal Aberto `AGENTS.md`**: Implementado na raiz do workspace como padrão compatível com qualquer agente do mercado.\n    - **Extensão da Governança e Lições Aprendidas para Todas as Pontes**: Blindagem ativa e consulta mandatória à memória registradas em `GEMINI.md`, `AGENTS.md`, `.cursorrules`, `CLAUDE.md`, `.windsurfrules`, `.clinerules`, `.github/copilot-instructions.md`, `.agents/rules/00-core.md` e `.agents/rules/01-ai-decision.md`.\n    - **Automação de Pontes Standalone**: Os utilitários CLI `scripts/link-project.js` e `scripts/create-project.js` agora criam automaticamente as pontes de governança no repositório de destino, garantindo que o agente continue governado mesmo se o projeto for aberto de forma isolada fora do Segundo Cérebro.\n  - **Sincronização e Atualização da Landing Page (`docs/brain-ui/landing/`)**:\n    - **Reflexo do AI Gateway Multi-Provedor**: Seção \"Feito para não quebrar\" atualizada destacando auto-descoberta dinâmica de modelos, suporte a OpenAI, Anthropic, Gemini, Groq, DeepSeek, OpenRouter e Ollama local, e recuperação inteligente de rate limit.\n    - **Atualização do FAQ**: Perguntas e respostas enriquecidas para destacar o padrão aberto `AGENTS.md`, suporte multi-IA com pontes nativas, privacidade local com BYOK/Ollama e esclarecimento cristalino dos modos Cockpit Central vs Standalone.\n    - **Paridade Bilíngue 100% no Dicionário i18n (`js/i18n.dict.js`)**: Todas as chaves sincronizadas em inglês, testadas via Chromium headless CDP com zero chaves de conteúdo ausentes.\n  - **Catálogo Dedicado de Lições Aprendidas por Projeto (`LESSONS_LEARNED.md`)**:\n    - **Separação Arquitetural Estrita de Escopo**: Eliminação da \"Amnésia das Sessões Antigas\" através de um arquivo dedicado por projeto para registrar pegadinhas técnicas, bugs de libs e contratos específicos de domínio sem poluir a governança global.\n    - **Novo Template Oficial**: Adicionado `templates/lessons-learned.md` e atualizado `templates/project.md`.\n    - **Automação nos Comandos CLI**: Atualizados `scripts/create-project.js` e `scripts/link-project.js` para inicializarem automaticamente `LESSONS_LEARNED.md` e pontes multi-IA completas em projetos novos ou vinculados.\n    - **Blindagem em Todas as Pontes de IA**: Atualizados `AGENTS.md`, `GEMINI.md`, `.cursorrules`, `CLAUDE.md`, `.windsurfrules`, `.clinerules` e `copilot-instructions.md` com regra mandatória de consultar o `LESSONS_LEARNED.md` local do projeto antes de alterar código.\n    - **Inicialização em Projetos Ativos**: Criados `projects/teste_alfredo_22/LESSONS_LEARNED.md` e `projects/Alfredo_teste/LESSONS_LEARNED.md` com validação de 100% dos links no linter `doctor`.\n\n- **Data**: 2026-10-10\n  - **Refinamento do Modal BYOK e Feedback Reativo do Console Terminal**:\n    - **Consolidação Total de Feedback no Terminal Console (`.ai-card-terminal` / `.ai-terminal-output`)**:\n      - **Remoção da Caixa Duplicada da Esquerda (`#aiTestFeedback`)**: Eliminada a antiga caixa verde/vermelha que aparecia abaixo do campo de chave. A coluna esquerda agora permanece limpa, contínua e sem saltos visuais.\n      - **Terminal Rico na Coluna Direita com Informações Completas**: O terminal ao vivo agora concentra 100% da telemetria de conexão em formato CLI avançado:\n        - `idle`: `$ ENGINE: <PROV> [STANDBY]` · `[IDLE] Clique em \"Testar\" para validar a API Key` · `LOCAL .ENV ENCRYPTION · ISOLADO`.\n        - `testing`: `$ CONNECTING TO <PROV> ENGINE...` · `[WAIT] Handshake HTTP e medição de latência...` · `[SCAN] Descobrindo catálogo de modelos na conta...`.\n        - `success`: `$ CONNECTED TO <PROV> [AUTHENTICATED]` · `[OK] Conexão bem-sucedida · Latência: <ms>ms` · `[OK] Modelos detectados · <n> modelos compatíveis` · `LOCAL .ENV ENCRYPTION · PRONTO PARA ATIVAR`.\n        - `error`: `$ ERROR CONNECTING TO <PROV> [FAILED]` · `[FAIL] <mensagem amigável de erro>` · `LOCAL .ENV ENCRYPTION · VERIFIQUE A CHAVE`.\n    - **Layout Balanceado e Parâmetros com Contexto Integrado**:\n      - Seção `4. Parâmetros de Execução` na coluna esquerda enriquecida com cards dedicados para `Cache TTL` e `Tentativas (Retries)` com inputs alinhados e explicações objetivas de impacto (0ms de latência e resiliência a HTTP 429).\n      - Coluna direita otimizada com cards de `Security & Privacidade` e `Scope & Governança` detalhados com bullets de segurança, garantindo altura simétrica e harmônica com a coluna esquerda sem espaços vazios.\n    - **Padronização Visual com os Demais Modais do Sistema**:\n      - Borda externa e sombras ajustadas com tonalidade azul-marinho escura (#0a101d / #111a2e / #1a253c), idêntica aos outros modais do AI Second Brain.\n      - Botão fechar padronizado em formato circular arredondado (`.ai-card-close-btn`).\n      - Inclusão do asset animado vetorial `assets/cerebro_neon_animado.svg` no card de cabeçalho do gateway.\n      - Alinhamento horizontal do rodapé (`.ai-settings-footer`) alinhado às margens dos inputs.\n    - **Paridade Absoluta 100% entre Local (`docs/brain-ui/`) e Demo Pública (`docs/brain-ui/demo/`)**:\n      - Replicação exata de todas as regras de CSS (`style.css`), lógica JavaScript (`app.js`), marcação HTML (`index.html`) e suporte a mock com validação realista no `demo-mode.js`.\n\n- **Data**: 2026-10-09\n  - **AI Gateway Multi-Provedor (BYOK — Bring Your Own Key)**:\n    - **Módulo Nativo Universal (`scripts/ai-gateway.js`)**: Cliente HTTP/HTTPS sem dependências externas, unificando os principais provedores de IA do mercado:\n      - **Groq Cloud**: Gratuito, ultra-rápido LPU (`openai/gpt-oss-120b` padrão, `openai/gpt-oss-20b` fallback, `qwen/qwen3.8-27b`).\n      - **OpenAI**: Flagship multimodal e raciocínio (`gpt-4o-mini`, `gpt-4o`, `o1-mini`).\n      - **Anthropic Claude**: Análise densa de código e arquitetura (`claude-3-5-sonnet-20241022`, `claude-3-5-haiku-20241022`).\n      - **OpenRouter**: Acesso a centenas de modelos abertos e proprietários (`deepseek/deepseek-chat`, `deepseek-r1`, `qwen-2.5-72b`).\n      - **Ollama Local**: 100% offline, privado na máquina do usuário, custo zero (`llama3.2`, `deepseek-r1`, `qwen2.5-coder`).\n      - **Endpoint Customizado**: Compatível com qualquer servidor local ou proxy corporativo OpenAI-Compatible.\n    - **Resiliência e Auto-Recuperação de Modelos Descontinuados**:\n      - Auto-fallback inteligente no `scripts/ai-gateway.js` quando o provedor retorna erro de modelo inexistente ou sem acesso (`does not exist or you do not have access to it` / 404). O gateway redireciona transparentemente a requisição para o modelo padrão ou de contingência sem abortar a síntese.\n      - Sincronização estrita de catálogo Groq com os modelos ativos da conta (`openai/gpt-oss-120b`, `openai/gpt-oss-20b`).\n    - **Endpoints REST no Backend (`server.js`)**:\n      - `GET /api/ai/config` e `GET /api/ai/status`: Retorna o provedor ativo, máscara segura da chave (ex: `gsk_••••••••Zvrf`), status de configuração e catálogo de provedores/modelos recomendados.\n      - `POST /api/ai/test`: Realiza ping em tempo real na API do provedor com a chave informada, mede a latência em milissegundos e retorna a lista viva de modelos disponíveis da conta do usuário.\n      - `POST /api/ai/save`: Gravação atômica das variáveis no arquivo `.env` físico e atualização imediata de `process.env` em memória sem necessidade de reiniciar o processo Node.js. Suporte a parâmetros avançados (`cacheHours`, `maxRetries`).\n      - **Interceptador de Cota 429**: Detecção de `Rate Limit / Quota Exceeded` propagando flag `quotaExceeded: true` para a interface gráfica.\n    - **Tríade de Modais UX de Alta Fidelidade no Cockpit (`docs/brain-ui/` e `docs/brain-ui/demo/`)**:\n      - **Pill Luminoso na Topbar (`#btnAiGatewayModal`)**: Exibe o status ao vivo da IA (`⚡ Groq Cloud • openai/gpt-oss-120b` com dot verde conectado; `✨ Conectar IA (BYOK)` em tom dourado quando não configurado; pulso vermelho em erro de cota).\n      - **Modal 1: Boas-Vindas & Onboarding (`#aiWelcomeModal`)**: Card escuro com robô neon pulsante convidando o desenvolvedor a conectar seu cérebro digital, acionado suavemente na primeira visita.\n      - **Modal 2: Central BYOK (`#aiSettingsModal`)**: Formulário em 4 etapas:\n        1. Seletor de provedor com ícones.\n        2. Input de chave com cadeado, botão de visibilidade olho (👁️), botão de teste (🔑) com feedback dinâmico de latência (ex: *✓ Conexão bem-sucedida! Latência: 355ms*).\n        3. Dropdown de modelos populado dinamicamente via ping da API.\n        4. Configurações avançadas (Expiração de cache em horas e tentativas máximas).\n        - **Card Verde de Privacidade**: Garante armazenamento 100% local no `.env` sob proteção do `.gitignore`.\n        - **Card Azul de Escopo**: Esclarece o raio de ação da IA (Research Lab, refinamento de briefing e grafo).\n        - **Botão \"Salvar e Ativar ⚡\"**: Salva a configuração e dispara evento no sistema.\n      - **Modal 3: Alerta de Cota Esgotada (`#aiQuotaModal`)**: Modal automático com cabeçalho de aviso, título dourado *\"Cota de IA Esgotada!\"*, caixa de recomendações (trocar para Groq gratuito, Claude ou Ollama local) e botão de redirecionamento para o configurador.\n    - **Efeito UAU: Pulso Sináptico no Grafo 3D Three.js**:\n      - Função `triggerSynapticPulse()` conectada a `graph.pulseSurge()` e `projectGraph.pulseSurge()` no `neuron-graph.js`, provocando uma aceleração visual nos impulsos elétricos das sinapses e nós ao ativar ou salvar uma chave.\n    - **Correção e Enriquecimento do Catálogo de Modelos Dinâmico (Modal BYOK)**:\n      - **Resolução do Bug de Modelos \"Undefined\"**: Identificado que o frontend esperava array de objetos `{ id, name }`, enquanto o gateway retornava array de strings. Implementado parsing polimórfico defensivo no frontend (`app.js` e `demo/app.js`) e normalização rica no backend (`scripts/ai-gateway.js`).\n      - **Filtragem Inteligente Universal de Modelos**: O backend agora descarta automaticamente modelos incompatíveis com chat/completions (áudio `whisper`, classificadores de moderação, guardrails, embeddings, imagem) garantindo que apenas modelos capazes de responder a prompts do Research Lab e síntese fiquem disponíveis.\n      - **Layout Limpo \\u0026 Alternador de Entrada Manual**: Removidos os chips redundantes abaixo do select. A interface agora conta com badge contextualizado (`#aiModelCountBadge`), dropdown enriquecido com janela de contexto (ex: `128k contexto`) e botão alternador para digitação manual do ID do modelo (`#btnToggleManualModel` / `#aiCustomModelWrap`) para suporte flexível a modelos customizados/beta.\n      - **Suporte ao Modo Demonstração (`demo-mode.js`)**: Interceptação de `/api/ai/test` no mock offline evitando erro 403 e populando o catálogo dinâmico mesmo em ambientes estáticos (GitHub Pages).\n      - **Eliminação de Modelos Hardcoded (Arquitetura 100% Dinâmica)**:\n        - Removidos presets fixos (`defaultModel`, `recommendedModels`, `fallbackModel`) de `scripts/ai-gateway.js`, `app.js` e `demo/app.js`. O configurador agora depende exclusivamente da resposta em tempo real da API do provedor ativo via teste de conexão.\n        - Se o usuário não testou a conexão ou não selecionou um modelo, o seletor exibe instrução amigável e impede inferências sem modelo válido.\n      - **Restauração e Isolamento do Vault de Demonstração (`demo-app`)**:\n        - Restaurado o arquivo `docs/brain-ui/demo/vault-data.js` via gerador isolado `build_demo_vault.py`, garantindo que a landing page pública exiba o projeto ilustrativo `demo-app` (35 arquivos de demonstração) e nunca exponha os projetos reais e locais do desenvolvedor (`teste_alfredo_22`, `Alfredo_teste`).\n  - **Refinamentos Visuais e Documentação**:\n    - **Dark Scrollbars**: Padronização dos scrollbars em tom escuro de luxo (#1e293b / #090d16) em todos os blocos de terminal e documentações.\n    - **Card do Criador**: Seção de autoria e comunidade valorizando a criação do projeto.\n    - **Internacionalização (i18n)**: Seletor de idioma PT/EN funcional em toda a landing page.\n    - **Licenciamento Open Source**: Inclusão de `LICENSE` MIT e `.env.example` sem expor segredos.\n\n- **Data**: 2026-10-08\n  - **Correção de Codificação do Terminal e Resiliência do Vault Manager**:\n    - **Terminal Windows (`start-brain.bat`)**: Inclusão de `chcp 65001 >nul` ativando UTF-8 nativo no CMD, eliminando a exibição de `ÔÇö` no lugar do travessão `—` e ícones.\n    - **Prioridade e Invalidação de Cache Local (`docs/brain-ui/vault.js`)**: Servidor local em `localhost` agora tem precedência estrita. Ao conectar com sucesso ao vivo, caches obsoletos no `localStorage` são limpos para evitar poluição visual.\n    - **Auto-Reconexão em Background**: Se o navegador carregar antes do Node.js concluir a subida do socket, o visualizador tenta auto-reconectar periodicamente e migra de forma transparente para `🟢 Ao Vivo (Disco)` sem necessidade de recarregar a página manualmente.\n    - **Árvore de Projetos Hierárquica em Modo Pasta**: Função `_buildVaultFromFiles` reescrita para espelhar a lógica de agrupamento do `scan-vault.js` (isolando projetos, contratos na raiz, subpastas `RESEARCH` e `BACKUPS`), eliminando a exibição plana de 34 arquivos avulsos sob `MEUS PROJETOS`.\n    - **Botão de Ação Rápida no Badge**: Disponibilizado botão `✕ Limpar Cache` diretamente no badge quando em modo de pasta em cache.\n- **Data**: 2026-10-02\n  - **Research Lab (Laboratório de Conhecimento Autônomo) — Etapa 3 (Motor de Execução Autônoma, Resiliência & Síntese Markdown)**:\n    - **Motor Autônomo (`scripts/research-engine.js`)**: Executa a varredura completa da taxonomia de subtópicos, gerando documentos `.md` profundos, estruturados com código, schemas SQL/Prisma e boas práticas.\n    - **Taxonomia de Duas Camadas**: Arquivos organizados automaticamente em `knowledge/` (fundamentos e padrões conceituais) e `actionable/` (código, implementação, schemas e testes).\n    - **Resiliência e Recuperação de Rate Limit no Groq Client (`scripts/groq-client.js`)**:\n      - Parser automático de cabeçalho e mensagens de erro (\"Please try again in X.XXs\").\n      - Backoff com tempo extra de segurança (+2s) e retentativas automáticas até 3x sem abortar o lote.\n      - Fallback inteligente de modelo para `openai/gpt-oss-20b` caso o modelo de 120b sature a cota TPM.\n      - Pausa estratégica de 6s entre arquivos para evitar saturação do bucket de tokens por minuto da camada gratuita.\n      - Resumabilidade inteligente: arquivos já existentes no disco são preservados e reaproveitados automaticamente caso uma execução seja retomada.\n    - **Consolidação em `OVERVIEW.md` e `_meta.json`**: Gera índice completo do laboratório com links markdown relativos clicáveis para cada documento e marca `status: \"completed\"`.\n    - **Integração com Grafo Neural 3D (`scripts/scan-vault.js`)**: Mapeamento de nós do laboratório com ícones dedicados (`🔬` para pastas/overview, `📘` para knowledge e `🛠️` para actionable) orbitando a estrela central do projeto.\n    - **Validação Prática Real**: Execução completa no projeto `teste_alfredo_22` gerando 9 arquivos técnicos completos (8 em `knowledge/` e 1 em `actionable/`) totalizando mais de 100KB de documentação técnica gerada autonomamente.\n    - **Catálogo de Subtópicos & Documentos Conectado ao Disco**:\n      - Corrigido o modal de subtópicos (`openDecomposeModal`): eliminado o gatilho redundante de consulta à IA quando a pesquisa já possui arquivos gerados no disco.\n      - O modal agora renderiza fielmente todos os arquivos reais existentes em `knowledge/` e `actionable/` (9 de 9 no caso do Bolo de Banana).\n      - Adicionados botões de ação direta em cada documento: `✏️ Editar / Ler` (abre no Live Markdown Editor para visualização e edição imediata com salvamento no disco via Ctrl+S) e `🗑️ Excluir` (remove o arquivo do disco, atualiza `_meta.json` e o `OVERVIEW.md`).\n      - Adicionado botão de exclusão completa do laboratório de pesquisa (`🗑️`) no cabeçalho de cada card de pesquisa.\n      - Novos endpoints backend: `POST /api/projects/:name/research/:slug/file/delete` e `POST /api/projects/:name/research/:slug/delete`.\n  - **Research Lab — Etapa 2 (UX/UI UAU no Brain Visualizer)**:\n    - **Aba Dedicada `🔬 Research Lab` no Project Workspace**: Integrada à navegação com pílula de contagem dinâmica (`#pwResearchTabBadge`).\n    - **Hero Banner com Glassmorphism Espacial**: Header com gradiente cósmico, badge pulsante verde de status da Groq Cloud (`openai/gpt-oss-120b`), latência média de inferência (~1.5s) e botão de ação primária `✨ Nova Pesquisa no Lab`.\n    - **Cards Métricos do Lab**: Mapeamento em tempo real do total de pesquisas ativas, documentos em `knowledge/`, especificações em `actionable/` e latência.\n    - **Empty State Futurista**: Orbe atômico pulsante em CSS, texto explicativo e botões de atalho para prompts rápidos de 1 clique (Microsserviços Event-Driven, Auth JWT, Cache & Redis).\n    - **Grid de Cards de Laboratório**: Cards com efeito hover 3D, indicador de status `🟢 Ativo`, caixa expansível do **Prompt Vivo** com tag de versão (`v1`, `v2`), badges das duas camadas (`knowledge/` e `actionable/`) e botões de ação (`▶️ Pesquisar Agora`, `🔮 Grafo 3D`, `🧩 Subtópicos`, `📄 OVERVIEW.md`, `📂 Abrir Pasta`).\n    - **Correção de Layout Responsivo**: Ajustado `.rl-card-title-text` com `word-break: break-word` e badge `🟢 Ativo` fixado à direita com `flex-shrink: 0`, eliminando qualquer sobreposição visual.\n    - **Modal de Criação \"Nova Pesquisa\" com Efeito UAU**:\n      - Campo de tema com chips de presets rápidos.\n      - Botão com faíscas animadas `✨ Melhorar com IA (Groq)`.\n      - **Split View Comparador \"Antes vs Depois\"**: Painel lado a lado contrastando a ideia bruta com o briefing estruturado pela IA.\n      - Painel de pré-visualização de decomposição temática com subtópicos categorizados em chips azuis (`knowledge`) e verdes (`actionable`).\n    - **Modal de \"Prompt Vivo\" & Histórico de Versões**: Interface de linha do tempo com todas as versões passadas do briefing (`definitionHistory`), data/hora e re-refinamento com IA.\n  - **Research Lab — Etapa 1 (Backend & IA Groq)**:\n    - **Módulo Nativo Groq (`scripts/groq-client.js`)**: Cliente HTTP nativo zero-dependência para a API do Groq Cloud (`api.groq.com`), com carregador próprio de `.env`, timeout de 60s, sanitização de markdown fences e parsing robusto de JSON.\n    - **Modelo Ativo**: Suporte para `openai/gpt-oss-120b`, `openai/gpt-oss-20b` e `qwen/qwen3.8-27b`.\n    - **Prompt Vivo & Refinamento Contextual (`refineResearchPrompt`)**: Algoritmo de enriquecimento que lê automaticamente os contratos do projeto (`PROJECT.md`, `ARCHITECTURE.md`) e transforma intenções livres do usuário em briefings de pesquisa estruturados de alto impacto.\n    - **Decomposição em Subtópicos (`decomposeResearchTopic`)**: Divisão do tema de pesquisa em sub-tópicos com taxonomia definida.\n    - **Endpoints REST Implementados no `server.js`**: `/api/ai/status`, `/api/ai/refine-prompt`, `/api/ai/decompose`, `/api/projects/:name/research`, `/api/projects/:name/research/:slug/definition`, `/api/projects/:name/research/:slug/run`.\n\n- **Data**: 2026-10-01 (Madrugada)\n  - **Gravação Física de Backups & Integração Nativa com Windows Explorer**:\n    - Backend grava fisicamente os arquivos gerados em `projects/<projeto>/BACKUPS/` (`dossie_governanca_<projeto>.md` e `backup_governanca_<projeto>.json`).\n    - Novos endpoints `/api/system/open-folder` e `/api/system/open-file` para abrir a pasta no Windows Explorer (`explorer.exe /select`) ou o arquivo no app padrão (`cmd /c start`).\n    - Correção do download do navegador mantendo o Blob URL ativo por 10s para permitir que o Chromium conclua a gravação sem abortar.\n    - Card enriquecido na aba *Backup & Exportação* com caminho absoluto no disco, botão direto para abrir no Explorer, botões para abrir cada arquivo, baixar e copiar caminhos.\n  - **Interatividade Total nos Cards do Project Workspace**:\n    - Edição rápida inline no card *Visão Geral & Contratos* para alterar Objetivo, Stack e Status com gravação direta no disco.\n    - Seletor de status do ciclo com pílulas luminosas conectadas ao `CURRENT_STATE.md`.\n    - Checklist interativo (*O que já foi definido*) com alternância, retorno ao roadmap e exclusão.\n    - Roadmap dinâmico (*Próximos Passos*) com botão \"✓ Concluir\" em 1 clique e input inline com tecla Enter.\n    - Sistema de Toast visual com glassmorphism para feedback instantâneo de gravação.\n  - **Contratos de Governança 100% Dinâmicos**:\n    - Backend inspeciona arquivos físicos reais no disco, exibindo apenas documentos existentes (`PROJECT.md`, `CURRENT_STATE.md`, etc.).\n    - Identificação de contratos recomendados ausentes (ex: `ARCHITECTURE.md`) com ação de inicialização com 1 clique (`+ Inicializar ARCHITECTURE.md`).\n    - Layout e botões dos chips de governança reformulados com `.btn-gov`, eliminando quebras de linha e desproporções.\n  - **Correções Estruturais & Backend**:\n    - Correção do aninhamento de modais no HTML que impedia a exibição do Live Markdown Editor.\n    - Correção na rota `GET /api/file` no `server.js` com verificação de método HTTP estrita, eliminando erro `400 Bad Request` no salvamento.\n- **Data**: 2026-09-30\n  - **Quickstart Studio (Modal de 3 Minutos)**: Onboarding guiado no portal web para criar projetos do zero ou vincular pastas existentes via junções NTFS sem terminal.\n  - **Sidebar \"Dois Mundos\"**: Reorganização visual clara separando \"MEUS PROJETOS\" no topo e \"CÉREBRO & GOVERNANÇA\" abaixo com divisor neon.\n  - **Project Workspace (Página Dedicada do Projeto)**: Hub com 5 abas (Visão Geral, Memória & Saúde, Grafo Neural 3D, Backup & Exportação de Dossiê, Gerenciamento & Desvinculação Segura).\n  - **Grafo Neural 3D (Three.js)**: Grafo orbital onde o projeto é o Sol Central conectado a seus arquivos locais e satélites de governança.\n  - **Grafo Global com Clusters Galácticos**: Projetos agrupados em clusters orbitais interligados por regras comuns.\n  - **APIs de Ciclo de Vida**: Endpoints backend para diagnóstico de memória, arquivamento seguro em `.archive/`, exportação de backup (.md e .json) e desvinculação não destrutiva.\n"
+      "content": "# Estado Atual do AI Second Brain\n\n> Última atualização: 2026-10-12\n\n## Status do Framework: 🟢 Operacional & Cockpit Avançado + 🔬 Research Lab + ⚡ AI Gateway Multi-Provedor (BYOK Ativo) + 🧠 Session Capture com IA\n\nO AI Second Brain está estruturado como uma plataforma universal de governança e desenvolvimento com IA, livre de acoplamento a projetos específicos e equipada com um portal web moderno, motor de pesquisa autônoma resiliente, AI Gateway multi-provedor (BYOK) e captura inteligente de sessões.\n\n## Estrutura do Workspace\n\n| Diretório | Papel | Estado |\n|---|---|---|\n| `.agents/rules/` | Regras universais de governança (IA, Segurança, Docs) | ✅ Agnósticas |\n| `.agents/skills/` | Workflows reutilizáveis para Antigravity | ✅ 8 skills ativas |\n| `knowledge/` | Base de conhecimento em IA, Arquitetura e Segurança | ✅ 100% universal |\n| `projects/` | Projetos conectados pelo desenvolvedor | 🟢 Suporta Greenfield & Brownfield + RESEARCH/ |\n| `memory/` | Memória de continuidade entre sessões | ✅ Operacional |\n| `templates/` | Modelos para novos projetos, specs e ADRs | ✅ Disponíveis |\n| `docs/brain-ui/` | Portal web interativo de visualização e governança | 🚀 UX/UI com Project Workspace, Grafo 3D, AI BYOK & Session Capture |\n| `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway, Research Engine, Session Capture) |\n\n## Sessões Recentes\n- **Data**: 2026-10-12\n  - **Implementação das 5 Oportunidades Práticas de Melhoria de UX & Conexão com IDEs**:\n    - **1. Inicialização Automática do Git no Quickstart (`git init`)**:\n      - Adicionado checkbox `[x] Inicializar repositório Git local automaticamente (git init)` no formulário de criação de projeto (`#qsFormNew`).\n      - Backend `server.js` dispara `git init -b main` (com fallback para `git init`) gerando imediatamente o `.gitignore` e as pontes de governança para versionamento instantâneo.\n    - **2. Input Livre e Flexível de Stack Tecnológica**:\n      - O campo de Stack Tecnológica no modal Quickstart foi transformado em um `<input type=\"text\" id=\"qsNewStack\">` editável, permitindo digitação livre de stacks combinadas/customizadas enquanto preserva os chips rápidos como atalhos inteligentes de preenchimento.\n    - **3. Disparadores Diretos de IDE no Project Workspace (`open-ide`)**:\n      - Adicionados botões de ação rápida no cabeçalho do projeto: `💻 VS Code`, `⚡ Cursor` e `📂 Pasta`.\n      - Endpoint `POST /api/system/open-ide` executa o comando nativo no sistema operacional com fallback seguro e toast de confirmação.\n    - **4. Prompt Bootstrap de Início de Sessão em 1 Clique**:\n      - Botão `✨ Copiar Prompt para Agente` no cabeçalho do projeto copia imediatamente para a área de transferência um prompt formatado contendo as regras absolutas, stack e contratos (`PROJECT.md`, `CURRENT_STATE.md`, `DECISIONS/`, `LESSONS_LEARNED.md`) para alimentar qualquer agente de IA sem amnésia.\n    - **5. Feedback Visual Ativo de Inferência com Mensagens Rotativas**:\n      - No modal de Session Capture (`#scStepLoading`), implementado loop de mensagens rotativas dinâmicas (\"Lendo commits...\", \"Cruzando contratos...\", \"Consultando lições aprendidas...\", \"Sintetizando resumo...\") e steps sincronizados com efeito glow neon suave, eliminando a sensação de travamento durante a inferência.\n    - **Paridade Estrita & Linter Verde**:\n      - Todas as alterações replicadas com 100% de paridade entre `docs/brain-ui/` e `docs/brain-ui/demo/` (incluindo interceptação de mock em `demo-mode.js`).\n      - `npm run doctor`: 100% dos links e arquivos válidos (0 erros).\n\n  - **Implementação Profissional do Session Capture (Registrar Sessão com IA)**:\n    - **Módulo Nativo de Captura (`scripts/session-capture.js`)**:\n      - Coleta determinística de dados do projeto: commits desde a última sessão registrada, arquivos modificados não commitados, diffstat com censura mandatória de arquivos confidenciais (`.env`, chaves privadas, secrets).\n      - Leitura e estruturação dos contratos (`PROJECT.md`, `CURRENT_STATE.md`, `LESSONS_LEARNED.md` e sessões recentes).\n      - Algoritmo de normalização e validação defensiva contra o estado real do projeto, impedindo duplicações ou inclusão de itens especulativos.\n      - Gravação física atômica: cria `MEMORY/sessions/AAAA-MM-DD-titulo.md` (nunca sobrescreve sessões existentes do mesmo dia), atualiza cirurgicamente `CURRENT_STATE.md` (remanejando itens concluídos de \"Próximos Passos\" para \"O que já foi definido\", adicionando novas pendências e preservando quebras de linha CRLF/LF) e anexa aprendizados em `LESSONS_LEARNED.md`.\n    - **Extensão do AI Gateway (`scripts/ai-gateway.js`)**:\n      - Nova função `summarizeSession(contextText, options)` com prompt especializado (`SYSTEM_PROMPTS.sessionCapture`) governado pelas regras de *Zero Fabricação*.\n      - Suporte à opção `skipCache: true` para o botão \"🔄 Regenerar\" na interface de revisão.\n      - Correção preventiva da variável `isModelNotFound` no manipulador de erros do gateway.\n    - **Endpoints REST no Backend (`server.js`)**:\n      - `POST /api/projects/:name/session/draft`: Coleta determinística + inferência com IA para gerar o rascunho. Nada é gravado em disco nesta etapa.\n      - `POST /api/projects/:name/session/commit`: Gravação atômica após aprovação e ajustes do usuário. Dispara invalidação de snapshot do vault e evento SSE em tempo real.\n    - **Interface de Alta Fidelidade no Cockpit e Modal de Revisão (`docs/brain-ui/`)**:\n      - Card promocional destacado na aba **Memória & Saúde** do Project Workspace com botão `🧠 Registrar Sessão`.\n      - Modal interativo (`#sessionCaptureModal`) em 3 etapas fluidas: Entrada (informações Git + notas do usuário) → Carregamento (orbe neon animado) → Revisão completa item a item com checkboxes e campos editáveis.\n      - Paridade absoluta com a demonstração pública em `docs/brain-ui/demo/` através de mocks no `demo-mode.js`.\n  - **Correção da Numeração Sequencial de Decisões Arquiteturais (ADRs)**:\n    - Em `docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js`, função `createNewDecisionRecord` atualizada para inspecionar os ADRs existentes do projeto e calcular o próximo número sequencial (`NNN-nova-decisao.md`), eliminando a sobrescrita do arquivo `001-stack-inicial.md`.\n\n- **Data**: 2026-10-11\n  - **Refinamento do Botão de Validação com Ícone Fiel e Efeito Cintilante Suave**:\n    - **Ajuste da Geometria do Ícone à Referência do Usuário**:\n      - Substituída a geometria anterior pelo ícone oficial Heroicons v2 Outline Key (`M15.75 5.25a3 3...`) com traçado de 1.8px em `docs/brain-ui/index.html` e `docs/brain-ui/demo/index.html`, replicando com exatidão a haste diagonal, dentes escalonados e cabeça arredondada da imagem fornecida pelo desenvolvedor.\n    - **Suavização do Efeito Cintilante (Eliminação de Excessos)**:\n      - Em `docs/brain-ui/style.css` e `docs/brain-ui/demo/style.css`:\n        - Eliminados os halos exagerados de 32px e os fundos em gradiente radial que estouravam a interface.\n        - Preservado o fundo estritamente escuro `#060a13` do botão.\n        - Definido um brilho respiratório calibrado (+20% de ganho luminoso):\n          - Sucesso (`.is-valid`): borda esmeralda (`rgba(16, 185, 129, 0.8)`), ícone `#10b981` com `drop-shadow(0 0 3px rgba(16, 185, 129, 0.72))` e `box-shadow` pulsando entre 5px e 11px (`@keyframes sparklingGreen` em ciclo ágil de 1.9s).\n          - Falha (`.is-invalid`): borda carmesim (`rgba(239, 68, 68, 0.8)`), ícone `#ef4444` com `drop-shadow(0 0 3px rgba(239, 68, 68, 0.72))` e `box-shadow` pulsando entre 5px e 11px (`@keyframes sparklingRed` em ciclo ágil de 1.9s).\n        - Estado hover neutro com borda suave translúcida, alinhado à estética dark do sistema.\n    - **Validação Visual & Integridade**:\n      - Comprovado visualmente no navegador com browser subagent: capturados screenshots dos estados de sucesso e erro demonstrando fidelidade à imagem de referência e a calibração de +20% no brilho.\n      - `npm run doctor`: 100% dos links e arquivos íntegros (0 erros).\n\n  - **Sincronização Fiel dos Parâmetros do `.env`, Validação Estrita e Estilização Escura das Setas de Retries**:\n    - **Sincronização com `.env` na Abertura do Modal de IA**:\n      - Em `docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js` (`openAiSettingsModal`), os campos `#aiCacheHoursInput` e `#aiMaxRetriesInput` passam a ser populados fielmente a partir de `cfg.cacheHours` e `cfg.maxRetries` lidos em tempo real do `.env` via `/api/ai/config`.\n      - Em `scripts/ai-gateway.js` (`getConfig` e `saveConfig`), corrigido o fallback `|| 2` que impedia o valor legítimo `0` de retries; agora tratados com validação de número inteiro positivo (`>= 0`).\n    - **Validação Defensiva e Restrição de Digitação em Camadas**:\n      - **Frontend (Interatividade & Sanitização)**: Função `setupAiParamsInputValidation` bloqueia teclas proibidas (`-`, `+`, `e`, `.`, `,` em retries; letras espúrias em cache) via `keydown`, sanitiza colagem via `input` (clamp entre 0 e 5 para retries e formato `${hours}h` entre 1h e 720h para cache no `blur`).\n      - **Frontend (Pré-Salvamento)**: `handleSaveAiSettings` valida estritamente ambos os parâmetros antes de qualquer disparo de rede; se inválidos, exibe feedback no terminal, aplica classe de erro `.input-error` com animação de shake e impede a submissão.\n      - **Backend (API & Gateway)**: `saveConfig` em `scripts/ai-gateway.js` e `/api/ai/save` em `server.js` validam intervalos permitidos (Cache: 1 a 720 horas; Retries: 0 a 10 tentativas), retornando HTTP 400 com mensagem amigável caso haja inconsistência.\n    - **Estilização Escura das Setas (Spin Buttons) de Retries**:\n      - Adicionado `color-scheme: dark;` em `.ai-param-detail-input-wrap .ai-param-input[type=\"number\"]` em `docs/brain-ui/style.css` e `docs/brain-ui/demo/style.css`.\n      - Customizados `::-webkit-inner-spin-button` e `::-webkit-outer-spin-button` com filtros escuros harmônicos e transições suaves, integrando o controle nativo ao visual dark da interface e eliminando setas/fundos claros.\n    - **Restauração e Blindagem do Fundo Escuro na Caixa de API Key (`#aiApiKeyInput`)**:\n      - Corrigido o comportamento do Chromium em que campos `type=\"password\"` ativavam o gerenciador de credenciais do navegador e aplicavam `-webkit-autofill` com fundo claro (`rgb(232, 240, 254)`).\n      - Aplicada blindagem CSS com `-webkit-box-shadow: 0 0 0 1000px #060a13 inset !important`, `-webkit-text-fill-color: #f8fafc !important`, `color-scheme: dark !important` e `background: #060a13 !important` em `docs/brain-ui/style.css` e `docs/brain-ui/demo/style.css`.\n      - Atualizado o HTML (`docs/brain-ui/index.html` e `demo/index.html`) com `placeholder=\"gsk_... ou cole sua chave de API\"` e `autocomplete=\"new-password\"` evitando que o navegador trate como senha de login com fundo branco.\n    - **Validação End-to-End**:\n      - Testado no navegador via browser subagent com comprovação visual dos valores `24h` e `4`, setas escuras, caixa de API Key escura (#060a13) e validação em tempo real.\n      - `npm run doctor`: 100% dos links e arquivos íntegros (0 erros).\n\n  - **Correção Crítica no AI Gateway (BYOK), Eliminação de ReferenceError e Blindagem de Base URL**:\n    - **Resolução do `ReferenceError: cachedModelsByProvider is not defined`**:\n      - Restaurada a declaração explícita de `const cachedModelsByProvider = {}` no topo de `scripts/ai-gateway.js`, eliminando as respostas HTTP 500 em `/api/ai/config` e HTTP 400 em `/api/ai/test` e `/api/ai/save`.\n    - **Isolamento Estrito de `baseUrl` por Provedor**:\n      - Corrigido o vazamento de `AI_BASE_URL` entre provedores no `.env`: agora apenas provedores configuráveis (`ollama` e `custom`) herdam ou gravam URLs customizadas; provedores padrão de nuvem (`groq`, `openai`, `anthropic`, `openrouter`) utilizam estritamente suas URLs oficiais da API, prevenindo que requisições para a Groq fossem roteadas para a URL da Anthropic.\n    - **Propagação Fiel de Erros HTTP e Prevenção de Falsos Positivos**:\n      - O bloco `testConnection` não silencia mais erros de autenticação (401/403) ou cota (429) no endpoint `/models`.\n      - Se nenhum modelo de chat for detectado, o sistema rejeita o teste com erro amigável em vez de gerar estado falso de sucesso com \"Catálogo pronto\".\n    - **Validação Preventiva no Frontend (`docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js`)**:\n      - Se o usuário não digitou chave e o provedor não possui chave salva no `.env`, o clique em \"Testar\" ou \"Salvar\" exibe erro claro no terminal e foca no input sem disparar requisições inválidas de rede.\n      - Se nenhum modelo foi selecionado, o botão \"Salvar e Ativar\" orienta a testar e escolher um modelo compatível.\n      - Ao trocar de provedor no select, o input `baseUrl` é devidamente limpo para provedores de nuvem.\n    - **Hot-Reload de Módulo no Servidor (`server.js`)**:\n      - Implementada a função `getAiGateway()` com invalidação dinâmica de cache do Node.js (`delete require.cache`), permitindo que alterações nas regras do gateway sejam refletidas em tempo real sem crash.\n\n  - **Auditoria e Fidelidade Estrita de Documentos na Landing Page (`docs/brain-ui/landing/`)**:\n    - **Eliminação de Referências a Arquivos Fictícios / Placeholders**:\n      - Em conformidade estrita com a regra universal de *Zero Fabricação*, eliminados todos os nomes de arquivos inexistentes que estavam exibidos na interface da landing page (`nucleo.md`, `seguranca.md`, `decisao-ia.md`, `ai-decision-gate.md`, `new-feature.md`, `bug-investigation.md`, `estado.md`, `licoes.md`, `sessao-13.md`, `adr-001.md`, etc.).\n    - **Mapeamento Preciso para Arquivos Reais do Workspace**:\n      - **Camada 01 (`rules/`)**: Substituído por `00-core.md`, `01-ai-decision.md` e `03-security.md`.\n      - **Camada 02 (`skills/`)**: Substituído por `ai-decision-gate/SKILL.md`, `new-feature/SKILL.md` e `bug-investigation/SKILL.md`.\n      - **Camada 03 (`memory/`)**: Substituído por `current-state.md`, `lessons-learned.md` e `README.md`.\n      - **Camada 04 (`decisions/`)**: Substituído por `GLOBAL_DECISIONS.md`, `001-stack-inicial.md` e `decisao_groq_provider.md`.\n      - **Terminal Chat Mockup**: Atualizado para ler e citar `memory/current-state.md`, `decisions/GLOBAL_DECISIONS.md` e `.agents/rules/03-security.md`.\n      - **Research Lab**: Caminhos atualizados para o padrão real `projects/<projeto>/RESEARCH/<tema>/knowledge/` e `actionable/`.\n      - **Quickstart Studio**: Card de estrutura atualizado incluindo `LESSONS_LEARNED.md`.\n    - **Correção Estrutural no Grafo Neural 3D e Leitor Lateral (`js/data.js`)**:\n      - Corrigido bug de renderização no Three.js (`CanvasGradient.addColorStop`) causado pela ausência de ícone/cor na pasta `templates`.\n      - Adicionado o atributo `realPath` em todos os nós do catálogo para exibir o caminho físico exato no cabeçalho do leitor Markdown lateral (`#reader`).\n      - Eventos de clique nos chips da landing page (`.chip[data-node]`) integrados para abrir diretamente o documento real correspondente no leitor.\n    - **Paridade i18n & Validação de Integridade**:\n      - Chaves do dicionário bilíngue `js/i18n.dict.js` sincronizadas.\n      - Validação com `npm run doctor`: 100% dos links e 98 arquivos Markdown verificados com sucesso (0 erros).\n\n  - **Eliminação de Listas Fixas e Busca de Modelos 100% Dinâmica em Tempo Real com Gatilho Automático na Abertura**:\n    - **Remoção Total de Hardcoding de Modelos**:\n      - Eliminado o catálogo fixo `AI_DEFAULT_MODELS_BY_PROVIDER` em `docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js`.\n      - Eliminados `DEFAULT_MODELS_BY_PROVIDER` e `cachedModelsByProvider` em `scripts/ai-gateway.js`.\n      - Removidas as opções `<option>` fixas de modelo em `docs/brain-ui/index.html` e `docs/brain-ui/demo/index.html`, iniciando o `<select id=\"aiModelSelect\">` exclusivamente com o placeholder neutro orientativo (*\"Clique em 'Testar' acima para listar os modelos disponíveis...\"*).\n    - **Gatilho Reativo Automático ao Abrir o Modal (`openAiSettingsModal`)**:\n      - Ao abrir a tela de configurações de IA, se o usuário já possui chave salva no `.env` (ou for um provedor local sem chave como Ollama), o sistema agora dispara imediatamente `testCurrentAiConnection()` em tempo real.\n      - A interface executa a animação de terminal ao vivo (`testing` -> handshake HTTP e medição de latência), envia a requisição para a API do provedor (ou mock interceptor no demo), recebe os modelos vivos da conta e popula dinamicamente o `<select id=\"aiModelSelect\">`, selecionando o modelo ativo da configuração.\n      - Se o usuário não tiver chave configurada (ou mudar para provedor sem chave), o terminal permanece em estado `idle` amigável e o select aguarda o preenchimento da chave e clique em Testar.\n    - **Paridade Estrita entre Produção Local e Versão Demo**:\n      - O arquivo `demo-mode.js` intercepta requisições `fetch('/api/ai/test')` simulando latência realista (~142ms) e lista de modelos compatíveis. O mesmo código JavaScript de `app.js` roda de forma 100% idêntica nos dois ambientes, sem bifurcações de lógica nem catálogos estáticos no frontend.\n    - **Refinamentos de Interface do Modal BYOK**:\n      - Substituição do chip redundante abaixo do botão Testar pelo botão alternador `✏️ Digitar ID manualmente` (`#btnToggleManualModel`).\n      - Centralização vertical perfeita da seta customizada do select (`.ai-select-arrow`) via `top: 50%` e `transform: translateY(-50%)`.\n      - Manutenção do título limpo `\"3. Modelo de IA\"`, deixando a contagem de modelos exclusivamente no console do terminal à direita.\n    - **Resiliência do Servidor HTTP Local (`server.js`)**:\n      - Tratamento para rotas de diretório estático (ex: `/demo/`), resolvendo automaticamente para `index.html` caso o caminho solicitado seja uma pasta.\n  - **Governança Agnóstica Universal e Blindagem Multi-IA**:\n    - **Criação do Padrão Universal Aberto `AGENTS.md`**: Implementado na raiz do workspace como padrão compatível com qualquer agente do mercado.\n    - **Extensão da Governança e Lições Aprendidas para Todas as Pontes**: Blindagem ativa e consulta mandatória à memória registradas em `GEMINI.md`, `AGENTS.md`, `.cursorrules`, `CLAUDE.md`, `.windsurfrules`, `.clinerules`, `.github/copilot-instructions.md`, `.agents/rules/00-core.md` e `.agents/rules/01-ai-decision.md`.\n    - **Automação de Pontes Standalone**: Os utilitários CLI `scripts/link-project.js` e `scripts/create-project.js` agora criam automaticamente as pontes de governança no repositório de destino, garantindo que o agente continue governado mesmo se o projeto for aberto de forma isolada fora do Segundo Cérebro.\n  - **Sincronização e Atualização da Landing Page (`docs/brain-ui/landing/`)**:\n    - **Reflexo do AI Gateway Multi-Provedor**: Seção \"Feito para não quebrar\" atualizada destacando auto-descoberta dinâmica de modelos, suporte a OpenAI, Anthropic, Gemini, Groq, DeepSeek, OpenRouter e Ollama local, e recuperação inteligente de rate limit.\n    - **Atualização do FAQ**: Perguntas e respostas enriquecidas para destacar o padrão aberto `AGENTS.md`, suporte multi-IA com pontes nativas, privacidade local com BYOK/Ollama e esclarecimento cristalino dos modos Cockpit Central vs Standalone.\n    - **Paridade Bilíngue 100% no Dicionário i18n (`js/i18n.dict.js`)**: Todas as chaves sincronizadas em inglês, testadas via Chromium headless CDP com zero chaves de conteúdo ausentes.\n  - **Catálogo Dedicado de Lições Aprendidas por Projeto (`LESSONS_LEARNED.md`)**:\n    - **Separação Arquitetural Estrita de Escopo**: Eliminação da \"Amnésia das Sessões Antigas\" através de um arquivo dedicado por projeto para registrar pegadinhas técnicas, bugs de libs e contratos específicos de domínio sem poluir a governança global.\n    - **Novo Template Oficial**: Adicionado `templates/lessons-learned.md` e atualizado `templates/project.md`.\n    - **Automação nos Comandos CLI**: Atualizados `scripts/create-project.js` e `scripts/link-project.js` para inicializarem automaticamente `LESSONS_LEARNED.md` e pontes multi-IA completas em projetos novos ou vinculados.\n    - **Blindagem em Todas as Pontes de IA**: Atualizados `AGENTS.md`, `GEMINI.md`, `.cursorrules`, `CLAUDE.md`, `.windsurfrules`, `.clinerules` e `copilot-instructions.md` com regra mandatória de consultar o `LESSONS_LEARNED.md` local do projeto antes de alterar código.\n    - **Inicialização em Projetos Ativos**: Criados `projects/teste_alfredo_22/LESSONS_LEARNED.md` e `projects/Alfredo_teste/LESSONS_LEARNED.md` com validação de 100% dos links no linter `doctor`.\n\n- **Data**: 2026-10-10\n  - **Refinamento do Modal BYOK e Feedback Reativo do Console Terminal**:\n    - **Consolidação Total de Feedback no Terminal Console (`.ai-card-terminal` / `.ai-terminal-output`)**:\n      - **Remoção da Caixa Duplicada da Esquerda (`#aiTestFeedback`)**: Eliminada a antiga caixa verde/vermelha que aparecia abaixo do campo de chave. A coluna esquerda agora permanece limpa, contínua e sem saltos visuais.\n      - **Terminal Rico na Coluna Direita com Informações Completas**: O terminal ao vivo agora concentra 100% da telemetria de conexão em formato CLI avançado:\n        - `idle`: `$ ENGINE: <PROV> [STANDBY]` · `[IDLE] Clique em \"Testar\" para validar a API Key` · `LOCAL .ENV ENCRYPTION · ISOLADO`.\n        - `testing`: `$ CONNECTING TO <PROV> ENGINE...` · `[WAIT] Handshake HTTP e medição de latência...` · `[SCAN] Descobrindo catálogo de modelos na conta...`.\n        - `success`: `$ CONNECTED TO <PROV> [AUTHENTICATED]` · `[OK] Conexão bem-sucedida · Latência: <ms>ms` · `[OK] Modelos detectados · <n> modelos compatíveis` · `LOCAL .ENV ENCRYPTION · PRONTO PARA ATIVAR`.\n        - `error`: `$ ERROR CONNECTING TO <PROV> [FAILED]` · `[FAIL] <mensagem amigável de erro>` · `LOCAL .ENV ENCRYPTION · VERIFIQUE A CHAVE`.\n    - **Layout Balanceado e Parâmetros com Contexto Integrado**:\n      - Seção `4. Parâmetros de Execução` na coluna esquerda enriquecida com cards dedicados para `Cache TTL` e `Tentativas (Retries)` com inputs alinhados e explicações objetivas de impacto (0ms de latência e resiliência a HTTP 429).\n      - Coluna direita otimizada com cards de `Security & Privacidade` e `Scope & Governança` detalhados com bullets de segurança, garantindo altura simétrica e harmônica com a coluna esquerda sem espaços vazios.\n    - **Padronização Visual com os Demais Modais do Sistema**:\n      - Borda externa e sombras ajustadas com tonalidade azul-marinho escura (#0a101d / #111a2e / #1a253c), idêntica aos outros modais do AI Second Brain.\n      - Botão fechar padronizado em formato circular arredondado (`.ai-card-close-btn`).\n      - Inclusão do asset animado vetorial `assets/cerebro_neon_animado.svg` no card de cabeçalho do gateway.\n      - Alinhamento horizontal do rodapé (`.ai-settings-footer`) alinhado às margens dos inputs.\n    - **Paridade Absoluta 100% entre Local (`docs/brain-ui/`) e Demo Pública (`docs/brain-ui/demo/`)**:\n      - Replicação exata de todas as regras de CSS (`style.css`), lógica JavaScript (`app.js`), marcação HTML (`index.html`) e suporte a mock com validação realista no `demo-mode.js`.\n\n- **Data**: 2026-10-09\n  - **AI Gateway Multi-Provedor (BYOK — Bring Your Own Key)**:\n    - **Módulo Nativo Universal (`scripts/ai-gateway.js`)**: Cliente HTTP/HTTPS sem dependências externas, unificando os principais provedores de IA do mercado:\n      - **Groq Cloud**: Gratuito, ultra-rápido LPU (`openai/gpt-oss-120b` padrão, `openai/gpt-oss-20b` fallback, `qwen/qwen3.8-27b`).\n      - **OpenAI**: Flagship multimodal e raciocínio (`gpt-4o-mini`, `gpt-4o`, `o1-mini`).\n      - **Anthropic Claude**: Análise densa de código e arquitetura (`claude-3-5-sonnet-20241022`, `claude-3-5-haiku-20241022`).\n      - **OpenRouter**: Acesso a centenas de modelos abertos e proprietários (`deepseek/deepseek-chat`, `deepseek-r1`, `qwen-2.5-72b`).\n      - **Ollama Local**: 100% offline, privado na máquina do usuário, custo zero (`llama3.2`, `deepseek-r1`, `qwen2.5-coder`).\n      - **Endpoint Customizado**: Compatível com qualquer servidor local ou proxy corporativo OpenAI-Compatible.\n    - **Resiliência e Auto-Recuperação de Modelos Descontinuados**:\n      - Auto-fallback inteligente no `scripts/ai-gateway.js` quando o provedor retorna erro de modelo inexistente ou sem acesso (`does not exist or you do not have access to it` / 404). O gateway redireciona transparentemente a requisição para o modelo padrão ou de contingência sem abortar a síntese.\n      - Sincronização estrita de catálogo Groq com os modelos ativos da conta (`openai/gpt-oss-120b`, `openai/gpt-oss-20b`).\n    - **Endpoints REST no Backend (`server.js`)**:\n      - `GET /api/ai/config` e `GET /api/ai/status`: Retorna o provedor ativo, máscara segura da chave (ex: `gsk_••••••••Zvrf`), status de configuração e catálogo de provedores/modelos recomendados.\n      - `POST /api/ai/test`: Realiza ping em tempo real na API do provedor com a chave informada, mede a latência em milissegundos e retorna a lista viva de modelos disponíveis da conta do usuário.\n      - `POST /api/ai/save`: Gravação atômica das variáveis no arquivo `.env` físico e atualização imediata de `process.env` em memória sem necessidade de reiniciar o processo Node.js. Suporte a parâmetros avançados (`cacheHours`, `maxRetries`).\n      - **Interceptador de Cota 429**: Detecção de `Rate Limit / Quota Exceeded` propagando flag `quotaExceeded: true` para a interface gráfica.\n    - **Tríade de Modais UX de Alta Fidelidade no Cockpit (`docs/brain-ui/` e `docs/brain-ui/demo/`)**:\n      - **Pill Luminoso na Topbar (`#btnAiGatewayModal`)**: Exibe o status ao vivo da IA (`⚡ Groq Cloud • openai/gpt-oss-120b` com dot verde conectado; `✨ Conectar IA (BYOK)` em tom dourado quando não configurado; pulso vermelho em erro de cota).\n      - **Modal 1: Boas-Vindas & Onboarding (`#aiWelcomeModal`)**: Card escuro com robô neon pulsante convidando o desenvolvedor a conectar seu cérebro digital, acionado suavemente na primeira visita.\n      - **Modal 2: Central BYOK (`#aiSettingsModal`)**: Formulário em 4 etapas:\n        1. Seletor de provedor com ícones.\n        2. Input de chave com cadeado, botão de visibilidade olho (👁️), botão de teste (🔑) com feedback dinâmico de latência (ex: *✓ Conexão bem-sucedida! Latência: 355ms*).\n        3. Dropdown de modelos populado dinamicamente via ping da API.\n        4. Configurações avançadas (Expiração de cache em horas e tentativas máximas).\n        - **Card Verde de Privacidade**: Garante armazenamento 100% local no `.env` sob proteção do `.gitignore`.\n        - **Card Azul de Escopo**: Esclarece o raio de ação da IA (Research Lab, refinamento de briefing e grafo).\n        - **Botão \"Salvar e Ativar ⚡\"**: Salva a configuração e dispara evento no sistema.\n      - **Modal 3: Alerta de Cota Esgotada (`#aiQuotaModal`)**: Modal automático com cabeçalho de aviso, título dourado *\"Cota de IA Esgotada!\"*, caixa de recomendações (trocar para Groq gratuito, Claude ou Ollama local) e botão de redirecionamento para o configurador.\n    - **Efeito UAU: Pulso Sináptico no Grafo 3D Three.js**:\n      - Função `triggerSynapticPulse()` conectada a `graph.pulseSurge()` e `projectGraph.pulseSurge()` no `neuron-graph.js`, provocando uma aceleração visual nos impulsos elétricos das sinapses e nós ao ativar ou salvar uma chave.\n    - **Correção e Enriquecimento do Catálogo de Modelos Dinâmico (Modal BYOK)**:\n      - **Resolução do Bug de Modelos \"Undefined\"**: Identificado que o frontend esperava array de objetos `{ id, name }`, enquanto o gateway retornava array de strings. Implementado parsing polimórfico defensivo no frontend (`app.js` e `demo/app.js`) e normalização rica no backend (`scripts/ai-gateway.js`).\n      - **Filtragem Inteligente Universal de Modelos**: O backend agora descarta automaticamente modelos incompatíveis com chat/completions (áudio `whisper`, classificadores de moderação, guardrails, embeddings, imagem) garantindo que apenas modelos capazes de responder a prompts do Research Lab e síntese fiquem disponíveis.\n      - **Layout Limpo \\u0026 Alternador de Entrada Manual**: Removidos os chips redundantes abaixo do select. A interface agora conta com badge contextualizado (`#aiModelCountBadge`), dropdown enriquecido com janela de contexto (ex: `128k contexto`) e botão alternador para digitação manual do ID do modelo (`#btnToggleManualModel` / `#aiCustomModelWrap`) para suporte flexível a modelos customizados/beta.\n      - **Suporte ao Modo Demonstração (`demo-mode.js`)**: Interceptação de `/api/ai/test` no mock offline evitando erro 403 e populando o catálogo dinâmico mesmo em ambientes estáticos (GitHub Pages).\n      - **Eliminação de Modelos Hardcoded (Arquitetura 100% Dinâmica)**:\n        - Removidos presets fixos (`defaultModel`, `recommendedModels`, `fallbackModel`) de `scripts/ai-gateway.js`, `app.js` e `demo/app.js`. O configurador agora depende exclusivamente da resposta em tempo real da API do provedor ativo via teste de conexão.\n        - Se o usuário não testou a conexão ou não selecionou um modelo, o seletor exibe instrução amigável e impede inferências sem modelo válido.\n      - **Restauração e Isolamento do Vault de Demonstração (`demo-app`)**:\n        - Restaurado o arquivo `docs/brain-ui/demo/vault-data.js` via gerador isolado `build_demo_vault.py`, garantindo que a landing page pública exiba o projeto ilustrativo `demo-app` (35 arquivos de demonstração) e nunca exponha os projetos reais e locais do desenvolvedor (`teste_alfredo_22`, `Alfredo_teste`).\n  - **Refinamentos Visuais e Documentação**:\n    - **Dark Scrollbars**: Padronização dos scrollbars em tom escuro de luxo (#1e293b / #090d16) em todos os blocos de terminal e documentações.\n    - **Card do Criador**: Seção de autoria e comunidade valorizando a criação do projeto.\n    - **Internacionalização (i18n)**: Seletor de idioma PT/EN funcional em toda a landing page.\n    - **Licenciamento Open Source**: Inclusão de `LICENSE` MIT e `.env.example` sem expor segredos.\n\n- **Data**: 2026-10-08\n  - **Correção de Codificação do Terminal e Resiliência do Vault Manager**:\n    - **Terminal Windows (`start-brain.bat`)**: Inclusão de `chcp 65001 >nul` ativando UTF-8 nativo no CMD, eliminando a exibição de `ÔÇö` no lugar do travessão `—` e ícones.\n    - **Prioridade e Invalidação de Cache Local (`docs/brain-ui/vault.js`)**: Servidor local em `localhost` agora tem precedência estrita. Ao conectar com sucesso ao vivo, caches obsoletos no `localStorage` são limpos para evitar poluição visual.\n    - **Auto-Reconexão em Background**: Se o navegador carregar antes do Node.js concluir a subida do socket, o visualizador tenta auto-reconectar periodicamente e migra de forma transparente para `🟢 Ao Vivo (Disco)` sem necessidade de recarregar a página manualmente.\n    - **Árvore de Projetos Hierárquica em Modo Pasta**: Função `_buildVaultFromFiles` reescrita para espelhar a lógica de agrupamento do `scan-vault.js` (isolando projetos, contratos na raiz, subpastas `RESEARCH` e `BACKUPS`), eliminando a exibição plana de 34 arquivos avulsos sob `MEUS PROJETOS`.\n    - **Botão de Ação Rápida no Badge**: Disponibilizado botão `✕ Limpar Cache` diretamente no badge quando em modo de pasta em cache.\n- **Data**: 2026-10-02\n  - **Research Lab (Laboratório de Conhecimento Autônomo) — Etapa 3 (Motor de Execução Autônoma, Resiliência & Síntese Markdown)**:\n    - **Motor Autônomo (`scripts/research-engine.js`)**: Executa a varredura completa da taxonomia de subtópicos, gerando documentos `.md` profundos, estruturados com código, schemas SQL/Prisma e boas práticas.\n    - **Taxonomia de Duas Camadas**: Arquivos organizados automaticamente em `knowledge/` (fundamentos e padrões conceituais) e `actionable/` (código, implementação, schemas e testes).\n    - **Resiliência e Recuperação de Rate Limit no Groq Client (`scripts/groq-client.js`)**:\n      - Parser automático de cabeçalho e mensagens de erro (\"Please try again in X.XXs\").\n      - Backoff com tempo extra de segurança (+2s) e retentativas automáticas até 3x sem abortar o lote.\n      - Fallback inteligente de modelo para `openai/gpt-oss-20b` caso o modelo de 120b sature a cota TPM.\n      - Pausa estratégica de 6s entre arquivos para evitar saturação do bucket de tokens por minuto da camada gratuita.\n      - Resumabilidade inteligente: arquivos já existentes no disco são preservados e reaproveitados automaticamente caso uma execução seja retomada.\n    - **Consolidação em `OVERVIEW.md` e `_meta.json`**: Gera índice completo do laboratório com links markdown relativos clicáveis para cada documento e marca `status: \"completed\"`.\n    - **Integração com Grafo Neural 3D (`scripts/scan-vault.js`)**: Mapeamento de nós do laboratório com ícones dedicados (`🔬` para pastas/overview, `📘` para knowledge e `🛠️` para actionable) orbitando a estrela central do projeto.\n    - **Validação Prática Real**: Execução completa no projeto `teste_alfredo_22` gerando 9 arquivos técnicos completos (8 em `knowledge/` e 1 em `actionable/`) totalizando mais de 100KB de documentação técnica gerada autonomamente.\n    - **Catálogo de Subtópicos & Documentos Conectado ao Disco**:\n      - Corrigido o modal de subtópicos (`openDecomposeModal`): eliminado o gatilho redundante de consulta à IA quando a pesquisa já possui arquivos gerados no disco.\n      - O modal agora renderiza fielmente todos os arquivos reais existentes em `knowledge/` e `actionable/` (9 de 9 no caso do Bolo de Banana).\n      - Adicionados botões de ação direta em cada documento: `✏️ Editar / Ler` (abre no Live Markdown Editor para visualização e edição imediata com salvamento no disco via Ctrl+S) e `🗑️ Excluir` (remove o arquivo do disco, atualiza `_meta.json` e o `OVERVIEW.md`).\n      - Adicionado botão de exclusão completa do laboratório de pesquisa (`🗑️`) no cabeçalho de cada card de pesquisa.\n      - Novos endpoints backend: `POST /api/projects/:name/research/:slug/file/delete` e `POST /api/projects/:name/research/:slug/delete`.\n  - **Research Lab — Etapa 2 (UX/UI UAU no Brain Visualizer)**:\n    - **Aba Dedicada `🔬 Research Lab` no Project Workspace**: Integrada à navegação com pílula de contagem dinâmica (`#pwResearchTabBadge`).\n    - **Hero Banner com Glassmorphism Espacial**: Header com gradiente cósmico, badge pulsante verde de status da Groq Cloud (`openai/gpt-oss-120b`), latência média de inferência (~1.5s) e botão de ação primária `✨ Nova Pesquisa no Lab`.\n    - **Cards Métricos do Lab**: Mapeamento em tempo real do total de pesquisas ativas, documentos em `knowledge/`, especificações em `actionable/` e latência.\n    - **Empty State Futurista**: Orbe atômico pulsante em CSS, texto explicativo e botões de atalho para prompts rápidos de 1 clique (Microsserviços Event-Driven, Auth JWT, Cache & Redis).\n    - **Grid de Cards de Laboratório**: Cards com efeito hover 3D, indicador de status `🟢 Ativo`, caixa expansível do **Prompt Vivo** com tag de versão (`v1`, `v2`), badges das duas camadas (`knowledge/` e `actionable/`) e botões de ação (`▶️ Pesquisar Agora`, `🔮 Grafo 3D`, `🧩 Subtópicos`, `📄 OVERVIEW.md`, `📂 Abrir Pasta`).\n    - **Correção de Layout Responsivo**: Ajustado `.rl-card-title-text` com `word-break: break-word` e badge `🟢 Ativo` fixado à direita com `flex-shrink: 0`, eliminando qualquer sobreposição visual.\n    - **Modal de Criação \"Nova Pesquisa\" com Efeito UAU**:\n      - Campo de tema com chips de presets rápidos.\n      - Botão com faíscas animadas `✨ Melhorar com IA (Groq)`.\n      - **Split View Comparador \"Antes vs Depois\"**: Painel lado a lado contrastando a ideia bruta com o briefing estruturado pela IA.\n      - Painel de pré-visualização de decomposição temática com subtópicos categorizados em chips azuis (`knowledge`) e verdes (`actionable`).\n    - **Modal de \"Prompt Vivo\" & Histórico de Versões**: Interface de linha do tempo com todas as versões passadas do briefing (`definitionHistory`), data/hora e re-refinamento com IA.\n  - **Research Lab — Etapa 1 (Backend & IA Groq)**:\n    - **Módulo Nativo Groq (`scripts/groq-client.js`)**: Cliente HTTP nativo zero-dependência para a API do Groq Cloud (`api.groq.com`), com carregador próprio de `.env`, timeout de 60s, sanitização de markdown fences e parsing robusto de JSON.\n    - **Modelo Ativo**: Suporte para `openai/gpt-oss-120b`, `openai/gpt-oss-20b` e `qwen/qwen3.8-27b`.\n    - **Prompt Vivo & Refinamento Contextual (`refineResearchPrompt`)**: Algoritmo de enriquecimento que lê automaticamente os contratos do projeto (`PROJECT.md`, `ARCHITECTURE.md`) e transforma intenções livres do usuário em briefings de pesquisa estruturados de alto impacto.\n    - **Decomposição em Subtópicos (`decomposeResearchTopic`)**: Divisão do tema de pesquisa em sub-tópicos com taxonomia definida.\n    - **Endpoints REST Implementados no `server.js`**: `/api/ai/status`, `/api/ai/refine-prompt`, `/api/ai/decompose`, `/api/projects/:name/research`, `/api/projects/:name/research/:slug/definition`, `/api/projects/:name/research/:slug/run`.\n\n- **Data**: 2026-10-01 (Madrugada)\n  - **Gravação Física de Backups & Integração Nativa com Windows Explorer**:\n    - Backend grava fisicamente os arquivos gerados em `projects/<projeto>/BACKUPS/` (`dossie_governanca_<projeto>.md` e `backup_governanca_<projeto>.json`).\n    - Novos endpoints `/api/system/open-folder` e `/api/system/open-file` para abrir a pasta no Windows Explorer (`explorer.exe /select`) ou o arquivo no app padrão (`cmd /c start`).\n    - Correção do download do navegador mantendo o Blob URL ativo por 10s para permitir que o Chromium conclua a gravação sem abortar.\n    - Card enriquecido na aba *Backup & Exportação* com caminho absoluto no disco, botão direto para abrir no Explorer, botões para abrir cada arquivo, baixar e copiar caminhos.\n  - **Interatividade Total nos Cards do Project Workspace**:\n    - Edição rápida inline no card *Visão Geral & Contratos* para alterar Objetivo, Stack e Status com gravação direta no disco.\n    - Seletor de status do ciclo com pílulas luminosas conectadas ao `CURRENT_STATE.md`.\n    - Checklist interativo (*O que já foi definido*) com alternância, retorno ao roadmap e exclusão.\n    - Roadmap dinâmico (*Próximos Passos*) com botão \"✓ Concluir\" em 1 clique e input inline com tecla Enter.\n    - Sistema de Toast visual com glassmorphism para feedback instantâneo de gravação.\n  - **Contratos de Governança 100% Dinâmicos**:\n    - Backend inspeciona arquivos físicos reais no disco, exibindo apenas documentos existentes (`PROJECT.md`, `CURRENT_STATE.md`, etc.).\n    - Identificação de contratos recomendados ausentes (ex: `ARCHITECTURE.md`) com ação de inicialização com 1 clique (`+ Inicializar ARCHITECTURE.md`).\n    - Layout e botões dos chips de governança reformulados com `.btn-gov`, eliminando quebras de linha e desproporções.\n  - **Correções Estruturais & Backend**:\n    - Correção do aninhamento de modais no HTML que impedia a exibição do Live Markdown Editor.\n    - Correção na rota `GET /api/file` no `server.js` com verificação de método HTTP estrita, eliminando erro `400 Bad Request` no salvamento.\n- **Data**: 2026-09-30\n  - **Quickstart Studio (Modal de 3 Minutos)**: Onboarding guiado no portal web para criar projetos do zero ou vincular pastas existentes via junções NTFS sem terminal.\n  - **Sidebar \"Dois Mundos\"**: Reorganização visual clara separando \"MEUS PROJETOS\" no topo e \"CÉREBRO & GOVERNANÇA\" abaixo com divisor neon.\n  - **Project Workspace (Página Dedicada do Projeto)**: Hub com 5 abas (Visão Geral, Memória & Saúde, Grafo Neural 3D, Backup & Exportação de Dossiê, Gerenciamento & Desvinculação Segura).\n  - **Grafo Neural 3D (Three.js)**: Grafo orbital onde o projeto é o Sol Central conectado a seus arquivos locais e satélites de governança.\n  - **Grafo Global com Clusters Galácticos**: Projetos agrupados em clusters orbitais interligados por regras comuns.\n  - **APIs de Ciclo de Vida**: Endpoints backend para diagnóstico de memória, arquivamento seguro em `.archive/`, exportação de backup (.md e .json) e desvinculação não destrutiva.\n"
     },
     {
       "id": "memory_lessons-learned_md",
@@ -406,10 +423,10 @@ window.VAULT_SNAPSHOT = {
       "title": "Lições Aprendidas",
       "category": "memory",
       "icon": "💾",
-      "size": 20726,
-      "mtime": 1791817645910.7478,
+      "size": 22502,
+      "mtime": 1791824381666.5232,
       "outgoingLinks": [],
-      "content": "# Lições Aprendidas\n\n## 2026-09-27 — Fundação do AI Second Brain\n\n### Lição 1: Formato nativo importa\n**Contexto**: A versão 1 usava estrutura genérica (CLAUDE.md).\n**Aprendizado**: Cada ferramenta (Antigravity, Claude Code, Cursor) tem seu formato nativo de customização. Usar o formato nativo garante que as features da ferramenta funcionem corretamente (descoberta automática de skills, rules, etc).\n**Ação**: Sempre adapte o AI Second Brain para o formato da ferramenta em uso.\n\n### Lição 2: AIJev não substitui código determinístico\n**Contexto**: Tentação de usar AIJev para tudo que envolve decisão.\n**Aprendizado**: Se uma regra pode ser escrita em código (if/else, switch), não precisa de AIJev. AIJev é para decisões que envolvem contexto complexo ou probabilidades.\n**Ação**: Decision Gate obrigatório antes de integrar qualquer IA.\n\n### Lição 3: LLM não é a resposta para tudo\n**Contexto**: Tendência de chamar LLM para cada problema.\n**Aprendizado**: LLM é caro, lento e não-determinístico. Use apenas quando realmente precisa de geração de texto ou raciocínio aberto.\n**Ação**: Sempre pergunte \"isso pode ser feito sem IA?\" antes de usar LLM.\n\n---\n\n## 2026-10-02 — Motor do Research Lab & Resiliência de Inferência\n\n### Lição 4: Catálogos de modelos de IA são efêmeros\n**Contexto**: Ao configurar o Groq para o Research Lab, modelos consagrados como `llama-3.3-70b-versatile` já estavam descontinuados/deprecados no provedor.\n**Aprendizado**: Provedores de nuvem (especialmente inferência rápida como Groq) alteram IDs e disponibilidade de modelos com frequência. Consultar a API de modelos (`GET /openai/v1/models`) em tempo de diagnóstico ou adotar modelos com alta janela de contexto (ex: `openai/gpt-oss-120b`) previne erros `404 model_decommissioned`.\n**Ação**: Sempre incluir verificação de status e permitir parametrização do modelo via `.env` (`GROQ_MODEL`).\n\n### Lição 5: Parsing defensivo de JSON gerado por LLMs\n**Contexto**: A decomposição de tópicos exige retorno estritamente em JSON estruturado, mas LLMs frequentemente adicionam blocos ` ```json ... ``` ` ou texto introdutório.\n**Aprendizado**: Clientes HTTP nativos devem sanitizar markdown fences e extrair blocos `{...}` ou `[...]` antes do `JSON.parse`.\n**Ação**: Implementar regex de desempacotamento de markdown fence e fallback antes de falhar a requisição.\n\n---\n\n## 2026-10-08 — Console UTF-8 no Windows & Resiliência de Cache\n\n### Lição 6: Precedência de cache em localStorage e codificação UTF-8 no Windows\n**Contexto**: O inicializador `.bat` exibia `ÔÇö` em vez de `—` no CMD, e o visualizador carregava um cache estático do `localStorage` mostrando 34 arquivos desordenados em vez de conectar ao servidor local ao vivo.\n**Aprendizado**: \n1. No Windows, o interpretador CMD roda por padrão em página de código OEM (CP850 / CP437). Scripts `.bat` contendo caracteres UTF-8 devem obrigatoriamente executar `chcp 65001 >nul` no topo.\n2. Em SPAs que suportam tanto servidor local quanto pasta offline, caches em `localStorage` não devem ter precedência sobre o servidor local em `localhost`. Race conditions durante a subida de processos exigem auto-reconexão com retentativas, e qualquer gerador offline deve manter paridade estrita de arquitetura de dados (árvore hierárquica) com o backend.\n**Ação**: Sempre forçar UTF-8 em scripts de console e implementar auto-reconexão e limpeza automática de caches obsoletos no cliente web.\n\n---\n\n## 2026-10-09 — AI Gateway Multi-Provedor (BYOK)\n\n### Lição 7: Atualização atômica de variáveis de ambiente em tempo de execução\n**Contexto**: Ao salvar uma nova chave de API ou trocar de provedor via modal BYOK, reiniciar o servidor interromperia a sessão web do usuário.\n**Aprendizado**: É possível manter persistência física em arquivo `.env` (preservando comentários e adicionando chaves atômicas) e sincronizar imediatamente o objeto `process.env` em memória no mesmo tick de execução. Isso permite que rotas subsequentes utilizem as novas credenciais sem exigir restart do Node.js.\n**Ação**: Sempre sincronizar `fs.writeFileSync('.env')` com mutação direta em `process.env[key] = value` para configurações de infraestrutura hot-swappable.\n\n### Lição 8: Normalização de protocolos de IA (OpenAI vs Anthropic) sem dependências\n**Contexto**: Diferentes provedores utilizam convenções distintas: a maioria segue o padrão `/v1/chat/completions` da OpenAI, enquanto a Anthropic exige `/v1/messages` com cabeçalho `x-api-key` e `anthropic-version`.\n**Aprendizado**: Uma camada de abstração com zero dependências externas pode mapear transparentemente o formato de request e unificar a extração de resposta (`content[0].text` vs `choices[0].message.content`), mantendo o restante da aplicação agnóstico ao provedor escolhido.\n**Ação**: Centralizar a tradução de payloads no gateway unificado e tratar `429` (Rate Limit) de maneira uniforme para disparar telas de contingência guiada.\n\n### Lição 9: Isolamento estrito entre o Vault de Demonstração Pública e Dados Locais\n**Contexto**: A sincronização automática da varredura local com a pasta da demo pública sobrescreveu o projeto de demonstração (`demo-app`) com os projetos locais reais do desenvolvedor, arriscando expor dados privados.\n**Aprendizado**: O ambiente de demonstração estático (`docs/brain-ui/demo/`) da landing page e o ambiente local de desenvolvimento do workspace devem manter isolamento estrito de dados: o gerador `build_demo_vault.py` produz dados ilustrativos limpos (`demo-app`) para a web pública, enquanto o `scan-vault.js` mapeia os projetos reais do usuário apenas para o visualizador privado no `localhost`.\n**Ação**: Isolar completamente geradores de dados estáticos para demonstração pública de scripts de varredura do disco local.\n\n---\n\n## 2026-10-10 — Robustez do Portal BYOK, Normalização & Terminal Console\n\n### Lição 10: Normalização de Catálogo de Modelos (Strings vs Objetos) no Teste de Conexão BYOK\n**Contexto**: No modal de configuração de IA (BYOK), o endpoint `/api/ai/test` retornava uma lista de strings de IDs de modelos, enquanto a interface web esperava objetos com propriedades `.id` e `.name`. Isso gerava opções `<option value=\"undefined\">undefined</option>` no dropdown, impedindo a visualização dos modelos detectados.\n**Aprendizado**: O backend de Gateway e o cliente frontend devem operar de forma defensiva e simétrica: o backend deve normalizar modelos como objetos tipados `{ id, name, contextWindow }`, filtrar modelos incompatíveis (áudio/guardrails em Groq e embeddings em OpenAI) e ordenar os recomendados no topo. O frontend, por sua vez, deve suportar tanto strings primitivas quanto objetos, apresentar contadores e chips de seleção rápida em 1 clique, e restaurar com segurança o modelo selecionado.\n**Ação**: Sempre normalizar estruturas de modelos em `{ id, name, contextWindow }` no gateway, aplicar parsing polimórfico no JavaScript client e enriquecer a UX com badges e chips rápidos.\n\n### Lição 11: Eliminação de Hardcoding de Modelos e Desacoplamento de UI\n**Contexto**: Presença de presets estáticos de modelos criava dependência de atualizações manuais no código fonte e induzia falsas expectativas caso o usuário não tivesse acesso a determinados modelos em sua conta.\n**Aprendizado**: Provedores de IA evoluem seus catálogos continuamente; fixar nomes em código gera débito técnico imediato. O gateway deve operar de forma dinâmica, descobrindo os modelos disponíveis em tempo real através da API do provedor (`GET /models` / `/api/tags`) a partir do teste de conexão acionado pelo usuário.\n**Ação**: Desacoplar formulários de configuração de listas estáticas no código e validar via handshake real com a API do provedor.\n\n### Lição 12: Feedback Monocromático Estrito e Estados Reativos em Consoles Web de Diagnóstico\n**Contexto**: No modal de configuração de IA (BYOK), o terminal ao vivo utilizava classes estáticas de cor (`.t-matrix` verde) para prefixos como `$` e rodapés `\"LOCAL .ENV ENCRYPTION\"`. Em caso de erro de conexão, a linha de erro aparecia mesclada com verde e vermelho, e trocar o provedor exibia prematuramente `[OK] CHAT COMPLETION READY` antes do clique no botão \"Testar\".\n**Aprendizado**:\n1. Componentes de terminal que simulam CLI em aplicações web devem implementar uma máquina de estados visual estrita (`idle`, `testing`, `success`, `error`).\n2. Estados de falha devem forçar 100% dos nós filhos (incluindo prompts e rodapés) para a cor de alerta (`#f87171`), e estados de sucesso para a cor de validação (`#00f59b`), impedindo poluição visual ou incoerência semântica.\n3. Trocas de contexto pelo usuário (ex: alterar o provedor no dropdown) devem reativamente zerar o estado para standby (`is-idle`), limpando feedbacks anteriores e informando o próximo passo (`[IDLE] Clique em \"Testar\" para validar a chave`).\n**Ação**: Centralizar a renderização de status de consoles em funções unificadas (`updateAiTerminalStatus`), forçar regras CSS com seletores descendentes defensivos (`.ai-terminal-output.is-error *`) e garantir que eventos `change` em selects sempre restaurem o estado para neutro/aguardando validação.\n\n### Lição 13: Transparência de Parâmetros de Gateway (Cache TTL e Retentativas) na UX e no Backend\n**Contexto**: No passo 4 do configurador BYOK existiam inputs para `Cache` (ex: `24h`) e `Tentativas` (ex: `2`). O desenvolvedor precisava de clareza sobre se esses valores tinham efeito real na execução das APIs e de contextualização visual imediata no modal para entender a finalidade de cada um.\n**Aprendizado**:\n1. Parâmetros de resiliência e otimização de custo (como retries e TTL de cache) só têm valor se forem ativamente honrados pelo engine: retries com backoff exponencial protegem contra rate limits (`429`) e oscilações de rede; enquanto o hashing (SHA-256) de prompts idênticos em cache em memória elimina chamadas redundantes, poupa tokens da cota do usuário e atinge latência de 0ms.\n2. Em interfaces técnicas (BYOK/DevTools), expor cards explicativos dedicados ao lado dos parâmetros reduz a carga cognitiva, esclarece trade-offs de desempenho e reforça a confiança na plataforma.\n**Ação**: Sempre acoplar parâmetros de configuração a camadas concretas de execução no engine de gateway e fornecer cards explicativos com métricas esperadas (ex: latência 0ms, tolerância a HTTP 429) na interface do usuário.\n\n---\n\n## 2026-10-11 — Descoberta Dinâmica em Tempo Real, Blindagem Universal & Pontes Standalone\n\n### Lição 14: Zero Catálogos Estáticos de Modelos — Descoberta Dinâmica em Tempo Real com Auto-Trigger na Abertura\n**Contexto**: A introdução temporária de um catálogo fixo de fallback (`AI_DEFAULT_MODELS_BY_PROVIDER`) para preencher o select antes do clique em \"Testar\" gerou discrepâncias (ex: textos verdes indicando conexão antes de os modelos estarem populados) e violou a filosofia fundamental de flexibilidade BYOK do AI Second Brain.\n**Aprendizado**:\n1. Catálogos estáticos de modelos de IA no frontend ou backend são antipadrões graves: APIs de IA evoluem semanalmente com novos lançamentos e deprecações, além de permissões variáveis por conta/chave.\n2. Em interfaces de configuração com chave já salva, a UX correta e elegante é **provocar/disparar o teste de conexão (`testCurrentAiConnection()`) automaticamente na própria abertura da tela (`openAiSettingsModal`)**. O usuário presencia o handshake em tempo real, a latência autêntica é aferida e o seletor é populado com modelos vivos direto da API.\n3. Se o usuário não possuir chave configurada, o seletor deve exibir exclusivamente o placeholder neutro orientativo (*\"Clique em 'Testar' acima para listar os modelos disponíveis...\"*) e manter o terminal em standby (`[IDLE]`), sem induzir falsos sucessos.\n4. A versão demo deve adotar **exatamente a mesma arquitetura**: mocks de transporte de rede (`demo-mode.js`) interceptam a rota de teste e retornam respostas simuladas com latência realista, permitindo que o mesmo código JS rode com 100% de paridade em ambos os ambientes sem bifurcação nem catálogos fixos no código da UI.\n**Ação**: NUNCA utilizar listas estáticas de modelos de IA em código JavaScript ou HTML. Sempre buscar modelos dinamicamente via requisição de teste provocada na abertura do modal ou por ação do usuário, assegurando paridade total entre o ambiente local e a demo pública.\n\n### Lição 15: Governança Universal Agnóstica (AGENTS.md) e Pontes Automáticas em Projetos Vinculados (Standalone)\n**Contexto**: Inicialmente a governança residia apenas em `GEMINI.md`. Ao operar com outras ferramentas (Cursor, Claude Code, Windsurf, Cline, Copilot) ou quando o desenvolvedor abria o repositório vinculado em uma janela isolada da IDE, o agente não lia as diretrizes nem as lições aprendidas do Segundo Cérebro.\n**Aprendizado**:\n1. O AI Second Brain é agnóstico tanto a linguagens/stacks quanto a ferramentas e provedores de IA. O padrão universal aberto deve ser o **`AGENTS.md`**, reconhecido por qualquer agente de ponta.\n2. Para ferramentas com arquivos de configuração proprietários, deve haver pontes nativas (`.cursorrules`, `CLAUDE.md`, `.windsurfrules`, `.clinerules`, `.github/copilot-instructions.md`) que instruem o agente a seguir as mesmas regras absolutas e a consultar obrigatoriamente a memória antes de agir.\n3. A governança não pode se limitar ao Cockpit Central: os utilitários de criação e vinculação de projetos (`scripts/link-project.js` e `scripts/create-project.js`) devem injetar automaticamente as pontes de governança diretamente na raiz física do projeto vinculado. Assim, mesmo em modo Standalone, o agente respeita as regras e decisões arquiteturais.\n**Ação**: Sempre manter governança multiplataforma espelhada em todas as pontes e automatizar a geração de arquivos de ponte durante o vínculo de novos repositórios.\n\n### Lição 16: Dois Níveis de Lições Aprendidas — Prevenção da \"Amnésia por Sessão Antiga\"\n**Contexto**: Registrar aprendizados apenas em arquivos diários de sessões passadas (`MEMORY/sessions/`) fazia com que o agente esquecesse erros antigos quando o histórico acumulava dezenas de sessões, pois nenhuma IA relê todo o histórico passado a cada novo prompt.\n**Aprendizado**:\n1. Para manter a alta coesão e evitar estouro de tokens, as lições aprendidas devem ser divididas em dois níveis explícitos:\n   - **Nível 1 (Global/Framework)** em `memory/lessons-learned.md`: armazena regras universais de engenharia, arquitetura e integrações de IA que se aplicam a qualquer projeto.\n   - **Nível 2 (Local/Do Projeto)** em `projects/<projeto>/LESSONS_LEARNED.md`: armazena armadilhas técnicas, regras de negócio e bugs específicos daquela base de código (ex: peculiaridades de schemas de banco, rotas de webhooks, bibliotecas da stack).\n2. O arquivo local viaja junto com o repositório no Git do projeto, garantindo que mesmo ao abrir a pasta isoladamente em outro editor, o agente sempre leia os erros que nunca devem ser repetidos antes de gerar código.\n**Ação**: Todo projeto novo ou vinculado deve nascer com seu próprio `LESSONS_LEARNED.md`, e todas as pontes de IA devem instruir mandatoriamente a consulta deste arquivo antes de agir.\n\n---\n\n### Lição 17: Isolamento Estrito de Base URL entre Provedores e Integridade de Cache em Memória\n**Contexto**: O AI Gateway apresentou erro 500 em `/api/ai/config` por ausência da declaração `cachedModelsByProvider`, e requisições para a Groq herdaram `AI_BASE_URL` da Anthropic salvo no `.env`, gerando falso positivo no terminal (0 modelos detectados como \"Catálogo pronto\") e erro 400 ao salvar.\n**Aprendizado**:\n1. Variáveis globais referenciadas em módulos de gateway devem possuir declaração atômica no topo do escopo (`const cachedModelsByProvider = {}`), prevenindo `ReferenceError` em rotas HTTP.\n2. Parâmetros como `baseUrl` pertencem ao provedor ativo: provedores padrão de nuvem (`groq`, `openai`, `anthropic`, `openrouter`) devem utilizar estritamente suas URLs oficiais mapeadas no catálogo, e nunca herdar parâmetros customizados de outros provedores armazenados anteriormente no `.env`. Apenas provedores locais ou configuráveis (`ollama`, `custom`) devem aceitar e persistir URLs customizadas.\n3. Consoles e terminais web não podem emitir estado `success` com 0 modelos detectados quando o provedor requer modelos para operar. Se a detecção retornar 0 modelos ou falhar, o sistema deve apresentar estado de erro explícito com mensagem amigável, orientando a inserção da chave correta e impedindo tentativas de salvamento inconsistentes.\n**Ação**: Isolar o escopo de `baseUrl` por provedor, validar retorno mínimo de modelos antes de declarar conexão bem-sucedida e aplicar validações preventivas no frontend antes de disparar endpoints de teste e gravação.\n\n---\n\n### Lição 18: Sincronização Bidirecional de Parâmetros de Ambiente, Blindagem de Autofill e Validação Defensiva\n**Contexto**: Parâmetros de execução (`AI_CACHE_TTL_HOURS` e `AI_MAX_RETRIES`) alterados no `.env` não eram refletidos ao reabrir o modal visual, campos de senha herdavam fundo claro invasivo do autofill do navegador, e valores numéricos permitiam fallback silencioso para `2` quando definidos como `0` (desativar retries).\n**Aprendizado**:\n1. **Sincronização Fiel de Estado**: Todo modal de configuração deve ler e aplicar ativamente todos os valores retornados pelo endpoint de configuração (`GET /api/ai/config`) aos elementos do DOM, sem depender de valores padrão estáticos declarados no HTML.\n2. **Tratamento de Falsy em Números**: Operadores de coalescência ou fallback como `parseInt(x) || 2` convertem incorretamente o valor legítimo `0` para `2`. Valores numéricos inteiros devem ser validados com `!isNaN(n) && n >= min && n <= max`.\n3. **Blindagem contra Autofill Claro no Dark Mode**: Campos de credenciais (`type=\"password\"`) sofrem interferência da folha de estilos nativa do Chromium (`:-webkit-autofill`), que sobrescreve fundos escuros com tons claros (`rgb(232, 240, 254)`). A blindagem exige `color-scheme: dark !important`, `box-shadow inset` e substituição de placeholders genéricos como `\"Password\"` por textos descritivos acompanhados de `autocomplete=\"new-password\"`.\n4. **Validação em Camadas (Frontend e Backend)**: Validações de limites (ex: TTL entre 1h e 720h, Retries entre 0 e 5) devem ocorrer em três camadas coordenadas: na interatividade (`keydown`/`input`), no pré-salvamento no cliente (com feedback visual e foco) e no backend (retornando HTTP 400 antes de gravar no disco).\n**Ação**: Sempre aplicar leitura explícita no modal, blindar inputs de senhas contra autofill e validar intervalos de dados em todas as camadas da aplicação.\n\n---\n\n## 2026-10-12 — Session Capture com IA & Higienização Determinística\n\n### Lição 19: Separação Estrita em Duas Etapas (Draft vs Commit) e Proteção de Segredos na Coleta Git\n**Contexto**: A automação do registro diário de sessões e atualização de memória precisava capturar o contexto do repositório (Git) sem vazar chaves de API/arquivos confidenciais para a IA e sem gravar arquivos precipitadamente antes da conferência do desenvolvedor.\n**Aprendizado**:\n1. **Separação em Duas Fases**: Toda ação de IA que altera memória e contratos vivos deve seguir a separação estrita: `/session/draft` (somente leitura: reúne contexto e pede redação em JSON tipado ao LLM) e `/session/commit` (gravação física: executada apenas após clique explícito de aprovação humana no modal de revisão).\n2. **Higienização Determinística de Segredos**: Ao ler telemetria Git (nomes de arquivos modificados e diffstat), nunca se deve enviar o código-fonte integral (patches). Além disso, nomes de arquivos que combinem com padrões de credenciais (`.env`, `.pem`, `.key`, `id_rsa`, `secrets.*`) devem ser censurados antes da montagem do prompt para a IA.\n3. **Atualização Cirúrgica de Markdown**: Modificações no `CURRENT_STATE.md` devem ser seletivas — preservando comentários, seções adicionais e quebras de linha (`CRLF` ou `LF`) originais, apenas remanejando itens concluídos de \"Próximos Passos\" para \"O que já foi definido\" e recalculando a numeração.\n**Ação**: Sempre aplicar o padrão Draft-then-Commit com revisão humana item a item em automações de memória e higienizar qualquer entrada Git contra padrões de segredos.\n\n\n\n"
+      "content": "# Lições Aprendidas\n\n## 2026-09-27 — Fundação do AI Second Brain\n\n### Lição 1: Formato nativo importa\n**Contexto**: A versão 1 usava estrutura genérica (CLAUDE.md).\n**Aprendizado**: Cada ferramenta (Antigravity, Claude Code, Cursor) tem seu formato nativo de customização. Usar o formato nativo garante que as features da ferramenta funcionem corretamente (descoberta automática de skills, rules, etc).\n**Ação**: Sempre adapte o AI Second Brain para o formato da ferramenta em uso.\n\n### Lição 2: AIJev não substitui código determinístico\n**Contexto**: Tentação de usar AIJev para tudo que envolve decisão.\n**Aprendizado**: Se uma regra pode ser escrita em código (if/else, switch), não precisa de AIJev. AIJev é para decisões que envolvem contexto complexo ou probabilidades.\n**Ação**: Decision Gate obrigatório antes de integrar qualquer IA.\n\n### Lição 3: LLM não é a resposta para tudo\n**Contexto**: Tendência de chamar LLM para cada problema.\n**Aprendizado**: LLM é caro, lento e não-determinístico. Use apenas quando realmente precisa de geração de texto ou raciocínio aberto.\n**Ação**: Sempre pergunte \"isso pode ser feito sem IA?\" antes de usar LLM.\n\n---\n\n## 2026-10-02 — Motor do Research Lab & Resiliência de Inferência\n\n### Lição 4: Catálogos de modelos de IA são efêmeros\n**Contexto**: Ao configurar o Groq para o Research Lab, modelos consagrados como `llama-3.3-70b-versatile` já estavam descontinuados/deprecados no provedor.\n**Aprendizado**: Provedores de nuvem (especialmente inferência rápida como Groq) alteram IDs e disponibilidade de modelos com frequência. Consultar a API de modelos (`GET /openai/v1/models`) em tempo de diagnóstico ou adotar modelos com alta janela de contexto (ex: `openai/gpt-oss-120b`) previne erros `404 model_decommissioned`.\n**Ação**: Sempre incluir verificação de status e permitir parametrização do modelo via `.env` (`GROQ_MODEL`).\n\n### Lição 5: Parsing defensivo de JSON gerado por LLMs\n**Contexto**: A decomposição de tópicos exige retorno estritamente em JSON estruturado, mas LLMs frequentemente adicionam blocos ` ```json ... ``` ` ou texto introdutório.\n**Aprendizado**: Clientes HTTP nativos devem sanitizar markdown fences e extrair blocos `{...}` ou `[...]` antes do `JSON.parse`.\n**Ação**: Implementar regex de desempacotamento de markdown fence e fallback antes de falhar a requisição.\n\n---\n\n## 2026-10-08 — Console UTF-8 no Windows & Resiliência de Cache\n\n### Lição 6: Precedência de cache em localStorage e codificação UTF-8 no Windows\n**Contexto**: O inicializador `.bat` exibia `ÔÇö` em vez de `—` no CMD, e o visualizador carregava um cache estático do `localStorage` mostrando 34 arquivos desordenados em vez de conectar ao servidor local ao vivo.\n**Aprendizado**: \n1. No Windows, o interpretador CMD roda por padrão em página de código OEM (CP850 / CP437). Scripts `.bat` contendo caracteres UTF-8 devem obrigatoriamente executar `chcp 65001 >nul` no topo.\n2. Em SPAs que suportam tanto servidor local quanto pasta offline, caches em `localStorage` não devem ter precedência sobre o servidor local em `localhost`. Race conditions durante a subida de processos exigem auto-reconexão com retentativas, e qualquer gerador offline deve manter paridade estrita de arquitetura de dados (árvore hierárquica) com o backend.\n**Ação**: Sempre forçar UTF-8 em scripts de console e implementar auto-reconexão e limpeza automática de caches obsoletos no cliente web.\n\n---\n\n## 2026-10-09 — AI Gateway Multi-Provedor (BYOK)\n\n### Lição 7: Atualização atômica de variáveis de ambiente em tempo de execução\n**Contexto**: Ao salvar uma nova chave de API ou trocar de provedor via modal BYOK, reiniciar o servidor interromperia a sessão web do usuário.\n**Aprendizado**: É possível manter persistência física em arquivo `.env` (preservando comentários e adicionando chaves atômicas) e sincronizar imediatamente o objeto `process.env` em memória no mesmo tick de execução. Isso permite que rotas subsequentes utilizem as novas credenciais sem exigir restart do Node.js.\n**Ação**: Sempre sincronizar `fs.writeFileSync('.env')` com mutação direta em `process.env[key] = value` para configurações de infraestrutura hot-swappable.\n\n### Lição 8: Normalização de protocolos de IA (OpenAI vs Anthropic) sem dependências\n**Contexto**: Diferentes provedores utilizam convenções distintas: a maioria segue o padrão `/v1/chat/completions` da OpenAI, enquanto a Anthropic exige `/v1/messages` com cabeçalho `x-api-key` e `anthropic-version`.\n**Aprendizado**: Uma camada de abstração com zero dependências externas pode mapear transparentemente o formato de request e unificar a extração de resposta (`content[0].text` vs `choices[0].message.content`), mantendo o restante da aplicação agnóstico ao provedor escolhido.\n**Ação**: Centralizar a tradução de payloads no gateway unificado e tratar `429` (Rate Limit) de maneira uniforme para disparar telas de contingência guiada.\n\n### Lição 9: Isolamento estrito entre o Vault de Demonstração Pública e Dados Locais\n**Contexto**: A sincronização automática da varredura local com a pasta da demo pública sobrescreveu o projeto de demonstração (`demo-app`) com os projetos locais reais do desenvolvedor, arriscando expor dados privados.\n**Aprendizado**: O ambiente de demonstração estático (`docs/brain-ui/demo/`) da landing page e o ambiente local de desenvolvimento do workspace devem manter isolamento estrito de dados: o gerador `build_demo_vault.py` produz dados ilustrativos limpos (`demo-app`) para a web pública, enquanto o `scan-vault.js` mapeia os projetos reais do usuário apenas para o visualizador privado no `localhost`.\n**Ação**: Isolar completamente geradores de dados estáticos para demonstração pública de scripts de varredura do disco local.\n\n---\n\n## 2026-10-10 — Robustez do Portal BYOK, Normalização & Terminal Console\n\n### Lição 10: Normalização de Catálogo de Modelos (Strings vs Objetos) no Teste de Conexão BYOK\n**Contexto**: No modal de configuração de IA (BYOK), o endpoint `/api/ai/test` retornava uma lista de strings de IDs de modelos, enquanto a interface web esperava objetos com propriedades `.id` e `.name`. Isso gerava opções `<option value=\"undefined\">undefined</option>` no dropdown, impedindo a visualização dos modelos detectados.\n**Aprendizado**: O backend de Gateway e o cliente frontend devem operar de forma defensiva e simétrica: o backend deve normalizar modelos como objetos tipados `{ id, name, contextWindow }`, filtrar modelos incompatíveis (áudio/guardrails em Groq e embeddings em OpenAI) e ordenar os recomendados no topo. O frontend, por sua vez, deve suportar tanto strings primitivas quanto objetos, apresentar contadores e chips de seleção rápida em 1 clique, e restaurar com segurança o modelo selecionado.\n**Ação**: Sempre normalizar estruturas de modelos em `{ id, name, contextWindow }` no gateway, aplicar parsing polimórfico no JavaScript client e enriquecer a UX com badges e chips rápidos.\n\n### Lição 11: Eliminação de Hardcoding de Modelos e Desacoplamento de UI\n**Contexto**: Presença de presets estáticos de modelos criava dependência de atualizações manuais no código fonte e induzia falsas expectativas caso o usuário não tivesse acesso a determinados modelos em sua conta.\n**Aprendizado**: Provedores de IA evoluem seus catálogos continuamente; fixar nomes em código gera débito técnico imediato. O gateway deve operar de forma dinâmica, descobrindo os modelos disponíveis em tempo real através da API do provedor (`GET /models` / `/api/tags`) a partir do teste de conexão acionado pelo usuário.\n**Ação**: Desacoplar formulários de configuração de listas estáticas no código e validar via handshake real com a API do provedor.\n\n### Lição 12: Feedback Monocromático Estrito e Estados Reativos em Consoles Web de Diagnóstico\n**Contexto**: No modal de configuração de IA (BYOK), o terminal ao vivo utilizava classes estáticas de cor (`.t-matrix` verde) para prefixos como `$` e rodapés `\"LOCAL .ENV ENCRYPTION\"`. Em caso de erro de conexão, a linha de erro aparecia mesclada com verde e vermelho, e trocar o provedor exibia prematuramente `[OK] CHAT COMPLETION READY` antes do clique no botão \"Testar\".\n**Aprendizado**:\n1. Componentes de terminal que simulam CLI em aplicações web devem implementar uma máquina de estados visual estrita (`idle`, `testing`, `success`, `error`).\n2. Estados de falha devem forçar 100% dos nós filhos (incluindo prompts e rodapés) para a cor de alerta (`#f87171`), e estados de sucesso para a cor de validação (`#00f59b`), impedindo poluição visual ou incoerência semântica.\n3. Trocas de contexto pelo usuário (ex: alterar o provedor no dropdown) devem reativamente zerar o estado para standby (`is-idle`), limpando feedbacks anteriores e informando o próximo passo (`[IDLE] Clique em \"Testar\" para validar a chave`).\n**Ação**: Centralizar a renderização de status de consoles em funções unificadas (`updateAiTerminalStatus`), forçar regras CSS com seletores descendentes defensivos (`.ai-terminal-output.is-error *`) e garantir que eventos `change` em selects sempre restaurem o estado para neutro/aguardando validação.\n\n### Lição 13: Transparência de Parâmetros de Gateway (Cache TTL e Retentativas) na UX e no Backend\n**Contexto**: No passo 4 do configurador BYOK existiam inputs para `Cache` (ex: `24h`) e `Tentativas` (ex: `2`). O desenvolvedor precisava de clareza sobre se esses valores tinham efeito real na execução das APIs e de contextualização visual imediata no modal para entender a finalidade de cada um.\n**Aprendizado**:\n1. Parâmetros de resiliência e otimização de custo (como retries e TTL de cache) só têm valor se forem ativamente honrados pelo engine: retries com backoff exponencial protegem contra rate limits (`429`) e oscilações de rede; enquanto o hashing (SHA-256) de prompts idênticos em cache em memória elimina chamadas redundantes, poupa tokens da cota do usuário e atinge latência de 0ms.\n2. Em interfaces técnicas (BYOK/DevTools), expor cards explicativos dedicados ao lado dos parâmetros reduz a carga cognitiva, esclarece trade-offs de desempenho e reforça a confiança na plataforma.\n**Ação**: Sempre acoplar parâmetros de configuração a camadas concretas de execução no engine de gateway e fornecer cards explicativos com métricas esperadas (ex: latência 0ms, tolerância a HTTP 429) na interface do usuário.\n\n---\n\n## 2026-10-11 — Descoberta Dinâmica em Tempo Real, Blindagem Universal & Pontes Standalone\n\n### Lição 14: Zero Catálogos Estáticos de Modelos — Descoberta Dinâmica em Tempo Real com Auto-Trigger na Abertura\n**Contexto**: A introdução temporária de um catálogo fixo de fallback (`AI_DEFAULT_MODELS_BY_PROVIDER`) para preencher o select antes do clique em \"Testar\" gerou discrepâncias (ex: textos verdes indicando conexão antes de os modelos estarem populados) e violou a filosofia fundamental de flexibilidade BYOK do AI Second Brain.\n**Aprendizado**:\n1. Catálogos estáticos de modelos de IA no frontend ou backend são antipadrões graves: APIs de IA evoluem semanalmente com novos lançamentos e deprecações, além de permissões variáveis por conta/chave.\n2. Em interfaces de configuração com chave já salva, a UX correta e elegante é **provocar/disparar o teste de conexão (`testCurrentAiConnection()`) automaticamente na própria abertura da tela (`openAiSettingsModal`)**. O usuário presencia o handshake em tempo real, a latência autêntica é aferida e o seletor é populado com modelos vivos direto da API.\n3. Se o usuário não possuir chave configurada, o seletor deve exibir exclusivamente o placeholder neutro orientativo (*\"Clique em 'Testar' acima para listar os modelos disponíveis...\"*) e manter o terminal em standby (`[IDLE]`), sem induzir falsos sucessos.\n4. A versão demo deve adotar **exatamente a mesma arquitetura**: mocks de transporte de rede (`demo-mode.js`) interceptam a rota de teste e retornam respostas simuladas com latência realista, permitindo que o mesmo código JS rode com 100% de paridade em ambos os ambientes sem bifurcação nem catálogos fixos no código da UI.\n**Ação**: NUNCA utilizar listas estáticas de modelos de IA em código JavaScript ou HTML. Sempre buscar modelos dinamicamente via requisição de teste provocada na abertura do modal ou por ação do usuário, assegurando paridade total entre o ambiente local e a demo pública.\n\n### Lição 15: Governança Universal Agnóstica (AGENTS.md) e Pontes Automáticas em Projetos Vinculados (Standalone)\n**Contexto**: Inicialmente a governança residia apenas em `GEMINI.md`. Ao operar com outras ferramentas (Cursor, Claude Code, Windsurf, Cline, Copilot) ou quando o desenvolvedor abria o repositório vinculado em uma janela isolada da IDE, o agente não lia as diretrizes nem as lições aprendidas do Segundo Cérebro.\n**Aprendizado**:\n1. O AI Second Brain é agnóstico tanto a linguagens/stacks quanto a ferramentas e provedores de IA. O padrão universal aberto deve ser o **`AGENTS.md`**, reconhecido por qualquer agente de ponta.\n2. Para ferramentas com arquivos de configuração proprietários, deve haver pontes nativas (`.cursorrules`, `CLAUDE.md`, `.windsurfrules`, `.clinerules`, `.github/copilot-instructions.md`) que instruem o agente a seguir as mesmas regras absolutas e a consultar obrigatoriamente a memória antes de agir.\n3. A governança não pode se limitar ao Cockpit Central: os utilitários de criação e vinculação de projetos (`scripts/link-project.js` e `scripts/create-project.js`) devem injetar automaticamente as pontes de governança diretamente na raiz física do projeto vinculado. Assim, mesmo em modo Standalone, o agente respeita as regras e decisões arquiteturais.\n**Ação**: Sempre manter governança multiplataforma espelhada em todas as pontes e automatizar a geração de arquivos de ponte durante o vínculo de novos repositórios.\n\n### Lição 16: Dois Níveis de Lições Aprendidas — Prevenção da \"Amnésia por Sessão Antiga\"\n**Contexto**: Registrar aprendizados apenas em arquivos diários de sessões passadas (`MEMORY/sessions/`) fazia com que o agente esquecesse erros antigos quando o histórico acumulava dezenas de sessões, pois nenhuma IA relê todo o histórico passado a cada novo prompt.\n**Aprendizado**:\n1. Para manter a alta coesão e evitar estouro de tokens, as lições aprendidas devem ser divididas em dois níveis explícitos:\n   - **Nível 1 (Global/Framework)** em `memory/lessons-learned.md`: armazena regras universais de engenharia, arquitetura e integrações de IA que se aplicam a qualquer projeto.\n   - **Nível 2 (Local/Do Projeto)** em `projects/<projeto>/LESSONS_LEARNED.md`: armazena armadilhas técnicas, regras de negócio e bugs específicos daquela base de código (ex: peculiaridades de schemas de banco, rotas de webhooks, bibliotecas da stack).\n2. O arquivo local viaja junto com o repositório no Git do projeto, garantindo que mesmo ao abrir a pasta isoladamente em outro editor, o agente sempre leia os erros que nunca devem ser repetidos antes de gerar código.\n**Ação**: Todo projeto novo ou vinculado deve nascer com seu próprio `LESSONS_LEARNED.md`, e todas as pontes de IA devem instruir mandatoriamente a consulta deste arquivo antes de agir.\n\n---\n\n### Lição 17: Isolamento Estrito de Base URL entre Provedores e Integridade de Cache em Memória\n**Contexto**: O AI Gateway apresentou erro 500 em `/api/ai/config` por ausência da declaração `cachedModelsByProvider`, e requisições para a Groq herdaram `AI_BASE_URL` da Anthropic salvo no `.env`, gerando falso positivo no terminal (0 modelos detectados como \"Catálogo pronto\") e erro 400 ao salvar.\n**Aprendizado**:\n1. Variáveis globais referenciadas em módulos de gateway devem possuir declaração atômica no topo do escopo (`const cachedModelsByProvider = {}`), prevenindo `ReferenceError` em rotas HTTP.\n2. Parâmetros como `baseUrl` pertencem ao provedor ativo: provedores padrão de nuvem (`groq`, `openai`, `anthropic`, `openrouter`) devem utilizar estritamente suas URLs oficiais mapeadas no catálogo, e nunca herdar parâmetros customizados de outros provedores armazenados anteriormente no `.env`. Apenas provedores locais ou configuráveis (`ollama`, `custom`) devem aceitar e persistir URLs customizadas.\n3. Consoles e terminais web não podem emitir estado `success` com 0 modelos detectados quando o provedor requer modelos para operar. Se a detecção retornar 0 modelos ou falhar, o sistema deve apresentar estado de erro explícito com mensagem amigável, orientando a inserção da chave correta e impedindo tentativas de salvamento inconsistentes.\n**Ação**: Isolar o escopo de `baseUrl` por provedor, validar retorno mínimo de modelos antes de declarar conexão bem-sucedida e aplicar validações preventivas no frontend antes de disparar endpoints de teste e gravação.\n\n---\n\n### Lição 18: Sincronização Bidirecional de Parâmetros de Ambiente, Blindagem de Autofill e Validação Defensiva\n**Contexto**: Parâmetros de execução (`AI_CACHE_TTL_HOURS` e `AI_MAX_RETRIES`) alterados no `.env` não eram refletidos ao reabrir o modal visual, campos de senha herdavam fundo claro invasivo do autofill do navegador, e valores numéricos permitiam fallback silencioso para `2` quando definidos como `0` (desativar retries).\n**Aprendizado**:\n1. **Sincronização Fiel de Estado**: Todo modal de configuração deve ler e aplicar ativamente todos os valores retornados pelo endpoint de configuração (`GET /api/ai/config`) aos elementos do DOM, sem depender de valores padrão estáticos declarados no HTML.\n2. **Tratamento de Falsy em Números**: Operadores de coalescência ou fallback como `parseInt(x) || 2` convertem incorretamente o valor legítimo `0` para `2`. Valores numéricos inteiros devem ser validados com `!isNaN(n) && n >= min && n <= max`.\n3. **Blindagem contra Autofill Claro no Dark Mode**: Campos de credenciais (`type=\"password\"`) sofrem interferência da folha de estilos nativa do Chromium (`:-webkit-autofill`), que sobrescreve fundos escuros com tons claros (`rgb(232, 240, 254)`). A blindagem exige `color-scheme: dark !important`, `box-shadow inset` e substituição de placeholders genéricos como `\"Password\"` por textos descritivos acompanhados de `autocomplete=\"new-password\"`.\n4. **Validação em Camadas (Frontend e Backend)**: Validações de limites (ex: TTL entre 1h e 720h, Retries entre 0 e 5) devem ocorrer em três camadas coordenadas: na interatividade (`keydown`/`input`), no pré-salvamento no cliente (com feedback visual e foco) e no backend (retornando HTTP 400 antes de gravar no disco).\n**Ação**: Sempre aplicar leitura explícita no modal, blindar inputs de senhas contra autofill e validar intervalos de dados em todas as camadas da aplicação.\n\n---\n\n## 2026-10-12 — Session Capture com IA & Higienização Determinística\n\n### Lição 19: Separação Estrita em Duas Etapas (Draft vs Commit) e Proteção de Segredos na Coleta Git\n**Contexto**: A automação do registro diário de sessões e atualização de memória precisava capturar o contexto do repositório (Git) sem vazar chaves de API/arquivos confidenciais para a IA e sem gravar arquivos precipitadamente antes da conferência do desenvolvedor.\n**Aprendizado**:\n1. **Separação em Duas Fases**: Toda ação de IA que altera memória e contratos vivos deve seguir a separação estrita: `/session/draft` (somente leitura: reúne contexto e pede redação em JSON tipado ao LLM) e `/session/commit` (gravação física: executada apenas após clique explícito de aprovação humana no modal de revisão).\n2. **Higienização Determinística de Segredos**: Ao ler telemetria Git (nomes de arquivos modificados e diffstat), nunca se deve enviar o código-fonte integral (patches). Além disso, nomes de arquivos que combinem com padrões de credenciais (`.env`, `.pem`, `.key`, `id_rsa`, `secrets.*`) devem ser censurados antes da montagem do prompt para a IA.\n3. **Atualização Cirúrgica de Markdown**: Modificações no `CURRENT_STATE.md` devem ser seletivas — preservando comentários, seções adicionais e quebras de linha (`CRLF` ou `LF`) originais, apenas remanejando itens concluídos de \"Próximos Passos\" para \"O que já foi definido\" e recalculando a numeração.\n**Ação**: Sempre aplicar o padrão Draft-then-Commit com revisão humana item a item em automações de memória e higienizar qualquer entrada Git contra padrões de segredos.\n### Lição 20: Redução de Fricção no Ciclo de Vida: Disparo Direto de IDEs, Prompt Bootstrap e Feedback de Inferência\n**Contexto**: A simulação prática com um desenvolvedor iniciante revelou três atritos na experiência real: alternância manual entre navegador e terminal para abrir a IDE (`code .`), necessidade de redigir manualmente instruções de contexto ao agente de IA na primeira sessão, e sensação de travamento durante os 2 a 4 segundos de inferência do LLM no modal de captura.\n**Aprendizado**:\n1. **Acoplamento Físico com a IDE do Desenvolvedor**: A interface web não deve ser um silo isolado. Endpoints de sistema seguros (`/api/system/open-ide`) permitindo abrir o projeto diretamente no VS Code ou Cursor AI via `cmd.exe /c code` (com fallback seguro para explorador de arquivos) eliminam atrito de linha de comando.\n2. **Prompt Bootstrap em 1 Clique**: Desenvolvedores frequentemente sofrem de amnésia ao abrir uma nova janela na IDE. Disponibilizar um botão que copia imediatamente um prompt contextualizado com as regras absolutas, stack e referências aos contratos acelera o início produtivo do trabalho.\n3. **Feedback Ativo e Rotativo em Chamadas Longas de IA**: Inferências de IA para síntese de documentos levam de 1,5 a 5 segundos. Um spinner estático gera insegurança de que a aplicação travou. Substituir por mensagens rotativas sincronizadas com as fases de trabalho (\"Lendo commits...\", \"Cruzando contratos...\", \"Sintetizando resumo...\") transmite transparência e melhora a percepção de performance.\n**Ação**: Sempre fornecer atalhos de abertura no ambiente local do usuário, prompts de início pré-parametrizados e indicadores de progresso com mensagens de estado dinâmicas em todas as operações de inferência.\n\n"
     },
     {
       "id": "memory_README_md",
@@ -670,6 +687,60 @@ window.VAULT_SNAPSHOT = {
       "content": "# 🔬 CRM\n\n> **Laboratório de Conhecimento Concluído**  \n> Projeto: **Alfredo_teste** &middot; Última atualização: 11/10/2026\n\n## Briefing da Pesquisa (Prompt Vivo)\n\nObjetivo\n- Definir tudo o que é necessário para criar um CRM profissional e de alta qualidade, alinhado à arquitetura de software e às boas práticas de desenvolvimento.\n\nFoco da pesquisa\n- Requisitos funcionais essenciais:\n  * Gestão de leads, contas, contatos e oportunidades\n  * Pipeline de vendas configurável\n  * Registro de interações (e‑mail, chamadas, notas)\n  * Relatórios e dashboards customizáveis\n  * Controle de acesso baseado em funções (RBAC)\n  * Integração com e‑mail, calendário e ferramentas de marketing\n- Requisitos não funcionais:\n  * Escalabilidade horizontal e vertical\n  * Alta disponibilidade e tolerância a falhas\n  * Segurança de dados (criptografia em repouso e em trânsito)\n  * Conformidade com LGPD/GDPR\n  * Performance: tempo de resposta < 200 ms para operações comuns\n- Arquitetura e design:\n  * Camadas separadas (API, serviços de domínio, camada de dados)\n  * API RESTful ou GraphQL bem versionada\n  * Uso de padrões como Repository, Service, DTO e Clean Architecture\n  * Estratégia de versionamento e migração de banco de dados (ex.: Flyway, Liquibase)\n- Stack tecnológica recomendada (genérica, adaptável ao contexto):\n  * Backend: linguagem moderna (ex.: Java Spring Boot, Node.js/Express, .NET Core, Python/Django)\n  * Banco de dados relacional (PostgreSQL, MySQL) + opcional NoSQL para buscas (Elasticsearch)\n  * Frontend: SPA com React, Angular ou Vue.js; design responsivo\n  * Autenticação: OAuth2/OpenID Connect (ex.: Keycloak, Auth0)\n  * Containerização: Docker + orquestração Kubernetes\n  * CI/CD: GitHub Actions, GitLab CI ou Azure DevOps\n- Integrações externas:\n  * APIs de e‑mail (SendGrid, Mailgun)\n  * Serviços de telefonia (Twilio)\n  * Plataformas de marketing (HubSpot, Mailchimp)\n- Testes e qualidade:\n  * Testes unitários, de integração e end‑to‑end (Jest, Cypress, Postman)\n  * Cobertura de código mínima 80 %\n  * Análise estática (SonarQube, ESLint)\n- Implantação e operação:\n  * Estratégia de deploy blue‑green ou canary\n  * Monitoramento (Prometheus, Grafana) e logging centralizado (ELK)\n  * Plano de backup e recuperação de desastres\n- Documentação e suporte:\n  * Swagger/OpenAPI para a API\n  * Guia de onboarding para desenvolvedores\n  * Manual de usuário final e FAQ\n\nEdge cases e tópicos frequentemente esquecidos\n- Multi‑tenant: isolamento de dados entre diferentes clientes\n- Operação offline ou com conectividade intermitente\n- Migração de dados de sistemas legados (importação/exportação CSV, ETL)\n- Controle de versões de schemas de dados sem downtime\n- Suporte a internacionalização (i18n) e fusos horários\n- Limitações de quota e rate‑limiting para APIs externas\n- Estratégias de auditoria e logs de alterações para compliance\n- Gerenciamento de conflitos de concorrência (optimistic locking)\n\nExcluir\n- Estratégias de vendas, técnicas de prospecção ou treinamento de equipe comercial\n- Ferramentas de marketing que não se integrem ao CRM\n- Comparações de preços de softwares comerciais existentes\n- Tópicos de branding, identidade visual ou campanhas publicitárias\n- Discussões sobre políticas de recursos humanos ou gestão de equipes\n- Conteúdo sobre desenvolvimento de aplicativos móveis que não façam parte da solução CRM\n- Tutoriais genéricos de programação que não estejam ligados à construção do CRM profissional.\n\n## Status: 🟢 Pesquisa Concluída & Catalogada\n\n---\n\n## 📘 Camada 1: Conhecimento Teórico & Conceitual (`knowledge/`)\n\n- [**Requisitos funcionais essenciais**](knowledge/01-requisitos-funcionais-essenciais.md)\n  *Listar e detalhar funcionalidades core como leads, contas, oportunidades, pipeline, interações e relatórios.*\n- [**Requisitos não funcionais e metas de performance**](knowledge/02-requisitos-nao-funcionais-performance.md)\n  *Definir requisitos de escalabilidade, disponibilidade, segurança, conformidade e tempo de resposta <200 ms.*\n- [**Arquitetura de camadas e padrões de design**](knowledge/03-arquitetura-padroes-design.md)\n  *Descrever a separação em API, domínio e dados usando Clean Architecture, Repository, Service e DTO.*\n- [**Segurança, RBAC e conformidade LGPD/GDPR**](knowledge/04-seguranca-rbac-conformidade.md)\n  *Especificar autenticação OAuth2/OpenID, controle de acesso baseado em papéis e criptografia em repouso e em trânsito.*\n- [**Design da API e versionamento**](knowledge/05-design-api-versionamento.md)\n  *Escolher entre RESTful ou GraphQL, definir estratégia de versionamento e gerar documentação OpenAPI/Swagger.*\n- [**Estratégias de escalabilidade e alta disponibilidade**](knowledge/07-estrategias-escalabilidade-disponibilidade.md)\n  *Planejar escalabilidade horizontal/vertical, balanceamento de carga, replicação de banco e tolerância a falhas.*\n- [**Integrações externas e rate‑limiting**](knowledge/08-integracoes-externas-rate-limiting.md)\n  *Mapear integrações com SendGrid, Twilio, HubSpot etc., e definir políticas de quota e controle de taxa.*\n- [**Pipeline CI/CD, containerização e orquestração**](knowledge/10-pipeline-cicd-containerizacao.md)\n  *Descrever fluxo de CI/CD (GitHub Actions, GitLab CI), Dockerização e deployment em Kubernetes.*\n- [**Estratégia de implantação e monitoramento**](knowledge/11-implantacao-monitoramento.md)\n  *Detalhar deploy blue‑green ou canary, métricas com Prometheus/Grafana e logging centralizado (ELK).*\n- [**Operação offline, i18n e auditoria de mudanças**](knowledge/12-offline-i18n-auditoria.md)\n  *Abordar suporte a uso offline, internacionalização, fusos horários e logs de auditoria para compliance.*\n\n## 🛠️ Camada 2: Especificações Práticas & Código (`actionable/`)\n\n- [**Modelagem de dados e migração de schema**](actionable/06-modelagem-dados-migracao-schema.md)\n  *Modelar entidades principais, escolher PostgreSQL/MySQL, definir estratégia de migração (Flyway/Liquibase) e multi‑tenant.*\n- [**Estratégia de testes e qualidade de código**](actionable/09-estrategia-testes-qualidade.md)\n  *Definir tipos de testes (unitário, integração, e2e), cobertura mínima 80 % e ferramentas de análise estática.*\n\n---\n\n*Todos os arquivos acima estão conectados ao Grafo Neural 3D do projeto no AI Second Brain.*\n"
     },
     {
+      "id": "projects_Controle-de-Estoque_ARCHITECTURE_md",
+      "path": "projects/Controle-de-Estoque/ARCHITECTURE.md",
+      "name": "ARCHITECTURE.md",
+      "title": "Controle-de-Estoque — Arquitetura da Solução",
+      "category": "projects",
+      "icon": "🏗️",
+      "size": 317,
+      "mtime": 1791821283238.4917,
+      "outgoingLinks": [],
+      "content": "# Controle-de-Estoque — Arquitetura da Solução\n\n> Visão arquitetural, padrões e design do sistema.\n\n## 1. Stack Tecnológica\n- **Linguagem / Framework**: C# / .NET\n\n## 2. Princípios Adotados\n- Código idiomático e desacoplado.\n- Se utilizar IA: aplicar o AI Decision Gate (`.agents/rules/01-ai-decision.md`).\n"
+    },
+    {
+      "id": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "path": "projects/Controle-de-Estoque/BACKUPS/dossie_governanca_Controle-de-Estoque.md",
+      "name": "dossie_governanca_Controle-de-Estoque.md",
+      "title": "DOSSIÊ DE GOVERNANÇA: CONTROLE-DE-ESTOQUE",
+      "category": "projects",
+      "icon": "📄",
+      "size": 1484,
+      "mtime": 1791821647419.004,
+      "outgoingLinks": [
+        "current_state.md",
+        "architecture.md"
+      ],
+      "content": "# DOSSIÊ DE GOVERNANÇA: CONTROLE-DE-ESTOQUE\n> Exportado automaticamente pelo AI Second Brain em 12/10/2026, 13:14:07\n\n\n---\n## 📄 Arquivo: `ARCHITECTURE.md`\n\n# Controle-de-Estoque — Arquitetura da Solução\n\n> Visão arquitetural, padrões e design do sistema.\n\n## 1. Stack Tecnológica\n- **Linguagem / Framework**: C# / .NET\n\n## 2. Princípios Adotados\n- Código idiomático e desacoplado.\n- Se utilizar IA: aplicar o AI Decision Gate (`.agents/rules/01-ai-decision.md`).\n\n\n---\n## 📄 Arquivo: `CURRENT_STATE.md`\n\n# Controle-de-Estoque — Estado Atual\n\n> Última atualização: 2026-10-12\n\n## Status: 🟢 Em Planejamento / Ativo\n\n## O que já foi definido\n- [x] Inicialização no AI Second Brain com governança e memória ativa.\n- [x] Stack selecionada: **C# / .NET**.\n- [x] Definir os requisitos centrais do sistema.\n- [x] Registrar a primeira decisão de arquitetura em `DECISIONS/`.\n- [x] Definir os próximos passos do projeto.\n\n## Próximos Passos\n1. Definir os próximos passos do projeto.\n\n\n\n---\n## 📄 Arquivo: `PROJECT.md`\n\n# Controle-de-Estoque\n\n## Visão Geral\nControle de Estoque\n\n## Informações Gerais\n- **Tipo**: Greenfield / Projeto Novo\n- **Stack Inicial**: C# / .NET\n- **Status**: 🟢 Em Planejamento / Ativo\n- **Data de Criação**: 2026-10-12\n\n## Links & Governança\n- Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)\n- Arquitetura: [ARCHITECTURE.md](ARCHITECTURE.md)\n- Decisões Técnicas: `DECISIONS/`\n- Memória de Sessões: `MEMORY/sessions/`\n\n"
+    },
+    {
+      "id": "projects_Controle-de-Estoque_CURRENT_STATE_md",
+      "path": "projects/Controle-de-Estoque/CURRENT_STATE.md",
+      "name": "CURRENT_STATE.md",
+      "title": "Controle-de-Estoque — Estado Atual",
+      "category": "projects",
+      "icon": "💾",
+      "size": 487,
+      "mtime": 1791821386582.2327,
+      "outgoingLinks": [],
+      "content": "# Controle-de-Estoque — Estado Atual\n\n> Última atualização: 2026-10-12\n\n## Status: 🟢 Em Planejamento / Ativo\n\n## O que já foi definido\n- [x] Inicialização no AI Second Brain com governança e memória ativa.\n- [x] Stack selecionada: **C# / .NET**.\n- [x] Definir os requisitos centrais do sistema.\n- [x] Registrar a primeira decisão de arquitetura em `DECISIONS/`.\n- [x] Definir os próximos passos do projeto.\n\n## Próximos Passos\n1. Definir os próximos passos do projeto.\n\n"
+    },
+    {
+      "id": "projects_Controle-de-Estoque_PROJECT_md",
+      "path": "projects/Controle-de-Estoque/PROJECT.md",
+      "name": "PROJECT.md",
+      "title": "Controle-de-Estoque",
+      "category": "projects",
+      "icon": "📄",
+      "size": 438,
+      "mtime": 1791821283232.4844,
+      "outgoingLinks": [
+        "current_state.md",
+        "architecture.md"
+      ],
+      "content": "# Controle-de-Estoque\n\n## Visão Geral\nControle de Estoque\n\n## Informações Gerais\n- **Tipo**: Greenfield / Projeto Novo\n- **Stack Inicial**: C# / .NET\n- **Status**: 🟢 Em Planejamento / Ativo\n- **Data de Criação**: 2026-10-12\n\n## Links & Governança\n- Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)\n- Arquitetura: [ARCHITECTURE.md](ARCHITECTURE.md)\n- Decisões Técnicas: `DECISIONS/`\n- Memória de Sessões: `MEMORY/sessions/`\n"
+    },
+    {
       "id": "projects_FinTrack_SaaS_ARCHITECTURE_md",
       "path": "projects/FinTrack_SaaS/ARCHITECTURE.md",
       "name": "ARCHITECTURE.md",
@@ -680,6 +751,21 @@ window.VAULT_SNAPSHOT = {
       "mtime": 1791818962158.2583,
       "outgoingLinks": [],
       "content": "# FinTrack_SaaS — Arquitetura da Solução\n\n> Visão arquitetural, padrões e design do sistema.\n\n## 1. Stack Tecnológica\n- **Linguagem / Framework**: Node.js / TypeScript\n\n## 2. Princípios Adotados\n- Código idiomático e desacoplado.\n- Se utilizar IA: aplicar o AI Decision Gate (`.agents/rules/01-ai-decision.md`).\n"
+    },
+    {
+      "id": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "path": "projects/FinTrack_SaaS/BACKUPS/dossie_governanca_FinTrack_SaaS.md",
+      "name": "dossie_governanca_FinTrack_SaaS.md",
+      "title": "DOSSIÊ DE GOVERNANÇA: FINTRACK_SAAS",
+      "category": "projects",
+      "icon": "🌐",
+      "size": 1473,
+      "mtime": 1791821125701.0608,
+      "outgoingLinks": [
+        "current_state.md",
+        "architecture.md"
+      ],
+      "content": "# DOSSIÊ DE GOVERNANÇA: FINTRACK_SAAS\n> Exportado automaticamente pelo AI Second Brain em 12/10/2026, 13:05:25\n\n\n---\n## 📄 Arquivo: `ARCHITECTURE.md`\n\n# FinTrack_SaaS — Arquitetura da Solução\n\n> Visão arquitetural, padrões e design do sistema.\n\n## 1. Stack Tecnológica\n- **Linguagem / Framework**: Node.js / TypeScript\n\n## 2. Princípios Adotados\n- Código idiomático e desacoplado.\n- Se utilizar IA: aplicar o AI Decision Gate (`.agents/rules/01-ai-decision.md`).\n\n\n---\n## 📄 Arquivo: `CURRENT_STATE.md`\n\n# FinTrack_SaaS — Estado Atual\n\n> Última atualização: 2026-10-12\n\n## Status: 🟢 Em Planejamento / Ativo\n\n## O que já foi definido\n- [x] Inicialização no AI Second Brain com governança e memória ativa.\n- [x] Stack selecionada: **Node.js / TypeScript**.\n\n## Próximos Passos\n1. Definir os requisitos centrais do sistema.\n2. Registrar a primeira decisão de arquitetura em `DECISIONS/`.\n3. Modelar tabelas Prisma de transacoes financeiras e contas\n\n\n\n---\n## 📄 Arquivo: `PROJECT.md`\n\n# FinTrack_SaaS\n\n## Visão Geral\nProjeto criado no AI Second Brain\n\n## Informações Gerais\n- **Tipo**: Greenfield / Projeto Novo\n- **Stack Inicial**: Node.js / TypeScript\n- **Status**: 🟢 Em Planejamento / Ativo\n- **Data de Criação**: 2026-10-12\n\n## Links & Governança\n- Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)\n- Arquitetura: [ARCHITECTURE.md](ARCHITECTURE.md)\n- Decisões Técnicas: `DECISIONS/`\n- Memória de Sessões: `MEMORY/sessions/`\n\n"
     },
     {
       "id": "projects_FinTrack_SaaS_CURRENT_STATE_md",
@@ -1697,6 +1783,62 @@ window.VAULT_SNAPSHOT = {
           ]
         },
         {
+          "id": "proj_Controle-de-Estoque",
+          "label": "Controle-de-Estoque",
+          "icon": "🚀",
+          "isGroup": true,
+          "isProject": true,
+          "startCollapsed": true,
+          "path": "projects/Controle-de-Estoque/PROJECT.md",
+          "totalFilesCount": 4,
+          "childrenCount": 4,
+          "children": [
+            {
+              "id": "projects_Controle-de-Estoque_PROJECT_md",
+              "label": "PROJECT.md (Visão Geral)",
+              "title": "Controle-de-Estoque",
+              "icon": "📄",
+              "path": "projects/Controle-de-Estoque/PROJECT.md",
+              "size": 438
+            },
+            {
+              "id": "projects_Controle-de-Estoque_CURRENT_STATE_md",
+              "label": "CURRENT_STATE.md (Estado Atual)",
+              "title": "Controle-de-Estoque — Estado Atual",
+              "icon": "💾",
+              "path": "projects/Controle-de-Estoque/CURRENT_STATE.md",
+              "size": 487
+            },
+            {
+              "id": "projects_Controle-de-Estoque_ARCHITECTURE_md",
+              "label": "ARCHITECTURE.md (Arquitetura)",
+              "title": "Controle-de-Estoque — Arquitetura da Solução",
+              "icon": "🏗️",
+              "path": "projects/Controle-de-Estoque/ARCHITECTURE.md",
+              "size": 317
+            },
+            {
+              "id": "sub_Controle-de-Estoque_backups",
+              "label": "BACKUPS",
+              "icon": "📦",
+              "isGroup": true,
+              "isSubfolder": true,
+              "startCollapsed": true,
+              "childrenCount": 1,
+              "children": [
+                {
+                  "id": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+                  "label": "dossie_governanca_Controle-de-Estoque.md",
+                  "title": "DOSSIÊ DE GOVERNANÇA: CONTROLE-DE-ESTOQUE",
+                  "icon": "📄",
+                  "path": "projects/Controle-de-Estoque/BACKUPS/dossie_governanca_Controle-de-Estoque.md",
+                  "size": 1484
+                }
+              ]
+            }
+          ]
+        },
+        {
           "id": "proj_FinTrack_SaaS",
           "label": "FinTrack_SaaS",
           "icon": "🚀",
@@ -1704,8 +1846,8 @@ window.VAULT_SNAPSHOT = {
           "isProject": true,
           "startCollapsed": true,
           "path": "projects/FinTrack_SaaS/PROJECT.md",
-          "totalFilesCount": 3,
-          "childrenCount": 3,
+          "totalFilesCount": 4,
+          "childrenCount": 4,
           "children": [
             {
               "id": "projects_FinTrack_SaaS_PROJECT_md",
@@ -1730,6 +1872,25 @@ window.VAULT_SNAPSHOT = {
               "icon": "🏗️",
               "path": "projects/FinTrack_SaaS/ARCHITECTURE.md",
               "size": 322
+            },
+            {
+              "id": "sub_FinTrack_SaaS_backups",
+              "label": "BACKUPS",
+              "icon": "📦",
+              "isGroup": true,
+              "isSubfolder": true,
+              "startCollapsed": true,
+              "childrenCount": 1,
+              "children": [
+                {
+                  "id": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+                  "label": "dossie_governanca_FinTrack_SaaS.md",
+                  "title": "DOSSIÊ DE GOVERNANÇA: FINTRACK_SAAS",
+                  "icon": "📄",
+                  "path": "projects/FinTrack_SaaS/BACKUPS/dossie_governanca_FinTrack_SaaS.md",
+                  "size": 1473
+                }
+              ]
             }
           ]
         },
@@ -2131,7 +2292,7 @@ window.VAULT_SNAPSHOT = {
           ]
         }
       ],
-      "badge": 3
+      "badge": 4
     },
     {
       "id": "knowledge",
@@ -2195,7 +2356,7 @@ window.VAULT_SNAPSHOT = {
           "label": "Decisões Globais",
           "icon": "⚖️",
           "path": "decisions/GLOBAL_DECISIONS.md",
-          "size": 4912
+          "size": 6711
         }
       ],
       "badge": 1
@@ -2211,14 +2372,14 @@ window.VAULT_SNAPSHOT = {
           "label": "Estado Atual do AI Second Brain",
           "icon": "💾",
           "path": "memory/current-state.md",
-          "size": 38879
+          "size": 41109
         },
         {
           "id": "memory_lessons-learned_md",
           "label": "Lições Aprendidas",
           "icon": "💾",
           "path": "memory/lessons-learned.md",
-          "size": 20726
+          "size": 22502
         },
         {
           "id": "memory_README_md",
@@ -2323,6 +2484,13 @@ window.VAULT_SNAPSHOT = {
           "size": 10864
         },
         {
+          "id": "docs_relatorio_usabilidade_dev_journey_md",
+          "label": "Relatório de Avaliação de Usabilidade e Experiência do Desenvolvedor (Dev Journey)",
+          "icon": "📝",
+          "path": "docs/relatorio_usabilidade_dev_journey.md",
+          "size": 11394
+        },
+        {
           "id": "docs_RESEARCH_LAB_md",
           "label": "Research Lab — Laboratório de Conhecimento Autônomo",
           "icon": "🔬",
@@ -2344,7 +2512,7 @@ window.VAULT_SNAPSHOT = {
           "size": 17528
         }
       ],
-      "badge": 9
+      "badge": 10
     },
     {
       "id": "core",
@@ -2473,6 +2641,14 @@ window.VAULT_SNAPSHOT = {
       "size": 22,
       "icon": "🚀",
       "path": "projects/Alfredo_teste/PROJECT.md"
+    },
+    {
+      "id": "hub_proj_Controle-de-Estoque",
+      "label": "Controle-de-Estoque",
+      "group": "projects",
+      "size": 22,
+      "icon": "🚀",
+      "path": "projects/Controle-de-Estoque/PROJECT.md"
     },
     {
       "id": "hub_proj_FinTrack_SaaS",
@@ -2665,6 +2841,14 @@ window.VAULT_SNAPSHOT = {
       "size": 12,
       "icon": "🔬",
       "path": "docs/melhorias_research_lab.md"
+    },
+    {
+      "id": "docs_relatorio_usabilidade_dev_journey_md",
+      "label": "Relatório de Avaliação de Usabilidade e Experiência do Desenvolvedor (Dev Journey)",
+      "group": "docs",
+      "size": 12,
+      "icon": "📝",
+      "path": "docs/relatorio_usabilidade_dev_journey.md"
     },
     {
       "id": "docs_RESEARCH_LAB_md",
@@ -2923,12 +3107,52 @@ window.VAULT_SNAPSHOT = {
       "path": "projects/Alfredo_teste/RESEARCH/crm/OVERVIEW.md"
     },
     {
+      "id": "projects_Controle-de-Estoque_ARCHITECTURE_md",
+      "label": "Controle-de-Estoque — Arquitetura da Solução",
+      "group": "projects",
+      "size": 9,
+      "icon": "🏗️",
+      "path": "projects/Controle-de-Estoque/ARCHITECTURE.md"
+    },
+    {
+      "id": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "label": "DOSSIÊ DE GOVERNANÇA: CONTROLE-DE-ESTOQUE",
+      "group": "projects",
+      "size": 9,
+      "icon": "📄",
+      "path": "projects/Controle-de-Estoque/BACKUPS/dossie_governanca_Controle-de-Estoque.md"
+    },
+    {
+      "id": "projects_Controle-de-Estoque_CURRENT_STATE_md",
+      "label": "Controle-de-Estoque — Estado Atual",
+      "group": "projects",
+      "size": 9,
+      "icon": "💾",
+      "path": "projects/Controle-de-Estoque/CURRENT_STATE.md"
+    },
+    {
+      "id": "projects_Controle-de-Estoque_PROJECT_md",
+      "label": "Controle-de-Estoque",
+      "group": "projects",
+      "size": 9,
+      "icon": "📄",
+      "path": "projects/Controle-de-Estoque/PROJECT.md"
+    },
+    {
       "id": "projects_FinTrack_SaaS_ARCHITECTURE_md",
       "label": "FinTrack_SaaS — Arquitetura da Solução",
       "group": "projects",
       "size": 9,
       "icon": "🏗️",
       "path": "projects/FinTrack_SaaS/ARCHITECTURE.md"
+    },
+    {
+      "id": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "label": "DOSSIÊ DE GOVERNANÇA: FINTRACK_SAAS",
+      "group": "projects",
+      "size": 9,
+      "icon": "🌐",
+      "path": "projects/FinTrack_SaaS/BACKUPS/dossie_governanca_FinTrack_SaaS.md"
     },
     {
       "id": "projects_FinTrack_SaaS_CURRENT_STATE_md",
@@ -3362,6 +3586,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "hub-projects",
+      "to": "hub_proj_Controle-de-Estoque"
+    },
+    {
+      "from": "hub-projects",
       "to": "hub_proj_FinTrack_SaaS"
     },
     {
@@ -3455,6 +3683,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "hub-docs",
       "to": "docs_melhorias_research_lab_md"
+    },
+    {
+      "from": "hub-docs",
+      "to": "docs_relatorio_usabilidade_dev_journey_md"
     },
     {
       "from": "hub-docs",
@@ -3585,8 +3817,28 @@ window.VAULT_SNAPSHOT = {
       "to": "projects_Alfredo_teste_RESEARCH_crm_OVERVIEW_md"
     },
     {
+      "from": "hub_proj_Controle-de-Estoque",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "hub_proj_Controle-de-Estoque",
+      "to": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md"
+    },
+    {
+      "from": "hub_proj_Controle-de-Estoque",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "hub_proj_Controle-de-Estoque",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
       "from": "hub_proj_FinTrack_SaaS",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
+    },
+    {
+      "from": "hub_proj_FinTrack_SaaS",
+      "to": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md"
     },
     {
       "from": "hub_proj_FinTrack_SaaS",
@@ -3802,6 +4054,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "_agents_rules_04-documentation_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "_agents_rules_04-documentation_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "_agents_rules_04-documentation_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "_agents_rules_04-documentation_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -3846,6 +4110,14 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "_agents_skills_architecture-review_SKILL_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "_agents_skills_architecture-review_SKILL_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "_agents_skills_architecture-review_SKILL_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -3871,6 +4143,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "_agents_skills_bug-investigation_SKILL_md",
       "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "_agents_skills_bug-investigation_SKILL_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
     },
     {
       "from": "_agents_skills_bug-investigation_SKILL_md",
@@ -3903,6 +4179,18 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "_agents_skills_new-feature_SKILL_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "_agents_skills_new-feature_SKILL_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "_agents_skills_new-feature_SKILL_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "_agents_skills_new-feature_SKILL_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
     },
     {
       "from": "_agents_skills_new-feature_SKILL_md",
@@ -3970,6 +4258,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "_agents_skills_project-onboarding_SKILL_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "_agents_skills_project-onboarding_SKILL_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "_agents_skills_project-onboarding_SKILL_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "_agents_skills_project-onboarding_SKILL_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -4019,6 +4319,14 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "_agents_skills_session-memory_SKILL_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "_agents_skills_session-memory_SKILL_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "_agents_skills_session-memory_SKILL_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
     },
     {
       "from": "_agents_skills_session-memory_SKILL_md",
@@ -4074,6 +4382,14 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "AGENTS_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "AGENTS_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "AGENTS_md",
       "to": "projects_FinTrack_SaaS_CURRENT_STATE_md"
     },
     {
@@ -4119,6 +4435,18 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "CLAUDE_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "CLAUDE_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "CLAUDE_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "CLAUDE_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
     },
     {
       "from": "CLAUDE_md",
@@ -4170,6 +4498,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "decisions_GLOBAL_DECISIONS_md",
+      "to": "docs_relatorio_usabilidade_dev_journey_md"
+    },
+    {
+      "from": "decisions_GLOBAL_DECISIONS_md",
       "to": "docs_RESEARCH_LAB_md"
     },
     {
@@ -4187,6 +4519,14 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "decisions_GLOBAL_DECISIONS_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "decisions_GLOBAL_DECISIONS_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "decisions_GLOBAL_DECISIONS_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
     },
     {
       "from": "decisions_GLOBAL_DECISIONS_md",
@@ -4215,6 +4555,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "docs_analise_prompt_refinement_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "docs_analise_prompt_refinement_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
     },
     {
       "from": "docs_analise_prompt_refinement_md",
@@ -4274,6 +4618,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -4326,6 +4682,14 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_decisao_groq_provider_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_decisao_groq_provider_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "docs_decisao_groq_provider_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -4367,6 +4731,18 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "docs_GUIA_PRATICO_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "docs_GUIA_PRATICO_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_GUIA_PRATICO_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_GUIA_PRATICO_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
     },
     {
       "from": "docs_GUIA_PRATICO_md",
@@ -4414,6 +4790,14 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_melhorias_research_lab_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_melhorias_research_lab_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "docs_melhorias_research_lab_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -4449,6 +4833,70 @@ window.VAULT_SNAPSHOT = {
       "to": "templates_project_md"
     },
     {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "CLAUDE_md"
+    },
+    {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "projects_Alfredo_teste_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "projects_FinTrack_SaaS_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "projects_teste_alfredo_22_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "templates_project_md"
+    },
+    {
       "from": "docs_RESEARCH_LAB_md",
       "to": "projects_Alfredo_teste_ARCHITECTURE_md"
     },
@@ -4459,6 +4907,14 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "docs_RESEARCH_LAB_md",
       "to": "projects_Alfredo_teste_RESEARCH_crm_OVERVIEW_md"
+    },
+    {
+      "from": "docs_RESEARCH_LAB_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_RESEARCH_LAB_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
     },
     {
       "from": "docs_RESEARCH_LAB_md",
@@ -4523,6 +4979,18 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
     },
     {
       "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
@@ -4583,6 +5051,18 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
     },
     {
       "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
@@ -4658,6 +5138,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "GEMINI_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "GEMINI_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "GEMINI_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "GEMINI_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -4714,6 +5206,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "knowledge_architecture_PATTERNS_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "knowledge_architecture_PATTERNS_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -4735,6 +5231,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "knowledge_global_INDEX_md",
       "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "knowledge_global_INDEX_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
     },
     {
       "from": "knowledge_global_INDEX_md",
@@ -4822,6 +5322,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "memory_current-state_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "memory_current-state_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -4906,6 +5418,14 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "memory_lessons-learned_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "memory_lessons-learned_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "memory_lessons-learned_md",
       "to": "projects_FinTrack_SaaS_CURRENT_STATE_md"
     },
     {
@@ -4958,6 +5478,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "memory_README_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "memory_README_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "memory_README_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "memory_README_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -5026,6 +5558,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -5066,6 +5610,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -5099,6 +5655,14 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_Alfredo_teste_LESSONS_LEARNED_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_LESSONS_LEARNED_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_LESSONS_LEARNED_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
     },
     {
       "from": "projects_Alfredo_teste_LESSONS_LEARNED_md",
@@ -5130,6 +5694,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_Alfredo_teste_PROJECT_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_PROJECT_md",
       "to": "projects_FinTrack_SaaS_CURRENT_STATE_md"
     },
     {
@@ -5151,6 +5719,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_actionable_09-estrategia-testes-qualidade_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_actionable_09-estrategia-testes-qualidade_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
     },
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_actionable_09-estrategia-testes-qualidade_md",
@@ -5194,6 +5766,14 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_01-requisitos-funcionais-essenciais_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_01-requisitos-funcionais-essenciais_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_01-requisitos-funcionais-essenciais_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -5219,6 +5799,14 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_02-requisitos-nao-funcionais-performance_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_02-requisitos-nao-funcionais-performance_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_02-requisitos-nao-funcionais-performance_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
     },
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_02-requisitos-nao-funcionais-performance_md",
@@ -5258,6 +5846,14 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_03-arquitetura-padroes-design_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_03-arquitetura-padroes-design_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_03-arquitetura-padroes-design_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -5282,6 +5878,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_07-estrategias-escalabilidade-disponibilidade_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_07-estrategias-escalabilidade-disponibilidade_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -5294,6 +5894,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_08-integracoes-externas-rate-limiting_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_08-integracoes-externas-rate-limiting_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -5303,6 +5907,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_12-offline-i18n-auditoria_md",
       "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_12-offline-i18n-auditoria_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
     },
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_12-offline-i18n-auditoria_md",
@@ -5366,11 +5974,115 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_OVERVIEW_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_OVERVIEW_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_OVERVIEW_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_ARCHITECTURE_md",
+      "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_ARCHITECTURE_md",
+      "to": "AGENTS_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "to": "AGENTS_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "to": "projects_FinTrack_SaaS_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "to": "templates_project_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_PROJECT_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_PROJECT_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_PROJECT_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_PROJECT_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_PROJECT_md",
+      "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_PROJECT_md",
+      "to": "projects_FinTrack_SaaS_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_PROJECT_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_PROJECT_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
     },
     {
       "from": "projects_FinTrack_SaaS_ARCHITECTURE_md",
@@ -5381,12 +6093,80 @@ window.VAULT_SNAPSHOT = {
       "to": "AGENTS_md"
     },
     {
+      "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "to": "AGENTS_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "to": "projects_FinTrack_SaaS_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "to": "templates_project_md"
+    },
+    {
       "from": "projects_FinTrack_SaaS_PROJECT_md",
       "to": "projects_Alfredo_teste_ARCHITECTURE_md"
     },
     {
       "from": "projects_FinTrack_SaaS_PROJECT_md",
       "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_PROJECT_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_PROJECT_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
     },
     {
       "from": "projects_FinTrack_SaaS_PROJECT_md",
@@ -5411,6 +6191,14 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_README_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "projects_README_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_README_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
     },
     {
       "from": "projects_README_md",
@@ -5471,6 +6259,18 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
       "to": "projects_Alfredo_teste_RESEARCH_crm_OVERVIEW_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
     },
     {
       "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
@@ -5606,6 +6406,14 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_teste_alfredo_22_PROJECT_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_PROJECT_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_PROJECT_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -5702,6 +6510,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_03-ai-integration-audio_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_03-ai-integration-audio_md",
       "to": "projects_FinTrack_SaaS_PROJECT_md"
     },
     {
@@ -5723,6 +6535,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_actionable_02-elo-implementation-node-ts_md",
       "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_actionable_02-elo-implementation-node-ts_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_actionable_02-elo-implementation-node-ts_md",
@@ -5766,6 +6582,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_knowledge_08-elo-scalability_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_knowledge_08-elo-scalability_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -5775,6 +6595,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_knowledge_09-rating-security-audit_md",
       "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_knowledge_09-rating-security-audit_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_knowledge_09-rating-security-audit_md",
@@ -5830,6 +6654,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-para-controlar-rotina-de-criancas-autiostas-nivel-1_knowledge_03-modelagem-dados-rotina_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_sistema-para-controlar-rotina-de-criancas-autiostas-nivel-1_knowledge_03-modelagem-dados-rotina_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -5839,6 +6667,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-para-controlar-rotina-de-criancas-autiostas-nivel-1_knowledge_04-arquitetura-backend-node-ts_md",
       "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_sistema-para-controlar-rotina-de-criancas-autiostas-nivel-1_knowledge_04-arquitetura-backend-node-ts_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-para-controlar-rotina-de-criancas-autiostas-nivel-1_knowledge_04-arquitetura-backend-node-ts_md",
@@ -5855,6 +6687,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-para-controlar-rotina-de-criancas-autiostas-nivel-1_knowledge_09-analytics-progresso-relatorios_md",
       "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_sistema-para-controlar-rotina-de-criancas-autiostas-nivel-1_knowledge_09-analytics-progresso-relatorios_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-para-controlar-rotina-de-criancas-autiostas-nivel-1_knowledge_09-analytics-progresso-relatorios_md",
@@ -5946,6 +6782,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "README_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "README_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "README_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "README_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -5994,6 +6842,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "templates_project_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "templates_project_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "templates_project_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "templates_project_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
     },
     {
@@ -6029,6 +6889,14 @@ window.VAULT_SNAPSHOT = {
       "to": "_agents_rules_03-security_md"
     },
     {
+      "from": "hub_proj_Controle-de-Estoque",
+      "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
+      "from": "hub_proj_Controle-de-Estoque",
+      "to": "_agents_rules_03-security_md"
+    },
+    {
       "from": "hub_proj_FinTrack_SaaS",
       "to": "_agents_rules_01-ai-decision_md"
     },
@@ -6046,6 +6914,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "hub_proj_Alfredo_teste",
+      "to": "hub_proj_Controle-de-Estoque"
+    },
+    {
+      "from": "hub_proj_Controle-de-Estoque",
       "to": "hub_proj_FinTrack_SaaS"
     },
     {
@@ -6106,16 +6978,16 @@ window.VAULT_SNAPSHOT = {
     }
   },
   "stats": {
-    "totalFiles": 103,
+    "totalFiles": 109,
     "rulesCount": 5,
     "skillsCount": 8,
-    "projectsCount": 3,
+    "projectsCount": 4,
     "knowledgeCount": 6,
     "decisionsCount": 1,
     "memoryCount": 3,
     "templatesCount": 5,
-    "docsCount": 9,
-    "totalNodes": 117,
-    "totalEdges": 684
+    "docsCount": 10,
+    "totalNodes": 124,
+    "totalEdges": 846
   }
 };

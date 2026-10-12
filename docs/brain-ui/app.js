@@ -2343,8 +2343,14 @@ function setupEventListeners() {
                 chipsContainer.querySelectorAll('.qs-chip').forEach(c => c.classList.remove('active'));
                 chip.classList.add('active');
                 const stackVal = chip.dataset.stack || chip.textContent.trim();
-                const hiddenInput = document.getElementById('qsNewStack');
-                if (hiddenInput) hiddenInput.value = stackVal;
+                const stackInput = document.getElementById('qsNewStack');
+                if (stackInput) {
+                    stackInput.value = stackVal;
+                    if (stackVal === 'Livre / Multi-stack') {
+                        stackInput.focus();
+                        stackInput.select();
+                    }
+                }
             });
         });
     }
@@ -2529,10 +2535,12 @@ async function submitQuickstartNew(e) {
     const nameInput = document.getElementById('qsNewName');
     const stackInput = document.getElementById('qsNewStack');
     const descInput = document.getElementById('qsNewDesc');
+    const initGitCheckbox = document.getElementById('qsNewInitGit');
 
     const name = nameInput ? nameInput.value.trim() : '';
     const stack = stackInput ? stackInput.value.trim() : 'Node.js / TypeScript';
     const desc = descInput ? descInput.value.trim() : '';
+    const initGit = initGitCheckbox ? initGitCheckbox.checked : true;
 
     if (!name) {
         alert('Por favor, digite um nome para o projeto.');
@@ -2552,7 +2560,7 @@ async function submitQuickstartNew(e) {
         const res = await fetch('/api/projects/new', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, stack, description: desc })
+            body: JSON.stringify({ name, stack, description: desc, initGit })
         });
         const data = await res.json();
 
@@ -4086,6 +4094,80 @@ function copyProjectPath() {
         alert('Caminho: ' + currentProjectData.realPath);
     });
 }
+
+async function openProjectInIde(ide = 'code') {
+    const project = currentProjectData ? currentProjectData.name : currentProject;
+    if (!project) return;
+
+    if (!isLocalEnvironment()) {
+        showOnlineDemoNotice(`abrir o projeto no editor (${ide.toUpperCase()})`);
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/system/open-ide', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ projectName: project, ide })
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+            showToast(`⚠️ ${data.error || 'Não foi possível disparar o editor.'}`, 'warning', 4000);
+            return;
+        }
+
+        const editorName = ide === 'cursor' ? 'Cursor AI' : ide === 'code' ? 'VS Code' : 'Explorador de Arquivos';
+        showToast(`💻 Projeto aberto no ${editorName}!`, 'success', 3500);
+    } catch (err) {
+        showToast(`❌ Falha ao comunicar com o servidor: ${err.message}`, 'error', 4000);
+    }
+}
+window.openProjectInIde = openProjectInIde;
+
+async function copySessionStartPrompt() {
+    const d = currentProjectData;
+    if (!d) return;
+
+    const btn = document.getElementById('btnPwCopyPrompt');
+    const projectName = d.name;
+    const realPath = d.realPath || `C:\\Projetos\\...\\${projectName}`;
+    const stack = d.stack || 'Não especificada';
+
+    const promptText = `Você está atuando no projeto **${projectName}**, governado pelas regras e memória do AI Second Brain.
+Stack Principal: ${stack}
+Diretório do Projeto: ${realPath}
+
+ANTES DE EXECUTAR QUALQUER TAREFA:
+1. Consulte a visão geral e arquitetura em: \`PROJECT.md\`
+2. Consulte o estado atual e tarefas ativas em: \`CURRENT_STATE.md\`
+3. Consulte as decisões arquiteturais consolidadas em: \`DECISIONS/\`
+4. Consulte as lições aprendidas em: \`memory/lessons-learned.md\` e \`LESSONS_LEARNED.md\`
+5. REGRAS ABSOLUTAS:
+   - Prioridade Determinística: SEMPRE utilize código puro/regras de negócio antes de recorrer a LLMs.
+   - Zero Fabricação: NUNCA invente contexto ou especificações que não existem na documentação.
+   - Catálogos 100% Dinâmicos: NUNCA crie listas fixas de modelos no código ou HTML.
+   - Respeito a Decisões: Não altere a arquitetura sem registrar um novo ADR em \`DECISIONS/\`.
+
+Me apresente um resumo rápido de onde o projeto parou e qual é o próximo passo recomendado para continuarmos.`;
+
+    try {
+        await navigator.clipboard.writeText(promptText);
+        showToast(`✨ Prompt de início para o agente copiado para a área de transferência!`, 'success', 4000);
+        if (btn) {
+            const originalText = btn.innerHTML;
+            btn.classList.add('copied');
+            btn.innerHTML = '✓ Prompt Copiado!';
+            setTimeout(() => {
+                btn.classList.remove('copied');
+                btn.innerHTML = originalText;
+            }, 2500);
+        }
+    } catch (err) {
+        showToast(`Não foi possível copiar o prompt: ${err.message}`, 'error');
+    }
+}
+window.copySessionStartPrompt = copySessionStartPrompt;
 
 async function clearProjectMemory() {
     if (!currentProject) return;
@@ -7284,6 +7366,33 @@ async function generateSessionDraft(regenerate = false) {
     const btnGen = scEl('btnScGenerate');
     if (btnGen) btnGen.disabled = true;
 
+    // Feedback visual dinâmico com mensagens rotativas
+    let scLoadingMsgIdx = 0;
+    const scLoadingMessages = [
+        { msg: '🔍 Lendo commits e arquivos alterados no Git...', step: 1 },
+        { msg: '📄 Cruzando com contratos (PROJECT.md, CURRENT_STATE.md)...', step: 2 },
+        { msg: '⚖️ Consultando lições aprendidas e ADRs existentes...', step: 3 },
+        { msg: '✨ Sintetizando resumo de governança com IA para sua revisão...', step: 4 }
+    ];
+    const updateScLoadingState = (idx) => {
+        const item = scLoadingMessages[idx % scLoadingMessages.length];
+        const liveMsg = scEl('scLoadingLiveMsg');
+        if (liveMsg) liveMsg.textContent = item.msg;
+        for (let i = 1; i <= 4; i++) {
+            const stepEl = scEl(`scStep${i}`);
+            if (stepEl) {
+                stepEl.classList.toggle('active', i === item.step);
+                stepEl.classList.toggle('completed', i < item.step);
+            }
+        }
+    };
+    updateScLoadingState(0);
+    clearInterval(window._scLoadingTimer);
+    window._scLoadingTimer = setInterval(() => {
+        scLoadingMsgIdx++;
+        updateScLoadingState(scLoadingMsgIdx);
+    }, 2200);
+
     try {
         const res = await fetch(`/api/projects/${encodeURIComponent(st.project)}/session/draft`, {
             method: 'POST',
@@ -7316,6 +7425,10 @@ async function generateSessionDraft(regenerate = false) {
         setSessionCaptureStep('input');
         setSessionCaptureStatus(`<span class="status-dot" style="background:#ef4444"></span> ${escapeHtml(err.message)}`);
     } finally {
+        if (window._scLoadingTimer) {
+            clearInterval(window._scLoadingTimer);
+            window._scLoadingTimer = null;
+        }
         st.busy = false;
         if (btnGen) btnGen.disabled = false;
     }

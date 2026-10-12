@@ -10174,3 +10174,133 @@ body::-webkit-scrollbar-thumb:hover {
         align-items: stretch;
     }
 }
+
+/* ── UX Enhancements: IDE Launcher & Prompt Bootstrap ───────── */
+.pw-ide-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pw-prompt-btn {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.22), rgba(168, 85, 247, 0.22)) !important;
+    border-color: rgba(168, 85, 247, 0.45) !important;
+    color: #e0e7ff !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 10px rgba(139, 92, 246, 0.25);
+    transition: all 0.2s ease;
+}
+
+.pw-prompt-btn:hover {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.35), rgba(168, 85, 247, 0.35)) !important;
+    border-color: rgba(168, 85, 247, 0.7) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(139, 92, 246, 0.4);
+}
+
+.pw-prompt-btn.copied {
+    background: rgba(16, 185, 129, 0.25) !important;
+    border-color: rgba(16, 185, 129, 0.6) !important;
+    color: #a7f3d0 !important;
+}
+
+/* Quickstart Checkbox */
+.qs-checkbox-field {
+    margin-top: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 10px 14px;
+}
+
+.qs-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.qs-checkbox-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #6366f1;
+    cursor: pointer;
+}
+
+/* Session Capture Live Inference Feedback */
+.sc-loading-live-msg {
+    font-size: 13px;
+    font-weight: 600;
+    color: #38bdf8;
+    margin: 8px 0 16px;
+    min-height: 20px;
+    animation: livePulse 2s infinite ease-in-out;
+}
+
+@keyframes livePulse {
+    0%, 100% { opacity: 0.85; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.01); color: #818cf8; }
+}
+
+.sc-loading-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+    max-width: 440px;
+    margin: 0 auto;
+}
+
+.sc-loading-steps li {
+    font-size: 12.5px;
+    color: var(--text-tertiary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.sc-loading-steps li::before {
+    content: "○";
+    font-size: 11px;
+    color: var(--text-tertiary);
+}
+
+.sc-loading-steps li.active {
+    color: #ffffff;
+    font-weight: 600;
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.35);
+}
+
+.sc-loading-steps li.active::before {
+    content: "●";
+    color: #818cf8;
+    animation: liveDot 1s infinite alternate;
+}
+
+.sc-loading-steps li.completed {
+    color: #94a3b8;
+    text-decoration: none;
+}
+
+.sc-loading-steps li.completed::before {
+    content: "✓";
+    color: #10b981;
+    font-weight: bold;
+}
+
+@keyframes liveDot {
+    from { opacity: 0.4; }
+    to { opacity: 1; }
+}
+

@@ -205,7 +205,7 @@ async function handleRequest(req, res) {
 
             const today = new Date().toISOString().split('T')[0];
 
-            // PROJECT.md
+            // 1. PROJECT.md
             const projectMd = `# ${safeName}
 
 ## Visão Geral
@@ -220,11 +220,12 @@ ${description}
 ## Links & Governança
 - Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)
 - Arquitetura: [ARCHITECTURE.md](ARCHITECTURE.md)
+- Lições Aprendidas: [LESSONS_LEARNED.md](LESSONS_LEARNED.md)
 - Decisões Técnicas: \`DECISIONS/\`
 - Memória de Sessões: \`MEMORY/sessions/\`
 `;
 
-            // CURRENT_STATE.md
+            // 2. CURRENT_STATE.md
             const currentStateMd = `# ${safeName} — Estado Atual
 
 > Última atualização: ${today}
@@ -240,7 +241,7 @@ ${description}
 2. Registrar a primeira decisão de arquitetura em \`DECISIONS/\`.
 `;
 
-            // ARCHITECTURE.md
+            // 3. ARCHITECTURE.md
             const archMd = `# ${safeName} — Arquitetura da Solução
 
 > Visão arquitetural, padrões e design do sistema.
@@ -249,13 +250,90 @@ ${description}
 - **Linguagem / Framework**: ${stack}
 
 ## 2. Princípios Adotados
-- Código idiomático e desacoplado.
+- Código idiomático, modular e testável.
 - Se utilizar IA: aplicar o AI Decision Gate (\`.agents/rules/01-ai-decision.md\`).
+`;
+
+            // 4. LESSONS_LEARNED.md (Local do Projeto — Nível 2)
+            const lessonsLearnedMd = `# ${safeName} — Lições Aprendidas
+
+> Este documento registra erros, armadilhas técnicas e aprendizados específicos deste projeto.
+> Qualquer agente de IA ou desenvolvedor deve consultar este arquivo antes de alterar código neste repositório.
+
+## Histórico de Lições Aprendidas
+<!-- Registre novos aprendizados seguindo o formato: -->
+<!-- ### YYYY-MM-DD — Título do Aprendizado -->
+<!-- - Contexto: O que motivou o problema -->
+<!-- - Causa Raiz: Motivo técnico da falha -->
+<!-- - O que NÃO fazer: Padrão a evitar -->
+<!-- - Padrão Correto: Solução validada e obrigatória -->
+`;
+
+            // 5. Pontes Multi-IA (para modo Cockpit ou Standalone)
+            const bridgeContent = `# Governança de IA — ${safeName}
+
+> Este projeto é governado pelo AI Second Brain.
+> Cérebro Central: \`${ROOT_DIR}\`
+
+## ANTES DE EXECUTAR QUALQUER TAREFA
+1. Consulte o estado atual em: [CURRENT_STATE.md](CURRENT_STATE.md)
+2. Consulte os requisitos e visão geral em: [PROJECT.md](PROJECT.md)
+3. Consulte as decisões arquiteturais em: DECISIONS/
+4. Consulte as lições aprendidas deste projeto em: [LESSONS_LEARNED.md](LESSONS_LEARNED.md)
+5. Consulte as lições aprendidas globais em: \`${path.join(ROOT_DIR, 'memory', 'lessons-learned.md')}\`
+6. REGRAS ABSOLUTAS:
+   - NUNCA crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API em tempo real.
+   - Sempre utilize código determinístico antes de recorrer a LLMs.
+   - NUNCA invente contexto ou regras especulativas sem solicitação expressa do desenvolvedor.
+`;
+
+            // 6. .gitignore padrão do projeto
+            const gitignoreContent = `# Dependências & Build
+node_modules/
+bin/
+obj/
+dist/
+build/
+.cache/
+
+# Variáveis de ambiente & Segredos
+.env
+.env.*
+*.key
+*.pem
+
+# Sistema Operacional & IDE
+.DS_Store
+Thumbs.db
+.vs/
+.vscode/
 `;
 
             fs.writeFileSync(path.join(targetFolder, 'PROJECT.md'), projectMd, 'utf-8');
             fs.writeFileSync(path.join(targetFolder, 'CURRENT_STATE.md'), currentStateMd, 'utf-8');
             fs.writeFileSync(path.join(targetFolder, 'ARCHITECTURE.md'), archMd, 'utf-8');
+            fs.writeFileSync(path.join(targetFolder, 'LESSONS_LEARNED.md'), lessonsLearnedMd, 'utf-8');
+            fs.writeFileSync(path.join(targetFolder, 'AGENTS.md'), bridgeContent, 'utf-8');
+            fs.writeFileSync(path.join(targetFolder, 'GEMINI.md'), bridgeContent, 'utf-8');
+            fs.writeFileSync(path.join(targetFolder, '.cursorrules'), bridgeContent, 'utf-8');
+            fs.writeFileSync(path.join(targetFolder, 'CLAUDE.md'), bridgeContent, 'utf-8');
+            fs.writeFileSync(path.join(targetFolder, '.gitignore'), gitignoreContent, 'utf-8');
+
+            // 7. git init opcional (se solicitado pelo usuário)
+            let gitInitialized = false;
+            if (body.initGit !== false) {
+                try {
+                    const { execSync } = require('child_process');
+                    execSync('git init -b main', { cwd: targetFolder, timeout: 5000, stdio: 'ignore' });
+                    gitInitialized = true;
+                } catch (e) {
+                    try {
+                        const { execSync } = require('child_process');
+                        execSync('git init', { cwd: targetFolder, timeout: 5000, stdio: 'ignore' });
+                        gitInitialized = true;
+                    } catch (_) {}
+                }
+            }
 
             // Atualiza snapshot do Vault
             delete require.cache[require.resolve('./scripts/scan-vault')];
@@ -1039,6 +1117,85 @@ Projeto externo vinculado ao AI Second Brain.
 
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({ success: true, path: cleanPath }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ error: err.message }));
+        }
+        return;
+    }
+
+    // API: Abrir Projeto na IDE Externa (VS Code / Cursor)
+    if (pathname === '/api/system/open-ide' && req.method === 'POST') {
+        try {
+            const body = await readJsonBody(req);
+            let targetPath = (body.path || '').trim();
+            if (!targetPath && body.projectName) {
+                targetPath = path.join(ROOT_DIR, 'projects', body.projectName);
+            }
+            const preferredIde = (body.ide || 'code').toLowerCase(); // 'code', 'cursor', 'explorer'
+
+            if (!targetPath) {
+                res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: 'Caminho ou nome do projeto não fornecido.' }));
+                return;
+            }
+
+            if (!path.isAbsolute(targetPath)) {
+                targetPath = path.resolve(ROOT_DIR, targetPath);
+            }
+
+            if (!fs.existsSync(targetPath)) {
+                res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: `Caminho não encontrado no disco: ${targetPath}` }));
+                return;
+            }
+
+            const cleanPath = path.normalize(targetPath).replace(/["'`$|;&<>]/g, '');
+
+            if (preferredIde === 'explorer' || preferredIde === 'pasta') {
+                if (process.platform === 'win32') {
+                    exec(`powershell.exe -NoProfile -Command "Invoke-Item -LiteralPath '${cleanPath.replace(/'/g, "''")}'"`, (err) => {
+                        if (err) exec(`cmd.exe /c start "" "${cleanPath}"`);
+                    });
+                } else if (process.platform === 'darwin') {
+                    exec(`open "${cleanPath}"`);
+                } else {
+                    exec(`xdg-open "${cleanPath}"`);
+                }
+                res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ success: true, path: cleanPath, ide: 'explorer' }));
+                return;
+            }
+
+            const ideCmd = preferredIde === 'cursor' ? 'cursor' : 'code';
+
+            console.log(`💻 [System] Abrindo projeto na IDE (${ideCmd}): ${cleanPath}`);
+
+            if (process.platform === 'win32') {
+                exec(`cmd.exe /c ${ideCmd} "${cleanPath}"`, (err) => {
+                    if (err) {
+                        console.warn(`⚠️ [System] Falha ao abrir com ${ideCmd}, tentando fallback para code/explorer:`, err.message);
+                        if (ideCmd === 'cursor') {
+                            exec(`cmd.exe /c code "${cleanPath}"`, (err2) => {
+                                if (err2) exec(`cmd.exe /c start "" "${cleanPath}"`);
+                            });
+                        } else {
+                            exec(`cmd.exe /c start "" "${cleanPath}"`);
+                        }
+                    }
+                });
+            } else if (process.platform === 'darwin') {
+                exec(`${ideCmd} "${cleanPath}"`, (err) => {
+                    if (err) exec(`open "${cleanPath}"`);
+                });
+            } else {
+                exec(`${ideCmd} "${cleanPath}"`, (err) => {
+                    if (err) exec(`xdg-open "${cleanPath}"`);
+                });
+            }
+
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ success: true, path: cleanPath, ide: ideCmd }));
         } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({ error: err.message }));

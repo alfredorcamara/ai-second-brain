@@ -55,5 +55,14 @@
 - **Motivo**: Elimina o atrito do registro manual de sessões e a amnésia de contexto entre agentes sem risco de alucinação ou perda de controle, respeitando o princípio de *Zero Fabricação*.
 - **Detalhes**: Ver `scripts/session-capture.js`, `scripts/ai-gateway.js` e interface em `docs/brain-ui/`.
 
-
-
+## ADR-G008: Otimizações Práticas de Usabilidade e Conexão com IDEs no Ciclo de Vida do Desenvolvedor
+- **Status**: Aceita
+- **Data**: 2026-10-12
+- **Descrição**: Consolidação de 5 melhorias essenciais de usabilidade identificadas na simulação prática de onboarding de projeto:
+  1. **Inicialização Automática de Repositório Git (`git init`)**: O modal Quickstart oferece opção de disparar `git init`, gerando o `.gitignore` padrão e vinculando os contratos de governança desde o primeiro segundo.
+  2. **Stack Tecnológica Flexível com Sugestões Rápidas**: O campo de Stack Tecnológica no Quickstart torna-se um input de texto livre editável, mantendo chips clicáveis como atalhos para preenchimento ágil.
+  3. **Disparadores Nativos de IDE (`open-ide`)**: O cabeçalho do Project Workspace ganha botões diretos para abrir o projeto no VS Code, Cursor AI ou Explorador de Arquivos local com fallback seguro.
+  4. **Prompt Bootstrap de Início de Sessão em 1 Clique**: Botão "Copiar Prompt para Agente" gera e copia para o clipboard uma instrução parametrizada contendo o caminho do projeto, contratos e regras absolutas para alimentar qualquer agente de IA sem amnésia.
+  5. **Feedback Visual Ativo de Inferência com Mensagens Rotativas**: O modal de Session Capture exibe etapas sincronizadas e animação contínua durante o tempo de resposta da IA, eliminando a sensação de travamento e aumentando a previsibilidade operacional.
+- **Motivo**: Reduz drasticamente o atrito entre o Cockpit Visual do Second Brain e o fluxo real de codificação na IDE, garantindo que o desenvolvedor comece e feche sessões com velocidade máxima.
+- **Detalhes**: Ver `server.js`, `docs/brain-ui/app.js`, `docs/brain-ui/demo/app.js` e `docs/relatorio_usabilidade_dev_journey.md`.

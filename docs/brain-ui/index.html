@@ -257,6 +257,17 @@
                                 </div>
                             </div>
                             <div class="pw-header-actions">
+                                <div class="pw-ide-actions">
+                                    <button class="btn btn-secondary btn-sm" onclick="openProjectInIde('code')" title="Abrir pasta do projeto no VS Code">
+                                        💻 VS Code
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm" onclick="openProjectInIde('cursor')" title="Abrir pasta do projeto no Cursor AI">
+                                        ⚡ Cursor
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm" onclick="openProjectInIde('explorer')" title="Abrir pasta no Explorador de Arquivos">
+                                        📂 Pasta
+                                    </button>
+                                </div>
                                 <button class="btn btn-secondary btn-sm" id="btnPwOpenDoc"
                                     title="Ver arquivo Markdown raw">
                                     📄 Ver Markdown
@@ -272,6 +283,8 @@
                             <code class="pw-path-code" id="pwRealPath">Carregando caminho...</code>
                             <button class="pw-copy-btn" id="btnPwCopyPath" onclick="copyProjectPath()"
                                 title="Copiar caminho da pasta">📋 Copiar Caminho</button>
+                            <button class="pw-copy-btn pw-prompt-btn" id="btnPwCopyPrompt" onclick="copySessionStartPrompt()"
+                                title="Copiar prompt com contexto completo para colar na sua IDE ou agente de IA">✨ Copiar Prompt para Agente</button>
                         </div>
 
                         <!-- Workspace Navigation Tabs -->
@@ -1169,20 +1182,27 @@
                             <small class="qs-hint">Use letras, números, hífens ou underscores.</small>
                         </div>
                         <div class="qs-field">
-                            <label>Stack Tecnológica Principal</label>
+                            <label for="qsNewStack">Stack Tecnológica Principal</label>
                             <div class="qs-stack-chips" id="qsStackChips">
-                                <button type="button" class="qs-chip active" data-stack="Node.js / TypeScript">Node.js /
-                                    TS</button>
+                                <button type="button" class="qs-chip active" data-stack="Node.js / TypeScript">Node.js / TS</button>
                                 <button type="button" class="qs-chip" data-stack="C# / .NET">C# / .NET</button>
                                 <button type="button" class="qs-chip" data-stack="Python">Python</button>
-                                <button type="button" class="qs-chip" data-stack="React / Next.js">React /
-                                    Next.js</button>
+                                <button type="button" class="qs-chip" data-stack="React / Next.js">React / Next.js</button>
                                 <button type="button" class="qs-chip" data-stack="Go">Go</button>
                                 <button type="button" class="qs-chip" data-stack="Rust">Rust</button>
-                                <button type="button" class="qs-chip" data-stack="Livre / Multi-stack">Livre /
-                                    Outro</button>
+                                <button type="button" class="qs-chip" data-stack="Livre / Multi-stack">Livre / Outro</button>
                             </div>
-                            <input type="hidden" id="qsNewStack" value="Node.js / TypeScript">
+                            <input type="text" id="qsNewStack" class="qs-input" value="Node.js / TypeScript"
+                                placeholder="ex: Node.js / TypeScript, FastAPI + Next.js, .NET 9 + SQL Server"
+                                autocomplete="off" style="margin-top: 8px;">
+                            <small class="qs-hint">Clique em um chip para preencher rápido ou edite livremente para stacks customizadas.</small>
+                        </div>
+                        <div class="qs-field qs-checkbox-field">
+                            <label class="qs-checkbox-label">
+                                <input type="checkbox" id="qsNewInitGit" checked>
+                                <span>Inicializar repositório Git local automaticamente (<code>git init</code>)</span>
+                            </label>
+                            <small class="qs-hint">Cria o versionamento Git, gera o <code>.gitignore</code> padrão e as pontes de IA instantaneamente.</small>
                         </div>
                         <div class="qs-field">
                             <label for="qsNewDesc">Descrição Rápida (Opcional)</label>
@@ -1383,11 +1403,13 @@
                 <div id="scStepLoading" style="display: none;">
                     <div class="sc-loading">
                         <div class="sc-orb"></div>
-                        <h3>Escrevendo a memória da sessão…</h3>
-                        <ul>
-                            <li>Lendo commits e arquivos alterados</li>
-                            <li>Cruzando com o roadmap e as lições já registradas</li>
-                            <li>Redigindo o rascunho para sua revisão</li>
+                        <h3 id="scLoadingTitle">Escrevendo a memória da sessão…</h3>
+                        <p id="scLoadingLiveMsg" class="sc-loading-live-msg">🔍 Lendo commits e arquivos alterados no Git...</p>
+                        <ul id="scLoadingSteps" class="sc-loading-steps">
+                            <li id="scStep1" class="active">Lendo histórico Git e arquivos modificados</li>
+                            <li id="scStep2">Cruzando com contratos (PROJECT.md, CURRENT_STATE.md)</li>
+                            <li id="scStep3">Consultando lições aprendidas e ADRs existentes</li>
+                            <li id="scStep4">Sintetizando resumo de governança com IA para sua revisão</li>
                         </ul>
                     </div>
                 </div>

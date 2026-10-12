@@ -21,6 +21,23 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 
 ## Sessões Recentes
 - **Data**: 2026-10-12
+  - **Implementação das 5 Oportunidades Práticas de Melhoria de UX & Conexão com IDEs**:
+    - **1. Inicialização Automática do Git no Quickstart (`git init`)**:
+      - Adicionado checkbox `[x] Inicializar repositório Git local automaticamente (git init)` no formulário de criação de projeto (`#qsFormNew`).
+      - Backend `server.js` dispara `git init -b main` (com fallback para `git init`) gerando imediatamente o `.gitignore` e as pontes de governança para versionamento instantâneo.
+    - **2. Input Livre e Flexível de Stack Tecnológica**:
+      - O campo de Stack Tecnológica no modal Quickstart foi transformado em um `<input type="text" id="qsNewStack">` editável, permitindo digitação livre de stacks combinadas/customizadas enquanto preserva os chips rápidos como atalhos inteligentes de preenchimento.
+    - **3. Disparadores Diretos de IDE no Project Workspace (`open-ide`)**:
+      - Adicionados botões de ação rápida no cabeçalho do projeto: `💻 VS Code`, `⚡ Cursor` e `📂 Pasta`.
+      - Endpoint `POST /api/system/open-ide` executa o comando nativo no sistema operacional com fallback seguro e toast de confirmação.
+    - **4. Prompt Bootstrap de Início de Sessão em 1 Clique**:
+      - Botão `✨ Copiar Prompt para Agente` no cabeçalho do projeto copia imediatamente para a área de transferência um prompt formatado contendo as regras absolutas, stack e contratos (`PROJECT.md`, `CURRENT_STATE.md`, `DECISIONS/`, `LESSONS_LEARNED.md`) para alimentar qualquer agente de IA sem amnésia.
+    - **5. Feedback Visual Ativo de Inferência com Mensagens Rotativas**:
+      - No modal de Session Capture (`#scStepLoading`), implementado loop de mensagens rotativas dinâmicas ("Lendo commits...", "Cruzando contratos...", "Consultando lições aprendidas...", "Sintetizando resumo...") e steps sincronizados com efeito glow neon suave, eliminando a sensação de travamento durante a inferência.
+    - **Paridade Estrita & Linter Verde**:
+      - Todas as alterações replicadas com 100% de paridade entre `docs/brain-ui/` e `docs/brain-ui/demo/` (incluindo interceptação de mock em `demo-mode.js`).
+      - `npm run doctor`: 100% dos links e arquivos válidos (0 erros).
+
   - **Implementação Profissional do Session Capture (Registrar Sessão com IA)**:
     - **Módulo Nativo de Captura (`scripts/session-capture.js`)**:
       - Coleta determinística de dados do projeto: commits desde a última sessão registrada, arquivos modificados não commitados, diffstat com censura mandatória de arquivos confidenciais (`.env`, chaves privadas, secrets).

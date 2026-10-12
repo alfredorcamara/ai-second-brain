@@ -152,6 +152,11 @@
 2. **Higienização Determinística de Segredos**: Ao ler telemetria Git (nomes de arquivos modificados e diffstat), nunca se deve enviar o código-fonte integral (patches). Além disso, nomes de arquivos que combinem com padrões de credenciais (`.env`, `.pem`, `.key`, `id_rsa`, `secrets.*`) devem ser censurados antes da montagem do prompt para a IA.
 3. **Atualização Cirúrgica de Markdown**: Modificações no `CURRENT_STATE.md` devem ser seletivas — preservando comentários, seções adicionais e quebras de linha (`CRLF` ou `LF`) originais, apenas remanejando itens concluídos de "Próximos Passos" para "O que já foi definido" e recalculando a numeração.
 **Ação**: Sempre aplicar o padrão Draft-then-Commit com revisão humana item a item em automações de memória e higienizar qualquer entrada Git contra padrões de segredos.
-
-
+### Lição 20: Redução de Fricção no Ciclo de Vida: Disparo Direto de IDEs, Prompt Bootstrap e Feedback de Inferência
+**Contexto**: A simulação prática com um desenvolvedor iniciante revelou três atritos na experiência real: alternância manual entre navegador e terminal para abrir a IDE (`code .`), necessidade de redigir manualmente instruções de contexto ao agente de IA na primeira sessão, e sensação de travamento durante os 2 a 4 segundos de inferência do LLM no modal de captura.
+**Aprendizado**:
+1. **Acoplamento Físico com a IDE do Desenvolvedor**: A interface web não deve ser um silo isolado. Endpoints de sistema seguros (`/api/system/open-ide`) permitindo abrir o projeto diretamente no VS Code ou Cursor AI via `cmd.exe /c code` (com fallback seguro para explorador de arquivos) eliminam atrito de linha de comando.
+2. **Prompt Bootstrap em 1 Clique**: Desenvolvedores frequentemente sofrem de amnésia ao abrir uma nova janela na IDE. Disponibilizar um botão que copia imediatamente um prompt contextualizado com as regras absolutas, stack e referências aos contratos acelera o início produtivo do trabalho.
+3. **Feedback Ativo e Rotativo em Chamadas Longas de IA**: Inferências de IA para síntese de documentos levam de 1,5 a 5 segundos. Um spinner estático gera insegurança de que a aplicação travou. Substituir por mensagens rotativas sincronizadas com as fases de trabalho ("Lendo commits...", "Cruzando contratos...", "Sintetizando resumo...") transmite transparência e melhora a percepção de performance.
+**Ação**: Sempre fornecer atalhos de abertura no ambiente local do usuário, prompts de início pré-parametrizados e indicadores de progresso com mensagens de estado dinâmicas em todas as operações de inferência.
 

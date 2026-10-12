@@ -100,6 +100,10 @@
                 }
             }));
         }
+        if (u.startsWith('/api/system/open-ide')) {
+            toast('💻 Demo somente leitura — em instalação local seu editor (VS Code, Cursor) seria disparado no projeto.');
+            return Promise.resolve(json({ success: true, message: 'Simulado no modo demo.' }));
+        }
         const sessionRoute = u.match(/^\/api\/projects\/[^/]+\/session\/(draft|commit)$/);
         if (sessionRoute) {
             if (sessionRoute[1] === 'commit') {
