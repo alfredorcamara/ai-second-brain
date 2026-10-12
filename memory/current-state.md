@@ -28,12 +28,12 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
       - Em `docs/brain-ui/style.css` e `docs/brain-ui/demo/style.css`:
         - Eliminados os halos exagerados de 32px e os fundos em gradiente radial que estouravam a interface.
         - Preservado o fundo estritamente escuro `#060a13` do botão.
-        - Definido um brilho respiratório discreto e elegante:
-          - Sucesso (`.is-valid`): borda esmeralda (`rgba(16, 185, 129, 0.75)`), ícone `#10b981` e `box-shadow` suave entre 4px e 9px (`@keyframes sparklingGreen` em ciclo suave de 2.2s).
-          - Falha (`.is-invalid`): borda carmesim (`rgba(239, 68, 68, 0.75)`), ícone `#ef4444` e `box-shadow` suave entre 4px e 9px (`@keyframes sparklingRed` em ciclo suave de 2.2s).
+        - Definido um brilho respiratório calibrado (+20% de ganho luminoso):
+          - Sucesso (`.is-valid`): borda esmeralda (`rgba(16, 185, 129, 0.8)`), ícone `#10b981` com `drop-shadow(0 0 3px rgba(16, 185, 129, 0.72))` e `box-shadow` pulsando entre 5px e 11px (`@keyframes sparklingGreen` em ciclo ágil de 1.9s).
+          - Falha (`.is-invalid`): borda carmesim (`rgba(239, 68, 68, 0.8)`), ícone `#ef4444` com `drop-shadow(0 0 3px rgba(239, 68, 68, 0.72))` e `box-shadow` pulsando entre 5px e 11px (`@keyframes sparklingRed` em ciclo ágil de 1.9s).
         - Estado hover neutro com borda suave translúcida, alinhado à estética dark do sistema.
     - **Validação Visual & Integridade**:
-      - Comprovado visualmente no navegador com browser subagent: capturados screenshots dos estados de sucesso e erro demonstrando fidelidade à imagem de referência e suavidade do brilho.
+      - Comprovado visualmente no navegador com browser subagent: capturados screenshots dos estados de sucesso e erro demonstrando fidelidade à imagem de referência e a calibração de +20% no brilho.
       - `npm run doctor`: 100% dos links e arquivos íntegros (0 erros).
 
   - **Sincronização Fiel dos Parâmetros do `.env`, Validação Estrita e Estilização Escura das Setas de Retries**:

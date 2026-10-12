@@ -9102,55 +9102,55 @@ body::-webkit-scrollbar-thumb:hover {
     100% { transform: rotate(5deg) scale(1.03); }
 }
 
-/* Estado: Validado Positivamente (Verde Cintilante Suave & Elegante) */
+/* Estado: Validado Positivamente (Verde Cintilante Calibrado +20%) */
 .btn-ai-test-key.is-valid,
 .btn-ai-test-key.is-success {
     background: #060a13 !important;
-    border-color: rgba(16, 185, 129, 0.75) !important;
+    border-color: rgba(16, 185, 129, 0.8) !important;
     color: #10b981 !important;
-    animation: sparklingGreen 2.2s infinite ease-in-out !important;
+    animation: sparklingGreen 1.9s infinite ease-in-out !important;
 }
 
 .btn-ai-test-key.is-valid .ai-key-icon-svg,
 .btn-ai-test-key.is-success .ai-key-icon-svg {
     stroke: #10b981 !important;
-    filter: drop-shadow(0 0 2px rgba(16, 185, 129, 0.6));
+    filter: drop-shadow(0 0 3px rgba(16, 185, 129, 0.72));
 }
 
 @keyframes sparklingGreen {
     0%, 100% {
-        box-shadow: 0 0 4px rgba(16, 185, 129, 0.25);
-        border-color: rgba(16, 185, 129, 0.5);
+        box-shadow: 0 0 5px rgba(16, 185, 129, 0.3);
+        border-color: rgba(16, 185, 129, 0.55);
     }
     50% {
-        box-shadow: 0 0 9px rgba(16, 185, 129, 0.5), 0 0 2px rgba(16, 185, 129, 0.7);
-        border-color: rgba(52, 211, 153, 0.9);
+        box-shadow: 0 0 11px rgba(16, 185, 129, 0.6), 0 0 3px rgba(16, 185, 129, 0.8);
+        border-color: rgba(52, 211, 153, 0.95);
     }
 }
 
-/* Estado: Falha na Validação (Vermelho Cintilante Suave & Elegante) */
+/* Estado: Falha na Validação (Vermelho Cintilante Calibrado +20%) */
 .btn-ai-test-key.is-invalid,
 .btn-ai-test-key.is-error {
     background: #060a13 !important;
-    border-color: rgba(239, 68, 68, 0.75) !important;
+    border-color: rgba(239, 68, 68, 0.8) !important;
     color: #ef4444 !important;
-    animation: sparklingRed 2.2s infinite ease-in-out !important;
+    animation: sparklingRed 1.9s infinite ease-in-out !important;
 }
 
 .btn-ai-test-key.is-invalid .ai-key-icon-svg,
 .btn-ai-test-key.is-error .ai-key-icon-svg {
     stroke: #ef4444 !important;
-    filter: drop-shadow(0 0 2px rgba(239, 68, 68, 0.6));
+    filter: drop-shadow(0 0 3px rgba(239, 68, 68, 0.72));
 }
 
 @keyframes sparklingRed {
     0%, 100% {
-        box-shadow: 0 0 4px rgba(239, 68, 68, 0.25);
-        border-color: rgba(239, 68, 68, 0.5);
+        box-shadow: 0 0 5px rgba(239, 68, 68, 0.3);
+        border-color: rgba(239, 68, 68, 0.55);
     }
     50% {
-        box-shadow: 0 0 9px rgba(239, 68, 68, 0.5), 0 0 2px rgba(239, 68, 68, 0.7);
-        border-color: rgba(248, 113, 113, 0.9);
+        box-shadow: 0 0 11px rgba(239, 68, 68, 0.6), 0 0 3px rgba(239, 68, 68, 0.8);
+        border-color: rgba(248, 113, 113, 0.95);
     }
 }
 
