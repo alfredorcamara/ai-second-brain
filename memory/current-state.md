@@ -21,6 +21,23 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 
 ## Sessões Recentes
 - **Data**: 2026-10-12
+  - **Sincronização & Atualização Completa das Documentações de Usuário e Landing Page**:
+    - **Landing Page (`docs/brain-ui/landing/index.html` e `i18n.dict.js`)**:
+      - Atualizado Bento Grid (`#vantagens`) com novos cards dedicados ao **Session Capture com IA (Draft & Commit)** e ao **Prompt Bootstrap & IDE Hooks (VS Code / Cursor)**.
+      - Atualizado Quickstart Studio (`#projeto`) destacando a criação guiada com `git init` automático, `.gitignore` seguro contra segredos, pontes multi-IA e flexibilidade total de stack.
+      - Adicionada pergunta e resposta no FAQ técnico sobre a sanitização automática de segredos (`.env`, tokens) e supervisão humana obrigatória antes da gravação de memória.
+      - Tradução bilíngue (PT/EN) 100% sincronizada no dicionário `landing/js/i18n.dict.js`.
+    - **Documentação da Solução do Cockpit (`docs/brain-ui/index.html` e `demo/index.html`)**:
+      - Capítulo 5 (Ciclo de Vida Hands-on): Etapa 1 atualizada com Prompt Bootstrap e botões de IDE; Etapa 4 atualizada com o fluxo Draft & Commit de Session Capture com IA.
+      - Capítulo 7 (Checklists & FAQ): Adicionado item técnico esclarecendo a sanitização de dados e segurança do Session Capture.
+    - **Manuais Oficiais (`docs/COMO_UTILIZAR_O_PROJETO.md` e `README.md`)**:
+      - Seção 4 de `COMO_UTILIZAR_O_PROJETO.md` enriquecida com a "Opção A: Fluxo Visual pelo Cockpit Web" e "Opção B: Fluxo Conversacional via Terminal/Chat".
+      - Seção 6 atualizada com a estrutura exata do Prompt Bootstrap gerado pelo Cockpit.
+      - `README.md` atualizado na seção "Comece em 3 Minutos" com os novos atalhos e recursos operacionais.
+    - **Validação & Paridade**:
+      - Executado `npm run scan` atualizando `vault-data.js` e espelhado em `demo/`.
+      - Executado `npm run doctor` com 100% de integridade (0 links quebrados, todos os contratos válidos).
+
   - **Implementação das 5 Oportunidades Práticas de Melhoria de UX & Conexão com IDEs**:
     - **1. Inicialização Automática do Git no Quickstart (`git init`)**:
       - Adicionado checkbox `[x] Inicializar repositório Git local automaticamente (git init)` no formulário de criação de projeto (`#qsFormNew`).

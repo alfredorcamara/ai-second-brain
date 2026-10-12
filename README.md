@@ -15,15 +15,18 @@ que entende o contexto, respeita regras e acumula conhecimento ao longo do tempo
 git clone https://github.com/alfredorcamara/ai-second-brain.git
 cd ai-second-brain
 
-# 2. Crie seu primeiro projeto (Greenfield) OU vincule um repositório existente (Brownfield)
-npm run project:new meu-saas          # Cria a pasta em projects/ com templates prontos
-# OU
-npm run project:link meu-repo "C:\Projetos\MeuRepo" # Conecta via junção sem duplicar arquivos
-
-# 3. Inicie o Cockpit Visual (Grafo 3D & Dashboard em tempo real)
+# 2. Inicie o Cockpit Visual (Grafo 3D, Quickstart Studio & Dashboard)
 npm start
 
-# 4. Abra o workspace na sua IDE favorita (Cursor, Claude Code, Antigravity, Windsurf) e comece a desenvolver!
+# 3. No navegador (ou via terminal):
+#    - Crie um novo projeto guiado com git init automático e stack aberta
+#    - Ou vincule um projeto existente via junção sem duplicar arquivos
+#    - Abra direto no VS Code / Cursor em 1 clique
+#    - Copie o Prompt Bootstrap pré-aquecido para seu agente
+#    - Feche sessões com o Session Capture assistido por IA (Draft & Commit)
+npm run project:new meu-saas          # Via terminal: cria templates em projects/
+# OU
+npm run project:link meu-repo "C:\Projetos\MeuRepo" # Conecta via junção
 ```
 
 ## Estrutura

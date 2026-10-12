@@ -983,10 +983,8 @@
                                 <div class="sdoc-step-item">
                                     <div class="sdoc-step-badge">Etapa 1</div>
                                     <div class="sdoc-step-text">
-                                        <h4>Início da Sessão (Leitura de Estado)</h4>
-                                        <p>O agente e o desenvolvedor abrem a sessão lendo o
-                                            <code>CURRENT_STATE.md</code>. O contexto de onde o projeto parou é
-                                            recuperado instantaneamente.
+                                        <h4>Início da Sessão (Prompt Bootstrap &amp; IDE Hooks)</h4>
+                                        <p>No Cockpit, clique em <code>✨ Copiar Prompt para Agente</code> para colar o contexto pré-aquecido (regras, restrições e estado atual) no chat do agente. Em seguida, clique em <code>💻 VS Code</code> ou <code>⚡ Cursor</code> para abrir a pasta do projeto diretamente do navegador.
                                         </p>
                                     </div>
                                 </div>
@@ -1010,9 +1008,8 @@
                                 <div class="sdoc-step-item">
                                     <div class="sdoc-step-badge">Etapa 4</div>
                                     <div class="sdoc-step-text">
-                                        <h4>Fechamento &amp; Memória Persistente</h4>
-                                        <p>Ao encerrar, a skill <code>session-memory</code> grava o que foi feito, as
-                                            decisões tomadas e os próximos passos. A próxima sessão inicia sem amnésia.
+                                        <h4>Fechamento &amp; Session Capture com IA (Draft &amp; Commit)</h4>
+                                        <p>Ao concluir o trabalho, clique em <code>🧠 Registrar Sessão</code>. A IA inspeciona seus commits Git e arquivos alterados, sintetizando um rascunho com entregas e pendências. O desenvolvedor revisa e aprova o rascunho antes da gravação em <code>CURRENT_STATE.md</code> e <code>MEMORY/sessions/</code>.
                                         </p>
                                     </div>
                                 </div>
@@ -1077,6 +1074,10 @@
                                 <p>No Windows, o AI Second Brain utiliza <strong>Junções NTFS (Junctions)</strong> ou
                                     symlinks de diretório. Os arquivos permanecem nos seus repositórios originais e
                                     apenas o espelho de governança é conectado ao cérebro.</p>
+                            </div>
+                            <div class="sdoc-faq-item">
+                                <h4>Como o Session Capture garante a segurança de senhas e segredos (.env)?</h4>
+                                <p>O motor do Session Capture opera sob o padrão <strong>Draft &amp; Commit</strong> com inspeção segura: arquivos de variáveis sensíveis como <code>.env</code>, chaves de API e credenciais são excluídos do diff. Além disso, nenhuma alteração é persistida na memória sem a revisão e aprovação explícita do desenvolvedor no modal.</p>
                             </div>
                             <div class="sdoc-faq-item">
                                 <h4>O que acontece se a Groq Cloud ficar indisponível?</h4>

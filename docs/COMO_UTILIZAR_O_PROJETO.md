@@ -248,9 +248,9 @@ Para que o Segundo Cérebro funcione como uma extensão real da sua memória, to
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ 1. ENTRADA (Context Loading)                                │
-│ "Vou trabalhar no [NomeDoProjeto] na feature de autenticação.│
-│ Carregue o estado atual e decisões pendentes."               │
+│ 1. ENTRADA (Context Loading & Bootstrap)                    │
+│ Cockpit: "Copiar Prompt para Agente" + Abrir VS Code/Cursor │
+│ Ou no chat: "Vou trabalhar no [Projeto]. Carregue o estado."│
 └──────────────────────────────┬──────────────────────────────┘
                                │
                                ▼
@@ -261,13 +261,33 @@ Para que o Segundo Cérebro funcione como uma extensão real da sua memória, to
                                │
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
-│ 3. SAÍDA (Memory Flush & Sync)                              │
-│ "Finalizamos por hoje. Atualize CURRENT_STATE.md e registre │
-│ a sessão na memória."                                       │
+│ 3. SAÍDA (Session Capture Assistido por IA: Draft & Commit) │
+│ Cockpit: "Registrar Sessão" (Lê Git + Rascunho IA + Revisão)│
+│ Ou no chat: "Finalizamos. Salve a memória da sessão."       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### 1. Início da Sessão
+### Opção A: Fluxo Visual pelo Cockpit Web (Recomendado ⭐)
+1. **Início da Sessão (Prompt Bootstrap & IDE Hooks)**:
+   - Abra o Cockpit (`npm start` em `http://localhost:3333/`).
+   - No card do seu projeto, clique em **`✨ Copiar Prompt para Agente`**. O Cockpit copia automaticamente para sua área de transferência um prompt pré-aquecido contendo a constituição de regras, restrições e o estado atual exato do projeto.
+   - Clique em **`💻 VS Code`** ou **`⚡ Cursor`** para abrir o repositório diretamente no editor desejado.
+   - Cole o prompt no chat do agente e comece imediatamente a desenvolver.
+2. **Durante a Sessão**:
+   - Desenvolva com o agente seguindo os playbooks das skills (`new-feature`, `bug-investigation`, `database-review`, etc.).
+   - Faça commits intermediários no Git normalmente.
+3. **Fim da Sessão (Session Capture com IA — Draft & Commit)**:
+   - Volte ao Cockpit e clique no botão **`🧠 Registrar Sessão`** no topo do workspace do projeto.
+   - O Cockpit invoca o AI Gateway (Groq, OpenAI, Gemini, etc.), analisa automaticamente os commits recentes do Git e os arquivos modificados, e produz um **rascunho estruturado** de Entregas Realizadas, Lições Aprendidas e Próximos Passos.
+   - **Revisão Humana Obrigatória**: Você pode editar qualquer parte do rascunho na tela.
+   - Clique em **`💾 Confirmar e Gravar Memória`**: o sistema grava o arquivo histórico em `MEMORY/sessions/YYYY-MM-DD-resumo.md` e sincroniza o `CURRENT_STATE.md`.
+
+---
+
+### Opção B: Fluxo Conversacional via Terminal / Chat da IDE
+Caso prefira operar 100% via terminal ou dentro do chat do agente:
+
+#### 1. Início da Sessão
 Antes de pedir código, peça o contexto:
 > *"Vou trabalhar no [Nome do Projeto]. Me apresente o estado atual e os próximos passos."*
 
@@ -276,15 +296,15 @@ O agente lê:
 - As últimas 3 sessões em `projects/[Nome]/MEMORY/sessions/`
 - As decisões relevantes em `projects/[Nome]/DECISIONS/`
 
-### 2. Durante a Sessão
+#### 2. Durante a Sessão
 O agente utiliza as skills adequadas para cada atividade:
 - **Vai criar endpoint ou serviço?** → Aciona a skill `new-feature`.
 - **Apareceu um erro/bug?** → Aciona a skill `bug-investigation`.
 - **Vai adicionar uma consulta SQL pesada?** → Aciona a skill `database-review`.
 - **A feature envolve inteligência ou decisão?** → Aciona a skill `ai-decision-gate`.
 
-### 3. Fim da Sessão (Memory Flush)
-Nunca encerre o Antigravity sem registrar a sessão. Envie:
+#### 3. Fim da Sessão (Memory Flush)
+Nunca encerre o chat sem registrar a sessão. Envie:
 > *"Fechando os trabalhos de hoje no [Nome do Projeto]. Salve a memória da sessão e atualize o CURRENT_STATE."*
 
 O agente:
@@ -355,6 +375,23 @@ Me apresente:
 1. O que foi feito recentemente.
 2. Quais são as tarefas prioritárias de hoje.
 3. Há algum bloqueio registrado?
+```
+
+### Prompt Bootstrap em 1 Clique (Gerado pelo Cockpit):
+No Cockpit (`http://localhost:3333/`), ao clicar em **`✨ Copiar Prompt para Agente`**, o sistema gera automaticamente este payload pré-aquecido para você colar no Cursor, Claude, Antigravity ou Windsurf:
+
+```text
+Você é o agente de desenvolvimento oficial deste projeto.
+Antes de propor ou escrever qualquer código:
+1. Leia as regras de engenharia em .agents/rules/
+2. Respeite o CURRENT_STATE.md e as decisões arquiteturais em DECISIONS/
+3. Jamais invente regras de negócio ou contexto inexistente.
+4. Prioridade determinística sempre: código puro primeiro, AIJev para decisões, LLM apenas para geração aberta.
+Projeto ativo: [NOME_DO_PROJETO]
+Caminho físico: [CAMINHO_DO_PROJETO]
+Stack: [STACK_TECNICA]
+
+Consulte o CURRENT_STATE.md e me diga onde paramos e qual o próximo passo prioritário.
 ```
 
 ### Para Implementar uma Nova Feature com IA:
