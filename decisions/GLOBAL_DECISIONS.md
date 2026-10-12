@@ -46,4 +46,14 @@
   4. **Resiliência a Falhas e Cota (429)**: Ping ao vivo de latência e detecção automática de esgotamento de créditos com interceptador gráfico guiando a troca de provedor sem interromper o fluxo de trabalho.
 - **Detalhes**: Ver `scripts/ai-gateway.js`, `server.js` e modais em `docs/brain-ui/index.html`.
 
+## ADR-G007: Captura de Sessão Assistida por IA com Revisão Humana Obrigatória (Session Capture)
+- **Status**: Aceita
+- **Data**: 2026-10-12
+- **Descrição**: A captura de memória diária de projetos conectados passa a ser assistida por IA através de um pipeline em duas etapas coordenadas:
+  1. **Coleta Determinística & Rascunho IA (Somente Leitura)**: `POST /api/projects/:name/session/draft` lê dados de telemetria Git (commits, nomes de arquivos modificados, diffstat com censura de arquivos sensíveis como `.env`), snapshot de contratos (`PROJECT.md`, `CURRENT_STATE.md`, `LESSONS_LEARNED.md`) e notas opcionais do desenvolvedor. A IA atua exclusivamente na redação e estruturação em JSON tipado. **Nada é gravado no disco nesta etapa**.
+  2. **Revisão Humana Interativa & Gravação Atômica**: O desenvolvedor revisa título, markdown de resumo, checkboxes de passos concluídos, novos passos e lições aprendidas sugeridas. Apenas sob clique explícito em "Gravar na memória", o endpoint `POST /api/projects/:name/session/commit` realiza gravação física no disco (`MEMORY/sessions/AAAA-MM-DD-titulo.md`), atualiza cirurgicamente `CURRENT_STATE.md` (remanejando itens concluídos e preservando seções adicionais e estilo CRLF) e anexa novas lições a `LESSONS_LEARNED.md`.
+- **Motivo**: Elimina o atrito do registro manual de sessões e a amnésia de contexto entre agentes sem risco de alucinação ou perda de controle, respeitando o princípio de *Zero Fabricação*.
+- **Detalhes**: Ver `scripts/session-capture.js`, `scripts/ai-gateway.js` e interface em `docs/brain-ui/`.
+
+
 

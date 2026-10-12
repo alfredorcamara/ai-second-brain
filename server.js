@@ -1250,6 +1250,74 @@ Projeto externo vinculado ao AI Second Brain.
         return;
     }
 
+    // ============================================================
+    // SESSION CAPTURE — Registro de sessão assistido por IA
+    // Fluxo: /session/draft (somente leitura + IA) → revisão humana → /session/commit (grava)
+    // ============================================================
+    const sessionRouteMatch = pathname.match(/^\/api\/projects\/([^/]+)\/session\/(draft|commit)$/);
+    if (sessionRouteMatch && req.method === 'POST') {
+        const sessionProject = decodeURIComponent(sessionRouteMatch[1]);
+        const sessionAction = sessionRouteMatch[2];
+        const sendJson = (status, payload) => {
+            res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify(payload));
+        };
+
+        try {
+            delete require.cache[require.resolve('./scripts/session-capture')];
+            const sessionCapture = require('./scripts/session-capture');
+            const body = await readJsonBody(req);
+
+            if (sessionAction === 'draft') {
+                const input = await sessionCapture.prepareDraftInput(ROOT_DIR, sessionProject, body.notes);
+                console.log(`🧠 [Session Capture] Gerando rascunho para '${input.name}' (git: ${input.gitSummary.available ? input.gitSummary.commits + ' commits, ' + input.gitSummary.changedFiles + ' arquivos' : 'indisponível'})`);
+
+                const startedAt = Date.now();
+                const ai = await getAiGateway().summarizeSession(input.promptText, { skipCache: !!body.regenerate });
+                const draft = sessionCapture.normalizeDraft(ai.draft, input.state);
+
+                console.log(`✅ [Session Capture] Rascunho pronto em ${Date.now() - startedAt}ms`);
+                sendJson(200, {
+                    success: true,
+                    project: input.name,
+                    draft,
+                    git: input.gitSummary,
+                    model: ai.model,
+                    provider: ai.provider,
+                    usage: ai.usage,
+                    inferenceMs: Date.now() - startedAt
+                });
+                return;
+            }
+
+            // commit
+            const result = sessionCapture.commitSession(ROOT_DIR, sessionProject, body);
+
+            try {
+                delete require.cache[require.resolve('./scripts/scan-vault')];
+                const { scanVault } = require('./scripts/scan-vault');
+                const vault = scanVault(ROOT_DIR);
+                fs.writeFileSync(path.join(UI_DIR, 'vault-data.js'), `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+            } catch (snapErr) {
+                console.warn('⚠️ [Session Capture] Falha ao atualizar snapshot do vault:', snapErr.message);
+            }
+            broadcastEvent('vault-updated', { project: sessionProject, type: 'session-capture', time: Date.now() });
+
+            console.log(`💾 [Session Capture] Sessão gravada: ${result.sessionFile}`);
+            sendJson(200, { success: true, ...result });
+        } catch (err) {
+            console.error(`❌ [Session Capture] Erro (${sessionAction}):`, err.message);
+            const status = err.statusCode === 429 || err.quotaExceeded ? 429 : (err.statusCode || 500);
+            sendJson(status, {
+                success: false,
+                error: err.message,
+                quotaExceeded: status === 429,
+                statusCode: status
+            });
+        }
+        return;
+    }
+
     // API: List Research Labs for a Project
     if (pathname.startsWith('/api/projects/') && pathname.endsWith('/research') && req.method === 'GET') {
         try {

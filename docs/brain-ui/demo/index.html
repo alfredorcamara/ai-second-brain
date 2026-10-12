@@ -1349,6 +1349,69 @@
          RESEARCH LAB MODALS (NOVA PESQUISA & PROMPT VIVO)
          ═══════════════════════════════════════════════════ -->
 
+    <!-- Modal: Registrar Sessão com IA (Session Capture) -->
+    <div id="sessionCaptureModal" class="editor-modal-backdrop" style="display: none;"
+        onclick="handleSessionCaptureBackdropClick(event)">
+        <div class="research-modal-card sc-modal-card" role="dialog" aria-modal="true" aria-labelledby="scModalTitle">
+            <div class="rl-modal-header">
+                <div class="rl-modal-title-group">
+                    <span class="rl-modal-badge">🧠 MEMÓRIA &middot; IA ESCRIBA</span>
+                    <h2 id="scModalTitle" class="rl-modal-title">Registrar Sessão com IA</h2>
+                    <p class="rl-modal-sub" id="scModalSub">A IA lê seus commits, arquivos alterados e notas e propõe o
+                        registro da sessão.</p>
+                </div>
+                <button class="editor-close-btn" onclick="closeSessionCaptureModal()" aria-label="Fechar">✕</button>
+            </div>
+
+            <div class="rl-modal-body">
+                <!-- Etapa 1: Entrada -->
+                <div id="scStepInput">
+                    <div class="sc-sources">
+                        <div class="sc-source"><span class="sc-source-icon">🌿</span><div><strong>Git do projeto</strong><span>Commits desde a última sessão, arquivos alterados e diffstat. O conteúdo do código nunca é enviado.</span></div></div>
+                        <div class="sc-source"><span class="sc-source-icon">📄</span><div><strong>Contratos</strong><span>PROJECT.md, CURRENT_STATE.md e sessões recentes de <b id="scProjectLabel">projeto</b>.</span></div></div>
+                        <div class="sc-source"><span class="sc-source-icon">✍️</span><div><strong>Suas notas</strong><span>Cole o resumo do chat com o agente ou escreva livremente (opcional se houver commits).</span></div></div>
+                    </div>
+
+                    <div class="rl-form-group">
+                        <label class="rl-form-label" for="scNotesInput">Notas da sessão <span class="rl-hint" style="display:inline;margin-left:6px;">(opcional)</span></label>
+                        <textarea id="scNotesInput" class="rl-form-textarea" rows="7" maxlength="12000"
+                            placeholder="Ex.: Implementei o login com JWT. Decidimos usar refresh token em cookie httpOnly. Falta cobrir expiração com testes."></textarea>
+                        <span class="rl-hint">A IA usa apenas o que estiver aqui, nos commits e nos contratos — nada é inventado. Você revisa tudo antes de gravar.</span>
+                    </div>
+                </div>
+
+                <!-- Etapa 2: Carregando -->
+                <div id="scStepLoading" style="display: none;">
+                    <div class="sc-loading">
+                        <div class="sc-orb"></div>
+                        <h3>Escrevendo a memória da sessão…</h3>
+                        <ul>
+                            <li>Lendo commits e arquivos alterados</li>
+                            <li>Cruzando com o roadmap e as lições já registradas</li>
+                            <li>Redigindo o rascunho para sua revisão</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Etapa 3: Revisão (preenchida via JS) -->
+                <div id="scStepReview" style="display: none;"></div>
+            </div>
+
+            <div class="sc-footer">
+                <div class="rl-modal-status" id="scStatus"></div>
+                <div class="rl-modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeSessionCaptureModal()">Cancelar</button>
+                    <button type="button" class="btn btn-secondary" id="btnScRegenerate" style="display: none;"
+                        onclick="generateSessionDraft(true)">🔄 Regenerar</button>
+                    <button type="button" class="btn btn-primary" id="btnScGenerate"
+                        onclick="generateSessionDraft(false)">✨ Gerar rascunho</button>
+                    <button type="button" class="btn btn-primary" id="btnScCommit" style="display: none;"
+                        onclick="commitSessionDraft()">💾 Gravar na memória</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal 1: Nova Pesquisa com IA Groq -->
     <div id="researchModal" class="editor-modal-backdrop" style="display: none;"
         onclick="handleResearchBackdropClick(event)">

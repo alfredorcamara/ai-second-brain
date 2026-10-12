@@ -100,6 +100,31 @@
                 }
             }));
         }
+        const sessionRoute = u.match(/^\/api\/projects\/[^/]+\/session\/(draft|commit)$/);
+        if (sessionRoute) {
+            if (sessionRoute[1] === 'commit') {
+                toast('🔒 Demo somente leitura — em instalação local a sessão seria gravada em MEMORY/sessions/.');
+                return Promise.resolve(json({ success: true, sessionFileName: 'exemplo-demo.md', movedSteps: 0, addedSteps: 0, lessonsAdded: 0 }));
+            }
+            return new Promise(resolve => setTimeout(() => resolve(json({
+                success: true,
+                project: 'demo-app',
+                git: { available: true, branch: 'main', since: null, commits: 3, changedFiles: 2 },
+                provider: 'groq',
+                model: 'openai/gpt-oss-120b',
+                inferenceMs: 1840,
+                usage: {},
+                draft: {
+                    title: 'Exemplo: autenticação JWT e testes de expiração',
+                    summaryMarkdown: '## O que foi feito\n- (Exemplo de demonstração) Implementado login com JWT e refresh token.\n- Cobertura de testes para expiração de token.\n\n## Decisões e motivos\n- Refresh token em cookie httpOnly para reduzir risco de XSS.\n\n## Pendências e bloqueios\n- Revisar política de rotação de refresh tokens.',
+                    completedSteps: [],
+                    newDefinedItems: ['Login com JWT e refresh token'],
+                    newNextSteps: ['Revisar política de rotação de refresh tokens'],
+                    lessons: [{ title: 'Expiração de JWT em testes', context: 'Testes dependiam do relógio real.', learning: 'Injetar o relógio evita testes instáveis de expiração.', action: 'Usar relógio injetável em testes de autenticação.' }],
+                    adrCandidates: [{ title: 'Refresh token em cookie httpOnly', reason: 'Mudança na estratégia de sessão.' }]
+                }
+            })), 1400));
+        }
         toast('🔒 Demo somente leitura — instale localmente para criar, editar e rodar o Research Lab.');
         return Promise.resolve(json({ ok: false, error: 'Modo demonstração (somente leitura)' }, 403));
     };

@@ -1,10 +1,10 @@
 # Estado Atual do AI Second Brain
 
-> Última atualização: 2026-10-11
+> Última atualização: 2026-10-12
 
-## Status do Framework: 🟢 Operacional & Cockpit Avançado + 🔬 Research Lab + ⚡ AI Gateway Multi-Provedor (BYOK Ativo)
+## Status do Framework: 🟢 Operacional & Cockpit Avançado + 🔬 Research Lab + ⚡ AI Gateway Multi-Provedor (BYOK Ativo) + 🧠 Session Capture com IA
 
-O AI Second Brain está estruturado como uma plataforma universal de governança e desenvolvimento com IA, livre de acoplamento a projetos específicos e equipada com um portal web moderno, motor de pesquisa autônoma resiliente e AI Gateway multi-provedor (BYOK).
+O AI Second Brain está estruturado como uma plataforma universal de governança e desenvolvimento com IA, livre de acoplamento a projetos específicos e equipada com um portal web moderno, motor de pesquisa autônoma resiliente, AI Gateway multi-provedor (BYOK) e captura inteligente de sessões.
 
 ## Estrutura do Workspace
 
@@ -16,10 +16,31 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 | `projects/` | Projetos conectados pelo desenvolvedor | 🟢 Suporta Greenfield & Brownfield + RESEARCH/ |
 | `memory/` | Memória de continuidade entre sessões | ✅ Operacional |
 | `templates/` | Modelos para novos projetos, specs e ADRs | ✅ Disponíveis |
-| `docs/brain-ui/` | Portal web interativo de visualização e governança | 🚀 UX/UI com Project Workspace, Grafo 3D & AI BYOK |
-| `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway Multi-Provedor, Research Engine) |
+| `docs/brain-ui/` | Portal web interativo de visualização e governança | 🚀 UX/UI com Project Workspace, Grafo 3D, AI BYOK & Session Capture |
+| `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway, Research Engine, Session Capture) |
 
 ## Sessões Recentes
+- **Data**: 2026-10-12
+  - **Implementação Profissional do Session Capture (Registrar Sessão com IA)**:
+    - **Módulo Nativo de Captura (`scripts/session-capture.js`)**:
+      - Coleta determinística de dados do projeto: commits desde a última sessão registrada, arquivos modificados não commitados, diffstat com censura mandatória de arquivos confidenciais (`.env`, chaves privadas, secrets).
+      - Leitura e estruturação dos contratos (`PROJECT.md`, `CURRENT_STATE.md`, `LESSONS_LEARNED.md` e sessões recentes).
+      - Algoritmo de normalização e validação defensiva contra o estado real do projeto, impedindo duplicações ou inclusão de itens especulativos.
+      - Gravação física atômica: cria `MEMORY/sessions/AAAA-MM-DD-titulo.md` (nunca sobrescreve sessões existentes do mesmo dia), atualiza cirurgicamente `CURRENT_STATE.md` (remanejando itens concluídos de "Próximos Passos" para "O que já foi definido", adicionando novas pendências e preservando quebras de linha CRLF/LF) e anexa aprendizados em `LESSONS_LEARNED.md`.
+    - **Extensão do AI Gateway (`scripts/ai-gateway.js`)**:
+      - Nova função `summarizeSession(contextText, options)` com prompt especializado (`SYSTEM_PROMPTS.sessionCapture`) governado pelas regras de *Zero Fabricação*.
+      - Suporte à opção `skipCache: true` para o botão "🔄 Regenerar" na interface de revisão.
+      - Correção preventiva da variável `isModelNotFound` no manipulador de erros do gateway.
+    - **Endpoints REST no Backend (`server.js`)**:
+      - `POST /api/projects/:name/session/draft`: Coleta determinística + inferência com IA para gerar o rascunho. Nada é gravado em disco nesta etapa.
+      - `POST /api/projects/:name/session/commit`: Gravação atômica após aprovação e ajustes do usuário. Dispara invalidação de snapshot do vault e evento SSE em tempo real.
+    - **Interface de Alta Fidelidade no Cockpit e Modal de Revisão (`docs/brain-ui/`)**:
+      - Card promocional destacado na aba **Memória & Saúde** do Project Workspace com botão `🧠 Registrar Sessão`.
+      - Modal interativo (`#sessionCaptureModal`) em 3 etapas fluidas: Entrada (informações Git + notas do usuário) → Carregamento (orbe neon animado) → Revisão completa item a item com checkboxes e campos editáveis.
+      - Paridade absoluta com a demonstração pública em `docs/brain-ui/demo/` através de mocks no `demo-mode.js`.
+  - **Correção da Numeração Sequencial de Decisões Arquiteturais (ADRs)**:
+    - Em `docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js`, função `createNewDecisionRecord` atualizada para inspecionar os ADRs existentes do projeto e calcular o próximo número sequencial (`NNN-nova-decisao.md`), eliminando a sobrescrita do arquivo `001-stack-inicial.md`.
+
 - **Data**: 2026-10-11
   - **Refinamento do Botão de Validação com Ícone Fiel e Efeito Cintilante Suave**:
     - **Ajuste da Geometria do Ícone à Referência do Usuário**:

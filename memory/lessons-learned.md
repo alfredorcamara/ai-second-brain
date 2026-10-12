@@ -141,4 +141,17 @@
 4. **Validação em Camadas (Frontend e Backend)**: Validações de limites (ex: TTL entre 1h e 720h, Retries entre 0 e 5) devem ocorrer em três camadas coordenadas: na interatividade (`keydown`/`input`), no pré-salvamento no cliente (com feedback visual e foco) e no backend (retornando HTTP 400 antes de gravar no disco).
 **Ação**: Sempre aplicar leitura explícita no modal, blindar inputs de senhas contra autofill e validar intervalos de dados em todas as camadas da aplicação.
 
+---
+
+## 2026-10-12 — Session Capture com IA & Higienização Determinística
+
+### Lição 19: Separação Estrita em Duas Etapas (Draft vs Commit) e Proteção de Segredos na Coleta Git
+**Contexto**: A automação do registro diário de sessões e atualização de memória precisava capturar o contexto do repositório (Git) sem vazar chaves de API/arquivos confidenciais para a IA e sem gravar arquivos precipitadamente antes da conferência do desenvolvedor.
+**Aprendizado**:
+1. **Separação em Duas Fases**: Toda ação de IA que altera memória e contratos vivos deve seguir a separação estrita: `/session/draft` (somente leitura: reúne contexto e pede redação em JSON tipado ao LLM) e `/session/commit` (gravação física: executada apenas após clique explícito de aprovação humana no modal de revisão).
+2. **Higienização Determinística de Segredos**: Ao ler telemetria Git (nomes de arquivos modificados e diffstat), nunca se deve enviar o código-fonte integral (patches). Além disso, nomes de arquivos que combinem com padrões de credenciais (`.env`, `.pem`, `.key`, `id_rsa`, `secrets.*`) devem ser censurados antes da montagem do prompt para a IA.
+3. **Atualização Cirúrgica de Markdown**: Modificações no `CURRENT_STATE.md` devem ser seletivas — preservando comentários, seções adicionais e quebras de linha (`CRLF` ou `LF`) originais, apenas remanejando itens concluídos de "Próximos Passos" para "O que já foi definido" e recalculando a numeração.
+**Ação**: Sempre aplicar o padrão Draft-then-Commit com revisão humana item a item em automações de memória e higienizar qualquer entrada Git contra padrões de segredos.
+
+
 

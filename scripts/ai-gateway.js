@@ -628,6 +628,10 @@ async function chatCompletion(messages, options = {}) {
  */
 async function handleChatError(err, messages, options, provider, retryCount, maxRetries) {
     const isRateLimit = err.statusCode === 429 || /rate limit|quota/i.test(err.message);
+    const isModelNotFound = !isRateLimit && (
+        err.statusCode === 404 ||
+        /model.*(does not exist|not found|decommission|no access)|does not exist or you do not have access/i.test(err.message)
+    );
     // Notificação se o modelo estiver indisponível/descontinuado no provedor
     if (isModelNotFound) {
         const customErr = new Error(`O modelo "${options.model || 'selecionado'}" não está disponível ou foi descontinuado pelo provedor ${provider.name}. Abra as configurações de IA no topo, teste a conexão e selecione um modelo ativo da lista.`);
@@ -718,8 +722,51 @@ DIRETRIZES DE CONTEÚDO:
 4. Inclua uma seção de "Trade-offs e Armadilhas a Evitar" (Gotchas, problemas comuns de concorrência, escala ou segurança).
 5. Inclua uma seção final de "Como Aplicar Neste Projeto" com recomendações concretas.
 6. Mantenha um tom profissional, direto, sem introduções genéricas.
-7. Use formatação markdown rica: tabelas comparativas, listas claras, blocos de código com sintaxe destacada.`
+7. Use formatação markdown rica: tabelas comparativas, listas claras, blocos de código com sintaxe destacada.`,
+
+    sessionCapture: () => `Você é o Escriba de Memória do AI Second Brain. Sua tarefa é converter o material bruto de uma sessão de trabalho (commits, arquivos alterados, notas do desenvolvedor) em registros de memória precisos e úteis para futuros agentes de IA.
+
+REGRAS ABSOLUTAS:
+1. Use EXCLUSIVAMENTE as informações fornecidas. NUNCA invente funcionalidades, arquivos, decisões, números ou resultados. Se algo não estiver claro, omita ou escreva "Não definido".
+2. O que foi feito deve se apoiar em commits, arquivos alterados ou nas notas do desenvolvedor.
+3. completedNextStepIndexes: inclua o número de um "Próximo Passo" SOMENTE se houver evidência explícita de que foi concluído nesta sessão.
+4. newDefinedItems: entregas concluídas nesta sessão que ainda não constam em "Já definido". Frases curtas (máx. 200 caracteres).
+5. newNextSteps: apenas pendências mencionadas nas notas/commits (TODO, "falta", "próximo", bloqueios). Não crie roadmap especulativo.
+6. lessons: apenas aprendizados não óbvios (armadilha, bug, contrato) embasados nas notas. Se não houver, retorne [].
+7. adrCandidates: apenas se os commits/notas indicarem mudança de arquitetura, biblioteca, banco ou provedor. Senão, [].
+8. Não repita itens já listados em "Já definido" ou "Lições já registradas".
+9. Idioma: português do Brasil. Tom técnico, direto e conciso.
+10. Responda SOMENTE com JSON válido, sem texto antes ou depois e sem cercas de markdown.
+
+FORMATO DE RESPOSTA (JSON):
+{
+  "title": "Título curto da sessão (máx. 80 caracteres)",
+  "summaryMarkdown": "Markdown SEM título H1, com as seções: ## O que foi feito, ## Decisões e motivos, ## Pendências e bloqueios (omita a seção que não tiver conteúdo)",
+  "completedNextStepIndexes": [1],
+  "newDefinedItems": ["..."],
+  "newNextSteps": ["..."],
+  "lessons": [{ "title": "...", "context": "...", "learning": "...", "action": "..." }],
+  "adrCandidates": [{ "title": "...", "reason": "..." }]
+}`
 };
+
+/**
+ * Extrai um objeto JSON de uma resposta de LLM (remove cercas markdown e texto ao redor).
+ */
+function parseJsonLoose(text) {
+    let s = String(text || '').trim();
+    s = s.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '');
+    try {
+        return JSON.parse(s);
+    } catch (_) {
+        const start = s.indexOf('{');
+        const end = s.lastIndexOf('}');
+        if (start !== -1 && end > start) {
+            return JSON.parse(s.slice(start, end + 1));
+        }
+        throw new Error('resposta não contém JSON válido');
+    }
+}
 
 /**
  * Funções de alto nível para o Research Lab
@@ -789,6 +836,35 @@ Gere o documento Markdown completo, rico e profissional sobre este subtópico ag
     };
 }
 
+/**
+ * Gera o rascunho de memória de uma sessão de trabalho (Session Capture).
+ * @param {string} contextText Contexto já montado de forma determinística (git + contratos + notas)
+ * @param {{ skipCache?: boolean }} [options] skipCache=true força nova inferência ("Regenerar")
+ * @returns {Promise<{ draft: object, usage: object, model: string, provider: string }>}
+ */
+async function summarizeSession(contextText, options = {}) {
+    const result = await chatCompletion([
+        { role: 'system', content: SYSTEM_PROMPTS.sessionCapture() },
+        { role: 'user', content: contextText }
+    ], { temperature: 0.2, maxTokens: 3000, skipCache: !!options.skipCache });
+
+    let draft;
+    try {
+        draft = parseJsonLoose(result.content);
+    } catch (e) {
+        const err = new Error(`A IA retornou uma resposta inválida ao resumir a sessão: ${e.message}. Tente novamente.`);
+        err.statusCode = 502;
+        throw err;
+    }
+
+    return {
+        draft,
+        usage: result.usage,
+        model: result.model,
+        provider: result.provider
+    };
+}
+
 module.exports = {
     PROVIDERS,
     loadEnvFile,
@@ -799,5 +875,7 @@ module.exports = {
     refineResearchPrompt,
     decomposeResearchTopic,
     synthesizeSubtopic,
+    summarizeSession,
+    parseJsonLoose,
     SYSTEM_PROMPTS
 };

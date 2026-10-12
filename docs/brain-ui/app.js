@@ -772,7 +772,49 @@ async function createNewDecisionRecord(projectName) {
     if (!projName) return;
 
     const today = new Date().toISOString().split('T')[0];
-    const defaultTemplate = `# ADR-001: Escolha da Stack e Padrões Iniciais de Arquitetura
+
+    // Numeração sequencial determinística: nunca sobrescreve um ADR existente
+    let existingDecisions = [];
+    if (currentProjectData && currentProjectData.name === projName && Array.isArray(currentProjectData.decisions)) {
+        existingDecisions = currentProjectData.decisions.map(d => d.name);
+    } else if (isLocalEnvironment()) {
+        try {
+            const resDet = await fetch(`/api/projects/${encodeURIComponent(projName)}/details`);
+            if (resDet.ok) {
+                const det = await resDet.json();
+                existingDecisions = (det.decisions || []).map(d => d.name);
+            }
+        } catch (e) {}
+    }
+    const maxAdrNum = existingDecisions.reduce((max, n) => {
+        const m = /^(?:ADR-)?(\d+)/i.exec(n);
+        return m ? Math.max(max, parseInt(m[1], 10)) : max;
+    }, 0);
+    const isFirstAdr = maxAdrNum === 0;
+    const adrNum = String(maxAdrNum + 1).padStart(3, '0');
+    const adrFileName = isFirstAdr ? '001-stack-inicial.md' : `${adrNum}-nova-decisao.md`;
+
+    const nextAdrTemplate = `# ADR-${adrNum}: [Título da decisão]
+
+> **Projeto**: ${projName}  
+> **Data**: ${today}  
+> **Status**: Proposta  
+
+## Contexto
+[Qual problema ou necessidade motivou esta decisão?]
+
+## Decisão
+[O que foi decidido?]
+
+## Consequências
+- **Positivas**: 
+- **Trade-offs / Riscos**: 
+
+## Alternativas Consideradas
+- 
+`;
+
+    const defaultTemplate = !isFirstAdr ? nextAdrTemplate : `# ADR-001: Escolha da Stack e Padrões Iniciais de Arquitetura
 
 > **Projeto**: ${projName}  
 > **Data**: ${today}  
@@ -795,7 +837,7 @@ Quaisquer decisões futuras que alterem bibliotecas essenciais, conexões de ban
 `;
 
     // Abre o editor markdown direto para salvar
-    openFileEditor(`projects/${projName}/DECISIONS/001-stack-inicial.md`, defaultTemplate, async () => {
+    openFileEditor(`projects/${projName}/DECISIONS/${adrFileName}`, defaultTemplate, async () => {
         showSecondBrainToast('⚖️ Decisão arquitetural registrada com sucesso no disco!');
         if (currentView === 'project-workspace') {
             await openProjectWorkspace(projName, 'overview');
@@ -3553,6 +3595,25 @@ function renderProjectMemoryTab() {
                     <div class="pw-metric-val">${d.decisionsCount}</div>
                     <div class="pw-metric-lbl">Decisões Arquiteturais</div>
                 </div>
+            </div>
+        </div>
+
+        <div class="pw-card sc-launch-card" style="margin-bottom: 20px;">
+            <div class="pw-card-header">
+                <span class="pw-card-title">🧠 Registrar Sessão com IA</span>
+                <span class="sc-ai-chip">✨ IA</span>
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 12px; font-size: 13px;">
+                Terminou de trabalhar? A IA lê seus commits, os arquivos alterados e suas notas e propõe o registro da sessão, as atualizações do roadmap e as lições aprendidas. Você revisa item a item antes de gravar.
+            </p>
+            <div class="pw-action-box">
+                <div class="pw-action-info">
+                    <h4>Memória sem esforço manual</h4>
+                    <p>Gera <code>MEMORY/sessions/</code>, atualiza o <code>CURRENT_STATE.md</code> e sugere entradas para <code>LESSONS_LEARNED.md</code>. Nada é gravado sem sua confirmação.</p>
+                </div>
+                <button class="btn btn-primary" id="btnOpenSessionCapture" onclick="openSessionCaptureModal()">
+                    🧠 Registrar Sessão
+                </button>
             </div>
         </div>
 
@@ -7133,6 +7194,274 @@ window.showQuotaExceededModal = showQuotaExceededModal;
 window.closeAiQuotaModal = closeAiQuotaModal;
 window.handleAiQuotaBackdropClick = handleAiQuotaBackdropClick;
 window.proceedFromQuotaToSettings = proceedFromQuotaToSettings;
+
+// ═══════════════════════════════════════════════════════════
+// SESSION CAPTURE — Registrar Sessão com IA
+// Fluxo: coleta determinística (git + contratos) → IA redige rascunho →
+// revisão humana item a item → só então grava (sessão, CURRENT_STATE, lições).
+// ═══════════════════════════════════════════════════════════
+let sessionCaptureState = { project: null, notes: '', draft: null, model: '', busy: false };
+
+function scEl(id) { return document.getElementById(id); }
+
+function setSessionCaptureStep(step) {
+    const map = { input: 'scStepInput', loading: 'scStepLoading', review: 'scStepReview' };
+    Object.entries(map).forEach(([key, id]) => {
+        const el = scEl(id);
+        if (el) el.style.display = key === step ? 'block' : 'none';
+    });
+    const show = (id, visible) => { const el = scEl(id); if (el) el.style.display = visible ? '' : 'none'; };
+    show('btnScGenerate', step === 'input');
+    show('btnScRegenerate', step === 'review');
+    show('btnScCommit', step === 'review');
+    const sub = scEl('scModalSub');
+    if (sub) {
+        sub.textContent = step === 'review'
+            ? 'Revise e ajuste o rascunho. Nada é gravado em disco até você confirmar.'
+            : step === 'loading'
+                ? 'A IA está lendo o contexto do projeto…'
+                : 'A IA lê seus commits, arquivos alterados e notas e propõe o registro da sessão.';
+    }
+}
+
+function setSessionCaptureStatus(html) {
+    const el = scEl('scStatus');
+    if (el) el.innerHTML = html || '';
+}
+
+function openSessionCaptureModal() {
+    const project = currentProjectData ? currentProjectData.name : currentProject;
+    if (!project) return;
+    sessionCaptureState = { project, notes: '', draft: null, model: '', busy: false };
+
+    const notesInput = scEl('scNotesInput');
+    if (notesInput) notesInput.value = '';
+    const projLabel = scEl('scProjectLabel');
+    if (projLabel) projLabel.textContent = project;
+
+    setSessionCaptureStep('input');
+    setSessionCaptureStatus('');
+    const modal = scEl('sessionCaptureModal');
+    if (modal) modal.style.display = 'flex';
+    setTimeout(() => notesInput && notesInput.focus(), 60);
+}
+
+async function closeSessionCaptureModal(force = false) {
+    const st = sessionCaptureState;
+    if (st.busy && !force) return;
+    if (!force && st.draft) {
+        const ok = await showBrainConfirm({
+            title: 'Descartar rascunho da sessão?',
+            badge: '🧠 SESSÃO',
+            icon: '🧠',
+            message: 'O rascunho gerado pela IA ainda não foi gravado e será perdido.',
+            confirmText: 'Descartar',
+            cancelText: 'Continuar revisando',
+            danger: true
+        });
+        if (!ok) return;
+    }
+    const modal = scEl('sessionCaptureModal');
+    if (modal) modal.style.display = 'none';
+    sessionCaptureState = { project: null, notes: '', draft: null, model: '', busy: false };
+}
+
+function handleSessionCaptureBackdropClick(event) {
+    if (event.target && event.target.id === 'sessionCaptureModal') closeSessionCaptureModal();
+}
+
+async function generateSessionDraft(regenerate = false) {
+    const st = sessionCaptureState;
+    if (!st.project || st.busy) return;
+
+    if (!regenerate) {
+        st.notes = (scEl('scNotesInput')?.value || '').trim();
+    }
+
+    st.busy = true;
+    setSessionCaptureStep('loading');
+    setSessionCaptureStatus('<span class="pulse-dot"></span> Consultando a IA…');
+    const btnGen = scEl('btnScGenerate');
+    if (btnGen) btnGen.disabled = true;
+
+    try {
+        const res = await fetch(`/api/projects/${encodeURIComponent(st.project)}/session/draft`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ notes: st.notes, regenerate: !!regenerate })
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+            setSessionCaptureStep('input');
+            if (res.status === 429 || data.quotaExceeded) {
+                setSessionCaptureStatus('<span class="status-dot" style="background:#f59e0b"></span> Cota de IA esgotada.');
+                showQuotaExceededModal(data.error);
+                return;
+            }
+            const needsConfig = /Chave de API|modelo de IA|Nenhum modelo/i.test(data.error || '');
+            setSessionCaptureStatus(
+                `<span class="status-dot" style="background:#ef4444"></span> ${escapeHtml(data.error || 'Falha ao gerar o rascunho.')}` +
+                (needsConfig ? ' <button type="button" class="sc-link-btn" onclick="openAiSettingsModal()">Abrir configurações de IA</button>' : '')
+            );
+            return;
+        }
+
+        st.draft = data.draft;
+        st.model = data.model || '';
+        renderSessionReview(data);
+        setSessionCaptureStep('review');
+        setSessionCaptureStatus(`<span class="status-dot" style="background:#10b981"></span> Rascunho pronto em ${data.inferenceMs || '?'}ms`);
+    } catch (err) {
+        setSessionCaptureStep('input');
+        setSessionCaptureStatus(`<span class="status-dot" style="background:#ef4444"></span> ${escapeHtml(err.message)}`);
+    } finally {
+        st.busy = false;
+        if (btnGen) btnGen.disabled = false;
+    }
+}
+
+function renderSessionReview(data) {
+    const el = scEl('scStepReview');
+    const d = data.draft;
+    if (!el || !d) return;
+
+    const git = data.git || {};
+    const gitChip = git.available
+        ? `🌿 ${escapeHtml(git.branch || 'git')} · ${git.commits} commit(s)${git.since ? ' desde ' + escapeHtml(git.since) : ''} · ${git.changedFiles} arquivo(s) não commitado(s)`
+        : `⚠️ Git indisponível — baseado apenas nas suas notas`;
+    const aiChip = `✨ ${escapeHtml(data.provider || 'ia')} · ${escapeHtml(data.model || '')}`;
+
+    const itemRows = (items, cls) => items.map(text => `
+        <label class="sc-item-row">
+            <input type="checkbox" class="sc-chk ${cls}" checked>
+            <input type="text" class="rl-form-input sc-item-input" value="${escapeHtml(text)}" maxlength="220">
+        </label>`).join('');
+
+    const completedHtml = d.completedSteps.length ? d.completedSteps.map(s => `
+        <label class="sc-item-row">
+            <input type="checkbox" class="sc-chk sc-completed" checked data-text="${escapeHtml(s.text)}">
+            <span class="sc-item-text"><s>${escapeHtml(s.text)}</s> <em>→ mover para “Já definido”</em></span>
+        </label>`).join('') : '<div class="sc-empty">Nenhum próximo passo concluído com evidência nesta sessão.</div>';
+
+    const lessonsHtml = d.lessons.length ? d.lessons.map((l, i) => `
+        <label class="sc-lesson">
+            <input type="checkbox" class="sc-chk sc-lesson-chk" checked data-index="${i}">
+            <span>
+                <strong>${escapeHtml(l.title)}</strong>
+                <span class="sc-lesson-text">${escapeHtml(l.learning)}</span>
+                ${l.action ? `<span class="sc-lesson-action">Ação: ${escapeHtml(l.action)}</span>` : ''}
+            </span>
+        </label>`).join('') : '<div class="sc-empty">Nenhuma lição não óbvia identificada.</div>';
+
+    const adrHtml = d.adrCandidates.length ? `
+        <div class="sc-section">
+            <div class="sc-section-title">⚖️ Possíveis decisões arquiteturais <span class="sc-badge">sugestão</span></div>
+            <ul class="sc-adr-list">${d.adrCandidates.map(a => `<li><strong>${escapeHtml(a.title)}</strong>${a.reason ? ' — ' + escapeHtml(a.reason) : ''}</li>`).join('')}</ul>
+            <span class="rl-hint">Registre-as depois em <code>DECISIONS/</code> pelo botão de decisão arquitetural do projeto.</span>
+        </div>` : '';
+
+    el.innerHTML = `
+        <div class="sc-chips">
+            <span class="sc-chip">${gitChip}</span>
+            <span class="sc-chip sc-chip-ai">${aiChip}</span>
+        </div>
+
+        <div class="rl-form-group">
+            <label class="rl-form-label" for="scTitleInput">Título da sessão</label>
+            <input id="scTitleInput" class="rl-form-input" type="text" maxlength="90" value="${escapeHtml(d.title)}">
+        </div>
+
+        <div class="rl-form-group">
+            <label class="rl-form-label" for="scSummaryInput">Registro da sessão <span class="rl-hint" style="display:inline;margin-left:6px;">(Markdown · editável) → <code>MEMORY/sessions/</code></span></label>
+            <textarea id="scSummaryInput" class="rl-form-textarea sc-summary" rows="10">${escapeHtml(d.summaryMarkdown)}</textarea>
+        </div>
+
+        <div class="sc-section">
+            <div class="sc-section-title">✅ Próximos passos concluídos</div>
+            ${completedHtml}
+        </div>
+
+        <div class="sc-section">
+            <div class="sc-section-title">📌 Novos itens “Já definido”</div>
+            ${d.newDefinedItems.length ? itemRows(d.newDefinedItems, 'sc-defined') : '<div class="sc-empty">Nenhum item novo.</div>'}
+        </div>
+
+        <div class="sc-section">
+            <div class="sc-section-title">🎯 Novos próximos passos <span class="sc-badge">somente pendências citadas</span></div>
+            ${d.newNextSteps.length ? itemRows(d.newNextSteps, 'sc-next') : '<div class="sc-empty">Nenhuma pendência nova identificada.</div>'}
+        </div>
+
+        <div class="sc-section">
+            <div class="sc-section-title">📚 Lições aprendidas <span class="sc-badge">→ LESSONS_LEARNED.md</span></div>
+            ${lessonsHtml}
+        </div>
+
+        ${adrHtml}
+    `;
+}
+
+async function commitSessionDraft() {
+    const st = sessionCaptureState;
+    if (!st.project || !st.draft || st.busy) return;
+
+    const root = scEl('scStepReview');
+    const checkedValues = cls => Array.from(root.querySelectorAll(`.${cls}:checked`))
+        .map(chk => chk.closest('.sc-item-row')?.querySelector('.sc-item-input')?.value.trim() || '')
+        .filter(Boolean);
+
+    const payload = {
+        title: (scEl('scTitleInput')?.value || '').trim(),
+        summaryMarkdown: (scEl('scSummaryInput')?.value || '').trim(),
+        completedSteps: Array.from(root.querySelectorAll('.sc-completed:checked')).map(chk => chk.dataset.text),
+        newDefinedItems: checkedValues('sc-defined'),
+        newNextSteps: checkedValues('sc-next'),
+        lessons: Array.from(root.querySelectorAll('.sc-lesson-chk:checked')).map(chk => st.draft.lessons[parseInt(chk.dataset.index, 10)]).filter(Boolean),
+        model: st.model
+    };
+
+    if (!payload.title || !payload.summaryMarkdown) {
+        setSessionCaptureStatus('<span class="status-dot" style="background:#ef4444"></span> Título e registro da sessão não podem ficar vazios.');
+        return;
+    }
+
+    const btn = scEl('btnScCommit');
+    st.busy = true;
+    if (btn) { btn.disabled = true; btn.textContent = 'Gravando…'; }
+
+    try {
+        const res = await fetch(`/api/projects/${encodeURIComponent(st.project)}/session/commit`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || 'Falha ao gravar a sessão.');
+
+        const project = st.project;
+        const parts = [`sessão ${data.sessionFileName}`];
+        if (data.movedSteps) parts.push(`${data.movedSteps} passo(s) concluído(s)`);
+        if (data.addedSteps) parts.push(`${data.addedSteps} novo(s) passo(s)`);
+        if (data.lessonsAdded) parts.push(`${data.lessonsAdded} lição(ões)`);
+        showSecondBrainToast(`🧠 Memória atualizada: ${parts.join(' · ')}`);
+
+        st.busy = false;
+        await closeSessionCaptureModal(true);
+        await openProjectWorkspace(project, 'memory');
+    } catch (err) {
+        setSessionCaptureStatus(`<span class="status-dot" style="background:#ef4444"></span> ${escapeHtml(err.message)}`);
+    } finally {
+        st.busy = false;
+        if (btn) { btn.disabled = false; btn.textContent = '💾 Gravar na memória'; }
+    }
+}
+
+window.openSessionCaptureModal = openSessionCaptureModal;
+window.closeSessionCaptureModal = closeSessionCaptureModal;
+window.handleSessionCaptureBackdropClick = handleSessionCaptureBackdropClick;
+window.generateSessionDraft = generateSessionDraft;
+window.commitSessionDraft = commitSessionDraft;
+
 
 // Carrega status da IA automaticamente após carregar a interface
 if (document.readyState === 'loading') {
