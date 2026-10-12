@@ -1,10 +1,10 @@
 // ═══════════════════════════════════════════════════
 // AI SECOND BRAIN — Dynamic Vault Snapshot
-// Auto-generated: 2026-10-12T17:12:14.951Z
+// Auto-generated: 2026-10-12T17:39:15.806Z
 // ═══════════════════════════════════════════════════
 
 window.VAULT_SNAPSHOT = {
-  "timestamp": 1791825134951,
+  "timestamp": 1791826755806,
   "files": [
     {
       "id": "_agents_rules_00-core_md",
@@ -411,10 +411,10 @@ window.VAULT_SNAPSHOT = {
       "title": "Estado Atual do AI Second Brain",
       "category": "memory",
       "icon": "💾",
-      "size": 41109,
-      "mtime": 1791824407022.2717,
+      "size": 43022,
+      "mtime": 1791825213991.1968,
       "outgoingLinks": [],
-      "content": "# Estado Atual do AI Second Brain\n\n> Última atualização: 2026-10-12\n\n## Status do Framework: 🟢 Operacional & Cockpit Avançado + 🔬 Research Lab + ⚡ AI Gateway Multi-Provedor (BYOK Ativo) + 🧠 Session Capture com IA\n\nO AI Second Brain está estruturado como uma plataforma universal de governança e desenvolvimento com IA, livre de acoplamento a projetos específicos e equipada com um portal web moderno, motor de pesquisa autônoma resiliente, AI Gateway multi-provedor (BYOK) e captura inteligente de sessões.\n\n## Estrutura do Workspace\n\n| Diretório | Papel | Estado |\n|---|---|---|\n| `.agents/rules/` | Regras universais de governança (IA, Segurança, Docs) | ✅ Agnósticas |\n| `.agents/skills/` | Workflows reutilizáveis para Antigravity | ✅ 8 skills ativas |\n| `knowledge/` | Base de conhecimento em IA, Arquitetura e Segurança | ✅ 100% universal |\n| `projects/` | Projetos conectados pelo desenvolvedor | 🟢 Suporta Greenfield & Brownfield + RESEARCH/ |\n| `memory/` | Memória de continuidade entre sessões | ✅ Operacional |\n| `templates/` | Modelos para novos projetos, specs e ADRs | ✅ Disponíveis |\n| `docs/brain-ui/` | Portal web interativo de visualização e governança | 🚀 UX/UI com Project Workspace, Grafo 3D, AI BYOK & Session Capture |\n| `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway, Research Engine, Session Capture) |\n\n## Sessões Recentes\n- **Data**: 2026-10-12\n  - **Implementação das 5 Oportunidades Práticas de Melhoria de UX & Conexão com IDEs**:\n    - **1. Inicialização Automática do Git no Quickstart (`git init`)**:\n      - Adicionado checkbox `[x] Inicializar repositório Git local automaticamente (git init)` no formulário de criação de projeto (`#qsFormNew`).\n      - Backend `server.js` dispara `git init -b main` (com fallback para `git init`) gerando imediatamente o `.gitignore` e as pontes de governança para versionamento instantâneo.\n    - **2. Input Livre e Flexível de Stack Tecnológica**:\n      - O campo de Stack Tecnológica no modal Quickstart foi transformado em um `<input type=\"text\" id=\"qsNewStack\">` editável, permitindo digitação livre de stacks combinadas/customizadas enquanto preserva os chips rápidos como atalhos inteligentes de preenchimento.\n    - **3. Disparadores Diretos de IDE no Project Workspace (`open-ide`)**:\n      - Adicionados botões de ação rápida no cabeçalho do projeto: `💻 VS Code`, `⚡ Cursor` e `📂 Pasta`.\n      - Endpoint `POST /api/system/open-ide` executa o comando nativo no sistema operacional com fallback seguro e toast de confirmação.\n    - **4. Prompt Bootstrap de Início de Sessão em 1 Clique**:\n      - Botão `✨ Copiar Prompt para Agente` no cabeçalho do projeto copia imediatamente para a área de transferência um prompt formatado contendo as regras absolutas, stack e contratos (`PROJECT.md`, `CURRENT_STATE.md`, `DECISIONS/`, `LESSONS_LEARNED.md`) para alimentar qualquer agente de IA sem amnésia.\n    - **5. Feedback Visual Ativo de Inferência com Mensagens Rotativas**:\n      - No modal de Session Capture (`#scStepLoading`), implementado loop de mensagens rotativas dinâmicas (\"Lendo commits...\", \"Cruzando contratos...\", \"Consultando lições aprendidas...\", \"Sintetizando resumo...\") e steps sincronizados com efeito glow neon suave, eliminando a sensação de travamento durante a inferência.\n    - **Paridade Estrita & Linter Verde**:\n      - Todas as alterações replicadas com 100% de paridade entre `docs/brain-ui/` e `docs/brain-ui/demo/` (incluindo interceptação de mock em `demo-mode.js`).\n      - `npm run doctor`: 100% dos links e arquivos válidos (0 erros).\n\n  - **Implementação Profissional do Session Capture (Registrar Sessão com IA)**:\n    - **Módulo Nativo de Captura (`scripts/session-capture.js`)**:\n      - Coleta determinística de dados do projeto: commits desde a última sessão registrada, arquivos modificados não commitados, diffstat com censura mandatória de arquivos confidenciais (`.env`, chaves privadas, secrets).\n      - Leitura e estruturação dos contratos (`PROJECT.md`, `CURRENT_STATE.md`, `LESSONS_LEARNED.md` e sessões recentes).\n      - Algoritmo de normalização e validação defensiva contra o estado real do projeto, impedindo duplicações ou inclusão de itens especulativos.\n      - Gravação física atômica: cria `MEMORY/sessions/AAAA-MM-DD-titulo.md` (nunca sobrescreve sessões existentes do mesmo dia), atualiza cirurgicamente `CURRENT_STATE.md` (remanejando itens concluídos de \"Próximos Passos\" para \"O que já foi definido\", adicionando novas pendências e preservando quebras de linha CRLF/LF) e anexa aprendizados em `LESSONS_LEARNED.md`.\n    - **Extensão do AI Gateway (`scripts/ai-gateway.js`)**:\n      - Nova função `summarizeSession(contextText, options)` com prompt especializado (`SYSTEM_PROMPTS.sessionCapture`) governado pelas regras de *Zero Fabricação*.\n      - Suporte à opção `skipCache: true` para o botão \"🔄 Regenerar\" na interface de revisão.\n      - Correção preventiva da variável `isModelNotFound` no manipulador de erros do gateway.\n    - **Endpoints REST no Backend (`server.js`)**:\n      - `POST /api/projects/:name/session/draft`: Coleta determinística + inferência com IA para gerar o rascunho. Nada é gravado em disco nesta etapa.\n      - `POST /api/projects/:name/session/commit`: Gravação atômica após aprovação e ajustes do usuário. Dispara invalidação de snapshot do vault e evento SSE em tempo real.\n    - **Interface de Alta Fidelidade no Cockpit e Modal de Revisão (`docs/brain-ui/`)**:\n      - Card promocional destacado na aba **Memória & Saúde** do Project Workspace com botão `🧠 Registrar Sessão`.\n      - Modal interativo (`#sessionCaptureModal`) em 3 etapas fluidas: Entrada (informações Git + notas do usuário) → Carregamento (orbe neon animado) → Revisão completa item a item com checkboxes e campos editáveis.\n      - Paridade absoluta com a demonstração pública em `docs/brain-ui/demo/` através de mocks no `demo-mode.js`.\n  - **Correção da Numeração Sequencial de Decisões Arquiteturais (ADRs)**:\n    - Em `docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js`, função `createNewDecisionRecord` atualizada para inspecionar os ADRs existentes do projeto e calcular o próximo número sequencial (`NNN-nova-decisao.md`), eliminando a sobrescrita do arquivo `001-stack-inicial.md`.\n\n- **Data**: 2026-10-11\n  - **Refinamento do Botão de Validação com Ícone Fiel e Efeito Cintilante Suave**:\n    - **Ajuste da Geometria do Ícone à Referência do Usuário**:\n      - Substituída a geometria anterior pelo ícone oficial Heroicons v2 Outline Key (`M15.75 5.25a3 3...`) com traçado de 1.8px em `docs/brain-ui/index.html` e `docs/brain-ui/demo/index.html`, replicando com exatidão a haste diagonal, dentes escalonados e cabeça arredondada da imagem fornecida pelo desenvolvedor.\n    - **Suavização do Efeito Cintilante (Eliminação de Excessos)**:\n      - Em `docs/brain-ui/style.css` e `docs/brain-ui/demo/style.css`:\n        - Eliminados os halos exagerados de 32px e os fundos em gradiente radial que estouravam a interface.\n        - Preservado o fundo estritamente escuro `#060a13` do botão.\n        - Definido um brilho respiratório calibrado (+20% de ganho luminoso):\n          - Sucesso (`.is-valid`): borda esmeralda (`rgba(16, 185, 129, 0.8)`), ícone `#10b981` com `drop-shadow(0 0 3px rgba(16, 185, 129, 0.72))` e `box-shadow` pulsando entre 5px e 11px (`@keyframes sparklingGreen` em ciclo ágil de 1.9s).\n          - Falha (`.is-invalid`): borda carmesim (`rgba(239, 68, 68, 0.8)`), ícone `#ef4444` com `drop-shadow(0 0 3px rgba(239, 68, 68, 0.72))` e `box-shadow` pulsando entre 5px e 11px (`@keyframes sparklingRed` em ciclo ágil de 1.9s).\n        - Estado hover neutro com borda suave translúcida, alinhado à estética dark do sistema.\n    - **Validação Visual & Integridade**:\n      - Comprovado visualmente no navegador com browser subagent: capturados screenshots dos estados de sucesso e erro demonstrando fidelidade à imagem de referência e a calibração de +20% no brilho.\n      - `npm run doctor`: 100% dos links e arquivos íntegros (0 erros).\n\n  - **Sincronização Fiel dos Parâmetros do `.env`, Validação Estrita e Estilização Escura das Setas de Retries**:\n    - **Sincronização com `.env` na Abertura do Modal de IA**:\n      - Em `docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js` (`openAiSettingsModal`), os campos `#aiCacheHoursInput` e `#aiMaxRetriesInput` passam a ser populados fielmente a partir de `cfg.cacheHours` e `cfg.maxRetries` lidos em tempo real do `.env` via `/api/ai/config`.\n      - Em `scripts/ai-gateway.js` (`getConfig` e `saveConfig`), corrigido o fallback `|| 2` que impedia o valor legítimo `0` de retries; agora tratados com validação de número inteiro positivo (`>= 0`).\n    - **Validação Defensiva e Restrição de Digitação em Camadas**:\n      - **Frontend (Interatividade & Sanitização)**: Função `setupAiParamsInputValidation` bloqueia teclas proibidas (`-`, `+`, `e`, `.`, `,` em retries; letras espúrias em cache) via `keydown`, sanitiza colagem via `input` (clamp entre 0 e 5 para retries e formato `${hours}h` entre 1h e 720h para cache no `blur`).\n      - **Frontend (Pré-Salvamento)**: `handleSaveAiSettings` valida estritamente ambos os parâmetros antes de qualquer disparo de rede; se inválidos, exibe feedback no terminal, aplica classe de erro `.input-error` com animação de shake e impede a submissão.\n      - **Backend (API & Gateway)**: `saveConfig` em `scripts/ai-gateway.js` e `/api/ai/save` em `server.js` validam intervalos permitidos (Cache: 1 a 720 horas; Retries: 0 a 10 tentativas), retornando HTTP 400 com mensagem amigável caso haja inconsistência.\n    - **Estilização Escura das Setas (Spin Buttons) de Retries**:\n      - Adicionado `color-scheme: dark;` em `.ai-param-detail-input-wrap .ai-param-input[type=\"number\"]` em `docs/brain-ui/style.css` e `docs/brain-ui/demo/style.css`.\n      - Customizados `::-webkit-inner-spin-button` e `::-webkit-outer-spin-button` com filtros escuros harmônicos e transições suaves, integrando o controle nativo ao visual dark da interface e eliminando setas/fundos claros.\n    - **Restauração e Blindagem do Fundo Escuro na Caixa de API Key (`#aiApiKeyInput`)**:\n      - Corrigido o comportamento do Chromium em que campos `type=\"password\"` ativavam o gerenciador de credenciais do navegador e aplicavam `-webkit-autofill` com fundo claro (`rgb(232, 240, 254)`).\n      - Aplicada blindagem CSS com `-webkit-box-shadow: 0 0 0 1000px #060a13 inset !important`, `-webkit-text-fill-color: #f8fafc !important`, `color-scheme: dark !important` e `background: #060a13 !important` em `docs/brain-ui/style.css` e `docs/brain-ui/demo/style.css`.\n      - Atualizado o HTML (`docs/brain-ui/index.html` e `demo/index.html`) com `placeholder=\"gsk_... ou cole sua chave de API\"` e `autocomplete=\"new-password\"` evitando que o navegador trate como senha de login com fundo branco.\n    - **Validação End-to-End**:\n      - Testado no navegador via browser subagent com comprovação visual dos valores `24h` e `4`, setas escuras, caixa de API Key escura (#060a13) e validação em tempo real.\n      - `npm run doctor`: 100% dos links e arquivos íntegros (0 erros).\n\n  - **Correção Crítica no AI Gateway (BYOK), Eliminação de ReferenceError e Blindagem de Base URL**:\n    - **Resolução do `ReferenceError: cachedModelsByProvider is not defined`**:\n      - Restaurada a declaração explícita de `const cachedModelsByProvider = {}` no topo de `scripts/ai-gateway.js`, eliminando as respostas HTTP 500 em `/api/ai/config` e HTTP 400 em `/api/ai/test` e `/api/ai/save`.\n    - **Isolamento Estrito de `baseUrl` por Provedor**:\n      - Corrigido o vazamento de `AI_BASE_URL` entre provedores no `.env`: agora apenas provedores configuráveis (`ollama` e `custom`) herdam ou gravam URLs customizadas; provedores padrão de nuvem (`groq`, `openai`, `anthropic`, `openrouter`) utilizam estritamente suas URLs oficiais da API, prevenindo que requisições para a Groq fossem roteadas para a URL da Anthropic.\n    - **Propagação Fiel de Erros HTTP e Prevenção de Falsos Positivos**:\n      - O bloco `testConnection` não silencia mais erros de autenticação (401/403) ou cota (429) no endpoint `/models`.\n      - Se nenhum modelo de chat for detectado, o sistema rejeita o teste com erro amigável em vez de gerar estado falso de sucesso com \"Catálogo pronto\".\n    - **Validação Preventiva no Frontend (`docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js`)**:\n      - Se o usuário não digitou chave e o provedor não possui chave salva no `.env`, o clique em \"Testar\" ou \"Salvar\" exibe erro claro no terminal e foca no input sem disparar requisições inválidas de rede.\n      - Se nenhum modelo foi selecionado, o botão \"Salvar e Ativar\" orienta a testar e escolher um modelo compatível.\n      - Ao trocar de provedor no select, o input `baseUrl` é devidamente limpo para provedores de nuvem.\n    - **Hot-Reload de Módulo no Servidor (`server.js`)**:\n      - Implementada a função `getAiGateway()` com invalidação dinâmica de cache do Node.js (`delete require.cache`), permitindo que alterações nas regras do gateway sejam refletidas em tempo real sem crash.\n\n  - **Auditoria e Fidelidade Estrita de Documentos na Landing Page (`docs/brain-ui/landing/`)**:\n    - **Eliminação de Referências a Arquivos Fictícios / Placeholders**:\n      - Em conformidade estrita com a regra universal de *Zero Fabricação*, eliminados todos os nomes de arquivos inexistentes que estavam exibidos na interface da landing page (`nucleo.md`, `seguranca.md`, `decisao-ia.md`, `ai-decision-gate.md`, `new-feature.md`, `bug-investigation.md`, `estado.md`, `licoes.md`, `sessao-13.md`, `adr-001.md`, etc.).\n    - **Mapeamento Preciso para Arquivos Reais do Workspace**:\n      - **Camada 01 (`rules/`)**: Substituído por `00-core.md`, `01-ai-decision.md` e `03-security.md`.\n      - **Camada 02 (`skills/`)**: Substituído por `ai-decision-gate/SKILL.md`, `new-feature/SKILL.md` e `bug-investigation/SKILL.md`.\n      - **Camada 03 (`memory/`)**: Substituído por `current-state.md`, `lessons-learned.md` e `README.md`.\n      - **Camada 04 (`decisions/`)**: Substituído por `GLOBAL_DECISIONS.md`, `001-stack-inicial.md` e `decisao_groq_provider.md`.\n      - **Terminal Chat Mockup**: Atualizado para ler e citar `memory/current-state.md`, `decisions/GLOBAL_DECISIONS.md` e `.agents/rules/03-security.md`.\n      - **Research Lab**: Caminhos atualizados para o padrão real `projects/<projeto>/RESEARCH/<tema>/knowledge/` e `actionable/`.\n      - **Quickstart Studio**: Card de estrutura atualizado incluindo `LESSONS_LEARNED.md`.\n    - **Correção Estrutural no Grafo Neural 3D e Leitor Lateral (`js/data.js`)**:\n      - Corrigido bug de renderização no Three.js (`CanvasGradient.addColorStop`) causado pela ausência de ícone/cor na pasta `templates`.\n      - Adicionado o atributo `realPath` em todos os nós do catálogo para exibir o caminho físico exato no cabeçalho do leitor Markdown lateral (`#reader`).\n      - Eventos de clique nos chips da landing page (`.chip[data-node]`) integrados para abrir diretamente o documento real correspondente no leitor.\n    - **Paridade i18n & Validação de Integridade**:\n      - Chaves do dicionário bilíngue `js/i18n.dict.js` sincronizadas.\n      - Validação com `npm run doctor`: 100% dos links e 98 arquivos Markdown verificados com sucesso (0 erros).\n\n  - **Eliminação de Listas Fixas e Busca de Modelos 100% Dinâmica em Tempo Real com Gatilho Automático na Abertura**:\n    - **Remoção Total de Hardcoding de Modelos**:\n      - Eliminado o catálogo fixo `AI_DEFAULT_MODELS_BY_PROVIDER` em `docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js`.\n      - Eliminados `DEFAULT_MODELS_BY_PROVIDER` e `cachedModelsByProvider` em `scripts/ai-gateway.js`.\n      - Removidas as opções `<option>` fixas de modelo em `docs/brain-ui/index.html` e `docs/brain-ui/demo/index.html`, iniciando o `<select id=\"aiModelSelect\">` exclusivamente com o placeholder neutro orientativo (*\"Clique em 'Testar' acima para listar os modelos disponíveis...\"*).\n    - **Gatilho Reativo Automático ao Abrir o Modal (`openAiSettingsModal`)**:\n      - Ao abrir a tela de configurações de IA, se o usuário já possui chave salva no `.env` (ou for um provedor local sem chave como Ollama), o sistema agora dispara imediatamente `testCurrentAiConnection()` em tempo real.\n      - A interface executa a animação de terminal ao vivo (`testing` -> handshake HTTP e medição de latência), envia a requisição para a API do provedor (ou mock interceptor no demo), recebe os modelos vivos da conta e popula dinamicamente o `<select id=\"aiModelSelect\">`, selecionando o modelo ativo da configuração.\n      - Se o usuário não tiver chave configurada (ou mudar para provedor sem chave), o terminal permanece em estado `idle` amigável e o select aguarda o preenchimento da chave e clique em Testar.\n    - **Paridade Estrita entre Produção Local e Versão Demo**:\n      - O arquivo `demo-mode.js` intercepta requisições `fetch('/api/ai/test')` simulando latência realista (~142ms) e lista de modelos compatíveis. O mesmo código JavaScript de `app.js` roda de forma 100% idêntica nos dois ambientes, sem bifurcações de lógica nem catálogos estáticos no frontend.\n    - **Refinamentos de Interface do Modal BYOK**:\n      - Substituição do chip redundante abaixo do botão Testar pelo botão alternador `✏️ Digitar ID manualmente` (`#btnToggleManualModel`).\n      - Centralização vertical perfeita da seta customizada do select (`.ai-select-arrow`) via `top: 50%` e `transform: translateY(-50%)`.\n      - Manutenção do título limpo `\"3. Modelo de IA\"`, deixando a contagem de modelos exclusivamente no console do terminal à direita.\n    - **Resiliência do Servidor HTTP Local (`server.js`)**:\n      - Tratamento para rotas de diretório estático (ex: `/demo/`), resolvendo automaticamente para `index.html` caso o caminho solicitado seja uma pasta.\n  - **Governança Agnóstica Universal e Blindagem Multi-IA**:\n    - **Criação do Padrão Universal Aberto `AGENTS.md`**: Implementado na raiz do workspace como padrão compatível com qualquer agente do mercado.\n    - **Extensão da Governança e Lições Aprendidas para Todas as Pontes**: Blindagem ativa e consulta mandatória à memória registradas em `GEMINI.md`, `AGENTS.md`, `.cursorrules`, `CLAUDE.md`, `.windsurfrules`, `.clinerules`, `.github/copilot-instructions.md`, `.agents/rules/00-core.md` e `.agents/rules/01-ai-decision.md`.\n    - **Automação de Pontes Standalone**: Os utilitários CLI `scripts/link-project.js` e `scripts/create-project.js` agora criam automaticamente as pontes de governança no repositório de destino, garantindo que o agente continue governado mesmo se o projeto for aberto de forma isolada fora do Segundo Cérebro.\n  - **Sincronização e Atualização da Landing Page (`docs/brain-ui/landing/`)**:\n    - **Reflexo do AI Gateway Multi-Provedor**: Seção \"Feito para não quebrar\" atualizada destacando auto-descoberta dinâmica de modelos, suporte a OpenAI, Anthropic, Gemini, Groq, DeepSeek, OpenRouter e Ollama local, e recuperação inteligente de rate limit.\n    - **Atualização do FAQ**: Perguntas e respostas enriquecidas para destacar o padrão aberto `AGENTS.md`, suporte multi-IA com pontes nativas, privacidade local com BYOK/Ollama e esclarecimento cristalino dos modos Cockpit Central vs Standalone.\n    - **Paridade Bilíngue 100% no Dicionário i18n (`js/i18n.dict.js`)**: Todas as chaves sincronizadas em inglês, testadas via Chromium headless CDP com zero chaves de conteúdo ausentes.\n  - **Catálogo Dedicado de Lições Aprendidas por Projeto (`LESSONS_LEARNED.md`)**:\n    - **Separação Arquitetural Estrita de Escopo**: Eliminação da \"Amnésia das Sessões Antigas\" através de um arquivo dedicado por projeto para registrar pegadinhas técnicas, bugs de libs e contratos específicos de domínio sem poluir a governança global.\n    - **Novo Template Oficial**: Adicionado `templates/lessons-learned.md` e atualizado `templates/project.md`.\n    - **Automação nos Comandos CLI**: Atualizados `scripts/create-project.js` e `scripts/link-project.js` para inicializarem automaticamente `LESSONS_LEARNED.md` e pontes multi-IA completas em projetos novos ou vinculados.\n    - **Blindagem em Todas as Pontes de IA**: Atualizados `AGENTS.md`, `GEMINI.md`, `.cursorrules`, `CLAUDE.md`, `.windsurfrules`, `.clinerules` e `copilot-instructions.md` com regra mandatória de consultar o `LESSONS_LEARNED.md` local do projeto antes de alterar código.\n    - **Inicialização em Projetos Ativos**: Criados `projects/teste_alfredo_22/LESSONS_LEARNED.md` e `projects/Alfredo_teste/LESSONS_LEARNED.md` com validação de 100% dos links no linter `doctor`.\n\n- **Data**: 2026-10-10\n  - **Refinamento do Modal BYOK e Feedback Reativo do Console Terminal**:\n    - **Consolidação Total de Feedback no Terminal Console (`.ai-card-terminal` / `.ai-terminal-output`)**:\n      - **Remoção da Caixa Duplicada da Esquerda (`#aiTestFeedback`)**: Eliminada a antiga caixa verde/vermelha que aparecia abaixo do campo de chave. A coluna esquerda agora permanece limpa, contínua e sem saltos visuais.\n      - **Terminal Rico na Coluna Direita com Informações Completas**: O terminal ao vivo agora concentra 100% da telemetria de conexão em formato CLI avançado:\n        - `idle`: `$ ENGINE: <PROV> [STANDBY]` · `[IDLE] Clique em \"Testar\" para validar a API Key` · `LOCAL .ENV ENCRYPTION · ISOLADO`.\n        - `testing`: `$ CONNECTING TO <PROV> ENGINE...` · `[WAIT] Handshake HTTP e medição de latência...` · `[SCAN] Descobrindo catálogo de modelos na conta...`.\n        - `success`: `$ CONNECTED TO <PROV> [AUTHENTICATED]` · `[OK] Conexão bem-sucedida · Latência: <ms>ms` · `[OK] Modelos detectados · <n> modelos compatíveis` · `LOCAL .ENV ENCRYPTION · PRONTO PARA ATIVAR`.\n        - `error`: `$ ERROR CONNECTING TO <PROV> [FAILED]` · `[FAIL] <mensagem amigável de erro>` · `LOCAL .ENV ENCRYPTION · VERIFIQUE A CHAVE`.\n    - **Layout Balanceado e Parâmetros com Contexto Integrado**:\n      - Seção `4. Parâmetros de Execução` na coluna esquerda enriquecida com cards dedicados para `Cache TTL` e `Tentativas (Retries)` com inputs alinhados e explicações objetivas de impacto (0ms de latência e resiliência a HTTP 429).\n      - Coluna direita otimizada com cards de `Security & Privacidade` e `Scope & Governança` detalhados com bullets de segurança, garantindo altura simétrica e harmônica com a coluna esquerda sem espaços vazios.\n    - **Padronização Visual com os Demais Modais do Sistema**:\n      - Borda externa e sombras ajustadas com tonalidade azul-marinho escura (#0a101d / #111a2e / #1a253c), idêntica aos outros modais do AI Second Brain.\n      - Botão fechar padronizado em formato circular arredondado (`.ai-card-close-btn`).\n      - Inclusão do asset animado vetorial `assets/cerebro_neon_animado.svg` no card de cabeçalho do gateway.\n      - Alinhamento horizontal do rodapé (`.ai-settings-footer`) alinhado às margens dos inputs.\n    - **Paridade Absoluta 100% entre Local (`docs/brain-ui/`) e Demo Pública (`docs/brain-ui/demo/`)**:\n      - Replicação exata de todas as regras de CSS (`style.css`), lógica JavaScript (`app.js`), marcação HTML (`index.html`) e suporte a mock com validação realista no `demo-mode.js`.\n\n- **Data**: 2026-10-09\n  - **AI Gateway Multi-Provedor (BYOK — Bring Your Own Key)**:\n    - **Módulo Nativo Universal (`scripts/ai-gateway.js`)**: Cliente HTTP/HTTPS sem dependências externas, unificando os principais provedores de IA do mercado:\n      - **Groq Cloud**: Gratuito, ultra-rápido LPU (`openai/gpt-oss-120b` padrão, `openai/gpt-oss-20b` fallback, `qwen/qwen3.8-27b`).\n      - **OpenAI**: Flagship multimodal e raciocínio (`gpt-4o-mini`, `gpt-4o`, `o1-mini`).\n      - **Anthropic Claude**: Análise densa de código e arquitetura (`claude-3-5-sonnet-20241022`, `claude-3-5-haiku-20241022`).\n      - **OpenRouter**: Acesso a centenas de modelos abertos e proprietários (`deepseek/deepseek-chat`, `deepseek-r1`, `qwen-2.5-72b`).\n      - **Ollama Local**: 100% offline, privado na máquina do usuário, custo zero (`llama3.2`, `deepseek-r1`, `qwen2.5-coder`).\n      - **Endpoint Customizado**: Compatível com qualquer servidor local ou proxy corporativo OpenAI-Compatible.\n    - **Resiliência e Auto-Recuperação de Modelos Descontinuados**:\n      - Auto-fallback inteligente no `scripts/ai-gateway.js` quando o provedor retorna erro de modelo inexistente ou sem acesso (`does not exist or you do not have access to it` / 404). O gateway redireciona transparentemente a requisição para o modelo padrão ou de contingência sem abortar a síntese.\n      - Sincronização estrita de catálogo Groq com os modelos ativos da conta (`openai/gpt-oss-120b`, `openai/gpt-oss-20b`).\n    - **Endpoints REST no Backend (`server.js`)**:\n      - `GET /api/ai/config` e `GET /api/ai/status`: Retorna o provedor ativo, máscara segura da chave (ex: `gsk_••••••••Zvrf`), status de configuração e catálogo de provedores/modelos recomendados.\n      - `POST /api/ai/test`: Realiza ping em tempo real na API do provedor com a chave informada, mede a latência em milissegundos e retorna a lista viva de modelos disponíveis da conta do usuário.\n      - `POST /api/ai/save`: Gravação atômica das variáveis no arquivo `.env` físico e atualização imediata de `process.env` em memória sem necessidade de reiniciar o processo Node.js. Suporte a parâmetros avançados (`cacheHours`, `maxRetries`).\n      - **Interceptador de Cota 429**: Detecção de `Rate Limit / Quota Exceeded` propagando flag `quotaExceeded: true` para a interface gráfica.\n    - **Tríade de Modais UX de Alta Fidelidade no Cockpit (`docs/brain-ui/` e `docs/brain-ui/demo/`)**:\n      - **Pill Luminoso na Topbar (`#btnAiGatewayModal`)**: Exibe o status ao vivo da IA (`⚡ Groq Cloud • openai/gpt-oss-120b` com dot verde conectado; `✨ Conectar IA (BYOK)` em tom dourado quando não configurado; pulso vermelho em erro de cota).\n      - **Modal 1: Boas-Vindas & Onboarding (`#aiWelcomeModal`)**: Card escuro com robô neon pulsante convidando o desenvolvedor a conectar seu cérebro digital, acionado suavemente na primeira visita.\n      - **Modal 2: Central BYOK (`#aiSettingsModal`)**: Formulário em 4 etapas:\n        1. Seletor de provedor com ícones.\n        2. Input de chave com cadeado, botão de visibilidade olho (👁️), botão de teste (🔑) com feedback dinâmico de latência (ex: *✓ Conexão bem-sucedida! Latência: 355ms*).\n        3. Dropdown de modelos populado dinamicamente via ping da API.\n        4. Configurações avançadas (Expiração de cache em horas e tentativas máximas).\n        - **Card Verde de Privacidade**: Garante armazenamento 100% local no `.env` sob proteção do `.gitignore`.\n        - **Card Azul de Escopo**: Esclarece o raio de ação da IA (Research Lab, refinamento de briefing e grafo).\n        - **Botão \"Salvar e Ativar ⚡\"**: Salva a configuração e dispara evento no sistema.\n      - **Modal 3: Alerta de Cota Esgotada (`#aiQuotaModal`)**: Modal automático com cabeçalho de aviso, título dourado *\"Cota de IA Esgotada!\"*, caixa de recomendações (trocar para Groq gratuito, Claude ou Ollama local) e botão de redirecionamento para o configurador.\n    - **Efeito UAU: Pulso Sináptico no Grafo 3D Three.js**:\n      - Função `triggerSynapticPulse()` conectada a `graph.pulseSurge()` e `projectGraph.pulseSurge()` no `neuron-graph.js`, provocando uma aceleração visual nos impulsos elétricos das sinapses e nós ao ativar ou salvar uma chave.\n    - **Correção e Enriquecimento do Catálogo de Modelos Dinâmico (Modal BYOK)**:\n      - **Resolução do Bug de Modelos \"Undefined\"**: Identificado que o frontend esperava array de objetos `{ id, name }`, enquanto o gateway retornava array de strings. Implementado parsing polimórfico defensivo no frontend (`app.js` e `demo/app.js`) e normalização rica no backend (`scripts/ai-gateway.js`).\n      - **Filtragem Inteligente Universal de Modelos**: O backend agora descarta automaticamente modelos incompatíveis com chat/completions (áudio `whisper`, classificadores de moderação, guardrails, embeddings, imagem) garantindo que apenas modelos capazes de responder a prompts do Research Lab e síntese fiquem disponíveis.\n      - **Layout Limpo \\u0026 Alternador de Entrada Manual**: Removidos os chips redundantes abaixo do select. A interface agora conta com badge contextualizado (`#aiModelCountBadge`), dropdown enriquecido com janela de contexto (ex: `128k contexto`) e botão alternador para digitação manual do ID do modelo (`#btnToggleManualModel` / `#aiCustomModelWrap`) para suporte flexível a modelos customizados/beta.\n      - **Suporte ao Modo Demonstração (`demo-mode.js`)**: Interceptação de `/api/ai/test` no mock offline evitando erro 403 e populando o catálogo dinâmico mesmo em ambientes estáticos (GitHub Pages).\n      - **Eliminação de Modelos Hardcoded (Arquitetura 100% Dinâmica)**:\n        - Removidos presets fixos (`defaultModel`, `recommendedModels`, `fallbackModel`) de `scripts/ai-gateway.js`, `app.js` e `demo/app.js`. O configurador agora depende exclusivamente da resposta em tempo real da API do provedor ativo via teste de conexão.\n        - Se o usuário não testou a conexão ou não selecionou um modelo, o seletor exibe instrução amigável e impede inferências sem modelo válido.\n      - **Restauração e Isolamento do Vault de Demonstração (`demo-app`)**:\n        - Restaurado o arquivo `docs/brain-ui/demo/vault-data.js` via gerador isolado `build_demo_vault.py`, garantindo que a landing page pública exiba o projeto ilustrativo `demo-app` (35 arquivos de demonstração) e nunca exponha os projetos reais e locais do desenvolvedor (`teste_alfredo_22`, `Alfredo_teste`).\n  - **Refinamentos Visuais e Documentação**:\n    - **Dark Scrollbars**: Padronização dos scrollbars em tom escuro de luxo (#1e293b / #090d16) em todos os blocos de terminal e documentações.\n    - **Card do Criador**: Seção de autoria e comunidade valorizando a criação do projeto.\n    - **Internacionalização (i18n)**: Seletor de idioma PT/EN funcional em toda a landing page.\n    - **Licenciamento Open Source**: Inclusão de `LICENSE` MIT e `.env.example` sem expor segredos.\n\n- **Data**: 2026-10-08\n  - **Correção de Codificação do Terminal e Resiliência do Vault Manager**:\n    - **Terminal Windows (`start-brain.bat`)**: Inclusão de `chcp 65001 >nul` ativando UTF-8 nativo no CMD, eliminando a exibição de `ÔÇö` no lugar do travessão `—` e ícones.\n    - **Prioridade e Invalidação de Cache Local (`docs/brain-ui/vault.js`)**: Servidor local em `localhost` agora tem precedência estrita. Ao conectar com sucesso ao vivo, caches obsoletos no `localStorage` são limpos para evitar poluição visual.\n    - **Auto-Reconexão em Background**: Se o navegador carregar antes do Node.js concluir a subida do socket, o visualizador tenta auto-reconectar periodicamente e migra de forma transparente para `🟢 Ao Vivo (Disco)` sem necessidade de recarregar a página manualmente.\n    - **Árvore de Projetos Hierárquica em Modo Pasta**: Função `_buildVaultFromFiles` reescrita para espelhar a lógica de agrupamento do `scan-vault.js` (isolando projetos, contratos na raiz, subpastas `RESEARCH` e `BACKUPS`), eliminando a exibição plana de 34 arquivos avulsos sob `MEUS PROJETOS`.\n    - **Botão de Ação Rápida no Badge**: Disponibilizado botão `✕ Limpar Cache` diretamente no badge quando em modo de pasta em cache.\n- **Data**: 2026-10-02\n  - **Research Lab (Laboratório de Conhecimento Autônomo) — Etapa 3 (Motor de Execução Autônoma, Resiliência & Síntese Markdown)**:\n    - **Motor Autônomo (`scripts/research-engine.js`)**: Executa a varredura completa da taxonomia de subtópicos, gerando documentos `.md` profundos, estruturados com código, schemas SQL/Prisma e boas práticas.\n    - **Taxonomia de Duas Camadas**: Arquivos organizados automaticamente em `knowledge/` (fundamentos e padrões conceituais) e `actionable/` (código, implementação, schemas e testes).\n    - **Resiliência e Recuperação de Rate Limit no Groq Client (`scripts/groq-client.js`)**:\n      - Parser automático de cabeçalho e mensagens de erro (\"Please try again in X.XXs\").\n      - Backoff com tempo extra de segurança (+2s) e retentativas automáticas até 3x sem abortar o lote.\n      - Fallback inteligente de modelo para `openai/gpt-oss-20b` caso o modelo de 120b sature a cota TPM.\n      - Pausa estratégica de 6s entre arquivos para evitar saturação do bucket de tokens por minuto da camada gratuita.\n      - Resumabilidade inteligente: arquivos já existentes no disco são preservados e reaproveitados automaticamente caso uma execução seja retomada.\n    - **Consolidação em `OVERVIEW.md` e `_meta.json`**: Gera índice completo do laboratório com links markdown relativos clicáveis para cada documento e marca `status: \"completed\"`.\n    - **Integração com Grafo Neural 3D (`scripts/scan-vault.js`)**: Mapeamento de nós do laboratório com ícones dedicados (`🔬` para pastas/overview, `📘` para knowledge e `🛠️` para actionable) orbitando a estrela central do projeto.\n    - **Validação Prática Real**: Execução completa no projeto `teste_alfredo_22` gerando 9 arquivos técnicos completos (8 em `knowledge/` e 1 em `actionable/`) totalizando mais de 100KB de documentação técnica gerada autonomamente.\n    - **Catálogo de Subtópicos & Documentos Conectado ao Disco**:\n      - Corrigido o modal de subtópicos (`openDecomposeModal`): eliminado o gatilho redundante de consulta à IA quando a pesquisa já possui arquivos gerados no disco.\n      - O modal agora renderiza fielmente todos os arquivos reais existentes em `knowledge/` e `actionable/` (9 de 9 no caso do Bolo de Banana).\n      - Adicionados botões de ação direta em cada documento: `✏️ Editar / Ler` (abre no Live Markdown Editor para visualização e edição imediata com salvamento no disco via Ctrl+S) e `🗑️ Excluir` (remove o arquivo do disco, atualiza `_meta.json` e o `OVERVIEW.md`).\n      - Adicionado botão de exclusão completa do laboratório de pesquisa (`🗑️`) no cabeçalho de cada card de pesquisa.\n      - Novos endpoints backend: `POST /api/projects/:name/research/:slug/file/delete` e `POST /api/projects/:name/research/:slug/delete`.\n  - **Research Lab — Etapa 2 (UX/UI UAU no Brain Visualizer)**:\n    - **Aba Dedicada `🔬 Research Lab` no Project Workspace**: Integrada à navegação com pílula de contagem dinâmica (`#pwResearchTabBadge`).\n    - **Hero Banner com Glassmorphism Espacial**: Header com gradiente cósmico, badge pulsante verde de status da Groq Cloud (`openai/gpt-oss-120b`), latência média de inferência (~1.5s) e botão de ação primária `✨ Nova Pesquisa no Lab`.\n    - **Cards Métricos do Lab**: Mapeamento em tempo real do total de pesquisas ativas, documentos em `knowledge/`, especificações em `actionable/` e latência.\n    - **Empty State Futurista**: Orbe atômico pulsante em CSS, texto explicativo e botões de atalho para prompts rápidos de 1 clique (Microsserviços Event-Driven, Auth JWT, Cache & Redis).\n    - **Grid de Cards de Laboratório**: Cards com efeito hover 3D, indicador de status `🟢 Ativo`, caixa expansível do **Prompt Vivo** com tag de versão (`v1`, `v2`), badges das duas camadas (`knowledge/` e `actionable/`) e botões de ação (`▶️ Pesquisar Agora`, `🔮 Grafo 3D`, `🧩 Subtópicos`, `📄 OVERVIEW.md`, `📂 Abrir Pasta`).\n    - **Correção de Layout Responsivo**: Ajustado `.rl-card-title-text` com `word-break: break-word` e badge `🟢 Ativo` fixado à direita com `flex-shrink: 0`, eliminando qualquer sobreposição visual.\n    - **Modal de Criação \"Nova Pesquisa\" com Efeito UAU**:\n      - Campo de tema com chips de presets rápidos.\n      - Botão com faíscas animadas `✨ Melhorar com IA (Groq)`.\n      - **Split View Comparador \"Antes vs Depois\"**: Painel lado a lado contrastando a ideia bruta com o briefing estruturado pela IA.\n      - Painel de pré-visualização de decomposição temática com subtópicos categorizados em chips azuis (`knowledge`) e verdes (`actionable`).\n    - **Modal de \"Prompt Vivo\" & Histórico de Versões**: Interface de linha do tempo com todas as versões passadas do briefing (`definitionHistory`), data/hora e re-refinamento com IA.\n  - **Research Lab — Etapa 1 (Backend & IA Groq)**:\n    - **Módulo Nativo Groq (`scripts/groq-client.js`)**: Cliente HTTP nativo zero-dependência para a API do Groq Cloud (`api.groq.com`), com carregador próprio de `.env`, timeout de 60s, sanitização de markdown fences e parsing robusto de JSON.\n    - **Modelo Ativo**: Suporte para `openai/gpt-oss-120b`, `openai/gpt-oss-20b` e `qwen/qwen3.8-27b`.\n    - **Prompt Vivo & Refinamento Contextual (`refineResearchPrompt`)**: Algoritmo de enriquecimento que lê automaticamente os contratos do projeto (`PROJECT.md`, `ARCHITECTURE.md`) e transforma intenções livres do usuário em briefings de pesquisa estruturados de alto impacto.\n    - **Decomposição em Subtópicos (`decomposeResearchTopic`)**: Divisão do tema de pesquisa em sub-tópicos com taxonomia definida.\n    - **Endpoints REST Implementados no `server.js`**: `/api/ai/status`, `/api/ai/refine-prompt`, `/api/ai/decompose`, `/api/projects/:name/research`, `/api/projects/:name/research/:slug/definition`, `/api/projects/:name/research/:slug/run`.\n\n- **Data**: 2026-10-01 (Madrugada)\n  - **Gravação Física de Backups & Integração Nativa com Windows Explorer**:\n    - Backend grava fisicamente os arquivos gerados em `projects/<projeto>/BACKUPS/` (`dossie_governanca_<projeto>.md` e `backup_governanca_<projeto>.json`).\n    - Novos endpoints `/api/system/open-folder` e `/api/system/open-file` para abrir a pasta no Windows Explorer (`explorer.exe /select`) ou o arquivo no app padrão (`cmd /c start`).\n    - Correção do download do navegador mantendo o Blob URL ativo por 10s para permitir que o Chromium conclua a gravação sem abortar.\n    - Card enriquecido na aba *Backup & Exportação* com caminho absoluto no disco, botão direto para abrir no Explorer, botões para abrir cada arquivo, baixar e copiar caminhos.\n  - **Interatividade Total nos Cards do Project Workspace**:\n    - Edição rápida inline no card *Visão Geral & Contratos* para alterar Objetivo, Stack e Status com gravação direta no disco.\n    - Seletor de status do ciclo com pílulas luminosas conectadas ao `CURRENT_STATE.md`.\n    - Checklist interativo (*O que já foi definido*) com alternância, retorno ao roadmap e exclusão.\n    - Roadmap dinâmico (*Próximos Passos*) com botão \"✓ Concluir\" em 1 clique e input inline com tecla Enter.\n    - Sistema de Toast visual com glassmorphism para feedback instantâneo de gravação.\n  - **Contratos de Governança 100% Dinâmicos**:\n    - Backend inspeciona arquivos físicos reais no disco, exibindo apenas documentos existentes (`PROJECT.md`, `CURRENT_STATE.md`, etc.).\n    - Identificação de contratos recomendados ausentes (ex: `ARCHITECTURE.md`) com ação de inicialização com 1 clique (`+ Inicializar ARCHITECTURE.md`).\n    - Layout e botões dos chips de governança reformulados com `.btn-gov`, eliminando quebras de linha e desproporções.\n  - **Correções Estruturais & Backend**:\n    - Correção do aninhamento de modais no HTML que impedia a exibição do Live Markdown Editor.\n    - Correção na rota `GET /api/file` no `server.js` com verificação de método HTTP estrita, eliminando erro `400 Bad Request` no salvamento.\n- **Data**: 2026-09-30\n  - **Quickstart Studio (Modal de 3 Minutos)**: Onboarding guiado no portal web para criar projetos do zero ou vincular pastas existentes via junções NTFS sem terminal.\n  - **Sidebar \"Dois Mundos\"**: Reorganização visual clara separando \"MEUS PROJETOS\" no topo e \"CÉREBRO & GOVERNANÇA\" abaixo com divisor neon.\n  - **Project Workspace (Página Dedicada do Projeto)**: Hub com 5 abas (Visão Geral, Memória & Saúde, Grafo Neural 3D, Backup & Exportação de Dossiê, Gerenciamento & Desvinculação Segura).\n  - **Grafo Neural 3D (Three.js)**: Grafo orbital onde o projeto é o Sol Central conectado a seus arquivos locais e satélites de governança.\n  - **Grafo Global com Clusters Galácticos**: Projetos agrupados em clusters orbitais interligados por regras comuns.\n  - **APIs de Ciclo de Vida**: Endpoints backend para diagnóstico de memória, arquivamento seguro em `.archive/`, exportação de backup (.md e .json) e desvinculação não destrutiva.\n"
+      "content": "# Estado Atual do AI Second Brain\n\n> Última atualização: 2026-10-12\n\n## Status do Framework: 🟢 Operacional & Cockpit Avançado + 🔬 Research Lab + ⚡ AI Gateway Multi-Provedor (BYOK Ativo) + 🧠 Session Capture com IA\n\nO AI Second Brain está estruturado como uma plataforma universal de governança e desenvolvimento com IA, livre de acoplamento a projetos específicos e equipada com um portal web moderno, motor de pesquisa autônoma resiliente, AI Gateway multi-provedor (BYOK) e captura inteligente de sessões.\n\n## Estrutura do Workspace\n\n| Diretório | Papel | Estado |\n|---|---|---|\n| `.agents/rules/` | Regras universais de governança (IA, Segurança, Docs) | ✅ Agnósticas |\n| `.agents/skills/` | Workflows reutilizáveis para Antigravity | ✅ 8 skills ativas |\n| `knowledge/` | Base de conhecimento em IA, Arquitetura e Segurança | ✅ 100% universal |\n| `projects/` | Projetos conectados pelo desenvolvedor | 🟢 Suporta Greenfield & Brownfield + RESEARCH/ |\n| `memory/` | Memória de continuidade entre sessões | ✅ Operacional |\n| `templates/` | Modelos para novos projetos, specs e ADRs | ✅ Disponíveis |\n| `docs/brain-ui/` | Portal web interativo de visualização e governança | 🚀 UX/UI com Project Workspace, Grafo 3D, AI BYOK & Session Capture |\n| `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway, Research Engine, Session Capture) |\n\n## Sessões Recentes\n- **Data**: 2026-10-12\n  - **Sincronização & Atualização Completa das Documentações de Usuário e Landing Page**:\n    - **Landing Page (`docs/brain-ui/landing/index.html` e `i18n.dict.js`)**:\n      - Atualizado Bento Grid (`#vantagens`) com novos cards dedicados ao **Session Capture com IA (Draft & Commit)** e ao **Prompt Bootstrap & IDE Hooks (VS Code / Cursor)**.\n      - Atualizado Quickstart Studio (`#projeto`) destacando a criação guiada com `git init` automático, `.gitignore` seguro contra segredos, pontes multi-IA e flexibilidade total de stack.\n      - Adicionada pergunta e resposta no FAQ técnico sobre a sanitização automática de segredos (`.env`, tokens) e supervisão humana obrigatória antes da gravação de memória.\n      - Tradução bilíngue (PT/EN) 100% sincronizada no dicionário `landing/js/i18n.dict.js`.\n    - **Documentação da Solução do Cockpit (`docs/brain-ui/index.html` e `demo/index.html`)**:\n      - Capítulo 5 (Ciclo de Vida Hands-on): Etapa 1 atualizada com Prompt Bootstrap e botões de IDE; Etapa 4 atualizada com o fluxo Draft & Commit de Session Capture com IA.\n      - Capítulo 7 (Checklists & FAQ): Adicionado item técnico esclarecendo a sanitização de dados e segurança do Session Capture.\n    - **Manuais Oficiais (`docs/COMO_UTILIZAR_O_PROJETO.md` e `README.md`)**:\n      - Seção 4 de `COMO_UTILIZAR_O_PROJETO.md` enriquecida com a \"Opção A: Fluxo Visual pelo Cockpit Web\" e \"Opção B: Fluxo Conversacional via Terminal/Chat\".\n      - Seção 6 atualizada com a estrutura exata do Prompt Bootstrap gerado pelo Cockpit.\n      - `README.md` atualizado na seção \"Comece em 3 Minutos\" com os novos atalhos e recursos operacionais.\n    - **Validação & Paridade**:\n      - Executado `npm run scan` atualizando `vault-data.js` e espelhado em `demo/`.\n      - Executado `npm run doctor` com 100% de integridade (0 links quebrados, todos os contratos válidos).\n\n  - **Implementação das 5 Oportunidades Práticas de Melhoria de UX & Conexão com IDEs**:\n    - **1. Inicialização Automática do Git no Quickstart (`git init`)**:\n      - Adicionado checkbox `[x] Inicializar repositório Git local automaticamente (git init)` no formulário de criação de projeto (`#qsFormNew`).\n      - Backend `server.js` dispara `git init -b main` (com fallback para `git init`) gerando imediatamente o `.gitignore` e as pontes de governança para versionamento instantâneo.\n    - **2. Input Livre e Flexível de Stack Tecnológica**:\n      - O campo de Stack Tecnológica no modal Quickstart foi transformado em um `<input type=\"text\" id=\"qsNewStack\">` editável, permitindo digitação livre de stacks combinadas/customizadas enquanto preserva os chips rápidos como atalhos inteligentes de preenchimento.\n    - **3. Disparadores Diretos de IDE no Project Workspace (`open-ide`)**:\n      - Adicionados botões de ação rápida no cabeçalho do projeto: `💻 VS Code`, `⚡ Cursor` e `📂 Pasta`.\n      - Endpoint `POST /api/system/open-ide` executa o comando nativo no sistema operacional com fallback seguro e toast de confirmação.\n    - **4. Prompt Bootstrap de Início de Sessão em 1 Clique**:\n      - Botão `✨ Copiar Prompt para Agente` no cabeçalho do projeto copia imediatamente para a área de transferência um prompt formatado contendo as regras absolutas, stack e contratos (`PROJECT.md`, `CURRENT_STATE.md`, `DECISIONS/`, `LESSONS_LEARNED.md`) para alimentar qualquer agente de IA sem amnésia.\n    - **5. Feedback Visual Ativo de Inferência com Mensagens Rotativas**:\n      - No modal de Session Capture (`#scStepLoading`), implementado loop de mensagens rotativas dinâmicas (\"Lendo commits...\", \"Cruzando contratos...\", \"Consultando lições aprendidas...\", \"Sintetizando resumo...\") e steps sincronizados com efeito glow neon suave, eliminando a sensação de travamento durante a inferência.\n    - **Paridade Estrita & Linter Verde**:\n      - Todas as alterações replicadas com 100% de paridade entre `docs/brain-ui/` e `docs/brain-ui/demo/` (incluindo interceptação de mock em `demo-mode.js`).\n      - `npm run doctor`: 100% dos links e arquivos válidos (0 erros).\n\n  - **Implementação Profissional do Session Capture (Registrar Sessão com IA)**:\n    - **Módulo Nativo de Captura (`scripts/session-capture.js`)**:\n      - Coleta determinística de dados do projeto: commits desde a última sessão registrada, arquivos modificados não commitados, diffstat com censura mandatória de arquivos confidenciais (`.env`, chaves privadas, secrets).\n      - Leitura e estruturação dos contratos (`PROJECT.md`, `CURRENT_STATE.md`, `LESSONS_LEARNED.md` e sessões recentes).\n      - Algoritmo de normalização e validação defensiva contra o estado real do projeto, impedindo duplicações ou inclusão de itens especulativos.\n      - Gravação física atômica: cria `MEMORY/sessions/AAAA-MM-DD-titulo.md` (nunca sobrescreve sessões existentes do mesmo dia), atualiza cirurgicamente `CURRENT_STATE.md` (remanejando itens concluídos de \"Próximos Passos\" para \"O que já foi definido\", adicionando novas pendências e preservando quebras de linha CRLF/LF) e anexa aprendizados em `LESSONS_LEARNED.md`.\n    - **Extensão do AI Gateway (`scripts/ai-gateway.js`)**:\n      - Nova função `summarizeSession(contextText, options)` com prompt especializado (`SYSTEM_PROMPTS.sessionCapture`) governado pelas regras de *Zero Fabricação*.\n      - Suporte à opção `skipCache: true` para o botão \"🔄 Regenerar\" na interface de revisão.\n      - Correção preventiva da variável `isModelNotFound` no manipulador de erros do gateway.\n    - **Endpoints REST no Backend (`server.js`)**:\n      - `POST /api/projects/:name/session/draft`: Coleta determinística + inferência com IA para gerar o rascunho. Nada é gravado em disco nesta etapa.\n      - `POST /api/projects/:name/session/commit`: Gravação atômica após aprovação e ajustes do usuário. Dispara invalidação de snapshot do vault e evento SSE em tempo real.\n    - **Interface de Alta Fidelidade no Cockpit e Modal de Revisão (`docs/brain-ui/`)**:\n      - Card promocional destacado na aba **Memória & Saúde** do Project Workspace com botão `🧠 Registrar Sessão`.\n      - Modal interativo (`#sessionCaptureModal`) em 3 etapas fluidas: Entrada (informações Git + notas do usuário) → Carregamento (orbe neon animado) → Revisão completa item a item com checkboxes e campos editáveis.\n      - Paridade absoluta com a demonstração pública em `docs/brain-ui/demo/` através de mocks no `demo-mode.js`.\n  - **Correção da Numeração Sequencial de Decisões Arquiteturais (ADRs)**:\n    - Em `docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js`, função `createNewDecisionRecord` atualizada para inspecionar os ADRs existentes do projeto e calcular o próximo número sequencial (`NNN-nova-decisao.md`), eliminando a sobrescrita do arquivo `001-stack-inicial.md`.\n\n- **Data**: 2026-10-11\n  - **Refinamento do Botão de Validação com Ícone Fiel e Efeito Cintilante Suave**:\n    - **Ajuste da Geometria do Ícone à Referência do Usuário**:\n      - Substituída a geometria anterior pelo ícone oficial Heroicons v2 Outline Key (`M15.75 5.25a3 3...`) com traçado de 1.8px em `docs/brain-ui/index.html` e `docs/brain-ui/demo/index.html`, replicando com exatidão a haste diagonal, dentes escalonados e cabeça arredondada da imagem fornecida pelo desenvolvedor.\n    - **Suavização do Efeito Cintilante (Eliminação de Excessos)**:\n      - Em `docs/brain-ui/style.css` e `docs/brain-ui/demo/style.css`:\n        - Eliminados os halos exagerados de 32px e os fundos em gradiente radial que estouravam a interface.\n        - Preservado o fundo estritamente escuro `#060a13` do botão.\n        - Definido um brilho respiratório calibrado (+20% de ganho luminoso):\n          - Sucesso (`.is-valid`): borda esmeralda (`rgba(16, 185, 129, 0.8)`), ícone `#10b981` com `drop-shadow(0 0 3px rgba(16, 185, 129, 0.72))` e `box-shadow` pulsando entre 5px e 11px (`@keyframes sparklingGreen` em ciclo ágil de 1.9s).\n          - Falha (`.is-invalid`): borda carmesim (`rgba(239, 68, 68, 0.8)`), ícone `#ef4444` com `drop-shadow(0 0 3px rgba(239, 68, 68, 0.72))` e `box-shadow` pulsando entre 5px e 11px (`@keyframes sparklingRed` em ciclo ágil de 1.9s).\n        - Estado hover neutro com borda suave translúcida, alinhado à estética dark do sistema.\n    - **Validação Visual & Integridade**:\n      - Comprovado visualmente no navegador com browser subagent: capturados screenshots dos estados de sucesso e erro demonstrando fidelidade à imagem de referência e a calibração de +20% no brilho.\n      - `npm run doctor`: 100% dos links e arquivos íntegros (0 erros).\n\n  - **Sincronização Fiel dos Parâmetros do `.env`, Validação Estrita e Estilização Escura das Setas de Retries**:\n    - **Sincronização com `.env` na Abertura do Modal de IA**:\n      - Em `docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js` (`openAiSettingsModal`), os campos `#aiCacheHoursInput` e `#aiMaxRetriesInput` passam a ser populados fielmente a partir de `cfg.cacheHours` e `cfg.maxRetries` lidos em tempo real do `.env` via `/api/ai/config`.\n      - Em `scripts/ai-gateway.js` (`getConfig` e `saveConfig`), corrigido o fallback `|| 2` que impedia o valor legítimo `0` de retries; agora tratados com validação de número inteiro positivo (`>= 0`).\n    - **Validação Defensiva e Restrição de Digitação em Camadas**:\n      - **Frontend (Interatividade & Sanitização)**: Função `setupAiParamsInputValidation` bloqueia teclas proibidas (`-`, `+`, `e`, `.`, `,` em retries; letras espúrias em cache) via `keydown`, sanitiza colagem via `input` (clamp entre 0 e 5 para retries e formato `${hours}h` entre 1h e 720h para cache no `blur`).\n      - **Frontend (Pré-Salvamento)**: `handleSaveAiSettings` valida estritamente ambos os parâmetros antes de qualquer disparo de rede; se inválidos, exibe feedback no terminal, aplica classe de erro `.input-error` com animação de shake e impede a submissão.\n      - **Backend (API & Gateway)**: `saveConfig` em `scripts/ai-gateway.js` e `/api/ai/save` em `server.js` validam intervalos permitidos (Cache: 1 a 720 horas; Retries: 0 a 10 tentativas), retornando HTTP 400 com mensagem amigável caso haja inconsistência.\n    - **Estilização Escura das Setas (Spin Buttons) de Retries**:\n      - Adicionado `color-scheme: dark;` em `.ai-param-detail-input-wrap .ai-param-input[type=\"number\"]` em `docs/brain-ui/style.css` e `docs/brain-ui/demo/style.css`.\n      - Customizados `::-webkit-inner-spin-button` e `::-webkit-outer-spin-button` com filtros escuros harmônicos e transições suaves, integrando o controle nativo ao visual dark da interface e eliminando setas/fundos claros.\n    - **Restauração e Blindagem do Fundo Escuro na Caixa de API Key (`#aiApiKeyInput`)**:\n      - Corrigido o comportamento do Chromium em que campos `type=\"password\"` ativavam o gerenciador de credenciais do navegador e aplicavam `-webkit-autofill` com fundo claro (`rgb(232, 240, 254)`).\n      - Aplicada blindagem CSS com `-webkit-box-shadow: 0 0 0 1000px #060a13 inset !important`, `-webkit-text-fill-color: #f8fafc !important`, `color-scheme: dark !important` e `background: #060a13 !important` em `docs/brain-ui/style.css` e `docs/brain-ui/demo/style.css`.\n      - Atualizado o HTML (`docs/brain-ui/index.html` e `demo/index.html`) com `placeholder=\"gsk_... ou cole sua chave de API\"` e `autocomplete=\"new-password\"` evitando que o navegador trate como senha de login com fundo branco.\n    - **Validação End-to-End**:\n      - Testado no navegador via browser subagent com comprovação visual dos valores `24h` e `4`, setas escuras, caixa de API Key escura (#060a13) e validação em tempo real.\n      - `npm run doctor`: 100% dos links e arquivos íntegros (0 erros).\n\n  - **Correção Crítica no AI Gateway (BYOK), Eliminação de ReferenceError e Blindagem de Base URL**:\n    - **Resolução do `ReferenceError: cachedModelsByProvider is not defined`**:\n      - Restaurada a declaração explícita de `const cachedModelsByProvider = {}` no topo de `scripts/ai-gateway.js`, eliminando as respostas HTTP 500 em `/api/ai/config` e HTTP 400 em `/api/ai/test` e `/api/ai/save`.\n    - **Isolamento Estrito de `baseUrl` por Provedor**:\n      - Corrigido o vazamento de `AI_BASE_URL` entre provedores no `.env`: agora apenas provedores configuráveis (`ollama` e `custom`) herdam ou gravam URLs customizadas; provedores padrão de nuvem (`groq`, `openai`, `anthropic`, `openrouter`) utilizam estritamente suas URLs oficiais da API, prevenindo que requisições para a Groq fossem roteadas para a URL da Anthropic.\n    - **Propagação Fiel de Erros HTTP e Prevenção de Falsos Positivos**:\n      - O bloco `testConnection` não silencia mais erros de autenticação (401/403) ou cota (429) no endpoint `/models`.\n      - Se nenhum modelo de chat for detectado, o sistema rejeita o teste com erro amigável em vez de gerar estado falso de sucesso com \"Catálogo pronto\".\n    - **Validação Preventiva no Frontend (`docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js`)**:\n      - Se o usuário não digitou chave e o provedor não possui chave salva no `.env`, o clique em \"Testar\" ou \"Salvar\" exibe erro claro no terminal e foca no input sem disparar requisições inválidas de rede.\n      - Se nenhum modelo foi selecionado, o botão \"Salvar e Ativar\" orienta a testar e escolher um modelo compatível.\n      - Ao trocar de provedor no select, o input `baseUrl` é devidamente limpo para provedores de nuvem.\n    - **Hot-Reload de Módulo no Servidor (`server.js`)**:\n      - Implementada a função `getAiGateway()` com invalidação dinâmica de cache do Node.js (`delete require.cache`), permitindo que alterações nas regras do gateway sejam refletidas em tempo real sem crash.\n\n  - **Auditoria e Fidelidade Estrita de Documentos na Landing Page (`docs/brain-ui/landing/`)**:\n    - **Eliminação de Referências a Arquivos Fictícios / Placeholders**:\n      - Em conformidade estrita com a regra universal de *Zero Fabricação*, eliminados todos os nomes de arquivos inexistentes que estavam exibidos na interface da landing page (`nucleo.md`, `seguranca.md`, `decisao-ia.md`, `ai-decision-gate.md`, `new-feature.md`, `bug-investigation.md`, `estado.md`, `licoes.md`, `sessao-13.md`, `adr-001.md`, etc.).\n    - **Mapeamento Preciso para Arquivos Reais do Workspace**:\n      - **Camada 01 (`rules/`)**: Substituído por `00-core.md`, `01-ai-decision.md` e `03-security.md`.\n      - **Camada 02 (`skills/`)**: Substituído por `ai-decision-gate/SKILL.md`, `new-feature/SKILL.md` e `bug-investigation/SKILL.md`.\n      - **Camada 03 (`memory/`)**: Substituído por `current-state.md`, `lessons-learned.md` e `README.md`.\n      - **Camada 04 (`decisions/`)**: Substituído por `GLOBAL_DECISIONS.md`, `001-stack-inicial.md` e `decisao_groq_provider.md`.\n      - **Terminal Chat Mockup**: Atualizado para ler e citar `memory/current-state.md`, `decisions/GLOBAL_DECISIONS.md` e `.agents/rules/03-security.md`.\n      - **Research Lab**: Caminhos atualizados para o padrão real `projects/<projeto>/RESEARCH/<tema>/knowledge/` e `actionable/`.\n      - **Quickstart Studio**: Card de estrutura atualizado incluindo `LESSONS_LEARNED.md`.\n    - **Correção Estrutural no Grafo Neural 3D e Leitor Lateral (`js/data.js`)**:\n      - Corrigido bug de renderização no Three.js (`CanvasGradient.addColorStop`) causado pela ausência de ícone/cor na pasta `templates`.\n      - Adicionado o atributo `realPath` em todos os nós do catálogo para exibir o caminho físico exato no cabeçalho do leitor Markdown lateral (`#reader`).\n      - Eventos de clique nos chips da landing page (`.chip[data-node]`) integrados para abrir diretamente o documento real correspondente no leitor.\n    - **Paridade i18n & Validação de Integridade**:\n      - Chaves do dicionário bilíngue `js/i18n.dict.js` sincronizadas.\n      - Validação com `npm run doctor`: 100% dos links e 98 arquivos Markdown verificados com sucesso (0 erros).\n\n  - **Eliminação de Listas Fixas e Busca de Modelos 100% Dinâmica em Tempo Real com Gatilho Automático na Abertura**:\n    - **Remoção Total de Hardcoding de Modelos**:\n      - Eliminado o catálogo fixo `AI_DEFAULT_MODELS_BY_PROVIDER` em `docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js`.\n      - Eliminados `DEFAULT_MODELS_BY_PROVIDER` e `cachedModelsByProvider` em `scripts/ai-gateway.js`.\n      - Removidas as opções `<option>` fixas de modelo em `docs/brain-ui/index.html` e `docs/brain-ui/demo/index.html`, iniciando o `<select id=\"aiModelSelect\">` exclusivamente com o placeholder neutro orientativo (*\"Clique em 'Testar' acima para listar os modelos disponíveis...\"*).\n    - **Gatilho Reativo Automático ao Abrir o Modal (`openAiSettingsModal`)**:\n      - Ao abrir a tela de configurações de IA, se o usuário já possui chave salva no `.env` (ou for um provedor local sem chave como Ollama), o sistema agora dispara imediatamente `testCurrentAiConnection()` em tempo real.\n      - A interface executa a animação de terminal ao vivo (`testing` -> handshake HTTP e medição de latência), envia a requisição para a API do provedor (ou mock interceptor no demo), recebe os modelos vivos da conta e popula dinamicamente o `<select id=\"aiModelSelect\">`, selecionando o modelo ativo da configuração.\n      - Se o usuário não tiver chave configurada (ou mudar para provedor sem chave), o terminal permanece em estado `idle` amigável e o select aguarda o preenchimento da chave e clique em Testar.\n    - **Paridade Estrita entre Produção Local e Versão Demo**:\n      - O arquivo `demo-mode.js` intercepta requisições `fetch('/api/ai/test')` simulando latência realista (~142ms) e lista de modelos compatíveis. O mesmo código JavaScript de `app.js` roda de forma 100% idêntica nos dois ambientes, sem bifurcações de lógica nem catálogos estáticos no frontend.\n    - **Refinamentos de Interface do Modal BYOK**:\n      - Substituição do chip redundante abaixo do botão Testar pelo botão alternador `✏️ Digitar ID manualmente` (`#btnToggleManualModel`).\n      - Centralização vertical perfeita da seta customizada do select (`.ai-select-arrow`) via `top: 50%` e `transform: translateY(-50%)`.\n      - Manutenção do título limpo `\"3. Modelo de IA\"`, deixando a contagem de modelos exclusivamente no console do terminal à direita.\n    - **Resiliência do Servidor HTTP Local (`server.js`)**:\n      - Tratamento para rotas de diretório estático (ex: `/demo/`), resolvendo automaticamente para `index.html` caso o caminho solicitado seja uma pasta.\n  - **Governança Agnóstica Universal e Blindagem Multi-IA**:\n    - **Criação do Padrão Universal Aberto `AGENTS.md`**: Implementado na raiz do workspace como padrão compatível com qualquer agente do mercado.\n    - **Extensão da Governança e Lições Aprendidas para Todas as Pontes**: Blindagem ativa e consulta mandatória à memória registradas em `GEMINI.md`, `AGENTS.md`, `.cursorrules`, `CLAUDE.md`, `.windsurfrules`, `.clinerules`, `.github/copilot-instructions.md`, `.agents/rules/00-core.md` e `.agents/rules/01-ai-decision.md`.\n    - **Automação de Pontes Standalone**: Os utilitários CLI `scripts/link-project.js` e `scripts/create-project.js` agora criam automaticamente as pontes de governança no repositório de destino, garantindo que o agente continue governado mesmo se o projeto for aberto de forma isolada fora do Segundo Cérebro.\n  - **Sincronização e Atualização da Landing Page (`docs/brain-ui/landing/`)**:\n    - **Reflexo do AI Gateway Multi-Provedor**: Seção \"Feito para não quebrar\" atualizada destacando auto-descoberta dinâmica de modelos, suporte a OpenAI, Anthropic, Gemini, Groq, DeepSeek, OpenRouter e Ollama local, e recuperação inteligente de rate limit.\n    - **Atualização do FAQ**: Perguntas e respostas enriquecidas para destacar o padrão aberto `AGENTS.md`, suporte multi-IA com pontes nativas, privacidade local com BYOK/Ollama e esclarecimento cristalino dos modos Cockpit Central vs Standalone.\n    - **Paridade Bilíngue 100% no Dicionário i18n (`js/i18n.dict.js`)**: Todas as chaves sincronizadas em inglês, testadas via Chromium headless CDP com zero chaves de conteúdo ausentes.\n  - **Catálogo Dedicado de Lições Aprendidas por Projeto (`LESSONS_LEARNED.md`)**:\n    - **Separação Arquitetural Estrita de Escopo**: Eliminação da \"Amnésia das Sessões Antigas\" através de um arquivo dedicado por projeto para registrar pegadinhas técnicas, bugs de libs e contratos específicos de domínio sem poluir a governança global.\n    - **Novo Template Oficial**: Adicionado `templates/lessons-learned.md` e atualizado `templates/project.md`.\n    - **Automação nos Comandos CLI**: Atualizados `scripts/create-project.js` e `scripts/link-project.js` para inicializarem automaticamente `LESSONS_LEARNED.md` e pontes multi-IA completas em projetos novos ou vinculados.\n    - **Blindagem em Todas as Pontes de IA**: Atualizados `AGENTS.md`, `GEMINI.md`, `.cursorrules`, `CLAUDE.md`, `.windsurfrules`, `.clinerules` e `copilot-instructions.md` com regra mandatória de consultar o `LESSONS_LEARNED.md` local do projeto antes de alterar código.\n    - **Inicialização em Projetos Ativos**: Criados `projects/teste_alfredo_22/LESSONS_LEARNED.md` e `projects/Alfredo_teste/LESSONS_LEARNED.md` com validação de 100% dos links no linter `doctor`.\n\n- **Data**: 2026-10-10\n  - **Refinamento do Modal BYOK e Feedback Reativo do Console Terminal**:\n    - **Consolidação Total de Feedback no Terminal Console (`.ai-card-terminal` / `.ai-terminal-output`)**:\n      - **Remoção da Caixa Duplicada da Esquerda (`#aiTestFeedback`)**: Eliminada a antiga caixa verde/vermelha que aparecia abaixo do campo de chave. A coluna esquerda agora permanece limpa, contínua e sem saltos visuais.\n      - **Terminal Rico na Coluna Direita com Informações Completas**: O terminal ao vivo agora concentra 100% da telemetria de conexão em formato CLI avançado:\n        - `idle`: `$ ENGINE: <PROV> [STANDBY]` · `[IDLE] Clique em \"Testar\" para validar a API Key` · `LOCAL .ENV ENCRYPTION · ISOLADO`.\n        - `testing`: `$ CONNECTING TO <PROV> ENGINE...` · `[WAIT] Handshake HTTP e medição de latência...` · `[SCAN] Descobrindo catálogo de modelos na conta...`.\n        - `success`: `$ CONNECTED TO <PROV> [AUTHENTICATED]` · `[OK] Conexão bem-sucedida · Latência: <ms>ms` · `[OK] Modelos detectados · <n> modelos compatíveis` · `LOCAL .ENV ENCRYPTION · PRONTO PARA ATIVAR`.\n        - `error`: `$ ERROR CONNECTING TO <PROV> [FAILED]` · `[FAIL] <mensagem amigável de erro>` · `LOCAL .ENV ENCRYPTION · VERIFIQUE A CHAVE`.\n    - **Layout Balanceado e Parâmetros com Contexto Integrado**:\n      - Seção `4. Parâmetros de Execução` na coluna esquerda enriquecida com cards dedicados para `Cache TTL` e `Tentativas (Retries)` com inputs alinhados e explicações objetivas de impacto (0ms de latência e resiliência a HTTP 429).\n      - Coluna direita otimizada com cards de `Security & Privacidade` e `Scope & Governança` detalhados com bullets de segurança, garantindo altura simétrica e harmônica com a coluna esquerda sem espaços vazios.\n    - **Padronização Visual com os Demais Modais do Sistema**:\n      - Borda externa e sombras ajustadas com tonalidade azul-marinho escura (#0a101d / #111a2e / #1a253c), idêntica aos outros modais do AI Second Brain.\n      - Botão fechar padronizado em formato circular arredondado (`.ai-card-close-btn`).\n      - Inclusão do asset animado vetorial `assets/cerebro_neon_animado.svg` no card de cabeçalho do gateway.\n      - Alinhamento horizontal do rodapé (`.ai-settings-footer`) alinhado às margens dos inputs.\n    - **Paridade Absoluta 100% entre Local (`docs/brain-ui/`) e Demo Pública (`docs/brain-ui/demo/`)**:\n      - Replicação exata de todas as regras de CSS (`style.css`), lógica JavaScript (`app.js`), marcação HTML (`index.html`) e suporte a mock com validação realista no `demo-mode.js`.\n\n- **Data**: 2026-10-09\n  - **AI Gateway Multi-Provedor (BYOK — Bring Your Own Key)**:\n    - **Módulo Nativo Universal (`scripts/ai-gateway.js`)**: Cliente HTTP/HTTPS sem dependências externas, unificando os principais provedores de IA do mercado:\n      - **Groq Cloud**: Gratuito, ultra-rápido LPU (`openai/gpt-oss-120b` padrão, `openai/gpt-oss-20b` fallback, `qwen/qwen3.8-27b`).\n      - **OpenAI**: Flagship multimodal e raciocínio (`gpt-4o-mini`, `gpt-4o`, `o1-mini`).\n      - **Anthropic Claude**: Análise densa de código e arquitetura (`claude-3-5-sonnet-20241022`, `claude-3-5-haiku-20241022`).\n      - **OpenRouter**: Acesso a centenas de modelos abertos e proprietários (`deepseek/deepseek-chat`, `deepseek-r1`, `qwen-2.5-72b`).\n      - **Ollama Local**: 100% offline, privado na máquina do usuário, custo zero (`llama3.2`, `deepseek-r1`, `qwen2.5-coder`).\n      - **Endpoint Customizado**: Compatível com qualquer servidor local ou proxy corporativo OpenAI-Compatible.\n    - **Resiliência e Auto-Recuperação de Modelos Descontinuados**:\n      - Auto-fallback inteligente no `scripts/ai-gateway.js` quando o provedor retorna erro de modelo inexistente ou sem acesso (`does not exist or you do not have access to it` / 404). O gateway redireciona transparentemente a requisição para o modelo padrão ou de contingência sem abortar a síntese.\n      - Sincronização estrita de catálogo Groq com os modelos ativos da conta (`openai/gpt-oss-120b`, `openai/gpt-oss-20b`).\n    - **Endpoints REST no Backend (`server.js`)**:\n      - `GET /api/ai/config` e `GET /api/ai/status`: Retorna o provedor ativo, máscara segura da chave (ex: `gsk_••••••••Zvrf`), status de configuração e catálogo de provedores/modelos recomendados.\n      - `POST /api/ai/test`: Realiza ping em tempo real na API do provedor com a chave informada, mede a latência em milissegundos e retorna a lista viva de modelos disponíveis da conta do usuário.\n      - `POST /api/ai/save`: Gravação atômica das variáveis no arquivo `.env` físico e atualização imediata de `process.env` em memória sem necessidade de reiniciar o processo Node.js. Suporte a parâmetros avançados (`cacheHours`, `maxRetries`).\n      - **Interceptador de Cota 429**: Detecção de `Rate Limit / Quota Exceeded` propagando flag `quotaExceeded: true` para a interface gráfica.\n    - **Tríade de Modais UX de Alta Fidelidade no Cockpit (`docs/brain-ui/` e `docs/brain-ui/demo/`)**:\n      - **Pill Luminoso na Topbar (`#btnAiGatewayModal`)**: Exibe o status ao vivo da IA (`⚡ Groq Cloud • openai/gpt-oss-120b` com dot verde conectado; `✨ Conectar IA (BYOK)` em tom dourado quando não configurado; pulso vermelho em erro de cota).\n      - **Modal 1: Boas-Vindas & Onboarding (`#aiWelcomeModal`)**: Card escuro com robô neon pulsante convidando o desenvolvedor a conectar seu cérebro digital, acionado suavemente na primeira visita.\n      - **Modal 2: Central BYOK (`#aiSettingsModal`)**: Formulário em 4 etapas:\n        1. Seletor de provedor com ícones.\n        2. Input de chave com cadeado, botão de visibilidade olho (👁️), botão de teste (🔑) com feedback dinâmico de latência (ex: *✓ Conexão bem-sucedida! Latência: 355ms*).\n        3. Dropdown de modelos populado dinamicamente via ping da API.\n        4. Configurações avançadas (Expiração de cache em horas e tentativas máximas).\n        - **Card Verde de Privacidade**: Garante armazenamento 100% local no `.env` sob proteção do `.gitignore`.\n        - **Card Azul de Escopo**: Esclarece o raio de ação da IA (Research Lab, refinamento de briefing e grafo).\n        - **Botão \"Salvar e Ativar ⚡\"**: Salva a configuração e dispara evento no sistema.\n      - **Modal 3: Alerta de Cota Esgotada (`#aiQuotaModal`)**: Modal automático com cabeçalho de aviso, título dourado *\"Cota de IA Esgotada!\"*, caixa de recomendações (trocar para Groq gratuito, Claude ou Ollama local) e botão de redirecionamento para o configurador.\n    - **Efeito UAU: Pulso Sináptico no Grafo 3D Three.js**:\n      - Função `triggerSynapticPulse()` conectada a `graph.pulseSurge()` e `projectGraph.pulseSurge()` no `neuron-graph.js`, provocando uma aceleração visual nos impulsos elétricos das sinapses e nós ao ativar ou salvar uma chave.\n    - **Correção e Enriquecimento do Catálogo de Modelos Dinâmico (Modal BYOK)**:\n      - **Resolução do Bug de Modelos \"Undefined\"**: Identificado que o frontend esperava array de objetos `{ id, name }`, enquanto o gateway retornava array de strings. Implementado parsing polimórfico defensivo no frontend (`app.js` e `demo/app.js`) e normalização rica no backend (`scripts/ai-gateway.js`).\n      - **Filtragem Inteligente Universal de Modelos**: O backend agora descarta automaticamente modelos incompatíveis com chat/completions (áudio `whisper`, classificadores de moderação, guardrails, embeddings, imagem) garantindo que apenas modelos capazes de responder a prompts do Research Lab e síntese fiquem disponíveis.\n      - **Layout Limpo \\u0026 Alternador de Entrada Manual**: Removidos os chips redundantes abaixo do select. A interface agora conta com badge contextualizado (`#aiModelCountBadge`), dropdown enriquecido com janela de contexto (ex: `128k contexto`) e botão alternador para digitação manual do ID do modelo (`#btnToggleManualModel` / `#aiCustomModelWrap`) para suporte flexível a modelos customizados/beta.\n      - **Suporte ao Modo Demonstração (`demo-mode.js`)**: Interceptação de `/api/ai/test` no mock offline evitando erro 403 e populando o catálogo dinâmico mesmo em ambientes estáticos (GitHub Pages).\n      - **Eliminação de Modelos Hardcoded (Arquitetura 100% Dinâmica)**:\n        - Removidos presets fixos (`defaultModel`, `recommendedModels`, `fallbackModel`) de `scripts/ai-gateway.js`, `app.js` e `demo/app.js`. O configurador agora depende exclusivamente da resposta em tempo real da API do provedor ativo via teste de conexão.\n        - Se o usuário não testou a conexão ou não selecionou um modelo, o seletor exibe instrução amigável e impede inferências sem modelo válido.\n      - **Restauração e Isolamento do Vault de Demonstração (`demo-app`)**:\n        - Restaurado o arquivo `docs/brain-ui/demo/vault-data.js` via gerador isolado `build_demo_vault.py`, garantindo que a landing page pública exiba o projeto ilustrativo `demo-app` (35 arquivos de demonstração) e nunca exponha os projetos reais e locais do desenvolvedor (`teste_alfredo_22`, `Alfredo_teste`).\n  - **Refinamentos Visuais e Documentação**:\n    - **Dark Scrollbars**: Padronização dos scrollbars em tom escuro de luxo (#1e293b / #090d16) em todos os blocos de terminal e documentações.\n    - **Card do Criador**: Seção de autoria e comunidade valorizando a criação do projeto.\n    - **Internacionalização (i18n)**: Seletor de idioma PT/EN funcional em toda a landing page.\n    - **Licenciamento Open Source**: Inclusão de `LICENSE` MIT e `.env.example` sem expor segredos.\n\n- **Data**: 2026-10-08\n  - **Correção de Codificação do Terminal e Resiliência do Vault Manager**:\n    - **Terminal Windows (`start-brain.bat`)**: Inclusão de `chcp 65001 >nul` ativando UTF-8 nativo no CMD, eliminando a exibição de `ÔÇö` no lugar do travessão `—` e ícones.\n    - **Prioridade e Invalidação de Cache Local (`docs/brain-ui/vault.js`)**: Servidor local em `localhost` agora tem precedência estrita. Ao conectar com sucesso ao vivo, caches obsoletos no `localStorage` são limpos para evitar poluição visual.\n    - **Auto-Reconexão em Background**: Se o navegador carregar antes do Node.js concluir a subida do socket, o visualizador tenta auto-reconectar periodicamente e migra de forma transparente para `🟢 Ao Vivo (Disco)` sem necessidade de recarregar a página manualmente.\n    - **Árvore de Projetos Hierárquica em Modo Pasta**: Função `_buildVaultFromFiles` reescrita para espelhar a lógica de agrupamento do `scan-vault.js` (isolando projetos, contratos na raiz, subpastas `RESEARCH` e `BACKUPS`), eliminando a exibição plana de 34 arquivos avulsos sob `MEUS PROJETOS`.\n    - **Botão de Ação Rápida no Badge**: Disponibilizado botão `✕ Limpar Cache` diretamente no badge quando em modo de pasta em cache.\n- **Data**: 2026-10-02\n  - **Research Lab (Laboratório de Conhecimento Autônomo) — Etapa 3 (Motor de Execução Autônoma, Resiliência & Síntese Markdown)**:\n    - **Motor Autônomo (`scripts/research-engine.js`)**: Executa a varredura completa da taxonomia de subtópicos, gerando documentos `.md` profundos, estruturados com código, schemas SQL/Prisma e boas práticas.\n    - **Taxonomia de Duas Camadas**: Arquivos organizados automaticamente em `knowledge/` (fundamentos e padrões conceituais) e `actionable/` (código, implementação, schemas e testes).\n    - **Resiliência e Recuperação de Rate Limit no Groq Client (`scripts/groq-client.js`)**:\n      - Parser automático de cabeçalho e mensagens de erro (\"Please try again in X.XXs\").\n      - Backoff com tempo extra de segurança (+2s) e retentativas automáticas até 3x sem abortar o lote.\n      - Fallback inteligente de modelo para `openai/gpt-oss-20b` caso o modelo de 120b sature a cota TPM.\n      - Pausa estratégica de 6s entre arquivos para evitar saturação do bucket de tokens por minuto da camada gratuita.\n      - Resumabilidade inteligente: arquivos já existentes no disco são preservados e reaproveitados automaticamente caso uma execução seja retomada.\n    - **Consolidação em `OVERVIEW.md` e `_meta.json`**: Gera índice completo do laboratório com links markdown relativos clicáveis para cada documento e marca `status: \"completed\"`.\n    - **Integração com Grafo Neural 3D (`scripts/scan-vault.js`)**: Mapeamento de nós do laboratório com ícones dedicados (`🔬` para pastas/overview, `📘` para knowledge e `🛠️` para actionable) orbitando a estrela central do projeto.\n    - **Validação Prática Real**: Execução completa no projeto `teste_alfredo_22` gerando 9 arquivos técnicos completos (8 em `knowledge/` e 1 em `actionable/`) totalizando mais de 100KB de documentação técnica gerada autonomamente.\n    - **Catálogo de Subtópicos & Documentos Conectado ao Disco**:\n      - Corrigido o modal de subtópicos (`openDecomposeModal`): eliminado o gatilho redundante de consulta à IA quando a pesquisa já possui arquivos gerados no disco.\n      - O modal agora renderiza fielmente todos os arquivos reais existentes em `knowledge/` e `actionable/` (9 de 9 no caso do Bolo de Banana).\n      - Adicionados botões de ação direta em cada documento: `✏️ Editar / Ler` (abre no Live Markdown Editor para visualização e edição imediata com salvamento no disco via Ctrl+S) e `🗑️ Excluir` (remove o arquivo do disco, atualiza `_meta.json` e o `OVERVIEW.md`).\n      - Adicionado botão de exclusão completa do laboratório de pesquisa (`🗑️`) no cabeçalho de cada card de pesquisa.\n      - Novos endpoints backend: `POST /api/projects/:name/research/:slug/file/delete` e `POST /api/projects/:name/research/:slug/delete`.\n  - **Research Lab — Etapa 2 (UX/UI UAU no Brain Visualizer)**:\n    - **Aba Dedicada `🔬 Research Lab` no Project Workspace**: Integrada à navegação com pílula de contagem dinâmica (`#pwResearchTabBadge`).\n    - **Hero Banner com Glassmorphism Espacial**: Header com gradiente cósmico, badge pulsante verde de status da Groq Cloud (`openai/gpt-oss-120b`), latência média de inferência (~1.5s) e botão de ação primária `✨ Nova Pesquisa no Lab`.\n    - **Cards Métricos do Lab**: Mapeamento em tempo real do total de pesquisas ativas, documentos em `knowledge/`, especificações em `actionable/` e latência.\n    - **Empty State Futurista**: Orbe atômico pulsante em CSS, texto explicativo e botões de atalho para prompts rápidos de 1 clique (Microsserviços Event-Driven, Auth JWT, Cache & Redis).\n    - **Grid de Cards de Laboratório**: Cards com efeito hover 3D, indicador de status `🟢 Ativo`, caixa expansível do **Prompt Vivo** com tag de versão (`v1`, `v2`), badges das duas camadas (`knowledge/` e `actionable/`) e botões de ação (`▶️ Pesquisar Agora`, `🔮 Grafo 3D`, `🧩 Subtópicos`, `📄 OVERVIEW.md`, `📂 Abrir Pasta`).\n    - **Correção de Layout Responsivo**: Ajustado `.rl-card-title-text` com `word-break: break-word` e badge `🟢 Ativo` fixado à direita com `flex-shrink: 0`, eliminando qualquer sobreposição visual.\n    - **Modal de Criação \"Nova Pesquisa\" com Efeito UAU**:\n      - Campo de tema com chips de presets rápidos.\n      - Botão com faíscas animadas `✨ Melhorar com IA (Groq)`.\n      - **Split View Comparador \"Antes vs Depois\"**: Painel lado a lado contrastando a ideia bruta com o briefing estruturado pela IA.\n      - Painel de pré-visualização de decomposição temática com subtópicos categorizados em chips azuis (`knowledge`) e verdes (`actionable`).\n    - **Modal de \"Prompt Vivo\" & Histórico de Versões**: Interface de linha do tempo com todas as versões passadas do briefing (`definitionHistory`), data/hora e re-refinamento com IA.\n  - **Research Lab — Etapa 1 (Backend & IA Groq)**:\n    - **Módulo Nativo Groq (`scripts/groq-client.js`)**: Cliente HTTP nativo zero-dependência para a API do Groq Cloud (`api.groq.com`), com carregador próprio de `.env`, timeout de 60s, sanitização de markdown fences e parsing robusto de JSON.\n    - **Modelo Ativo**: Suporte para `openai/gpt-oss-120b`, `openai/gpt-oss-20b` e `qwen/qwen3.8-27b`.\n    - **Prompt Vivo & Refinamento Contextual (`refineResearchPrompt`)**: Algoritmo de enriquecimento que lê automaticamente os contratos do projeto (`PROJECT.md`, `ARCHITECTURE.md`) e transforma intenções livres do usuário em briefings de pesquisa estruturados de alto impacto.\n    - **Decomposição em Subtópicos (`decomposeResearchTopic`)**: Divisão do tema de pesquisa em sub-tópicos com taxonomia definida.\n    - **Endpoints REST Implementados no `server.js`**: `/api/ai/status`, `/api/ai/refine-prompt`, `/api/ai/decompose`, `/api/projects/:name/research`, `/api/projects/:name/research/:slug/definition`, `/api/projects/:name/research/:slug/run`.\n\n- **Data**: 2026-10-01 (Madrugada)\n  - **Gravação Física de Backups & Integração Nativa com Windows Explorer**:\n    - Backend grava fisicamente os arquivos gerados em `projects/<projeto>/BACKUPS/` (`dossie_governanca_<projeto>.md` e `backup_governanca_<projeto>.json`).\n    - Novos endpoints `/api/system/open-folder` e `/api/system/open-file` para abrir a pasta no Windows Explorer (`explorer.exe /select`) ou o arquivo no app padrão (`cmd /c start`).\n    - Correção do download do navegador mantendo o Blob URL ativo por 10s para permitir que o Chromium conclua a gravação sem abortar.\n    - Card enriquecido na aba *Backup & Exportação* com caminho absoluto no disco, botão direto para abrir no Explorer, botões para abrir cada arquivo, baixar e copiar caminhos.\n  - **Interatividade Total nos Cards do Project Workspace**:\n    - Edição rápida inline no card *Visão Geral & Contratos* para alterar Objetivo, Stack e Status com gravação direta no disco.\n    - Seletor de status do ciclo com pílulas luminosas conectadas ao `CURRENT_STATE.md`.\n    - Checklist interativo (*O que já foi definido*) com alternância, retorno ao roadmap e exclusão.\n    - Roadmap dinâmico (*Próximos Passos*) com botão \"✓ Concluir\" em 1 clique e input inline com tecla Enter.\n    - Sistema de Toast visual com glassmorphism para feedback instantâneo de gravação.\n  - **Contratos de Governança 100% Dinâmicos**:\n    - Backend inspeciona arquivos físicos reais no disco, exibindo apenas documentos existentes (`PROJECT.md`, `CURRENT_STATE.md`, etc.).\n    - Identificação de contratos recomendados ausentes (ex: `ARCHITECTURE.md`) com ação de inicialização com 1 clique (`+ Inicializar ARCHITECTURE.md`).\n    - Layout e botões dos chips de governança reformulados com `.btn-gov`, eliminando quebras de linha e desproporções.\n  - **Correções Estruturais & Backend**:\n    - Correção do aninhamento de modais no HTML que impedia a exibição do Live Markdown Editor.\n    - Correção na rota `GET /api/file` no `server.js` com verificação de método HTTP estrita, eliminando erro `400 Bad Request` no salvamento.\n- **Data**: 2026-09-30\n  - **Quickstart Studio (Modal de 3 Minutos)**: Onboarding guiado no portal web para criar projetos do zero ou vincular pastas existentes via junções NTFS sem terminal.\n  - **Sidebar \"Dois Mundos\"**: Reorganização visual clara separando \"MEUS PROJETOS\" no topo e \"CÉREBRO & GOVERNANÇA\" abaixo com divisor neon.\n  - **Project Workspace (Página Dedicada do Projeto)**: Hub com 5 abas (Visão Geral, Memória & Saúde, Grafo Neural 3D, Backup & Exportação de Dossiê, Gerenciamento & Desvinculação Segura).\n  - **Grafo Neural 3D (Three.js)**: Grafo orbital onde o projeto é o Sol Central conectado a seus arquivos locais e satélites de governança.\n  - **Grafo Global com Clusters Galácticos**: Projetos agrupados em clusters orbitais interligados por regras comuns.\n  - **APIs de Ciclo de Vida**: Endpoints backend para diagnóstico de memória, arquivamento seguro em `.archive/`, exportação de backup (.md e .json) e desvinculação não destrutiva.\n"
     },
     {
       "id": "memory_lessons-learned_md",
@@ -793,6 +793,118 @@ window.VAULT_SNAPSHOT = {
         "architecture.md"
       ],
       "content": "# FinTrack_SaaS\n\n## Visão Geral\nProjeto criado no AI Second Brain\n\n## Informações Gerais\n- **Tipo**: Greenfield / Projeto Novo\n- **Stack Inicial**: Node.js / TypeScript\n- **Status**: 🟢 Em Planejamento / Ativo\n- **Data de Criação**: 2026-10-12\n\n## Links & Governança\n- Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)\n- Arquitetura: [ARCHITECTURE.md](ARCHITECTURE.md)\n- Decisões Técnicas: `DECISIONS/`\n- Memória de Sessões: `MEMORY/sessions/`\n"
+    },
+    {
+      "id": "projects_OmniHealth_AI_AGENTS_md",
+      "path": "projects/OmniHealth_AI/AGENTS.md",
+      "name": "AGENTS.md",
+      "title": "Governança de IA — OmniHealth_AI",
+      "category": "agents",
+      "icon": "🤖",
+      "size": 969,
+      "mtime": 1791826066478.0068,
+      "outgoingLinks": [
+        "current_state.md",
+        "project.md",
+        "lessons_learned.md"
+      ],
+      "content": "# Governança de IA — OmniHealth_AI\n\n> Este projeto é governado pelo AI Second Brain.\n> Cérebro Central: `C:\\Projetos\\SaaS\\Google Antigravity\\Projetos\\AI_SECOND_BRAIN`\n\n## ANTES DE EXECUTAR QUALQUER TAREFA\n1. Consulte o estado atual em: [CURRENT_STATE.md](CURRENT_STATE.md)\n2. Consulte os requisitos e visão geral em: [PROJECT.md](PROJECT.md)\n3. Consulte as decisões arquiteturais em: DECISIONS/\n4. Consulte as lições aprendidas deste projeto em: [LESSONS_LEARNED.md](LESSONS_LEARNED.md)\n5. Consulte as lições aprendidas globais em: `C:\\Projetos\\SaaS\\Google Antigravity\\Projetos\\AI_SECOND_BRAIN\\memory\\lessons-learned.md`\n6. REGRAS ABSOLUTAS:\n   - NUNCA crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API em tempo real.\n   - Sempre utilize código determinístico antes de recorrer a LLMs.\n   - NUNCA invente contexto ou regras especulativas sem solicitação expressa do desenvolvedor.\n"
+    },
+    {
+      "id": "projects_OmniHealth_AI_ARCHITECTURE_md",
+      "path": "projects/OmniHealth_AI/ARCHITECTURE.md",
+      "name": "ARCHITECTURE.md",
+      "title": "OmniHealth_AI — Arquitetura da Solução",
+      "category": "projects",
+      "icon": "🏗️",
+      "size": 359,
+      "mtime": 1791826066474,
+      "outgoingLinks": [],
+      "content": "# OmniHealth_AI — Arquitetura da Solução\n\n> Visão arquitetural, padrões e design do sistema.\n\n## 1. Stack Tecnológica\n- **Linguagem / Framework**: Fastify + TypeScript + PostgreSQL + Prisma + Redis\n\n## 2. Princípios Adotados\n- Código idiomático, modular e testável.\n- Se utilizar IA: aplicar o AI Decision Gate (`.agents/rules/01-ai-decision.md`).\n"
+    },
+    {
+      "id": "projects_OmniHealth_AI_CLAUDE_md",
+      "path": "projects/OmniHealth_AI/CLAUDE.md",
+      "name": "CLAUDE.md",
+      "title": "Governança de IA — OmniHealth_AI",
+      "category": "projects",
+      "icon": "📄",
+      "size": 969,
+      "mtime": 1791826066490.2688,
+      "outgoingLinks": [
+        "current_state.md",
+        "project.md",
+        "lessons_learned.md"
+      ],
+      "content": "# Governança de IA — OmniHealth_AI\n\n> Este projeto é governado pelo AI Second Brain.\n> Cérebro Central: `C:\\Projetos\\SaaS\\Google Antigravity\\Projetos\\AI_SECOND_BRAIN`\n\n## ANTES DE EXECUTAR QUALQUER TAREFA\n1. Consulte o estado atual em: [CURRENT_STATE.md](CURRENT_STATE.md)\n2. Consulte os requisitos e visão geral em: [PROJECT.md](PROJECT.md)\n3. Consulte as decisões arquiteturais em: DECISIONS/\n4. Consulte as lições aprendidas deste projeto em: [LESSONS_LEARNED.md](LESSONS_LEARNED.md)\n5. Consulte as lições aprendidas globais em: `C:\\Projetos\\SaaS\\Google Antigravity\\Projetos\\AI_SECOND_BRAIN\\memory\\lessons-learned.md`\n6. REGRAS ABSOLUTAS:\n   - NUNCA crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API em tempo real.\n   - Sempre utilize código determinístico antes de recorrer a LLMs.\n   - NUNCA invente contexto ou regras especulativas sem solicitação expressa do desenvolvedor.\n"
+    },
+    {
+      "id": "projects_OmniHealth_AI_CURRENT_STATE_md",
+      "path": "projects/OmniHealth_AI/CURRENT_STATE.md",
+      "name": "CURRENT_STATE.md",
+      "title": "OmniHealth_AI — Estado Atual",
+      "category": "projects",
+      "icon": "💾",
+      "size": 657,
+      "mtime": 1791826656774.413,
+      "outgoingLinks": [],
+      "content": "# OmniHealth_AI — Estado Atual\n\n> Última atualização: 2026-10-12\n\n## Status: 🟢 Em Planejamento / Ativo\n\n## O que já foi definido\n- [x] Inicialização no AI Second Brain com governança e memória ativa.\n- [x] Stack selecionada: **Fastify + TypeScript + PostgreSQL + Prisma + Redis**.\n- [x] Arquitetura base do OmniHealth_AI inicializada no Git\n- [x] Stack Fastify + PostgreSQL + Prisma + Redis configurada\n\n## Próximos Passos\n1. Definir os requisitos centrais do sistema.\n2. Registrar a primeira decisão de arquitetura em `DECISIONS/`.\n3. Implementar endpoints REST de triagem e prontuário\n4. Modelar tabelas Prisma de pacientes e agendamentos\n"
+    },
+    {
+      "id": "projects_OmniHealth_AI_GEMINI_md",
+      "path": "projects/OmniHealth_AI/GEMINI.md",
+      "name": "GEMINI.md",
+      "title": "Governança de IA — OmniHealth_AI",
+      "category": "projects",
+      "icon": "🧠",
+      "size": 969,
+      "mtime": 1791826066479.0042,
+      "outgoingLinks": [
+        "current_state.md",
+        "project.md",
+        "lessons_learned.md"
+      ],
+      "content": "# Governança de IA — OmniHealth_AI\n\n> Este projeto é governado pelo AI Second Brain.\n> Cérebro Central: `C:\\Projetos\\SaaS\\Google Antigravity\\Projetos\\AI_SECOND_BRAIN`\n\n## ANTES DE EXECUTAR QUALQUER TAREFA\n1. Consulte o estado atual em: [CURRENT_STATE.md](CURRENT_STATE.md)\n2. Consulte os requisitos e visão geral em: [PROJECT.md](PROJECT.md)\n3. Consulte as decisões arquiteturais em: DECISIONS/\n4. Consulte as lições aprendidas deste projeto em: [LESSONS_LEARNED.md](LESSONS_LEARNED.md)\n5. Consulte as lições aprendidas globais em: `C:\\Projetos\\SaaS\\Google Antigravity\\Projetos\\AI_SECOND_BRAIN\\memory\\lessons-learned.md`\n6. REGRAS ABSOLUTAS:\n   - NUNCA crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API em tempo real.\n   - Sempre utilize código determinístico antes de recorrer a LLMs.\n   - NUNCA invente contexto ou regras especulativas sem solicitação expressa do desenvolvedor.\n"
+    },
+    {
+      "id": "projects_OmniHealth_AI_LESSONS_LEARNED_md",
+      "path": "projects/OmniHealth_AI/LESSONS_LEARNED.md",
+      "name": "LESSONS_LEARNED.md",
+      "title": "OmniHealth_AI — Lições Aprendidas",
+      "category": "projects",
+      "icon": "💡",
+      "size": 600,
+      "mtime": 1791826066476.0022,
+      "outgoingLinks": [],
+      "content": "# OmniHealth_AI — Lições Aprendidas\n\n> Este documento registra erros, armadilhas técnicas e aprendizados específicos deste projeto.\n> Qualquer agente de IA ou desenvolvedor deve consultar este arquivo antes de alterar código neste repositório.\n\n## Histórico de Lições Aprendidas\n<!-- Registre novos aprendizados seguindo o formato: -->\n<!-- ### YYYY-MM-DD — Título do Aprendizado -->\n<!-- - Contexto: O que motivou o problema -->\n<!-- - Causa Raiz: Motivo técnico da falha -->\n<!-- - O que NÃO fazer: Padrão a evitar -->\n<!-- - Padrão Correto: Solução validada e obrigatória -->\n"
+    },
+    {
+      "id": "projects_OmniHealth_AI_MEMORY_sessions_2026-10-12-arquitetura-inicial-e-schemas-de-triagem-clinica_md",
+      "path": "projects/OmniHealth_AI/MEMORY/sessions/2026-10-12-arquitetura-inicial-e-schemas-de-triagem-clinica.md",
+      "name": "2026-10-12-arquitetura-inicial-e-schemas-de-triagem-clinica.md",
+      "title": "Sessão 2026-10-12 — Arquitetura inicial e schemas de triagem clinica",
+      "category": "projects",
+      "icon": "💾",
+      "size": 402,
+      "mtime": 1791826656764.0244,
+      "outgoingLinks": [],
+      "content": "# Sessão 2026-10-12 — Arquitetura inicial e schemas de triagem clinica\n\n> Registro gerado com apoio de IA e revisado pelo desenvolvedor antes de gravar.\n\n## O que foi feito\n- Commit inicial f0ddb73 adicionou a arquitetura base do OmniHealth_AI.\n- Configuração da estrutura de telemedicina com Fastify, TypeScript, PostgreSQL, Prisma e Redis.\n- Criação dos schemas iniciais para triagem clinica.\n"
+    },
+    {
+      "id": "projects_OmniHealth_AI_PROJECT_md",
+      "path": "projects/OmniHealth_AI/PROJECT.md",
+      "name": "PROJECT.md",
+      "title": "OmniHealth_AI",
+      "category": "projects",
+      "icon": "📄",
+      "size": 639,
+      "mtime": 1791826066472.002,
+      "outgoingLinks": [
+        "current_state.md",
+        "architecture.md",
+        "lessons_learned.md"
+      ],
+      "content": "# OmniHealth_AI\n\n## Visão Geral\nPlataforma de telemedicina e triagem clPlataforma de telemedicina e triagem clinica inteligente com prontuario eletronico\n\n## Informações Gerais\n- **Tipo**: Greenfield / Projeto Novo\n- **Stack Inicial**: Fastify + TypeScript + PostgreSQL + Prisma + Redis\n- **Status**: 🟢 Em Planejamento / Ativo\n- **Data de Criação**: 2026-10-12\n\n## Links & Governança\n- Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)\n- Arquitetura: [ARCHITECTURE.md](ARCHITECTURE.md)\n- Lições Aprendidas: [LESSONS_LEARNED.md](LESSONS_LEARNED.md)\n- Decisões Técnicas: `DECISIONS/`\n- Memória de Sessões: `MEMORY/sessions/`\n"
     },
     {
       "id": "projects_README_md",
@@ -1553,9 +1665,16 @@ window.VAULT_SNAPSHOT = {
           "icon": "🤖",
           "path": "AGENTS.md",
           "size": 2472
+        },
+        {
+          "id": "projects_OmniHealth_AI_AGENTS_md",
+          "label": "Governança de IA — OmniHealth_AI",
+          "icon": "🤖",
+          "path": "projects/OmniHealth_AI/AGENTS.md",
+          "size": 969
         }
       ],
-      "badge": 1
+      "badge": 2
     },
     {
       "id": "projects",
@@ -1889,6 +2008,86 @@ window.VAULT_SNAPSHOT = {
                   "icon": "📄",
                   "path": "projects/FinTrack_SaaS/BACKUPS/dossie_governanca_FinTrack_SaaS.md",
                   "size": 1473
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "proj_OmniHealth_AI",
+          "label": "OmniHealth_AI",
+          "icon": "🚀",
+          "isGroup": true,
+          "isProject": true,
+          "startCollapsed": true,
+          "path": "projects/OmniHealth_AI/PROJECT.md",
+          "totalFilesCount": 7,
+          "childrenCount": 7,
+          "children": [
+            {
+              "id": "projects_OmniHealth_AI_PROJECT_md",
+              "label": "PROJECT.md (Visão Geral)",
+              "title": "OmniHealth_AI",
+              "icon": "📄",
+              "path": "projects/OmniHealth_AI/PROJECT.md",
+              "size": 639
+            },
+            {
+              "id": "projects_OmniHealth_AI_CURRENT_STATE_md",
+              "label": "CURRENT_STATE.md (Estado Atual)",
+              "title": "OmniHealth_AI — Estado Atual",
+              "icon": "💾",
+              "path": "projects/OmniHealth_AI/CURRENT_STATE.md",
+              "size": 657
+            },
+            {
+              "id": "projects_OmniHealth_AI_ARCHITECTURE_md",
+              "label": "ARCHITECTURE.md (Arquitetura)",
+              "title": "OmniHealth_AI — Arquitetura da Solução",
+              "icon": "🏗️",
+              "path": "projects/OmniHealth_AI/ARCHITECTURE.md",
+              "size": 359
+            },
+            {
+              "id": "projects_OmniHealth_AI_CLAUDE_md",
+              "label": "CLAUDE.md",
+              "title": "Governança de IA — OmniHealth_AI",
+              "icon": "📄",
+              "path": "projects/OmniHealth_AI/CLAUDE.md",
+              "size": 969
+            },
+            {
+              "id": "projects_OmniHealth_AI_GEMINI_md",
+              "label": "GEMINI.md",
+              "title": "Governança de IA — OmniHealth_AI",
+              "icon": "🧠",
+              "path": "projects/OmniHealth_AI/GEMINI.md",
+              "size": 969
+            },
+            {
+              "id": "projects_OmniHealth_AI_LESSONS_LEARNED_md",
+              "label": "LESSONS_LEARNED.md",
+              "title": "OmniHealth_AI — Lições Aprendidas",
+              "icon": "💡",
+              "path": "projects/OmniHealth_AI/LESSONS_LEARNED.md",
+              "size": 600
+            },
+            {
+              "id": "sub_OmniHealth_AI_MEMORY",
+              "label": "MEMORY",
+              "icon": "💾",
+              "isGroup": true,
+              "isSubfolder": true,
+              "startCollapsed": true,
+              "childrenCount": 1,
+              "children": [
+                {
+                  "id": "projects_OmniHealth_AI_MEMORY_sessions_2026-10-12-arquitetura-inicial-e-schemas-de-triagem-clinica_md",
+                  "label": "2026-10-12-arquitetura-inicial-e-schemas-de-triagem-clinica.md",
+                  "title": "Sessão 2026-10-12 — Arquitetura inicial e schemas de triagem clinica",
+                  "icon": "💾",
+                  "path": "projects/OmniHealth_AI/MEMORY/sessions/2026-10-12-arquitetura-inicial-e-schemas-de-triagem-clinica.md",
+                  "size": 402
                 }
               ]
             }
@@ -2292,7 +2491,7 @@ window.VAULT_SNAPSHOT = {
           ]
         }
       ],
-      "badge": 4
+      "badge": 5
     },
     {
       "id": "knowledge",
@@ -2372,7 +2571,7 @@ window.VAULT_SNAPSHOT = {
           "label": "Estado Atual do AI Second Brain",
           "icon": "💾",
           "path": "memory/current-state.md",
-          "size": 41109
+          "size": 43022
         },
         {
           "id": "memory_lessons-learned_md",
@@ -2657,6 +2856,14 @@ window.VAULT_SNAPSHOT = {
       "size": 22,
       "icon": "🚀",
       "path": "projects/FinTrack_SaaS/PROJECT.md"
+    },
+    {
+      "id": "hub_proj_OmniHealth_AI",
+      "label": "OmniHealth_AI",
+      "group": "projects",
+      "size": 22,
+      "icon": "🚀",
+      "path": "projects/OmniHealth_AI/PROJECT.md"
     },
     {
       "id": "hub_proj_teste_alfredo_22",
@@ -3171,6 +3378,70 @@ window.VAULT_SNAPSHOT = {
       "path": "projects/FinTrack_SaaS/PROJECT.md"
     },
     {
+      "id": "projects_OmniHealth_AI_AGENTS_md",
+      "label": "Governança de IA — OmniHealth_AI",
+      "group": "agents",
+      "size": 9,
+      "icon": "🤖",
+      "path": "projects/OmniHealth_AI/AGENTS.md"
+    },
+    {
+      "id": "projects_OmniHealth_AI_ARCHITECTURE_md",
+      "label": "OmniHealth_AI — Arquitetura da Solução",
+      "group": "projects",
+      "size": 9,
+      "icon": "🏗️",
+      "path": "projects/OmniHealth_AI/ARCHITECTURE.md"
+    },
+    {
+      "id": "projects_OmniHealth_AI_CLAUDE_md",
+      "label": "Governança de IA — OmniHealth_AI",
+      "group": "projects",
+      "size": 9,
+      "icon": "📄",
+      "path": "projects/OmniHealth_AI/CLAUDE.md"
+    },
+    {
+      "id": "projects_OmniHealth_AI_CURRENT_STATE_md",
+      "label": "OmniHealth_AI — Estado Atual",
+      "group": "projects",
+      "size": 9,
+      "icon": "💾",
+      "path": "projects/OmniHealth_AI/CURRENT_STATE.md"
+    },
+    {
+      "id": "projects_OmniHealth_AI_GEMINI_md",
+      "label": "Governança de IA — OmniHealth_AI",
+      "group": "projects",
+      "size": 9,
+      "icon": "🧠",
+      "path": "projects/OmniHealth_AI/GEMINI.md"
+    },
+    {
+      "id": "projects_OmniHealth_AI_LESSONS_LEARNED_md",
+      "label": "OmniHealth_AI — Lições Aprendidas",
+      "group": "projects",
+      "size": 9,
+      "icon": "💡",
+      "path": "projects/OmniHealth_AI/LESSONS_LEARNED.md"
+    },
+    {
+      "id": "projects_OmniHealth_AI_MEMORY_sessions_2026-10-12-arquitetura-inicial-e-schemas-de-triagem-clinica_md",
+      "label": "Sessão 2026-10-12 — Arquitetura inicial e schemas de triagem clinica",
+      "group": "projects",
+      "size": 9,
+      "icon": "💾",
+      "path": "projects/OmniHealth_AI/MEMORY/sessions/2026-10-12-arquitetura-inicial-e-schemas-de-triagem-clinica.md"
+    },
+    {
+      "id": "projects_OmniHealth_AI_PROJECT_md",
+      "label": "OmniHealth_AI",
+      "group": "projects",
+      "size": 9,
+      "icon": "📄",
+      "path": "projects/OmniHealth_AI/PROJECT.md"
+    },
+    {
       "id": "projects_README_md",
       "label": "Diretório de Projetos — AI Second Brain",
       "group": "projects",
@@ -3594,6 +3865,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "hub-projects",
+      "to": "hub_proj_OmniHealth_AI"
+    },
+    {
+      "from": "hub-projects",
       "to": "hub_proj_teste_alfredo_22"
     },
     {
@@ -3849,6 +4124,38 @@ window.VAULT_SNAPSHOT = {
       "to": "projects_FinTrack_SaaS_PROJECT_md"
     },
     {
+      "from": "hub-agents",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
+      "from": "hub_proj_OmniHealth_AI",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "hub_proj_OmniHealth_AI",
+      "to": "projects_OmniHealth_AI_CLAUDE_md"
+    },
+    {
+      "from": "hub_proj_OmniHealth_AI",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "hub_proj_OmniHealth_AI",
+      "to": "projects_OmniHealth_AI_GEMINI_md"
+    },
+    {
+      "from": "hub_proj_OmniHealth_AI",
+      "to": "projects_OmniHealth_AI_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "hub_proj_OmniHealth_AI",
+      "to": "projects_OmniHealth_AI_MEMORY_sessions_2026-10-12-arquitetura-inicial-e-schemas-de-triagem-clinica_md"
+    },
+    {
+      "from": "hub_proj_OmniHealth_AI",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
       "from": "hub-projects",
       "to": "projects_README_md"
     },
@@ -4078,6 +4385,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "_agents_rules_04-documentation_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "_agents_rules_04-documentation_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "_agents_rules_04-documentation_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "_agents_rules_04-documentation_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -4099,6 +4418,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "_agents_skills_ai-integration_SKILL_md",
       "to": "AGENTS_md"
+    },
+    {
+      "from": "_agents_skills_ai-integration_SKILL_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
     },
     {
       "from": "_agents_skills_architecture-review_SKILL_md",
@@ -4123,6 +4446,14 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "_agents_skills_architecture-review_SKILL_md",
       "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "_agents_skills_architecture-review_SKILL_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "_agents_skills_architecture-review_SKILL_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
     },
     {
       "from": "_agents_skills_architecture-review_SKILL_md",
@@ -4151,6 +4482,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "_agents_skills_bug-investigation_SKILL_md",
       "to": "projects_FinTrack_SaaS_CURRENT_STATE_md"
+    },
+    {
+      "from": "_agents_skills_bug-investigation_SKILL_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
     },
     {
       "from": "_agents_skills_bug-investigation_SKILL_md",
@@ -4203,6 +4538,22 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "_agents_skills_new-feature_SKILL_md",
       "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "_agents_skills_new-feature_SKILL_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
+      "from": "_agents_skills_new-feature_SKILL_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "_agents_skills_new-feature_SKILL_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "_agents_skills_new-feature_SKILL_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
     },
     {
       "from": "_agents_skills_new-feature_SKILL_md",
@@ -4282,6 +4633,26 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "_agents_skills_project-onboarding_SKILL_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
+      "from": "_agents_skills_project-onboarding_SKILL_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "_agents_skills_project-onboarding_SKILL_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "_agents_skills_project-onboarding_SKILL_md",
+      "to": "projects_OmniHealth_AI_GEMINI_md"
+    },
+    {
+      "from": "_agents_skills_project-onboarding_SKILL_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "_agents_skills_project-onboarding_SKILL_md",
       "to": "projects_README_md"
     },
     {
@@ -4335,6 +4706,14 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "_agents_skills_session-memory_SKILL_md",
       "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "_agents_skills_session-memory_SKILL_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "_agents_skills_session-memory_SKILL_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
     },
     {
       "from": "_agents_skills_session-memory_SKILL_md",
@@ -4395,6 +4774,26 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "AGENTS_md",
       "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "AGENTS_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
+      "from": "AGENTS_md",
+      "to": "projects_OmniHealth_AI_CLAUDE_md"
+    },
+    {
+      "from": "AGENTS_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "AGENTS_md",
+      "to": "projects_OmniHealth_AI_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "AGENTS_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
     },
     {
       "from": "AGENTS_md",
@@ -4459,6 +4858,26 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "CLAUDE_md",
       "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "CLAUDE_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "CLAUDE_md",
+      "to": "projects_OmniHealth_AI_CLAUDE_md"
+    },
+    {
+      "from": "CLAUDE_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "CLAUDE_md",
+      "to": "projects_OmniHealth_AI_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "CLAUDE_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
     },
     {
       "from": "CLAUDE_md",
@@ -4538,6 +4957,26 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "decisions_GLOBAL_DECISIONS_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
+      "from": "decisions_GLOBAL_DECISIONS_md",
+      "to": "projects_OmniHealth_AI_CLAUDE_md"
+    },
+    {
+      "from": "decisions_GLOBAL_DECISIONS_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "decisions_GLOBAL_DECISIONS_md",
+      "to": "projects_OmniHealth_AI_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "decisions_GLOBAL_DECISIONS_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "decisions_GLOBAL_DECISIONS_md",
       "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
     },
     {
@@ -4563,6 +5002,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "docs_analise_prompt_refinement_md",
       "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "docs_analise_prompt_refinement_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
     },
     {
       "from": "docs_analise_prompt_refinement_md",
@@ -4642,6 +5085,30 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
+      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
+      "to": "projects_OmniHealth_AI_CLAUDE_md"
+    },
+    {
+      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
+      "to": "projects_OmniHealth_AI_GEMINI_md"
+    },
+    {
+      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "docs_COMO_UTILIZAR_O_PROJETO_md",
       "to": "projects_README_md"
     },
     {
@@ -4698,6 +5165,14 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_decisao_groq_provider_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_decisao_groq_provider_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "docs_decisao_groq_provider_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -4758,6 +5233,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_GUIA_PRATICO_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_GUIA_PRATICO_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_GUIA_PRATICO_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "docs_GUIA_PRATICO_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -4803,6 +5290,14 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "docs_melhorias_research_lab_md",
       "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "docs_melhorias_research_lab_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_melhorias_research_lab_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
     },
     {
       "from": "docs_melhorias_research_lab_md",
@@ -4878,6 +5373,26 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "projects_OmniHealth_AI_CLAUDE_md"
+    },
+    {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "projects_OmniHealth_AI_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "docs_relatorio_usabilidade_dev_journey_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -4923,6 +5438,14 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "docs_RESEARCH_LAB_md",
       "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "docs_RESEARCH_LAB_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_RESEARCH_LAB_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
     },
     {
       "from": "docs_RESEARCH_LAB_md",
@@ -5006,6 +5529,26 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "projects_OmniHealth_AI_CLAUDE_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "docs_SOLUCAO_AI_SECOND_BRAIN_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -5075,6 +5618,30 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
       "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
+      "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "to": "projects_OmniHealth_AI_CLAUDE_md"
+    },
+    {
+      "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "to": "projects_OmniHealth_AI_GEMINI_md"
+    },
+    {
+      "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
     },
     {
       "from": "docs_VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO_md",
@@ -5162,6 +5729,26 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "GEMINI_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
+      "from": "GEMINI_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "GEMINI_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "GEMINI_md",
+      "to": "projects_OmniHealth_AI_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "GEMINI_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "GEMINI_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -5193,12 +5780,28 @@ window.VAULT_SNAPSHOT = {
       "to": "GEMINI_md"
     },
     {
+      "from": "knowledge_ai_AI_GATEWAY_md",
+      "to": "projects_OmniHealth_AI_CLAUDE_md"
+    },
+    {
+      "from": "knowledge_ai_AI_GATEWAY_md",
+      "to": "projects_OmniHealth_AI_GEMINI_md"
+    },
+    {
       "from": "knowledge_ai_MODEL_SELECTION_md",
       "to": "CLAUDE_md"
     },
     {
       "from": "knowledge_ai_MODEL_SELECTION_md",
       "to": "GEMINI_md"
+    },
+    {
+      "from": "knowledge_ai_MODEL_SELECTION_md",
+      "to": "projects_OmniHealth_AI_CLAUDE_md"
+    },
+    {
+      "from": "knowledge_ai_MODEL_SELECTION_md",
+      "to": "projects_OmniHealth_AI_GEMINI_md"
     },
     {
       "from": "knowledge_architecture_PATTERNS_md",
@@ -5211,6 +5814,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "knowledge_architecture_PATTERNS_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
+    },
+    {
+      "from": "knowledge_architecture_PATTERNS_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
     },
     {
       "from": "knowledge_architecture_PATTERNS_md",
@@ -5242,6 +5849,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "knowledge_global_INDEX_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "knowledge_global_INDEX_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -5251,6 +5862,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "knowledge_security_OWASP_md",
       "to": "AGENTS_md"
+    },
+    {
+      "from": "knowledge_security_OWASP_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
     },
     {
       "from": "memory_current-state_md",
@@ -5279,6 +5894,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "memory_current-state_md",
       "to": "docs_brain-ui_demo_README_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "docs_COMO_UTILIZAR_O_PROJETO_md"
     },
     {
       "from": "memory_current-state_md",
@@ -5346,6 +5965,34 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "memory_current-state_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "projects_OmniHealth_AI_CLAUDE_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "projects_OmniHealth_AI_GEMINI_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "projects_OmniHealth_AI_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "memory_current-state_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "memory_current-state_md",
       "to": "projects_README_md"
     },
     {
@@ -5434,6 +6081,30 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "memory_lessons-learned_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
+      "from": "memory_lessons-learned_md",
+      "to": "projects_OmniHealth_AI_CLAUDE_md"
+    },
+    {
+      "from": "memory_lessons-learned_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "memory_lessons-learned_md",
+      "to": "projects_OmniHealth_AI_GEMINI_md"
+    },
+    {
+      "from": "memory_lessons-learned_md",
+      "to": "projects_OmniHealth_AI_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "memory_lessons-learned_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "memory_lessons-learned_md",
       "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
     },
     {
@@ -5502,6 +6173,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "memory_README_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "memory_README_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "memory_README_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "memory_README_md",
       "to": "projects_README_md"
     },
     {
@@ -5537,6 +6220,10 @@ window.VAULT_SNAPSHOT = {
       "to": "AGENTS_md"
     },
     {
+      "from": "projects_Alfredo_teste_ARCHITECTURE_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
       "from": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
       "to": "_agents_rules_01-ai-decision_md"
     },
@@ -5582,6 +6269,22 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_BACKUPS_dossie_governanca_Alfredo_teste_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -5634,6 +6337,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_DECISIONS_001-stack-inicial_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -5671,6 +6386,14 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_Alfredo_teste_LESSONS_LEARNED_md",
       "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_LESSONS_LEARNED_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_LESSONS_LEARNED_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
     },
     {
       "from": "projects_Alfredo_teste_LESSONS_LEARNED_md",
@@ -5702,6 +6425,14 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_Alfredo_teste_PROJECT_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_PROJECT_md",
+      "to": "projects_OmniHealth_AI_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_PROJECT_md",
       "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
     },
     {
@@ -5727,6 +6458,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_actionable_09-estrategia-testes-qualidade_md",
       "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_actionable_09-estrategia-testes-qualidade_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
     },
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_actionable_09-estrategia-testes-qualidade_md",
@@ -5782,6 +6517,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_01-requisitos-funcionais-essenciais_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_01-requisitos-funcionais-essenciais_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_01-requisitos-funcionais-essenciais_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_01-requisitos-funcionais-essenciais_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -5815,6 +6562,14 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_02-requisitos-nao-funcionais-performance_md",
       "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_02-requisitos-nao-funcionais-performance_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_02-requisitos-nao-funcionais-performance_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
     },
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_02-requisitos-nao-funcionais-performance_md",
@@ -5862,6 +6617,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_03-arquitetura-padroes-design_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_03-arquitetura-padroes-design_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_03-arquitetura-padroes-design_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_03-arquitetura-padroes-design_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -5886,6 +6653,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_07-estrategias-escalabilidade-disponibilidade_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_07-estrategias-escalabilidade-disponibilidade_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -5902,6 +6673,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_08-integracoes-externas-rate-limiting_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_08-integracoes-externas-rate-limiting_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -5915,6 +6690,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_12-offline-i18n-auditoria_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_12-offline-i18n-auditoria_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
     },
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_knowledge_12-offline-i18n-auditoria_md",
@@ -5982,6 +6761,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_Alfredo_teste_RESEARCH_crm_OVERVIEW_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Alfredo_teste_RESEARCH_crm_OVERVIEW_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -5991,6 +6774,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_Controle-de-Estoque_ARCHITECTURE_md",
       "to": "AGENTS_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_ARCHITECTURE_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
     },
     {
       "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
@@ -6035,6 +6822,22 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
       "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
     },
     {
       "from": "projects_Controle-de-Estoque_BACKUPS_dossie_governanca_Controle-de-Estoque_md",
@@ -6078,6 +6881,14 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_Controle-de-Estoque_PROJECT_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_PROJECT_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_Controle-de-Estoque_PROJECT_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -6091,6 +6902,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_FinTrack_SaaS_ARCHITECTURE_md",
       "to": "AGENTS_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_ARCHITECTURE_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
     },
     {
       "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
@@ -6135,6 +6950,22 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
       "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
     },
     {
       "from": "projects_FinTrack_SaaS_BACKUPS_dossie_governanca_FinTrack_SaaS_md",
@@ -6178,11 +7009,275 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_FinTrack_SaaS_PROJECT_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_PROJECT_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_FinTrack_SaaS_PROJECT_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
       "from": "projects_FinTrack_SaaS_PROJECT_md",
       "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_AGENTS_md",
+      "to": "memory_lessons-learned_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_AGENTS_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_AGENTS_md",
+      "to": "projects_Alfredo_teste_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_AGENTS_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_AGENTS_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_AGENTS_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_AGENTS_md",
+      "to": "projects_FinTrack_SaaS_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_AGENTS_md",
+      "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_AGENTS_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_AGENTS_md",
+      "to": "projects_OmniHealth_AI_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_AGENTS_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_AGENTS_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_AGENTS_md",
+      "to": "projects_teste_alfredo_22_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_AGENTS_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_AGENTS_md",
+      "to": "templates_lessons-learned_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_AGENTS_md",
+      "to": "templates_project_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_ARCHITECTURE_md",
+      "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_ARCHITECTURE_md",
+      "to": "AGENTS_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_ARCHITECTURE_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_CLAUDE_md",
+      "to": "memory_lessons-learned_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_CLAUDE_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_CLAUDE_md",
+      "to": "projects_Alfredo_teste_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_CLAUDE_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_CLAUDE_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_CLAUDE_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_CLAUDE_md",
+      "to": "projects_FinTrack_SaaS_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_CLAUDE_md",
+      "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_CLAUDE_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_CLAUDE_md",
+      "to": "projects_OmniHealth_AI_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_CLAUDE_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_CLAUDE_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_CLAUDE_md",
+      "to": "projects_teste_alfredo_22_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_CLAUDE_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_CLAUDE_md",
+      "to": "templates_lessons-learned_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_CLAUDE_md",
+      "to": "templates_project_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_GEMINI_md",
+      "to": "memory_lessons-learned_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_GEMINI_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_GEMINI_md",
+      "to": "projects_Alfredo_teste_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_GEMINI_md",
+      "to": "projects_Alfredo_teste_PROJECT_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_GEMINI_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_GEMINI_md",
+      "to": "projects_Controle-de-Estoque_PROJECT_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_GEMINI_md",
+      "to": "projects_FinTrack_SaaS_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_GEMINI_md",
+      "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_GEMINI_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_GEMINI_md",
+      "to": "projects_OmniHealth_AI_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_GEMINI_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_GEMINI_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_GEMINI_md",
+      "to": "projects_teste_alfredo_22_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_GEMINI_md",
+      "to": "projects_teste_alfredo_22_PROJECT_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_GEMINI_md",
+      "to": "templates_lessons-learned_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_GEMINI_md",
+      "to": "templates_project_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_PROJECT_md",
+      "to": "projects_Alfredo_teste_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_PROJECT_md",
+      "to": "projects_Alfredo_teste_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_PROJECT_md",
+      "to": "projects_Alfredo_teste_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_PROJECT_md",
+      "to": "projects_Controle-de-Estoque_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_PROJECT_md",
+      "to": "projects_Controle-de-Estoque_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_PROJECT_md",
+      "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_PROJECT_md",
+      "to": "projects_FinTrack_SaaS_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_PROJECT_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_PROJECT_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_PROJECT_md",
+      "to": "projects_OmniHealth_AI_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_PROJECT_md",
+      "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_PROJECT_md",
+      "to": "projects_teste_alfredo_22_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_OmniHealth_AI_PROJECT_md",
+      "to": "projects_teste_alfredo_22_LESSONS_LEARNED_md"
     },
     {
       "from": "projects_README_md",
@@ -6207,6 +7302,14 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_README_md",
       "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "projects_README_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_README_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
     },
     {
       "from": "projects_README_md",
@@ -6227,6 +7330,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_teste_alfredo_22_ARCHITECTURE_md",
       "to": "AGENTS_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_ARCHITECTURE_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
     },
     {
       "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
@@ -6283,6 +7390,22 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
       "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
     },
     {
       "from": "projects_teste_alfredo_22_BACKUPS_dossie_governanca_teste_alfredo_22_md",
@@ -6422,6 +7545,18 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_teste_alfredo_22_PROJECT_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_PROJECT_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_PROJECT_md",
+      "to": "projects_OmniHealth_AI_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_PROJECT_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -6455,6 +7590,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_04-reducao-gordura-bolo_md",
       "to": "AGENTS_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_knowledge_04-reducao-gordura-bolo_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_bolo-de-banana_OVERVIEW_md",
@@ -6518,6 +7657,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_03-ai-integration-audio_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_knowledge_03-ai-integration-audio_md",
       "to": "projects_teste_alfredo_22_PROJECT_md"
     },
     {
@@ -6533,6 +7676,10 @@ window.VAULT_SNAPSHOT = {
       "to": "AGENTS_md"
     },
     {
+      "from": "projects_teste_alfredo_22_RESEARCH_criar-um-mp3-inteligente_OVERVIEW_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_actionable_02-elo-implementation-node-ts_md",
       "to": "projects_Alfredo_teste_ARCHITECTURE_md"
     },
@@ -6546,6 +7693,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_actionable_02-elo-implementation-node-ts_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_actionable_02-elo-implementation-node-ts_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -6555,6 +7706,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_knowledge_01-elo-fundamentals_md",
       "to": "AGENTS_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_knowledge_01-elo-fundamentals_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_knowledge_05-k-factor-calibration_md",
@@ -6590,6 +7745,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_knowledge_08-elo-scalability_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_knowledge_08-elo-scalability_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -6603,6 +7762,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_knowledge_09-rating-security-audit_md",
       "to": "projects_FinTrack_SaaS_PROJECT_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_knowledge_09-rating-security-audit_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-de-ranking-elo-e-matchmaking_knowledge_09-rating-security-audit_md",
@@ -6662,6 +7825,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-para-controlar-rotina-de-criancas-autiostas-nivel-1_knowledge_03-modelagem-dados-rotina_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_sistema-para-controlar-rotina-de-criancas-autiostas-nivel-1_knowledge_03-modelagem-dados-rotina_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -6675,6 +7842,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-para-controlar-rotina-de-criancas-autiostas-nivel-1_knowledge_04-arquitetura-backend-node-ts_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_sistema-para-controlar-rotina-de-criancas-autiostas-nivel-1_knowledge_04-arquitetura-backend-node-ts_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-para-controlar-rotina-de-criancas-autiostas-nivel-1_knowledge_04-arquitetura-backend-node-ts_md",
@@ -6695,6 +7866,10 @@ window.VAULT_SNAPSHOT = {
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-para-controlar-rotina-de-criancas-autiostas-nivel-1_knowledge_09-analytics-progresso-relatorios_md",
       "to": "projects_FinTrack_SaaS_ARCHITECTURE_md"
+    },
+    {
+      "from": "projects_teste_alfredo_22_RESEARCH_sistema-para-controlar-rotina-de-criancas-autiostas-nivel-1_knowledge_09-analytics-progresso-relatorios_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
     },
     {
       "from": "projects_teste_alfredo_22_RESEARCH_sistema-para-controlar-rotina-de-criancas-autiostas-nivel-1_knowledge_09-analytics-progresso-relatorios_md",
@@ -6806,6 +7981,30 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "README_md",
+      "to": "projects_OmniHealth_AI_AGENTS_md"
+    },
+    {
+      "from": "README_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "README_md",
+      "to": "projects_OmniHealth_AI_CLAUDE_md"
+    },
+    {
+      "from": "README_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "README_md",
+      "to": "projects_OmniHealth_AI_GEMINI_md"
+    },
+    {
+      "from": "README_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "README_md",
       "to": "projects_README_md"
     },
     {
@@ -6866,6 +8065,22 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "templates_project_md",
+      "to": "projects_OmniHealth_AI_ARCHITECTURE_md"
+    },
+    {
+      "from": "templates_project_md",
+      "to": "projects_OmniHealth_AI_CURRENT_STATE_md"
+    },
+    {
+      "from": "templates_project_md",
+      "to": "projects_OmniHealth_AI_LESSONS_LEARNED_md"
+    },
+    {
+      "from": "templates_project_md",
+      "to": "projects_OmniHealth_AI_PROJECT_md"
+    },
+    {
+      "from": "templates_project_md",
       "to": "projects_teste_alfredo_22_ARCHITECTURE_md"
     },
     {
@@ -6905,6 +8120,14 @@ window.VAULT_SNAPSHOT = {
       "to": "_agents_rules_03-security_md"
     },
     {
+      "from": "hub_proj_OmniHealth_AI",
+      "to": "_agents_rules_01-ai-decision_md"
+    },
+    {
+      "from": "hub_proj_OmniHealth_AI",
+      "to": "_agents_rules_03-security_md"
+    },
+    {
       "from": "hub_proj_teste_alfredo_22",
       "to": "_agents_rules_01-ai-decision_md"
     },
@@ -6922,6 +8145,10 @@ window.VAULT_SNAPSHOT = {
     },
     {
       "from": "hub_proj_FinTrack_SaaS",
+      "to": "hub_proj_OmniHealth_AI"
+    },
+    {
+      "from": "hub_proj_OmniHealth_AI",
       "to": "hub_proj_teste_alfredo_22"
     }
   ],
@@ -6978,16 +8205,16 @@ window.VAULT_SNAPSHOT = {
     }
   },
   "stats": {
-    "totalFiles": 109,
+    "totalFiles": 117,
     "rulesCount": 5,
     "skillsCount": 8,
-    "projectsCount": 4,
+    "projectsCount": 5,
     "knowledgeCount": 6,
     "decisionsCount": 1,
     "memoryCount": 3,
     "templatesCount": 5,
     "docsCount": 10,
-    "totalNodes": 124,
-    "totalEdges": 846
+    "totalNodes": 133,
+    "totalEdges": 1085
   }
 };
