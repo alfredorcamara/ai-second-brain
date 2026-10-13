@@ -266,11 +266,26 @@ function handleAiEngineHelpBackdropClick(event) {
     }
 }
 
-function openAiDecisionFlowHelpModal() {
+function openAiDecisionFlowHelpModal(stepId) {
     const modal = document.getElementById('aiDecisionFlowHelpModal');
     if (modal) {
         modal.style.display = 'flex';
         document.body.style.overflow = 'hidden';
+
+        if (stepId) {
+            const target = document.getElementById(`aiFlowStep_${stepId}`);
+            if (target) {
+                setTimeout(() => {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    target.classList.remove('ai-step-highlight-pulse');
+                    void target.offsetWidth;
+                    target.classList.add('ai-step-highlight-pulse');
+                    setTimeout(() => {
+                        target.classList.remove('ai-step-highlight-pulse');
+                    }, 2400);
+                }, 100);
+            }
+        }
     }
 }
 
@@ -310,7 +325,7 @@ function handleBrainMetricsHelpBackdropClick(event) {
     }
 }
 
-// Suporte à tecla ESC para fechar modais de ajuda
+// Suporte à tecla ESC para fechar modais de ajuda e Enter/Espaço no fluxograma
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         const engineModal = document.getElementById('aiEngineHelpModal');
@@ -324,6 +339,12 @@ document.addEventListener('keydown', (e) => {
         const metricsModal = document.getElementById('brainMetricsHelpModal');
         if (metricsModal && metricsModal.style.display === 'flex') {
             closeBrainMetricsHelpModal();
+        }
+    } else if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.closest && e.target.closest('.flow-diagram')) {
+        const btn = e.target.closest('[role="button"]');
+        if (btn) {
+            e.preventDefault();
+            btn.click();
         }
     }
 });

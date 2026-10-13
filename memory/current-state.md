@@ -25,6 +25,11 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
     - **Modais Educativos nos Cards de Governança (`#aiDecisionFlowHelpModal` & `#brainMetricsHelpModal`)**:
       - Adicionados modais explicativos de alta fidelidade visual nos cards *AI Decision Flow* e *Métricas do Cérebro*, detalhando a hierarquia determinística (Código determinístico vs AIJev vs LLM vs Validação) e o papel prático das 6 métricas fundamentais (Regras, Skills, Projetos, Conhecimento, Decisões, Memória).
       - Redesenhados os botões de ajuda `?` em estilo minimalista e translúcido (ghost button com ícone vetorial SVG Heroicons e efeito hover suave), substituindo o antigo botão circular sólido.
+    - **Interatividade Contextual no AI Decision Flow (`#aiDecisionFlowHelpModal`)**:
+      - **Abertura e Rolagem por Bloco do Fluxograma**: Todos os nós (`TAREFA`, `Determinística?`, `Decisão?`, `Geração?`, `VALIDAÇÃO`) e ramificações (`SIM → CÓDIGO`, `SIM → AIJEV`, `SIM → LLM`) do card *AI Decision Flow* tornados interativos e clicáveis.
+      - **Navegação Direcionada com Destaque Luminoso**: Ao clicar em qualquer etapa, a função `openAiDecisionFlowHelpModal(stepId)` abre o modal, executa rolagem suave (`scrollIntoView`) centralizando na etapa correspondente e dispara um pulso luminoso violeta (`@keyframes flowStepPulse`) de orientação visual.
+      - **Affordance & Micro-interações**: Adicionado `cursor: pointer`, ganho de brilho no hover, elevação suave (`translateY(-2px)`) e sombras dinâmicas via `filter: drop-shadow` compatíveis com o formato poligonal `clip-path` dos nós de decisão.
+      - **Acessibilidade Completa**: Configurados atributos semânticos (`role="button"`, `tabindex="0"`), tooltips explicativos (`title="..."`) e atalhos de teclado (`Enter` e `Espaço`).
     - **Remoção de Jargão `(BYOK)` do Título de Configuração de IA**:
       - Título do modal atualizado de `Configuração de IA (BYOK)` para simplesmente `Configuração de IA`, reduzindo atrito cognitivo e jargões corporativos na UI, mantendo o conceito técnico registrado nos ADRs de arquitetura.
     - **Correção de Layout e Respiro na Barra de Busca da Sidebar (`✨ IA`)**:

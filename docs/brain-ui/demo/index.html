@@ -626,32 +626,40 @@
                             </div>
                             <div class="flow-diagram">
                                 <div class="flow-step">
-                                    <div class="flow-node start">TAREFA</div>
+                                    <div class="flow-node start" onclick="openAiDecisionFlowHelpModal('intro')"
+                                        title="Clique para ver o princípio central da árvore de decisão" role="button" tabindex="0">TAREFA</div>
                                     <div class="flow-arrow">↓</div>
                                 </div>
                                 <div class="flow-step">
-                                    <div class="flow-node decision">Determinística?</div>
-                                    <div class="flow-branch">
+                                    <div class="flow-node decision" onclick="openAiDecisionFlowHelpModal('deterministic')"
+                                        title="Etapa 1: É Determinística? Clique para ver detalhes" role="button" tabindex="0">Determinística?</div>
+                                    <div class="flow-branch" onclick="openAiDecisionFlowHelpModal('deterministic')"
+                                        title="Clique para ver: Código Determinístico Puro (Custo zero / &lt;1ms)" role="button" tabindex="0">
                                         <span class="flow-yes">SIM → CÓDIGO</span>
                                     </div>
                                     <div class="flow-arrow">NÃO ↓</div>
                                 </div>
                                 <div class="flow-step">
-                                    <div class="flow-node decision">Decisão?</div>
-                                    <div class="flow-branch">
+                                    <div class="flow-node decision" onclick="openAiDecisionFlowHelpModal('decision')"
+                                        title="Etapa 2: É Decisão ou Classificação? Clique para ver detalhes" role="button" tabindex="0">Decisão?</div>
+                                    <div class="flow-branch" onclick="openAiDecisionFlowHelpModal('decision')"
+                                        title="Clique para ver: AIJev / Jev (Alta velocidade / Auditável)" role="button" tabindex="0">
                                         <span class="flow-yes">SIM → AIJEV</span>
                                     </div>
                                     <div class="flow-arrow">NÃO ↓</div>
                                 </div>
                                 <div class="flow-step">
-                                    <div class="flow-node decision">Geração?</div>
-                                    <div class="flow-branch">
+                                    <div class="flow-node decision" onclick="openAiDecisionFlowHelpModal('generation')"
+                                        title="Etapa 3: Precisa Gerar Linguagem? Clique para ver detalhes" role="button" tabindex="0">Geração?</div>
+                                    <div class="flow-branch" onclick="openAiDecisionFlowHelpModal('generation')"
+                                        title="Clique para ver: LLM via AI Gateway (Linguagem natural)" role="button" tabindex="0">
                                         <span class="flow-yes">SIM → LLM</span>
                                     </div>
                                     <div class="flow-arrow">↓</div>
                                 </div>
                                 <div class="flow-step">
-                                    <div class="flow-node end">VALIDAÇÃO</div>
+                                    <div class="flow-node end" onclick="openAiDecisionFlowHelpModal('validation')"
+                                        title="Etapa 4: Validação Programática Obrigatória. Clique para ver detalhes" role="button" tabindex="0">VALIDAÇÃO</div>
                                 </div>
                             </div>
                         </div>
@@ -1932,7 +1940,7 @@
 
             <div style="padding: 24px; color: #cbd5e1; font-size: 13.5px; line-height: 1.6;">
                 <!-- Introdução / Princípio Central -->
-                <div class="ai-help-section"
+                <div id="aiFlowStep_intro" class="ai-help-section"
                     style="background: rgba(168, 85, 247, 0.05); border-color: rgba(168, 85, 247, 0.2);">
                     <h3
                         style="font-size: 14.5px; color: #e9d5ff; margin: 0 0 8px 0; display: flex; align-items: center; gap: 8px;">
@@ -1955,7 +1963,7 @@
 
                     <div style="display: flex; flex-direction: column; gap: 12px;">
                         <!-- Etapa 1 -->
-                        <div style="background: rgba(0,0,0,0.3); border-left: 3px solid #10b981; border-radius: 6px; padding: 12px 14px;">
+                        <div id="aiFlowStep_deterministic" style="background: rgba(0,0,0,0.3); border-left: 3px solid #10b981; border-radius: 6px; padding: 12px 14px; transition: all 0.3s ease;">
                             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
                                 <strong style="color: #6ee7b7; font-size: 13.5px;">1. É Determinística? → CÓDIGO PURO / REGRA</strong>
                                 <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 600;">Custo Zero · Latência &lt;1ms</span>
@@ -1966,7 +1974,7 @@
                         </div>
 
                         <!-- Etapa 2 -->
-                        <div style="background: rgba(0,0,0,0.3); border-left: 3px solid #f59e0b; border-radius: 6px; padding: 12px 14px;">
+                        <div id="aiFlowStep_decision" style="background: rgba(0,0,0,0.3); border-left: 3px solid #f59e0b; border-radius: 6px; padding: 12px 14px; transition: all 0.3s ease;">
                             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
                                 <strong style="color: #fcd34d; font-size: 13.5px;">2. É Decisão ou Classificação? → AIJEV / JEV</strong>
                                 <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-weight: 600;">Alta Velocidade · 100% Auditável</span>
@@ -1977,7 +1985,7 @@
                         </div>
 
                         <!-- Etapa 3 -->
-                        <div style="background: rgba(0,0,0,0.3); border-left: 3px solid #38bdf8; border-radius: 6px; padding: 12px 14px;">
+                        <div id="aiFlowStep_generation" style="background: rgba(0,0,0,0.3); border-left: 3px solid #38bdf8; border-radius: 6px; padding: 12px 14px; transition: all 0.3s ease;">
                             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
                                 <strong style="color: #7dd3fc; font-size: 13.5px;">3. Precisa Gerar Linguagem? → LLM (AI GATEWAY)</strong>
                                 <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-weight: 600;">Raciocínio Aberto · Linguagem Natural</span>
@@ -1988,7 +1996,7 @@
                         </div>
 
                         <!-- Etapa 4 -->
-                        <div style="background: rgba(0,0,0,0.3); border-left: 3px solid #a855f7; border-radius: 6px; padding: 12px 14px;">
+                        <div id="aiFlowStep_validation" style="background: rgba(0,0,0,0.3); border-left: 3px solid #a855f7; border-radius: 6px; padding: 12px 14px; transition: all 0.3s ease;">
                             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
                                 <strong style="color: #d8b4fe; font-size: 13.5px;">4. Fechamento Obrigatório: VALIDAÇÃO PROGRAMÁTICA</strong>
                                 <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(168, 85, 247, 0.15); color: #c084fc; font-weight: 600;">Blindagem de Segurança</span>
