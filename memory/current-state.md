@@ -21,6 +21,11 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 
 ## Sessões Recentes
 - **Data**: 2026-10-12
+  - **Isolamento Estrito do Vault de Demonstração na Landing Page (`build:demo`)**:
+    - **Diagnóstico & Correção**: O snapshot de demonstração (`docs/brain-ui/demo/vault-data.js`) havia sido sobrescrito com o vault completo do workspace local, expondo indevidamente os projetos privados do usuário na demonstração embutida da landing page.
+    - **Restauração do Vault de Demonstração**: Regenerado o `docs/brain-ui/demo/vault-data.js` via `python docs/brain-ui/demo/tools/build_demo_vault.py`, restaurando o cofre ilustrativo curado (35 arquivos de demonstração) contendo exclusivamente o projeto governado `demo-app`.
+    - **Automação no `package.json`**: Adicionado o script `"build:demo": "python docs/brain-ui/demo/tools/build_demo_vault.py"` para permitir rebuild e manutenção imediata sem risco de sobrescrita acidental pelo `scan-vault.js`.
+    - **Comprovação Visual**: Validado no navegador via browser subagent com captura de tela demonstrando que a demonstração na landing page exibe exclusivamente `demo-app (1 projeto governamental)`.
   - **Progressive Disclosure & Central de Ajuda Cognitiva ("? Como Funciona")**:
     - **Botão e Modal Dedicado de Arquitetura RAG (`#askBrainHelpModal`)**:
       - Adicionado botão `? Como Funciona` no cabeçalho do modal "Pergunte ao Cérebro" com abertura em camada superior (`z-index: 10050`).
