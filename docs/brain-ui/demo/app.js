@@ -1161,7 +1161,7 @@ function renderDashboardProjects() {
                             <span>🛡️</span> Governança de Arquitetura
                             <span class="proj-gov-info-btn" title="O que significa este percentual?">ℹ️</span>
                         </span>
-                        <span class="proj-gov-val">${govPercent}% Conforme</span>
+                        <span class="proj-gov-val ${govPercent === 100 ? 'is-100' : 'is-partial'}">${govPercent}% Conforme</span>
                     </div>
                     <div class="proj-gov-track">
                         <div class="proj-gov-fill" style="width: ${govPercent}%; background: ${govBarColor};"></div>
@@ -1169,16 +1169,16 @@ function renderDashboardProjects() {
                     <!-- Pílulas dos 4 Contratos (+25% cada) -->
                     <div class="proj-gov-pills">
                         <span class="gov-pill ${hasProjectMd ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${hasProjectMd ? `navigateTo('projects/${folderName}/PROJECT.md')` : `initializeContract('PROJECT.md')`}" title="${hasProjectMd ? '✓ PROJECT.md ativo (Clique para visualizar)' : '⚠️ Clique para inicializar PROJECT.md'}">
-                            ${hasProjectMd ? '✓' : '⚠️'} PROJECT
+                            ${hasProjectMd ? '✓ PROJECT' : '+ PROJECT'}
                         </span>
                         <span class="gov-pill ${hasCurrentState ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${hasCurrentState ? `navigateTo('projects/${folderName}/CURRENT_STATE.md')` : `initializeContract('CURRENT_STATE.md')`}" title="${hasCurrentState ? '✓ CURRENT_STATE.md ativo (Clique para visualizar)' : '⚠️ Clique para inicializar CURRENT_STATE.md'}">
-                            ${hasCurrentState ? '✓' : '⚠️'} STATE
+                            ${hasCurrentState ? '✓ STATE' : '+ STATE'}
                         </span>
                         <span class="gov-pill ${hasArchitecture ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${hasArchitecture ? `navigateTo('projects/${folderName}/ARCHITECTURE.md')` : `initializeContract('ARCHITECTURE.md')`}" title="${hasArchitecture ? '✓ ARCHITECTURE.md ativo (Clique para visualizar)' : '⚠️ Clique para inicializar ARCHITECTURE.md'}">
-                            ${hasArchitecture ? '✓' : '⚠️'} ARCH
+                            ${hasArchitecture ? '✓ ARCH' : '+ ARCH'}
                         </span>
                         <span class="gov-pill ${hasDecisions ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${hasDecisions ? `openProjectWorkspace('${folderName}', 'overview')` : `createNewDecisionRecord('${folderName}')`}" title="${hasDecisions ? '✓ Decisões registradas (Clique para ver no Workspace)' : '⚠️ Clique para registrar a primeira decisão (ADR-001) e bater 100%!'}">
-                            ${hasDecisions ? '✓' : '➕'} DECISIONS
+                            ${hasDecisions ? '✓ DECISIONS' : '+ DECISIONS'}
                         </span>
                     </div>
                 </div>

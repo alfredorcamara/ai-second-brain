@@ -3990,12 +3990,12 @@ body {
 
 .btn-dash-act {
     flex: 1;
-    font-size: 11px;
+    font-size: 11.5px;
     font-weight: 600;
-    padding: 6px 10px;
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 7px 10px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.09);
     color: var(--text-primary);
     cursor: pointer;
     display: flex;
@@ -4006,45 +4006,53 @@ body {
 }
 
 .btn-dash-act:hover {
-    background: var(--accent-primary);
-    border-color: var(--accent-secondary);
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.2);
     color: #fff;
     transform: translateY(-1px);
 }
 
 .btn-dash-act.primary {
-    background: rgba(99, 102, 241, 0.18);
-    border-color: rgba(99, 102, 241, 0.35);
-    color: #c4b5fd;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.45);
+    color: #34d399;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
 }
 
 .btn-dash-act.primary:hover {
-    background: var(--accent-primary);
-    color: #fff;
+    background: #10b981;
+    border-color: #34d399;
+    color: #060a13;
+    box-shadow: 0 4px 18px rgba(16, 185, 129, 0.45);
+    transform: translateY(-1px);
 }
 
 .btn-dash-act.neural-act {
-    background: rgba(168, 85, 247, 0.12);
-    border-color: rgba(168, 85, 247, 0.25);
-    color: #d8b4fe;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
 }
 
 .btn-dash-act.neural-act:hover {
-    background: #9333ea;
-    border-color: #a855f7;
-    color: #fff;
+    background: rgba(168, 85, 247, 0.2);
+    border-color: rgba(168, 85, 247, 0.5);
+    color: #f8fafc;
+    box-shadow: 0 4px 14px rgba(168, 85, 247, 0.25);
+    transform: translateY(-1px);
 }
 
 .btn-dash-act.lab-act {
     background: rgba(6, 182, 212, 0.12);
-    border-color: rgba(6, 182, 212, 0.25);
+    border: 1px solid rgba(6, 182, 212, 0.35);
     color: #67e8f9;
 }
 
 .btn-dash-act.lab-act:hover {
-    background: #0891b2;
+    background: rgba(6, 182, 212, 0.25);
     border-color: #06b6d4;
     color: #fff;
+    box-shadow: 0 4px 14px rgba(6, 182, 212, 0.25);
+    transform: translateY(-1px);
 }
 
 /* ── Proj Dashboard Card (Executive UAU Glassmorphic Card) ── */
@@ -4277,40 +4285,59 @@ body {
 
 /* Governance Bar */
 .proj-gov-container {
-    background: rgba(0, 0, 0, 0.22);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 9px;
-    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 12px;
+    padding: 12px 14px;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.proj-gov-container:hover {
+    background: rgba(0, 0, 0, 0.36);
+    border-color: rgba(255, 255, 255, 0.12);
 }
 
 .proj-gov-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 6px;
-    font-size: 11px;
+    margin-bottom: 8px;
+    font-size: 12px;
 }
 
 .proj-gov-label {
-    color: var(--text-tertiary);
-    font-weight: 500;
+    color: #cbd5e1;
+    font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
+    font-size: 12.5px;
 }
 
 .proj-gov-val {
     font-weight: 700;
-    color: #a78bfa;
     font-family: var(--font-mono, monospace);
+    font-size: 12px;
+    letter-spacing: 0.2px;
+}
+
+.proj-gov-val.is-100 {
+    color: #34d399;
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+.proj-gov-val.is-partial {
+    color: #fbbf24;
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.35);
 }
 
 .proj-gov-track {
     width: 100%;
-    height: 5px;
+    height: 4px;
     background: rgba(255, 255, 255, 0.08);
     border-radius: 999px;
     overflow: hidden;
+    margin-bottom: 10px;
 }
 
 .proj-gov-fill {
@@ -4323,69 +4350,88 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 17px;
-    height: 17px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.14);
     color: var(--text-secondary);
-    font-size: 10px;
+    font-size: 9.5px;
     cursor: pointer;
     transition: all var(--transition-fast);
-    margin-left: 6px;
+    margin-left: 4px;
     line-height: 1;
 }
 
 .proj-gov-info-btn:hover {
-    background: rgba(99, 102, 241, 0.3);
-    border-color: rgba(99, 102, 241, 0.5);
+    background: rgba(99, 102, 241, 0.35);
+    border-color: rgba(99, 102, 241, 0.6);
     color: #fff;
     transform: scale(1.15);
 }
 
-/* Governance 4-Contracts Breakdown Pills */
+/* Governance 4-Contracts Breakdown Pills (2x2 Grid Luminous Layout) */
 .proj-gov-pills {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-    margin-top: 8px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
 }
 
 .gov-pill {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    font-size: 9.5px;
+    gap: 6px;
+    font-size: 11px;
     font-weight: 600;
-    padding: 3px 4px;
-    border-radius: 5px;
+    padding: 7px 10px;
+    border-radius: 8px;
     letter-spacing: 0.3px;
     white-space: nowrap;
-    transition: all var(--transition-fast);
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: var(--font-mono, monospace);
+    user-select: none;
 }
 
 .gov-pill.valid {
-    background: rgba(16, 185, 129, 0.12);
+    background: rgba(16, 185, 129, 0.09);
     color: #34d399;
-    border: 1px solid rgba(16, 185, 129, 0.25);
+    border: 1px solid rgba(16, 185, 129, 0.45);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.12);
+}
+
+.gov-pill.valid:hover {
+    background: rgba(16, 185, 129, 0.18);
+    border-color: rgba(16, 185, 129, 0.75);
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.3);
+    transform: translateY(-1.5px);
 }
 
 .gov-pill.pending {
-    background: rgba(245, 158, 11, 0.1);
+    background: rgba(245, 158, 11, 0.09);
     color: #fbbf24;
-    border: 1px dashed rgba(245, 158, 11, 0.35);
+    border: 1px dashed rgba(245, 158, 11, 0.55);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.12);
 }
 
-.gov-pill:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.2);
+.gov-pill.pending:hover {
+    background: rgba(245, 158, 11, 0.18);
+    border-color: rgba(245, 158, 11, 0.85);
+    border-style: solid;
+    box-shadow: 0 0 16px rgba(245, 158, 11, 0.3);
+    transform: translateY(-1.5px);
 }
 
-/* Quick Stats */
+/* Quick Stats Dock (Unified Cohesive Strip) */
 .proj-quick-stats {
     display: flex;
-    gap: 8px;
+    align-items: center;
+    justify-content: space-around;
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
+    padding: 8px 10px;
+    gap: 4px;
 }
 
 .pqs-chip {
@@ -4393,15 +4439,23 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 8px;
-    padding: 6px 8px;
-    font-size: 11px;
-    color: var(--text-secondary);
+    gap: 6px;
+    background: transparent;
+    border: none;
+    padding: 2px 4px;
+    font-size: 11.5px;
+    color: #94a3b8;
     font-weight: 500;
     white-space: nowrap;
+}
+
+.pqs-chip:not(:last-child) {
+    border-right: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.pqs-chip strong {
+    color: #f8fafc;
+    font-weight: 700;
 }
 
 .pqs-chip strong {

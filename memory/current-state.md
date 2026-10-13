@@ -25,6 +25,13 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
     - **Modais Educativos nos Cards de Governança (`#aiDecisionFlowHelpModal` & `#brainMetricsHelpModal`)**:
       - Adicionados modais explicativos de alta fidelidade visual nos cards *AI Decision Flow* e *Métricas do Cérebro*, detalhando a hierarquia determinística (Código determinístico vs AIJev vs LLM vs Validação) e o papel prático das 6 métricas fundamentais (Regras, Skills, Projetos, Conhecimento, Decisões, Memória).
       - Redesenhados os botões de ajuda `?` em estilo minimalista e translúcido (ghost button com ícone vetorial SVG Heroicons e efeito hover suave), substituindo o antigo botão circular sólido.
+    - **Redesign dos Cards de Projetos ("Projetos Sob Governança")**:
+      - **Ajuste Semântico de Título**: Seção atualizada de *"Meus Projetos Governamentais"* para **"Projetos Sob Governança"**, eliminando a ambiguidade com órgãos governamentais e alinhando ao conceito de governança de software por IA.
+      - **Grid 2x2 Luminous para os 4 Contratos**: Os 4 contratos essenciais (`PROJECT`, `STATE`, `ARCH`, `DECISIONS`) organizados em layout 2x2 de alta escaneabilidade com tipografia nítida (11px monospace), preenchimento translúcido com glow neon esmeralda para contratos válidos (`✓`) e destaque âmbar para pendências (`+ DECISIONS`).
+      - **Dock Unificado de Métricas**: Substituição das 3 caixas cinzas pesadas por uma faixa única com divisórias translúcidas discretas integrando `docs indexados`, `labs de pesquisa` e `proporção de contratos`.
+      - **Hierarquia de Ações Refinada**: Botão `🚀 Workspace` com destaque luminoso de ação primária, e `🪐 Grafo 3D` / `🔬 Labs` / `⚙️ Gerenciar` como ações secundárias em estilo dark glass sofisticado.
+      - **Sanitização de Dados**: Corrigida a duplicação textual no `PROJECT.md` do `OmniHealth_AI`.
+      - **Paridade Absoluta 100%**: Espelhado em `docs/brain-ui/` e `docs/brain-ui/demo/` (`index.html`, `app.js`, `style.css`).
     - **Interatividade Contextual no AI Decision Flow (`#aiDecisionFlowHelpModal`)**:
       - **Abertura e Rolagem por Bloco do Fluxograma**: Todos os nós (`TAREFA`, `Determinística?`, `Decisão?`, `Geração?`, `VALIDAÇÃO`) e ramificações (`SIM → CÓDIGO`, `SIM → AIJEV`, `SIM → LLM`) do card *AI Decision Flow* tornados interativos e clicáveis.
       - **Navegação Direcionada com Destaque Luminoso**: Ao clicar em qualquer etapa, a função `openAiDecisionFlowHelpModal(stepId)` abre o modal, executa rolagem suave (`scrollIntoView`) centralizando na etapa correspondente e dispara um pulso luminoso violeta (`@keyframes flowStepPulse`) de orientação visual.
