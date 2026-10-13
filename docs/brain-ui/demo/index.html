@@ -727,6 +727,91 @@
                             </div>
                         </div>
 
+                        <!-- Toolbar de Governança: Busca, Filtros e Ordenação -->
+                        <div class="proj-toolbar-wrap" id="projToolbarWrap">
+                            <div class="proj-toolbar-top-row">
+                                <!-- Search Box -->
+                                <div class="proj-search-box">
+                                    <span class="proj-search-icon">🔍</span>
+                                    <input type="text" id="projSearchInput" class="proj-search-input" 
+                                           placeholder="Buscar por nome, pasta, descrição ou tecnologia... (Pressione / para focar)" 
+                                           autocomplete="off" spellcheck="false" oninput="handleProjectSearchInput(event)">
+                                    <span class="proj-search-kbd-hint" id="projSearchKbdHint">/</span>
+                                    <button type="button" class="proj-search-clear-btn" id="projSearchClearBtn" 
+                                            onclick="clearProjectSearch()" title="Limpar busca" style="display: none;">✕</button>
+                                </div>
+
+                                <!-- Quick Summary & Reset -->
+                                <div class="proj-toolbar-summary">
+                                    <span class="proj-results-counter" id="projResultsCounter">Carregando projetos...</span>
+                                    <button type="button" class="btn-proj-reset-filters" id="btnProjResetFilters" 
+                                            onclick="resetProjectFilters()" style="display: none;" title="Restaurar todos os filtros">
+                                        <span>↺</span> Limpar Filtros
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="proj-toolbar-filters-row">
+                                <!-- Filtro por Status -->
+                                <div class="proj-filter-group">
+                                    <label class="proj-filter-label" for="projStatusFilter">
+                                        <span class="proj-filter-label-icon">🚦</span> Status
+                                    </label>
+                                    <div class="proj-select-wrapper">
+                                        <select id="projStatusFilter" class="proj-filter-select" onchange="handleProjectFilterChange()">
+                                            <option value="all">Todos os Status</option>
+                                            <option value="active">🟢 Ativo / Produção</option>
+                                            <option value="planning">🟡 Planejamento</option>
+                                            <option value="concept">🔴 Conceituação</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Filtro por Stack (Dinâmico) -->
+                                <div class="proj-filter-group">
+                                    <label class="proj-filter-label" for="projStackFilter">
+                                        <span class="proj-filter-label-icon">⚡</span> Stack
+                                    </label>
+                                    <div class="proj-select-wrapper">
+                                        <select id="projStackFilter" class="proj-filter-select" onchange="handleProjectFilterChange()">
+                                            <option value="all">Todas as Stacks</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Filtro por Governança -->
+                                <div class="proj-filter-group">
+                                    <label class="proj-filter-label" for="projGovFilter">
+                                        <span class="proj-filter-label-icon">🛡️</span> Governança
+                                    </label>
+                                    <div class="proj-select-wrapper">
+                                        <select id="projGovFilter" class="proj-filter-select" onchange="handleProjectFilterChange()">
+                                            <option value="all">Todas as Conformidades</option>
+                                            <option value="100">🛡️ 100% Conforme (Ouro)</option>
+                                            <option value="partial">⚠️ Pendente (&lt; 100%)</option>
+                                            <option value="labs">🔬 Com Research Labs</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Ordenação (Sort) -->
+                                <div class="proj-filter-group">
+                                    <label class="proj-filter-label" for="projSortSelect">
+                                        <span class="proj-filter-label-icon">⇅</span> Ordenar
+                                    </label>
+                                    <div class="proj-select-wrapper">
+                                        <select id="projSortSelect" class="proj-filter-select" onchange="handleProjectFilterChange()">
+                                            <option value="name_asc">Nome (A → Z)</option>
+                                            <option value="name_desc">Nome (Z → A)</option>
+                                            <option value="gov_desc">Governança (Maior → Menor)</option>
+                                            <option value="docs_desc">Mais Documentos</option>
+                                            <option value="labs_desc">Mais Labs de Pesquisa</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Dynamic Projects Grid (Rendered via App Controller) -->
                         <div class="dash-projects-grid" id="dynamicProjectsSlot"></div>
                     </section>

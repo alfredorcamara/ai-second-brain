@@ -325,9 +325,16 @@ function handleBrainMetricsHelpBackdropClick(event) {
     }
 }
 
-// Suporte à tecla ESC para fechar modais de ajuda e Enter/Espaço no fluxograma
+// Suporte à tecla ESC para fechar modais de ajuda e atalhos globais
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
+        const searchInput = document.getElementById('projSearchInput');
+        if (searchInput && document.activeElement === searchInput) {
+            clearProjectSearch();
+            searchInput.blur();
+            return;
+        }
+
         const engineModal = document.getElementById('aiEngineHelpModal');
         if (engineModal && engineModal.style.display === 'flex') {
             closeAiEngineHelpModal();
@@ -339,6 +346,24 @@ document.addEventListener('keydown', (e) => {
         const metricsModal = document.getElementById('brainMetricsHelpModal');
         if (metricsModal && metricsModal.style.display === 'flex') {
             closeBrainMetricsHelpModal();
+        }
+    } else if ((e.key === '/' || e.code === 'Slash' || e.code === 'NumpadDivide') && (currentView === 'dashboard' || document.getElementById('dashboardOverlay')?.classList.contains('active'))) {
+        const activeTag = (document.activeElement && document.activeElement.tagName) || '';
+        const isInput = activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT';
+        
+        // Verifica se há algum modal aberto no momento
+        const isModalOpen = Array.from(document.querySelectorAll('.modal, .brain-dialog-overlay, .ai-welcome-modal')).some(m => {
+            return m.style.display === 'flex' || m.style.display === 'block';
+        });
+
+        if (!isInput && !isModalOpen) {
+            const searchInput = document.getElementById('projSearchInput');
+            if (searchInput) {
+                e.preventDefault();
+                searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                searchInput.focus();
+                searchInput.select();
+            }
         }
     } else if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.closest && e.target.closest('.flow-diagram')) {
         const btn = e.target.closest('[role="button"]');
@@ -986,7 +1011,16 @@ function showGovernanceExplainer(folderName, govPercent, hasProjectMd, hasCurren
 }
 window.showGovernanceExplainer = showGovernanceExplainer;
 
-// ── Dynamic Projects Dashboard Rendering ──────────
+// ── Dynamic Projects Dashboard Rendering & Filtering ──────
+let allDashboardProjects = [];
+let projectFilterState = {
+    search: '',
+    status: 'all',
+    stack: 'all',
+    governance: 'all',
+    sort: 'name_asc'
+};
+
 function renderDashboardProjects() {
     const slot = document.getElementById('dynamicProjectsSlot');
     if (!slot) return;
@@ -1022,7 +1056,12 @@ function renderDashboardProjects() {
         countBadge.textContent = projectsList.length;
     }
 
+    const toolbar = document.getElementById('projToolbarWrap');
+
     if (projectsList.length === 0) {
+        allDashboardProjects = [];
+        if (toolbar) toolbar.style.display = 'none';
+
         // Nenhum projeto conectado:
         slot.innerHTML = `
             <div class="dash-card status-card" onclick="openQuickstartWizard()" style="cursor: pointer; grid-column: 1 / -1; border: 1px dashed rgba(99, 102, 241, 0.45); padding: 32px;">
@@ -1040,9 +1079,10 @@ function renderDashboardProjects() {
         return;
     }
 
-    // Gera cards acionáveis para cada projeto
-    let html = '';
-    projectsList.forEach(proj => {
+    if (toolbar) toolbar.style.display = 'flex';
+
+    // Mapeia e enriquece todos os projetos
+    allDashboardProjects = projectsList.map(proj => {
         const folderName = proj.path.split('/')[1];
         const title = proj.title || folderName;
         
@@ -1126,100 +1166,338 @@ function renderDashboardProjects() {
             govBarColor = 'linear-gradient(90deg, #6366f1, #06b6d4)';
         }
 
-        html += `
-            <div class="dash-card proj-dashboard-card" onclick="openProjectWorkspace('${folderName}')">
-                <div>
-                    <!-- Header (Apenas o nome do projeto e status, sem avatar) -->
-                    <div class="proj-card-header">
-                        <div class="proj-card-main-info">
-                            <div class="proj-card-title-row">
-                                <h3 class="proj-card-title" title="${escapeHtml(title)}">${escapeHtml(title)}</h3>
-                                <span class="proj-status-chip ${statusClass}">
-                                    <span class="proj-pulse-dot ${statusColor}"></span>
-                                    ${statusBadge}
-                                </span>
-                            </div>
-                            <div class="proj-card-sub-row">
-                                <span class="proj-card-path">projects/${folderName}/</span>
-                                <span class="proj-stack-chip" title="Stack de Tecnologia">
-                                    <span>${stackIcon}</span> ${escapeHtml(stack)}
-                                </span>
-                            </div>
+        return {
+            folderName,
+            title,
+            statusBadge,
+            statusClass,
+            statusColor,
+            desc,
+            stack,
+            stackIcon,
+            totalDocs,
+            totalLabs,
+            hasProjectMd,
+            hasCurrentState,
+            hasArchitecture,
+            hasDecisions,
+            contractsFound,
+            govPercent,
+            govBarColor
+        };
+    });
+
+    // Popula o select de Stacks de forma dinâmica
+    updateProjectStacksFilterSelect();
+
+    // Aplica filtros e renderiza
+    applyDashboardProjectFilters();
+}
+
+function updateProjectStacksFilterSelect() {
+    const stackSelect = document.getElementById('projStackFilter');
+    if (!stackSelect) return;
+
+    const stackCounts = new Map();
+    allDashboardProjects.forEach(p => {
+        const s = p.stack || 'Livre';
+        stackCounts.set(s, (stackCounts.get(s) || 0) + 1);
+    });
+
+    const sortedStacks = Array.from(stackCounts.keys()).sort((a, b) => a.localeCompare(b));
+    const currentVal = projectFilterState.stack;
+
+    let html = `<option value="all">Todas as Stacks (${allDashboardProjects.length})</option>`;
+    sortedStacks.forEach(s => {
+        const count = stackCounts.get(s);
+        const isSelected = currentVal === s ? 'selected' : '';
+        html += `<option value="${escapeHtml(s)}" ${isSelected}>${escapeHtml(s)} (${count})</option>`;
+    });
+
+    stackSelect.innerHTML = html;
+}
+
+function renderSingleProjectCardHtml(p) {
+    return `
+        <div class="dash-card proj-dashboard-card" onclick="openProjectWorkspace('${p.folderName}')">
+            <div>
+                <!-- Header (Apenas o nome do projeto e status, sem avatar) -->
+                <div class="proj-card-header">
+                    <div class="proj-card-main-info">
+                        <div class="proj-card-title-row">
+                            <h3 class="proj-card-title" title="${escapeHtml(p.title)}">${escapeHtml(p.title)}</h3>
+                            <span class="proj-status-chip ${p.statusClass}">
+                                <span class="proj-pulse-dot ${p.statusColor}"></span>
+                                ${p.statusBadge}
+                            </span>
+                        </div>
+                        <div class="proj-card-sub-row">
+                            <span class="proj-card-path">projects/${p.folderName}/</span>
+                            <span class="proj-stack-chip" title="Stack de Tecnologia">
+                                <span>${p.stackIcon}</span> ${escapeHtml(p.stack)}
+                            </span>
                         </div>
                     </div>
-
-                    <!-- Descrição -->
-                    <p class="proj-card-desc" style="margin-top: 12px;" title="${escapeHtml(desc)}">
-                        ${escapeHtml(desc)}
-                    </p>
                 </div>
 
-                <!-- Barra de Governança com Explicação e Breakdown dos 4 Contratos -->
-                <div class="proj-gov-container" onclick="event.stopPropagation(); showGovernanceExplainer('${folderName}', ${govPercent}, ${hasProjectMd}, ${hasCurrentState}, ${hasArchitecture}, ${hasDecisions})" style="cursor: pointer;" title="Clique para ver o detalhamento do cálculo de governança">
-                    <div class="proj-gov-header">
-                        <span class="proj-gov-label">
-                            <span>🛡️</span> Governança de Arquitetura
-                            <span class="proj-gov-info-btn" title="O que significa este percentual?">ℹ️</span>
-                        </span>
-                        <span class="proj-gov-val ${govPercent === 100 ? 'is-100' : 'is-partial'}">${govPercent}% Conforme</span>
-                    </div>
-                    <div class="proj-gov-track">
-                        <div class="proj-gov-fill" style="width: ${govPercent}%; background: ${govBarColor};"></div>
-                    </div>
-                    <!-- Pílulas dos 4 Contratos (+25% cada) -->
-                    <div class="proj-gov-pills">
-                        <span class="gov-pill ${hasProjectMd ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${hasProjectMd ? `navigateTo('projects/${folderName}/PROJECT.md')` : `initializeContract('PROJECT.md')`}" title="${hasProjectMd ? '✓ PROJECT.md ativo (Clique para visualizar)' : '⚠️ Clique para inicializar PROJECT.md'}">
-                            ${hasProjectMd ? '✓ PROJECT' : '+ PROJECT'}
-                        </span>
-                        <span class="gov-pill ${hasCurrentState ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${hasCurrentState ? `navigateTo('projects/${folderName}/CURRENT_STATE.md')` : `initializeContract('CURRENT_STATE.md')`}" title="${hasCurrentState ? '✓ CURRENT_STATE.md ativo (Clique para visualizar)' : '⚠️ Clique para inicializar CURRENT_STATE.md'}">
-                            ${hasCurrentState ? '✓ STATE' : '+ STATE'}
-                        </span>
-                        <span class="gov-pill ${hasArchitecture ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${hasArchitecture ? `navigateTo('projects/${folderName}/ARCHITECTURE.md')` : `initializeContract('ARCHITECTURE.md')`}" title="${hasArchitecture ? '✓ ARCHITECTURE.md ativo (Clique para visualizar)' : '⚠️ Clique para inicializar ARCHITECTURE.md'}">
-                            ${hasArchitecture ? '✓ ARCH' : '+ ARCH'}
-                        </span>
-                        <span class="gov-pill ${hasDecisions ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${hasDecisions ? `openProjectWorkspace('${folderName}', 'overview')` : `createNewDecisionRecord('${folderName}')`}" title="${hasDecisions ? '✓ Decisões registradas (Clique para ver no Workspace)' : '⚠️ Clique para registrar a primeira decisão (ADR-001) e bater 100%!'}">
-                            ${hasDecisions ? '✓ DECISIONS' : '+ DECISIONS'}
-                        </span>
-                    </div>
-                </div>
+                <!-- Descrição -->
+                <p class="proj-card-desc" style="margin-top: 12px;" title="${escapeHtml(p.desc)}">
+                    ${escapeHtml(p.desc)}
+                </p>
+            </div>
 
-                <!-- Quick Stats Strip -->
-                <div class="proj-quick-stats">
-                    <div class="pqs-chip" title="Documentos e especificações indexados">
-                        <span>📄</span> <strong>${totalDocs}</strong> docs
-                    </div>
-                    <div class="pqs-chip" title="Pesquisas e Experimentos de IA">
-                        <span>🔬</span> <strong>${totalLabs}</strong> ${totalLabs === 1 ? 'lab' : 'labs'}
-                    </div>
-                    <div class="pqs-chip" title="Contratos vivos (PROJECT, CURRENT_STATE, ARCHITECTURE, DECISIONS)">
-                        <span>🛡️</span> <strong>${contractsFound}/4</strong> contratos
-                    </div>
+            <!-- Barra de Governança com Explicação e Breakdown dos 4 Contratos -->
+            <div class="proj-gov-container" onclick="event.stopPropagation(); showGovernanceExplainer('${p.folderName}', ${p.govPercent}, ${p.hasProjectMd}, ${p.hasCurrentState}, ${p.hasArchitecture}, ${p.hasDecisions})" style="cursor: pointer;" title="Clique para ver o detalhamento do cálculo de governança">
+                <div class="proj-gov-header">
+                    <span class="proj-gov-label">
+                        <span>🛡️</span> Governança de Arquitetura
+                        <span class="proj-gov-info-btn" title="O que significa este percentual?">ℹ️</span>
+                    </span>
+                    <span class="proj-gov-val ${p.govPercent === 100 ? 'is-100' : 'is-partial'}">${p.govPercent}% Conforme</span>
                 </div>
+                <div class="proj-gov-track">
+                    <div class="proj-gov-fill" style="width: ${p.govPercent}%; background: ${p.govBarColor};"></div>
+                </div>
+                <!-- Pílulas dos 4 Contratos (+25% cada) -->
+                <div class="proj-gov-pills">
+                    <span class="gov-pill ${p.hasProjectMd ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${p.hasProjectMd ? `navigateTo('projects/${p.folderName}/PROJECT.md')` : `initializeContract('PROJECT.md')`}" title="${p.hasProjectMd ? '✓ PROJECT.md ativo (Clique para visualizar)' : '⚠️ Clique para inicializar PROJECT.md'}">
+                        ${p.hasProjectMd ? '✓ PROJECT' : '+ PROJECT'}
+                    </span>
+                    <span class="gov-pill ${p.hasCurrentState ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${p.hasCurrentState ? `navigateTo('projects/${p.folderName}/CURRENT_STATE.md')` : `initializeContract('CURRENT_STATE.md')`}" title="${p.hasCurrentState ? '✓ CURRENT_STATE.md ativo (Clique para visualizar)' : '⚠️ Clique para inicializar CURRENT_STATE.md'}">
+                        ${p.hasCurrentState ? '✓ STATE' : '+ STATE'}
+                    </span>
+                    <span class="gov-pill ${p.hasArchitecture ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${p.hasArchitecture ? `navigateTo('projects/${p.folderName}/ARCHITECTURE.md')` : `initializeContract('ARCHITECTURE.md')`}" title="${p.hasArchitecture ? '✓ ARCHITECTURE.md ativo (Clique para visualizar)' : '⚠️ Clique para inicializar ARCHITECTURE.md'}">
+                        ${p.hasArchitecture ? '✓ ARCH' : '+ ARCH'}
+                    </span>
+                    <span class="gov-pill ${p.hasDecisions ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${p.hasDecisions ? `openProjectWorkspace('${p.folderName}', 'overview')` : `createNewDecisionRecord('${p.folderName}')`}" title="${p.hasDecisions ? '✓ Decisões registradas (Clique para ver no Workspace)' : '⚠️ Clique para registrar a primeira decisão (ADR-001) e bater 100%!'}">
+                        ${p.hasDecisions ? '✓ DECISIONS' : '+ DECISIONS'}
+                    </span>
+                </div>
+            </div>
 
-                <!-- Ações Rápidas -->
-                <div class="dash-card-actions" style="margin-top: 2px;">
-                    <button class="btn-dash-act primary" onclick="event.stopPropagation(); openProjectWorkspace('${folderName}', 'overview')" title="Abrir Dashboard Completo">
-                        🚀 Workspace
+            <!-- Quick Stats Strip -->
+            <div class="proj-quick-stats">
+                <div class="pqs-chip" title="Documentos e especificações indexados">
+                    <span>📄</span> <strong>${p.totalDocs}</strong> docs
+                </div>
+                <div class="pqs-chip" title="Pesquisas e Experimentos de IA">
+                    <span>🔬</span> <strong>${p.totalLabs}</strong> ${p.totalLabs === 1 ? 'lab' : 'labs'}
+                </div>
+                <div class="pqs-chip" title="Contratos vivos (PROJECT, CURRENT_STATE, ARCHITECTURE, DECISIONS)">
+                    <span>🛡️</span> <strong>${p.contractsFound}/4</strong> contratos
+                </div>
+            </div>
+
+            <!-- Ações Rápidas -->
+            <div class="dash-card-actions" style="margin-top: 2px;">
+                <button class="btn-dash-act primary" onclick="event.stopPropagation(); openProjectWorkspace('${p.folderName}', 'overview')" title="Abrir Dashboard Completo">
+                    🚀 Workspace
+                </button>
+                <button class="btn-dash-act neural-act" onclick="event.stopPropagation(); openProjectWorkspace('${p.folderName}', 'graph')" title="Explorar Grafo Neural 3D">
+                    🔮 Grafo 3D
+                </button>
+                ${p.totalLabs > 0 ? `
+                    <button class="btn-dash-act lab-act" onclick="event.stopPropagation(); openProjectWorkspace('${p.folderName}', 'research')" title="Ver Experimentos de Pesquisa">
+                        🔬 Labs (${p.totalLabs})
                     </button>
-                    <button class="btn-dash-act neural-act" onclick="event.stopPropagation(); openProjectWorkspace('${folderName}', 'graph')" title="Explorar Grafo Neural 3D">
-                        🔮 Grafo 3D
+                ` : `
+                    <button class="btn-dash-act" onclick="event.stopPropagation(); openProjectWorkspace('${p.folderName}', 'settings')" title="Configurar Projeto">
+                        ⚙️ Gerenciar
                     </button>
-                    ${totalLabs > 0 ? `
-                        <button class="btn-dash-act lab-act" onclick="event.stopPropagation(); openProjectWorkspace('${folderName}', 'research')" title="Ver Experimentos de Pesquisa">
-                            🔬 Labs (${totalLabs})
-                        </button>
-                    ` : `
-                        <button class="btn-dash-act" onclick="event.stopPropagation(); openProjectWorkspace('${folderName}', 'settings')" title="Configurar Projeto">
-                            ⚙️ Gerenciar
-                        </button>
-                    `}
+                `}
+            </div>
+        </div>
+    `;
+}
+
+function applyDashboardProjectFilters() {
+    const slot = document.getElementById('dynamicProjectsSlot');
+    if (!slot) return;
+
+    if (allDashboardProjects.length === 0) return;
+
+    const query = (projectFilterState.search || '').trim().toLowerCase();
+    const statusFilter = projectFilterState.status || 'all';
+    const stackFilter = projectFilterState.stack || 'all';
+    const govFilter = projectFilterState.governance || 'all';
+    const sortVal = projectFilterState.sort || 'name_asc';
+
+    // 1. Filtragem
+    let filtered = allDashboardProjects.filter(p => {
+        // Busca textual
+        if (query) {
+            const matchTitle = (p.title || '').toLowerCase().includes(query);
+            const matchFolder = (p.folderName || '').toLowerCase().includes(query);
+            const matchDesc = (p.desc || '').toLowerCase().includes(query);
+            const matchStack = (p.stack || '').toLowerCase().includes(query);
+            if (!matchTitle && !matchFolder && !matchDesc && !matchStack) {
+                return false;
+            }
+        }
+
+        // Filtro por Status
+        if (statusFilter !== 'all') {
+            if (p.statusClass !== statusFilter) return false;
+        }
+
+        // Filtro por Stack
+        if (stackFilter !== 'all') {
+            if (p.stack !== stackFilter) return false;
+        }
+
+        // Filtro por Governança
+        if (govFilter === '100') {
+            if (p.govPercent !== 100) return false;
+        } else if (govFilter === 'partial') {
+            if (p.govPercent >= 100) return false;
+        } else if (govFilter === 'labs') {
+            if (p.totalLabs <= 0) return false;
+        }
+
+        return true;
+    });
+
+    // 2. Ordenação
+    filtered.sort((a, b) => {
+        if (sortVal === 'name_asc') {
+            return (a.title || a.folderName).localeCompare(b.title || b.folderName);
+        } else if (sortVal === 'name_desc') {
+            return (b.title || b.folderName).localeCompare(a.title || a.folderName);
+        } else if (sortVal === 'gov_desc') {
+            if (b.govPercent !== a.govPercent) return b.govPercent - a.govPercent;
+            return (a.title || a.folderName).localeCompare(b.title || b.folderName);
+        } else if (sortVal === 'docs_desc') {
+            if (b.totalDocs !== a.totalDocs) return b.totalDocs - a.totalDocs;
+            return (a.title || a.folderName).localeCompare(b.title || b.folderName);
+        } else if (sortVal === 'labs_desc') {
+            if (b.totalLabs !== a.totalLabs) return b.totalLabs - a.totalLabs;
+            return (a.title || a.folderName).localeCompare(b.title || b.folderName);
+        }
+        return 0;
+    });
+
+    // 3. Atualização dos Contadores e Controles na UI
+    const totalCount = allDashboardProjects.length;
+    const filteredCount = filtered.length;
+    const isFiltered = query !== '' || statusFilter !== 'all' || stackFilter !== 'all' || govFilter !== 'all';
+
+    const countBadge = document.getElementById('dashProjectsCountBadge');
+    if (countBadge) {
+        countBadge.textContent = isFiltered ? `${filteredCount} / ${totalCount}` : totalCount;
+    }
+
+    const counterEl = document.getElementById('projResultsCounter');
+    if (counterEl) {
+        if (isFiltered) {
+            counterEl.innerHTML = `Exibindo <strong>${filteredCount}</strong> de <strong>${totalCount}</strong> projetos`;
+        } else {
+            counterEl.innerHTML = `Total de <strong>${totalCount}</strong> projetos conectados`;
+        }
+    }
+
+    const resetBtn = document.getElementById('btnProjResetFilters');
+    if (resetBtn) {
+        resetBtn.style.display = (isFiltered || sortVal !== 'name_asc') ? 'inline-flex' : 'none';
+    }
+
+    const clearSearchBtn = document.getElementById('projSearchClearBtn');
+    const searchKbdHint = document.getElementById('projSearchKbdHint');
+    if (clearSearchBtn && searchKbdHint) {
+        if (query) {
+            clearSearchBtn.style.display = 'inline-flex';
+            searchKbdHint.style.display = 'none';
+        } else {
+            clearSearchBtn.style.display = 'none';
+            searchKbdHint.style.display = 'inline-block';
+        }
+    }
+
+    // 4. Renderização dos Cards ou Empty State
+    if (filtered.length === 0) {
+        slot.innerHTML = `
+            <div class="dash-projects-empty-card" style="grid-column: 1 / -1;">
+                <div class="proj-empty-icon">🔍</div>
+                <h3 class="proj-empty-title">Nenhum projeto encontrado</h3>
+                <p class="proj-empty-desc">
+                    Nenhum workspace sob governança corresponde aos termos ou filtros selecionados.
+                </p>
+                <div class="proj-empty-actions">
+                    <button type="button" class="btn-proj-reset-filters" onclick="resetProjectFilters()" style="display: inline-flex;">
+                        <span>↺</span> Limpar Filtros e Ver Todos (${totalCount})
+                    </button>
                 </div>
             </div>
         `;
+        return;
+    }
+
+    let html = '';
+    filtered.forEach(p => {
+        html += renderSingleProjectCardHtml(p);
     });
 
     slot.innerHTML = html;
 }
+
+function handleProjectFilterChange() {
+    const statusSelect = document.getElementById('projStatusFilter');
+    const stackSelect = document.getElementById('projStackFilter');
+    const govSelect = document.getElementById('projGovFilter');
+    const sortSelect = document.getElementById('projSortSelect');
+
+    if (statusSelect) projectFilterState.status = statusSelect.value;
+    if (stackSelect) projectFilterState.stack = stackSelect.value;
+    if (govSelect) projectFilterState.governance = govSelect.value;
+    if (sortSelect) projectFilterState.sort = sortSelect.value;
+
+    applyDashboardProjectFilters();
+}
+
+function handleProjectSearchInput(e) {
+    projectFilterState.search = e ? e.target.value : '';
+    applyDashboardProjectFilters();
+}
+
+function clearProjectSearch() {
+    const input = document.getElementById('projSearchInput');
+    if (input) {
+        input.value = '';
+        projectFilterState.search = '';
+        input.focus();
+    }
+    applyDashboardProjectFilters();
+}
+
+function resetProjectFilters() {
+    projectFilterState = {
+        search: '',
+        status: 'all',
+        stack: 'all',
+        governance: 'all',
+        sort: 'name_asc'
+    };
+
+    const input = document.getElementById('projSearchInput');
+    const statusSelect = document.getElementById('projStatusFilter');
+    const stackSelect = document.getElementById('projStackFilter');
+    const govSelect = document.getElementById('projGovFilter');
+    const sortSelect = document.getElementById('projSortSelect');
+
+    if (input) input.value = '';
+    if (statusSelect) statusSelect.value = 'all';
+    if (stackSelect) stackSelect.value = 'all';
+    if (govSelect) govSelect.value = 'all';
+    if (sortSelect) sortSelect.value = 'name_asc';
+
+    applyDashboardProjectFilters();
+}
+
+window.handleProjectFilterChange = handleProjectFilterChange;
+window.handleProjectSearchInput = handleProjectSearchInput;
+window.clearProjectSearch = clearProjectSearch;
+window.resetProjectFilters = resetProjectFilters;
+window.renderDashboardProjects = renderDashboardProjects;
+window.applyDashboardProjectFilters = applyDashboardProjectFilters;
 
 function toggleSection(sectionId) {
     const items = document.getElementById(`section-${sectionId}`);

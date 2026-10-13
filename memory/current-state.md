@@ -21,6 +21,29 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 
 ## Sessões Recentes
 - **Data**: 2026-10-13
+  - **Implementação da Toolbar de Governança de Projetos (Busca em Tempo Real, Filtros Dinâmicos e Ordenação)**:
+    - **Toolbar Executiva em Dark Glassmorphism (`.proj-toolbar-wrap`)**:
+      - Adicionada barra de controles integrada entre o cabeçalho de *Projetos Sob Governança* e a grade de cards (`#dynamicProjectsSlot`), com fundo translúcido (`rgba(20, 24, 38, 0.75)`), blur de 14px, bordas suaves e acentos luminosos em índigo/esmeralda.
+    - **Omnisearch Instantâneo em Tempo Real (`#projSearchInput`)**:
+      - Busca inteligente e tolerante a maiúsculas/minúsculas e acentos pesquisando simultaneamente em 4 dimensões: Nome do Projeto, Caminho da Pasta (`projects/...`), Descrição oficial e Stack de Tecnologia.
+      - Botão de limpeza rápida `✕` (`#projSearchClearBtn`) dinâmico e badge visual `[/]`.
+      - **Atalhos Globais de Teclado (`/` e `Esc`)**: Pressionar `/` em qualquer ponto do Dashboard rola suavemente a tela (`scrollIntoView({ behavior: 'smooth', block: 'center' })`) e foca diretamente no campo de busca com seleção de texto. Pressionar `Esc` limpa o filtro e desfoca o campo. Tratamento robusto contra falsos positivos de modais e total compatibilidade com teclados ABNT2 (`e.code === 'Slash'`, `'NumpadDivide'`).
+    - **Filtro 100% Dinâmico por Stack Tecnológica (`#projStackFilter`)**:
+      - Descoberta automática de stacks a partir dos contratos `PROJECT.md` dos projetos reais conectados, sem nenhuma lista fixa/hardcoded (respeitando rigorosamente a regra de *Zero Fabricação* e *Catálogos Dinâmicos*).
+      - Exibe contagem de projetos por tecnologia (ex.: `Node.js / TypeScript (2)`, `C# / .NET (1)`).
+    - **Filtro por Status Operacional (`#projStatusFilter`)**:
+      - Segmentação rápida por ciclo de vida do projeto: `Todos os Status`, `🟢 Ativo / Produção`, `🟡 Planejamento`, `🔴 Conceituação`.
+    - **Filtro por Saúde de Governança de Arquitetura (`#projGovFilter`)**:
+      - Segmentação por maturidade dos 4 contratos vivos: `Todas as Conformidades`, `🛡️ 100% Conforme (Ouro)`, `⚠️ Pendente (< 100%)`, `🔬 Com Research Labs`.
+    - **Ordenação Inteligente (`#projSortSelect`)**:
+      - Modos de classificação rápida: `Nome (A → Z)`, `Nome (Z → A)`, `Governança (Maior → Menor)`, `Mais Documentos Indexados`, `Mais Labs de Pesquisa`.
+    - **Contador Dinâmico e Feedback Reativo de Filtros (`#projResultsCounter` & `#btnProjResetFilters`)**:
+      - Exibe telemetria em tempo real: `"Exibindo X de Y projetos"` e badge no cabeçalho atualizado (`X / Y`).
+      - Botão contextual `↺ Limpar Filtros` exibido apenas quando filtros ou ordenações não-padrão estão ativos.
+    - **Empty State Sofisticado (`.dash-projects-empty-card`)**:
+      - Apresenta card com ícone de lupa, mensagem orientativa amigável e botão `↺ Limpar Filtros e Ver Todos (N)` para restauração em 1 clique quando uma busca não retorna resultados.
+    - **Paridade Absoluta 100%**:
+      - Replicado integralmente em `docs/brain-ui/` e `docs/brain-ui/demo/` (`index.html`, `app.js`, `style.css`).
   - **Refinamento de UX, Consistência de Ícones de IA e Central de Ajuda Cognitiva**:
     - **Modais Educativos nos Cards de Governança (`#aiDecisionFlowHelpModal` & `#brainMetricsHelpModal`)**:
       - Adicionados modais explicativos de alta fidelidade visual nos cards *AI Decision Flow* e *Métricas do Cérebro*, detalhando a hierarquia determinística (Código determinístico vs AIJev vs LLM vs Validação) e o papel prático das 6 métricas fundamentais (Regras, Skills, Projetos, Conhecimento, Decisões, Memória).
