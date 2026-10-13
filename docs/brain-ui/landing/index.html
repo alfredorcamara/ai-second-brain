@@ -336,8 +336,7 @@
           vai para um modelo de IA.</p>
         <p class="diag-cap" data-d="lab">O prompt de pesquisa é um documento vivo: refinado com IA e versionado (v1,
           v2…). O motor gera duas camadas de arquivos: conhecimento conceitual e especificações acionáveis.</p>
-        <p class="diag-cap" data-d="ciclo">Zero amnésia: cada sessão começa lendo o estado atual, desenvolve com o
-          contexto e termina registrando o que foi feito. A próxima assume exatamente de onde esta parou.</p>
+        <p class="diag-cap" data-d="ciclo">Zero amnésia: cada sessão começa lendo o estado atual com Prompt Bootstrap, consulta regras e ADRs via Pergunte ao Cérebro (Ctrl+K) e termina registrando entregas com Session Capture. A próxima assume exatamente de onde esta parou.</p>
       </div>
     </section>
     <section class="sec " id="research">
@@ -449,6 +448,11 @@
           <p>Visualize seu conhecimento como neurônios conectados. Descubra links cruzados e abra qualquer arquivo num
             clique.</p>
         </div>
+        <div class="card rv">
+          <div class="card-icon-wrap" style="--c:#ec4899"><i>✨</i></div>
+          <h3>Pergunte ao Cérebro (Ctrl+K)</h3>
+          <p>Busca semântica determinística (TF-IDF/BM25) com multiplicadores de governança e síntese por IA (BYOK). Tire dúvidas técnicas em segundos com citações verificadas e Zero Fabricação.</p>
+        </div>
       </div>
 
       <div class="stats rv">
@@ -465,8 +469,7 @@
     <section class="sec " id="demo">
       <div class="sec-badge rv">Demo ao vivo</div>
       <h2 class="rv">Não acredite: <em>teste agora.</em></h2>
-      <p class="sub rv">O dashboard real, rodando no navegador com um vault de exemplo. Explore o grafo, abra documentos
-        e leia a documentação. É somente leitura.</p>
+      <p class="sub rv">O dashboard real, rodando no navegador com um vault de exemplo. Explore o grafo 3D, pressione Ctrl+K para perguntar ao cérebro e leia a documentação. É somente leitura.</p>
       <div class="browser rv">
         <div class="browser-bar"><span class="dots"><i></i><i></i><i></i></span><span
             class="url">demo/index.html</span><a href="../demo/index.html" target="_blank" rel="noopener">Abrir em tela
@@ -522,6 +525,14 @@
           <summary>Onde ficam os backups e dossiês de governança?</summary>
           <p>Na pasta física projects/&lt;nome&gt;/BACKUPS/, com exportação completa em Markdown (legível por humanos) e
             JSON estruturado (auditável por scripts).</p>
+        </details>
+        <details class="rv">
+          <summary>Como funciona o "Pergunte ao Cérebro" e por que ele não exige banco vetorial?</summary>
+          <p>Diferente de bancos vetoriais pesados e opacos, o AI Second Brain utiliza um motor RAG determinístico inspirado em BM25/TF-IDF com multiplicadores de arquitetura (ADRs 2.4x, Estado Atual 2.2x, Contratos 2.0x, Regras 1.8x). Ele recupera os trechos mais densos do cofre e utiliza a IA configurada (BYOK) para sintetizar respostas técnicas precisas com links clicáveis para os arquivos originais, seguindo a diretriz de Zero Fabricação e transparência algorítmica.</p>
+        </details>
+        <details class="rv">
+          <summary>O que é o Progressive Disclosure nas buscas do cofre?</summary>
+          <p>Para evitar o efeito "Lost in the Middle" (onde LLMs alucinam ou ignoram trechos do meio ao receberem dezenas de documentos), a IA sintetiza prioritariamente os 5 a 7 documentos mais relevantes. Ao mesmo tempo, o desenvolvedor pode expandir com 1 clique até 12 fontes adicionais encontradas no cofre através do botão interativo, inspecionando cada arquivo no leitor ou focando diretamente no Grafo Neural 3D.</p>
         </details>
         <details class="rv">
           <summary>Posso testar antes de instalar?</summary>

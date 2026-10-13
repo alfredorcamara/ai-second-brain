@@ -1,10 +1,10 @@
 // ═══════════════════════════════════════════════════
 // AI SECOND BRAIN — Dynamic Vault Snapshot
-// Auto-generated: 2026-10-13T01:30:06.514Z
+// Auto-generated: 2026-10-13T01:58:36.227Z
 // ═══════════════════════════════════════════════════
 
 window.VAULT_SNAPSHOT = {
-  "timestamp": 1791855006514,
+  "timestamp": 1791856716227,
   "files": [
     {
       "id": "_agents_rules_00-core_md",
