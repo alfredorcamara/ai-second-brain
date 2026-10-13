@@ -107,7 +107,13 @@ body {
 .logo {
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: center;
+}
+
+.logo img {
+    width: 90%;
+    height: auto;
+    display: block;
 }
 
 .logo-icon {
@@ -172,6 +178,7 @@ body {
 
 .search-box input {
     flex: 1;
+    min-width: 0;
     background: none;
     border: none;
     outline: none;
@@ -8351,21 +8358,23 @@ body::-webkit-scrollbar-thumb:hover {
     }
 }
 
-/* ── Botão de Ajuda de IA e Modal de Integração Multi-IA ── */
+/* ── Botão de Ajuda de IA e Modais de Governança (Design Minimalista & Sutil) ── */
 .ai-engine-help-btn {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    color: var(--text-secondary);
-    font-size: 12px;
-    font-weight: 700;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: transparent;
+    border: none;
+    color: var(--text-tertiary, #94a3b8);
+    opacity: 0.45;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.15s ease-in-out;
     flex-shrink: 0;
     user-select: none;
     line-height: 1;
@@ -8373,17 +8382,35 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .ai-engine-help-btn:hover {
-    background: rgba(56, 189, 248, 0.2);
-    border-color: #38bdf8;
-    color: #38bdf8;
-    box-shadow: 0 0 12px rgba(56, 189, 248, 0.45);
-    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary, #f8fafc);
+    opacity: 1;
+    box-shadow: none;
+    transform: none;
+}
+
+.ai-engine-help-btn:active {
+    background: rgba(255, 255, 255, 0.14);
+    transform: scale(0.95);
+}
+
+.ai-engine-help-btn svg {
+    display: block;
+    stroke: currentColor;
+    pointer-events: none;
+    transition: stroke 0.15s ease;
 }
 
 .ai-engine-help-btn.mini {
     width: 18px;
     height: 18px;
+    border-radius: 4px;
     font-size: 10px;
+}
+
+.ai-engine-help-btn.mini svg {
+    width: 12px;
+    height: 12px;
 }
 
 .ai-help-section {
@@ -8618,9 +8645,16 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .ai-pill-icon {
-    font-size: 13px;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+}
+
+.ai-pill-sparkle-svg {
+    width: 14px;
+    height: 14px;
+    display: block;
+    flex-shrink: 0;
 }
 
 .ai-pill-provider {
@@ -9098,8 +9132,13 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 @keyframes keyTestingJiggle {
-    0% { transform: rotate(-5deg) scale(0.97); }
-    100% { transform: rotate(5deg) scale(1.03); }
+    0% {
+        transform: rotate(-5deg) scale(0.97);
+    }
+
+    100% {
+        transform: rotate(5deg) scale(1.03);
+    }
 }
 
 /* Estado: Validado Positivamente (Verde Cintilante Calibrado +20%) */
@@ -9118,10 +9157,13 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 @keyframes sparklingGreen {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 0 5px rgba(16, 185, 129, 0.3);
         border-color: rgba(16, 185, 129, 0.55);
     }
+
     50% {
         box-shadow: 0 0 11px rgba(16, 185, 129, 0.6), 0 0 3px rgba(16, 185, 129, 0.8);
         border-color: rgba(52, 211, 153, 0.95);
@@ -9144,10 +9186,13 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 @keyframes sparklingRed {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 0 5px rgba(239, 68, 68, 0.3);
         border-color: rgba(239, 68, 68, 0.55);
     }
+
     50% {
         box-shadow: 0 0 11px rgba(239, 68, 68, 0.6), 0 0 3px rgba(239, 68, 68, 0.8);
         border-color: rgba(248, 113, 113, 0.95);
@@ -9352,9 +9397,21 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 @keyframes aiShakeInput {
-    0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-4px); }
-    40%, 80% { transform: translateX(4px); }
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20%,
+    60% {
+        transform: translateX(-4px);
+    }
+
+    40%,
+    80% {
+        transform: translateX(4px);
+    }
 }
 
 .ai-param-detail-input-wrap .ai-param-input {
@@ -9974,11 +10031,18 @@ body::-webkit-scrollbar-thumb:hover {
     animation: scFadeStep 0.5s ease forwards;
 }
 
-.sc-loading li:nth-child(2) { animation-delay: 0.9s; }
-.sc-loading li:nth-child(3) { animation-delay: 1.8s; }
+.sc-loading li:nth-child(2) {
+    animation-delay: 0.9s;
+}
+
+.sc-loading li:nth-child(3) {
+    animation-delay: 1.8s;
+}
 
 @keyframes scFadeStep {
-    to { opacity: 1; }
+    to {
+        opacity: 1;
+    }
 }
 
 .sc-orb {
@@ -9992,8 +10056,17 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 @keyframes scOrbPulse {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 22px rgba(139, 92, 246, 0.45); }
-    50% { transform: scale(1.12); box-shadow: 0 0 38px rgba(139, 92, 246, 0.8); }
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 22px rgba(139, 92, 246, 0.45);
+    }
+
+    50% {
+        transform: scale(1.12);
+        box-shadow: 0 0 38px rgba(139, 92, 246, 0.8);
+    }
 }
 
 .sc-chips {
@@ -10241,8 +10314,18 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 @keyframes livePulse {
-    0%, 100% { opacity: 0.85; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.01); color: #818cf8; }
+
+    0%,
+    100% {
+        opacity: 0.85;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.01);
+        color: #818cf8;
+    }
 }
 
 .sc-loading-steps {
@@ -10300,8 +10383,13 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 @keyframes liveDot {
-    from { opacity: 0.4; }
-    to { opacity: 1; }
+    from {
+        opacity: 0.4;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 /* ============================================================
@@ -10340,8 +10428,17 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 @keyframes sparkPulse {
-    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px #a855f7); }
-    50% { transform: scale(1.2); filter: drop-shadow(0 0 8px #6366f1); }
+
+    0%,
+    100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 4px #a855f7);
+    }
+
+    50% {
+        transform: scale(1.2);
+        filter: drop-shadow(0 0 8px #6366f1);
+    }
 }
 
 .btn-ask-brain-trigger .ask-kbd {
@@ -10359,9 +10456,11 @@ body::-webkit-scrollbar-thumb:hover {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 2px 7px;
-    margin-right: 4px;
-    font-size: 10.5px;
+    padding: 4px 5px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 11px;
+    margin-right: -3px;
     font-weight: 700;
     color: #c084fc;
     background: rgba(168, 85, 247, 0.12);
@@ -10407,13 +10506,25 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 @keyframes fadeInModal {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes scaleInCard {
-    from { transform: scale(0.96) translateY(12px); opacity: 0; }
-    to { transform: scale(1) translateY(0); opacity: 1; }
+    from {
+        transform: scale(0.96) translateY(12px);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
 }
 
 .ask-brain-header {
@@ -10573,7 +10684,8 @@ body::-webkit-scrollbar-thumb:hover {
     min-width: 170px;
 }
 
-.ask-scope-select:hover, .ask-scope-select:focus {
+.ask-scope-select:hover,
+.ask-scope-select:focus {
     border-color: rgba(168, 85, 247, 0.6);
     background: rgba(30, 41, 59, 0.95);
     box-shadow: 0 0 10px rgba(168, 85, 247, 0.25);
@@ -10652,7 +10764,8 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 /* Micro-feedback copied state */
-.ask-source-btn.copied, .ask-copy-answer-btn.copied {
+.ask-source-btn.copied,
+.ask-copy-answer-btn.copied {
     background: rgba(16, 185, 129, 0.25) !important;
     border-color: rgba(16, 185, 129, 0.7) !important;
     color: #34d399 !important;
@@ -10661,9 +10774,17 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 @keyframes copiedPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.12); }
-    100% { transform: scale(1.05); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.12);
+    }
+
+    100% {
+        transform: scale(1.05);
+    }
 }
 
 /* Body */
@@ -10731,13 +10852,27 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 @keyframes orbPulse {
-    from { transform: scale(0.85); opacity: 0.7; }
-    to { transform: scale(1.15); opacity: 1; }
+    from {
+        transform: scale(0.85);
+        opacity: 0.7;
+    }
+
+    to {
+        transform: scale(1.15);
+        opacity: 1;
+    }
 }
 
 @keyframes orbGlow {
-    from { opacity: 0.3; transform: scale(0.9); }
-    to { opacity: 0.8; transform: scale(1.2); }
+    from {
+        opacity: 0.3;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 0.8;
+        transform: scale(1.2);
+    }
 }
 
 .ask-brain-loading-state h4 {
@@ -10822,7 +10957,8 @@ body::-webkit-scrollbar-thumb:hover {
     margin-bottom: 12px;
 }
 
-.ask-answer-content ul, .ask-answer-content ol {
+.ask-answer-content ul,
+.ask-answer-content ol {
     margin: 8px 0 14px 20px;
 }
 
@@ -10907,15 +11043,19 @@ body::-webkit-scrollbar-thumb:hover {
 .ask-source-card.cat-decision {
     border-left-color: #a855f7;
 }
+
 .ask-source-card.cat-research {
     border-left-color: #06b6d4;
 }
+
 .ask-source-card.cat-rules {
     border-left-color: #10b981;
 }
+
 .ask-source-card.cat-memory {
     border-left-color: #f59e0b;
 }
+
 .ask-source-card.cat-project {
     border-left-color: #3b82f6;
 }
@@ -10988,21 +11128,25 @@ body::-webkit-scrollbar-thumb:hover {
     color: #d8b4fe;
     border: 1px solid rgba(168, 85, 247, 0.4);
 }
+
 .ask-source-cat-badge.cat-research {
     background: rgba(6, 182, 212, 0.18);
     color: #67e8f9;
     border: 1px solid rgba(6, 182, 212, 0.4);
 }
+
 .ask-source-cat-badge.cat-rules {
     background: rgba(168, 85, 247, 0.18);
     color: #6ee7b7;
     border: 1px solid rgba(16, 185, 129, 0.4);
 }
+
 .ask-source-cat-badge.cat-memory {
     background: rgba(245, 158, 11, 0.18);
     color: #fde68a;
     border: 1px solid rgba(245, 158, 11, 0.4);
 }
+
 .ask-source-cat-badge.cat-project {
     background: rgba(59, 130, 246, 0.18);
     color: #93c5fd;
@@ -11291,7 +11435,8 @@ body::-webkit-scrollbar-thumb:hover {
     background: rgba(3, 6, 16, 0.88);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-    z-index: 10050; /* Superior ao askBrainModal (10000) */
+    z-index: 10050;
+    /* Superior ao askBrainModal (10000) */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -11469,5 +11614,3 @@ body::-webkit-scrollbar-thumb:hover {
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     background: rgba(255, 255, 255, 0.015);
 }
-
-

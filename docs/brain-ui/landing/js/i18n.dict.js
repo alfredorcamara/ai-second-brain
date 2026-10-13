@@ -184,7 +184,7 @@ window.I18N_EN = {
  "AI Second Brain — Dê uma memória viva e persistente à sua IA": "AI Second Brain — Give your AI a living, persistent memory",
  "Na pasta física projects/<nome>/BACKUPS/, com exportação completa em Markdown (legível por humanos) e JSON estruturado (auditável por scripts).": "In the physical folder projects/&lt;name&gt;/BACKUPS/, with a full export in Markdown (human-readable) and structured JSON (script-auditable).",
  "Compatível com qualquer ferramenta de IA": "Compatible with any AI tool",
- "Idealizado & Mantido por": "Conceived & Maintained by",
+ "Criado & Mantido por": "Created & Maintained by",
  "Passo a Passo de Instalação": "Step-by-Step Installation",
  "Clone o repositório, inicie o dashboard local e aponte seu agente favorito na raiz do workspace.": "Clone the repository, launch the local dashboard and point your favorite agent at the workspace root.",
  "Requisitos": "Requirements",

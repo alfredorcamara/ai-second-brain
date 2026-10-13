@@ -72,10 +72,16 @@
                         <span class="ask-kbd">Ctrl+K</span>
                     </button>
 
-                    <!-- AI Gateway BYOK Pill -->
+                    <!-- AI Gateway Status Pill -->
                     <button id="btnAiGatewayModal" class="ai-status-pill unconfigured"
-                        title="Configurar Motor de Inteligência Artificial (BYOK)" onclick="openAiSettingsModal()">
-                        <span class="ai-pill-icon">✨</span>
+                        title="Configurar Conexão de IA" onclick="openAiSettingsModal()">
+                        <span class="ai-pill-icon">
+                            <svg class="ai-pill-sparkle-svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4L12 2z" />
+                                <path d="M19 16l1 2.5L22.5 19.5 20 20.5 19 23l-1-2.5-2.5-1 2.5-1 1-2.5z" stroke-width="1.5" />
+                            </svg>
+                        </span>
                         <span class="ai-pill-provider" id="aiStatusPillProvider">AI Gateway</span>
                         <span class="status-dot snapshot" id="aiStatusPillDot"></span>
                     </button>
@@ -549,7 +555,14 @@
                                 <h3 style="margin: 0; font-size: 15px; white-space: nowrap;">🏗️ Arquitetura do Sistema
                                 </h3>
                                 <button type="button" class="ai-engine-help-btn" onclick="openAiEngineHelpModal()"
-                                    title="Como funciona a troca de motor de IA e as pontes no disco?">?</button>
+                                    title="Como funciona a troca de motor de IA e as pontes no disco?"
+                                    aria-label="Ajuda sobre Arquitetura do Sistema">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                    </svg>
+                                </button>
                             </div>
                             <div class="arch-diagram" style="margin-top: 14px;">
                                 <div class="arch-layer">
@@ -598,7 +611,18 @@
 
                         <!-- Card 2: AI Decision Flow -->
                         <div class="dash-card flow-card">
-                            <h3>🧭 AI Decision Flow</h3>
+                            <div class="arch-card-header">
+                                <h3 style="margin: 0; font-size: 15px; white-space: nowrap;">🧭 AI Decision Flow</h3>
+                                <button type="button" class="ai-engine-help-btn" onclick="openAiDecisionFlowHelpModal()"
+                                    title="Como funciona o fluxo de decisão e roteamento de IA?"
+                                    aria-label="Ajuda sobre AI Decision Flow">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                    </svg>
+                                </button>
+                            </div>
                             <div class="flow-diagram">
                                 <div class="flow-step">
                                     <div class="flow-node start">TAREFA</div>
@@ -633,7 +657,18 @@
 
                         <!-- Card 3: Métricas do Cérebro -->
                         <div class="dash-card metrics-card">
-                            <h3>📊 Métricas do Cérebro</h3>
+                            <div class="arch-card-header">
+                                <h3 style="margin: 0; font-size: 15px; white-space: nowrap;">📊 Métricas do Cérebro</h3>
+                                <button type="button" class="ai-engine-help-btn" onclick="openBrainMetricsHelpModal()"
+                                    title="O que significa cada métrica de governança do cérebro?"
+                                    aria-label="Ajuda sobre Métricas do Cérebro">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                    </svg>
+                                </button>
+                            </div>
                             <div class="metrics-grid">
                                 <div class="metric">
                                     <span class="metric-value" id="metricRules">7</span>
@@ -1867,6 +1902,317 @@
         </div>
     </div>
 
+    <!-- Modal 5: Guia do AI Decision Flow (Roteamento & Governança de IA) -->
+    <div id="aiDecisionFlowHelpModal" class="editor-modal-backdrop" style="display: none;"
+        onclick="handleAiDecisionFlowHelpBackdropClick(event)">
+        <div class="editor-modal-card" style="max-width: 760px; height: auto; max-height: 88vh; overflow-y: auto;"
+            role="dialog" aria-modal="true" aria-labelledby="aiDecisionFlowHelpTitle">
+            <div class="editor-header"
+                style="background: linear-gradient(135deg, rgba(30, 27, 75, 0.7), rgba(15, 23, 42, 0.85));">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div
+                        style="width: 36px; height: 36px; border-radius: 10px; background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.35); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                        🧭
+                    </div>
+                    <div>
+                        <div
+                            style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #c084fc; letter-spacing: 0.06em;">
+                            Roteamento &amp; Governança de Inteligência
+                        </div>
+                        <h2 id="aiDecisionFlowHelpTitle"
+                            style="margin: 0; font-size: 17px; font-weight: 700; color: #f8fafc;">
+                            Como Funciona o AI Decision Flow?
+                        </h2>
+                    </div>
+                </div>
+                <button type="button" class="editor-close-btn" onclick="closeAiDecisionFlowHelpModal()"
+                    aria-label="Fechar">✕</button>
+            </div>
+
+            <div style="padding: 24px; color: #cbd5e1; font-size: 13.5px; line-height: 1.6;">
+                <!-- Introdução / Princípio Central -->
+                <div class="ai-help-section"
+                    style="background: rgba(168, 85, 247, 0.05); border-color: rgba(168, 85, 247, 0.2);">
+                    <h3
+                        style="font-size: 14.5px; color: #e9d5ff; margin: 0 0 8px 0; display: flex; align-items: center; gap: 8px;">
+                        <span>⚖️</span> O Princípio da Prioridade Determinística (AIJev First)
+                    </h3>
+                    <p style="margin: 0 0 10px 0; color: var(--text-secondary);">
+                        No desenvolvimento assistido por IA, o erro mais comum e custoso é usar <strong>LLMs generativos para tudo</strong>. Modelos generativos trazem latência em segundos, custos contínuos de tokens e risco de alucinação em regras de negócio críticas.
+                    </p>
+                    <p style="margin: 0; color: var(--text-secondary);">
+                        O <strong>AI Decision Flow</strong> estabelece uma hierarquia rigorosa: <strong style="color: #f8fafc;">código puro sempre que possível, árvores de decisão estruturadas (AIJev) para classificações, e LLMs apenas para geração textual aberta ou raciocínio não-estruturado.</strong>
+                    </p>
+                </div>
+
+                <!-- Passo a Passo Detalhado -->
+                <div class="ai-help-section">
+                    <h3
+                        style="font-size: 14.5px; color: #f8fafc; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                        <span>🪜</span> As 4 Etapas da Árvore de Decisão
+                    </h3>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <!-- Etapa 1 -->
+                        <div style="background: rgba(0,0,0,0.3); border-left: 3px solid #10b981; border-radius: 6px; padding: 12px 14px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                                <strong style="color: #6ee7b7; font-size: 13.5px;">1. É Determinística? → CÓDIGO PURO / REGRA</strong>
+                                <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 600;">Custo Zero · Latência &lt;1ms</span>
+                            </div>
+                            <p style="margin: 0; font-size: 12.5px; color: var(--text-secondary);">
+                                Cálculos matemáticos, validação de campos, expressões regulares, operadores lógicos (<code>if/else</code>) e consultas SQL padrão. Se a resposta pode ser expressa por matemática ou regras exatas, <strong>NUNCA use IA</strong>.
+                            </p>
+                        </div>
+
+                        <!-- Etapa 2 -->
+                        <div style="background: rgba(0,0,0,0.3); border-left: 3px solid #f59e0b; border-radius: 6px; padding: 12px 14px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                                <strong style="color: #fcd34d; font-size: 13.5px;">2. É Decisão ou Classificação? → AIJEV / JEV</strong>
+                                <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-weight: 600;">Alta Velocidade · 100% Auditável</span>
+                            </div>
+                            <p style="margin: 0; font-size: 12.5px; color: var(--text-secondary);">
+                                Roteamento de eventos, triagem de severidade de erros, aprovação de pedidos, classificação de risco ou priorização de alertas. O AIJev avalia o estado atual contra opções tipadas e retorna probabilidades numéricas explicáveis, sem texto prolixo.
+                            </p>
+                        </div>
+
+                        <!-- Etapa 3 -->
+                        <div style="background: rgba(0,0,0,0.3); border-left: 3px solid #38bdf8; border-radius: 6px; padding: 12px 14px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                                <strong style="color: #7dd3fc; font-size: 13.5px;">3. Precisa Gerar Linguagem? → LLM (AI GATEWAY)</strong>
+                                <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-weight: 600;">Raciocínio Aberto · Linguagem Natural</span>
+                            </div>
+                            <p style="margin: 0; font-size: 12.5px; color: var(--text-secondary);">
+                                Redigir e-mails, resumir históricos técnicos, sintetizar relatórios ou gerar código. Acesso via <strong>AI Gateway</strong> com provedores dinâmicos (Claude, Gemini, OpenAI, Groq, Ollama) com fallback automático, cache e observabilidade.
+                            </p>
+                        </div>
+
+                        <!-- Etapa 4 -->
+                        <div style="background: rgba(0,0,0,0.3); border-left: 3px solid #a855f7; border-radius: 6px; padding: 12px 14px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                                <strong style="color: #d8b4fe; font-size: 13.5px;">4. Fechamento Obrigatório: VALIDAÇÃO PROGRAMÁTICA</strong>
+                                <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(168, 85, 247, 0.15); color: #c084fc; font-weight: 600;">Blindagem de Segurança</span>
+                            </div>
+                            <p style="margin: 0; font-size: 12.5px; color: var(--text-secondary);">
+                                Nenhum output produzido por LLM é gravado em disco ou executado cegamente. O resultado passa por validação determinística de schemas (JSON Schema / Zod), checagem de tipos e revisão humana de segurança.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela Comparativa de Casos Reais -->
+                <div class="ai-help-section">
+                    <h3
+                        style="font-size: 14.5px; color: #f8fafc; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+                        <span>📋</span> Guia Prático: Onde Cada Demanda Deve Cair?
+                    </h3>
+                    <div class="ai-help-table-wrap" style="overflow-x: auto;">
+                        <table class="ai-help-table">
+                            <thead>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 12px; color: #94a3b8;">
+                                    <th>Necessidade de Software</th>
+                                    <th>Destino no Flow</th>
+                                    <th>Motivo de Engenharia</th>
+                                </tr>
+                            </thead>
+                            <tbody style="font-size: 12px; color: #cbd5e1;">
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td>Cálculo de juros, desconto ou conciliação</td>
+                                    <td><span style="color:#34d399; font-weight:600;">Código Puro</span></td>
+                                    <td>Determinismo matemático absoluto; custo zero.</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td>Classificar severidade de falha em SQL Job</td>
+                                    <td><span style="color:#fbbf24; font-weight:600;">AIJev / Regras</span></td>
+                                    <td>Decisão rápida, probabilística e explicável para auditoria.</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td>Roteamento de chamado para suporte nível 1 ou 2</td>
+                                    <td><span style="color:#fbbf24; font-weight:600;">AIJev / Jev</span></td>
+                                    <td>Categorização direta por padrões sem gasto de tokens.</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td>Gerar explicação humana de incidente para diretoria</td>
+                                    <td><span style="color:#38bdf8; font-weight:600;">LLM (Gateway)</span></td>
+                                    <td>Capacidade de síntese e nuances de linguagem natural.</td>
+                                </tr>
+                                <tr>
+                                    <td>Persistir sessão ou alterar código do repositório</td>
+                                    <td><span style="color:#c084fc; font-weight:600;">Validação</span></td>
+                                    <td>Garante integridade antes de qualquer alteração no disco.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Dica Operacional -->
+                <div class="ai-help-section" style="margin-bottom: 24px;">
+                    <div class="ai-help-callout success"
+                        style="background: rgba(16, 185, 129, 0.08); border-left: 3px solid #10b981; border-radius: 6px; padding: 12px 16px; font-size: 13px; color: #34d399;">
+                        <strong style="color: #6ee7b7; display: block; margin-bottom: 4px; font-size: 13.5px;">💡
+                            Como Usar no Seu Dia a Dia:</strong>
+                        Ao pedir uma nova funcionalidade no chat do agente, ative a skill <code>ai-decision-gate</code>. O agente analisará a demanda e apresentará a divisão exata entre regras determinísticas, AIJev e LLM antes de escrever o código.
+                    </div>
+                </div>
+
+                <!-- Rodapé -->
+                <div
+                    style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; flex-wrap: wrap; gap: 10px;">
+                    <div style="font-size: 12px; color: var(--text-tertiary);">
+                        Documentação técnica completa em <code>knowledge/ai/AIJEV.md</code> e <code>GEMINI.md</code>.
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn btn-secondary" onclick="closeAiDecisionFlowHelpModal()">
+                            Entendi! Fechar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 6: Guia das Métricas do Cérebro (Telemetria & Acervo Vivo) -->
+    <div id="brainMetricsHelpModal" class="editor-modal-backdrop" style="display: none;"
+        onclick="handleBrainMetricsHelpBackdropClick(event)">
+        <div class="editor-modal-card" style="max-width: 760px; height: auto; max-height: 88vh; overflow-y: auto;"
+            role="dialog" aria-modal="true" aria-labelledby="brainMetricsHelpTitle">
+            <div class="editor-header"
+                style="background: linear-gradient(135deg, rgba(30, 27, 75, 0.7), rgba(15, 23, 42, 0.85));">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div
+                        style="width: 36px; height: 36px; border-radius: 10px; background: rgba(52, 211, 153, 0.15); border: 1px solid rgba(52, 211, 153, 0.35); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                        📊
+                    </div>
+                    <div>
+                        <div
+                            style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #34d399; letter-spacing: 0.06em;">
+                            Telemetria &amp; Acervo Vivo
+                        </div>
+                        <h2 id="brainMetricsHelpTitle"
+                            style="margin: 0; font-size: 17px; font-weight: 700; color: #f8fafc;">
+                            O que Significam as Métricas do Cérebro?
+                        </h2>
+                    </div>
+                </div>
+                <button type="button" class="editor-close-btn" onclick="closeBrainMetricsHelpModal()"
+                    aria-label="Fechar">✕</button>
+            </div>
+
+            <div style="padding: 24px; color: #cbd5e1; font-size: 13.5px; line-height: 1.6;">
+                <!-- Introdução -->
+                <div class="ai-help-section"
+                    style="background: rgba(52, 211, 153, 0.05); border-color: rgba(52, 211, 153, 0.2);">
+                    <h3
+                        style="font-size: 14.5px; color: #a7f3d0; margin: 0 0 8px 0; display: flex; align-items: center; gap: 8px;">
+                        <span>🧠</span> O Índice de Inteligência &amp; Governança
+                    </h3>
+                    <p style="margin: 0; color: var(--text-secondary);">
+                        As <strong>Métricas do Cérebro</strong> refletem o volume e a densidade de inteligência do seu workspace. Elas monitoram os 6 pilares estruturais que mantêm o desenvolvimento com IA seguro, ágil e livre de amnésia técnica entre sessões.
+                    </p>
+                </div>
+
+                <!-- As 6 Métricas Detalhadas em Grid/Cards -->
+                <div class="ai-help-section">
+                    <h3
+                        style="font-size: 14.5px; color: #f8fafc; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+                        <span>🔍</span> Entendendo Cada uma das 6 Métricas
+                    </h3>
+
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                        <!-- Métrica 1: Rules -->
+                        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 12px 14px;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span style="font-size: 16px;">📜</span>
+                                <strong style="color: #f8fafc; font-size: 13.5px;">RULES (Regras Absolutas)</strong>
+                            </div>
+                            <p style="margin: 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
+                                Diretrizes invioláveis em <code>.agents/rules/</code> (Segurança, C#, SQL Server, Zero Fabricação de Contexto). O agente é obrigado a consultá-las antes de propor qualquer alteração de código.
+                            </p>
+                        </div>
+
+                        <!-- Métrica 2: Skills -->
+                        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 12px 14px;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span style="font-size: 16px;">⚡</span>
+                                <strong style="color: #f8fafc; font-size: 13.5px;">SKILLS (Playbooks Operacionais)</strong>
+                            </div>
+                            <p style="margin: 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
+                                Procedimentos padronizados em <code>.agents/skills/</code> (como <code>project-onboarding</code>, <code>new-feature</code>, <code>bug-investigation</code>, <code>session-memory</code>). Garantem processos consistentes de engenharia.
+                            </p>
+                        </div>
+
+                        <!-- Métrica 3: Projects -->
+                        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 12px 14px;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span style="font-size: 16px;">🚀</span>
+                                <strong style="color: #f8fafc; font-size: 13.5px;">PROJECTS (Projetos Conectados)</strong>
+                            </div>
+                            <p style="margin: 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
+                                O total de repositórios governados em <code>projects/</code> (Greenfield e Brownfield). Cada projeto mantém seus contratos (<code>PROJECT.md</code>, <code>CURRENT_STATE.md</code>) e histórico totalmente isolados.
+                            </p>
+                        </div>
+
+                        <!-- Métrica 4: Knowledge -->
+                        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 12px 14px;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span style="font-size: 16px;">📚</span>
+                                <strong style="color: #f8fafc; font-size: 13.5px;">KNOWLEDGE (Base de Conhecimento)</strong>
+                            </div>
+                            <p style="margin: 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
+                                Guias conceituais e padrões arquiteturais em <code>knowledge/</code> (AI Gateway, AIJev, Seleção de Modelos). Serve de base teórica compartilhada para todos os projetos do workspace.
+                            </p>
+                        </div>
+
+                        <!-- Métrica 5: Decisions -->
+                        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 12px 14px;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span style="font-size: 16px;">🏛️</span>
+                                <strong style="color: #f8fafc; font-size: 13.5px;">DECISIONS (ADRs Arquiteturais)</strong>
+                            </div>
+                            <p style="margin: 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
+                                Registros Imutáveis de Decisões Arquiteturais em <code>DECISIONS/</code>. Registram por que uma tecnologia foi adotada, impedindo que IAs futuras revertam decisões tomadas no passado.
+                            </p>
+                        </div>
+
+                        <!-- Métrica 6: Memory -->
+                        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 12px 14px;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span style="font-size: 16px;">💾</span>
+                                <strong style="color: #f8fafc; font-size: 13.5px;">MEMORY (Memória &amp; Sessões)</strong>
+                            </div>
+                            <p style="margin: 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
+                                Registros diários de trabalho (<code>MEMORY/sessions/</code>) e lições aprendidas (<code>LESSONS_LEARNED.md</code>). Permitem que qualquer agente retome o contexto sem perda de tempo.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Como as Métricas são Atualizadas -->
+                <div class="ai-help-section" style="margin-bottom: 24px;">
+                    <div class="ai-help-callout info"
+                        style="background: rgba(56, 189, 248, 0.08); border-left: 3px solid #38bdf8; border-radius: 6px; padding: 12px 16px; font-size: 13px; color: #38bdf8;">
+                        <strong style="color: #7dd3fc; display: block; margin-bottom: 4px; font-size: 13.5px;">🔄
+                            Sincronização Automática em Tempo Real:</strong>
+                        Esses contadores são computados a partir dos arquivos físicos do seu workspace e atualizados no carregamento do Cockpit. Eles alimentam diretamente os nós visíveis no <strong>Grafo Neural 3D</strong>.
+                    </div>
+                </div>
+
+                <!-- Rodapé -->
+                <div
+                    style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; flex-wrap: wrap; gap: 10px;">
+                    <div style="font-size: 12px; color: var(--text-tertiary);">
+                        Dica: Use o botão <code>+ Novo ou Conectar Projeto</code> para expandir seu ecossistema.
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn btn-secondary" onclick="closeBrainMetricsHelpModal()">
+                            Entendi! Fechar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ============================================================ -->
     <!-- AI GATEWAY MULTI-PROVEDOR (BYOK) — MODAIS DE EXPERIÊNCIA UX -->
     <!-- ============================================================ -->
@@ -1924,7 +2270,7 @@
                                     stroke-width="1.5" />
                             </svg>
                         </span>
-                        <h2 id="aiSettingsTitle" class="ai-settings-title">Configuração de IA (BYOK)</h2>
+                        <h2 id="aiSettingsTitle" class="ai-settings-title">Configuração de IA</h2>
                     </div>
                     <button type="button" class="ai-card-close-btn" onclick="closeAiSettingsModal()"
                         aria-label="Fechar">✕</button>

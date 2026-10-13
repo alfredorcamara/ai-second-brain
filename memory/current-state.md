@@ -1,6 +1,6 @@
 # Estado Atual do AI Second Brain
 
-> Última atualização: 2026-10-12
+> Última atualização: 2026-10-13
 
 ## Status do Framework: 🟢 Operacional & Cockpit Avançado + 🔬 Research Lab + ⚡ AI Gateway Multi-Provedor (BYOK Ativo) + 🧠 Session Capture + ✨ Pergunte ao Cérebro (Global Q&A)
 
@@ -20,6 +20,26 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 | `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway, Research Engine, Session Capture, Brain Search) |
 
 ## Sessões Recentes
+- **Data**: 2026-10-13
+  - **Refinamento de UX, Consistência de Ícones de IA e Central de Ajuda Cognitiva**:
+    - **Modais Educativos nos Cards de Governança (`#aiDecisionFlowHelpModal` & `#brainMetricsHelpModal`)**:
+      - Adicionados modais explicativos de alta fidelidade visual nos cards *AI Decision Flow* e *Métricas do Cérebro*, detalhando a hierarquia determinística (Código determinístico vs AIJev vs LLM vs Validação) e o papel prático das 6 métricas fundamentais (Regras, Skills, Projetos, Conhecimento, Decisões, Memória).
+      - Redesenhados os botões de ajuda `?` em estilo minimalista e translúcido (ghost button com ícone vetorial SVG Heroicons e efeito hover suave), substituindo o antigo botão circular sólido.
+    - **Remoção de Jargão `(BYOK)` do Título de Configuração de IA**:
+      - Título do modal atualizado de `Configuração de IA (BYOK)` para simplesmente `Configuração de IA`, reduzindo atrito cognitivo e jargões corporativos na UI, mantendo o conceito técnico registrado nos ADRs de arquitetura.
+    - **Correção de Layout e Respiro na Barra de Busca da Sidebar (`✨ IA`)**:
+      - Identificado e corrigido comportamento de flexbox no `.search-box input` com adição de `min-width: 0;`, eliminando o esmagamento do botão contra a borda direita e prevenindo quebra de texto em duas linhas.
+      - Calibrado espaçamento simétrico e respiro elegante de ~14px em relação à borda do container.
+    - **Redimensionamento e Centralização da Logo da Sidebar**:
+      - Logo ajustada para 90% com `justify-content: center;` no container flex `.logo`, garantindo harmonia visual e margens laterais equilibradas na sidebar.
+    - **Harmonização do Pill de Status de IA na Topbar (`#btnAiGatewayModal`)**:
+      - Removida a duplicidade de ícones (`✨` + `⚡`), eliminando o raio extra gerado por concatenação de string no JavaScript.
+      - Substituído o emoji estático pelo mesmo SVG vetorial refinado de constelação/brilho de IA utilizado no modal (`.ai-pill-sparkle-svg`), com herança dinâmica de cor via `stroke="currentColor"`.
+    - **Ajuste Fino na Landing Page**:
+      - Atualizado o rótulo de autoria no footer para `"Criado & Mantido por"` (e `"Created & Maintained by"` em inglês), alinhando ao padrão universal de projetos open-source.
+    - **Paridade Absoluta & Integridade**:
+      - Alterações replicadas integralmente com 100% de paridade em `docs/brain-ui/` e `docs/brain-ui/demo/` (`index.html`, `app.js`, `style.css`).
+      - Validado via linter de integridade `npm run doctor` com 100% dos links e arquivos válidos (0 erros).
 - **Data**: 2026-10-12
   - **Isolamento Estrito do Vault de Demonstração na Landing Page (`build:demo`)**:
     - **Diagnóstico & Correção**: O snapshot de demonstração (`docs/brain-ui/demo/vault-data.js`) havia sido sobrescrito com o vault completo do workspace local, expondo indevidamente os projetos privados do usuário na demonstração embutida da landing page.

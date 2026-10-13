@@ -266,12 +266,64 @@ function handleAiEngineHelpBackdropClick(event) {
     }
 }
 
-// Suporte à tecla ESC para fechar o modal
+function openAiDecisionFlowHelpModal() {
+    const modal = document.getElementById('aiDecisionFlowHelpModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeAiDecisionFlowHelpModal() {
+    const modal = document.getElementById('aiDecisionFlowHelpModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+function handleAiDecisionFlowHelpBackdropClick(event) {
+    if (event.target && event.target.id === 'aiDecisionFlowHelpModal') {
+        closeAiDecisionFlowHelpModal();
+    }
+}
+
+function openBrainMetricsHelpModal() {
+    const modal = document.getElementById('brainMetricsHelpModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeBrainMetricsHelpModal() {
+    const modal = document.getElementById('brainMetricsHelpModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+function handleBrainMetricsHelpBackdropClick(event) {
+    if (event.target && event.target.id === 'brainMetricsHelpModal') {
+        closeBrainMetricsHelpModal();
+    }
+}
+
+// Suporte à tecla ESC para fechar modais de ajuda
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-        const modal = document.getElementById('aiEngineHelpModal');
-        if (modal && modal.style.display === 'flex') {
+        const engineModal = document.getElementById('aiEngineHelpModal');
+        if (engineModal && engineModal.style.display === 'flex') {
             closeAiEngineHelpModal();
+        }
+        const flowModal = document.getElementById('aiDecisionFlowHelpModal');
+        if (flowModal && flowModal.style.display === 'flex') {
+            closeAiDecisionFlowHelpModal();
+        }
+        const metricsModal = document.getElementById('brainMetricsHelpModal');
+        if (metricsModal && metricsModal.style.display === 'flex') {
+            closeBrainMetricsHelpModal();
         }
     }
 });
@@ -279,6 +331,14 @@ document.addEventListener('keydown', (e) => {
 window.openAiEngineHelpModal = openAiEngineHelpModal;
 window.closeAiEngineHelpModal = closeAiEngineHelpModal;
 window.handleAiEngineHelpBackdropClick = handleAiEngineHelpBackdropClick;
+
+window.openAiDecisionFlowHelpModal = openAiDecisionFlowHelpModal;
+window.closeAiDecisionFlowHelpModal = closeAiDecisionFlowHelpModal;
+window.handleAiDecisionFlowHelpBackdropClick = handleAiDecisionFlowHelpBackdropClick;
+
+window.openBrainMetricsHelpModal = openBrainMetricsHelpModal;
+window.closeBrainMetricsHelpModal = closeBrainMetricsHelpModal;
+window.handleBrainMetricsHelpBackdropClick = handleBrainMetricsHelpBackdropClick;
 
 function renderProjectBridgesChips(projectName) {
     const files = (window.VAULT && window.VAULT.data && window.VAULT.data.files) || [];
@@ -6358,12 +6418,12 @@ function updateAiGatewayPillUI(config) {
     if (config.configured) {
         btn.classList.add('connected');
         const shortModel = (config.model || '').split('/').pop();
-        label.textContent = `⚡ ${config.providerName || config.provider} • ${shortModel}`;
-        btn.title = `Motor Ativo: ${config.providerName || config.provider} (${config.model || 'Padrão'}). Clique para gerenciar BYOK.`;
+        label.textContent = `${config.providerName || config.provider} • ${shortModel}`;
+        btn.title = `Motor Ativo: ${config.providerName || config.provider} (${config.model || 'Padrão'}). Clique para configurar IA.`;
         if (dot) dot.className = 'status-dot live';
     } else {
         btn.classList.add('unconfigured');
-        label.textContent = `Conectar IA (BYOK)`;
+        label.textContent = `Conectar IA`;
         btn.title = `Nenhuma IA configurada. Clique para conectar Groq, OpenAI, Claude ou Ollama.`;
         if (dot) dot.className = 'status-dot snapshot';
     }
