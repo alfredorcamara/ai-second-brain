@@ -1250,8 +1250,20 @@ function renderSingleProjectCardHtml(p) {
             <div class="proj-gov-container" onclick="event.stopPropagation(); showGovernanceExplainer('${p.folderName}', ${p.govPercent}, ${p.hasProjectMd}, ${p.hasCurrentState}, ${p.hasArchitecture}, ${p.hasDecisions})" style="cursor: pointer;" title="Clique para ver o detalhamento do cálculo de governança">
                 <div class="proj-gov-header">
                     <span class="proj-gov-label">
-                        <span>🛡️</span> Governança de Arquitetura
-                        <span class="proj-gov-info-btn" title="O que significa este percentual?">ℹ️</span>
+                        <span class="proj-gov-shield-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                <path d="m9 12 2 2 4-4"></path>
+                            </svg>
+                        </span>
+                        Governança de Arquitetura
+                        <span class="proj-gov-info-btn" title="O que significa este percentual? (Clique para ver o detalhamento)" aria-label="Informações sobre governança">
+                            <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                        </span>
                     </span>
                     <span class="proj-gov-val ${p.govPercent === 100 ? 'is-100' : 'is-partial'}">${p.govPercent}% Conforme</span>
                 </div>

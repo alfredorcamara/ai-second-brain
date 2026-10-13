@@ -4646,24 +4646,56 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 16px;
-    height: 16px;
+    width: 17px;
+    height: 17px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.14);
-    color: var(--text-secondary);
-    font-size: 9.5px;
+    color: var(--text-tertiary, #94a3b8);
     cursor: pointer;
-    transition: all var(--transition-fast);
-    margin-left: 4px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-left: 2px;
     line-height: 1;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.proj-gov-info-btn svg {
+    display: block;
+    pointer-events: none;
+    stroke: currentColor;
+    transition: stroke 0.2s ease;
 }
 
 .proj-gov-info-btn:hover {
-    background: rgba(99, 102, 241, 0.35);
-    border-color: rgba(99, 102, 241, 0.6);
-    color: #fff;
+    background: rgba(99, 102, 241, 0.32);
+    border-color: rgba(99, 102, 241, 0.65);
+    color: #ffffff;
     transform: scale(1.15);
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.45);
+}
+
+.proj-gov-info-btn:active {
+    transform: scale(0.95);
+}
+
+.proj-gov-shield-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #818cf8;
+    filter: drop-shadow(0 0 6px rgba(99, 102, 241, 0.45));
+    flex-shrink: 0;
+    transition: all var(--transition-fast);
+}
+
+.proj-gov-shield-icon svg {
+    display: block;
+}
+
+.proj-dashboard-card:hover .proj-gov-shield-icon {
+    color: #a5b4fc;
+    filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.7));
 }
 
 /* Governance 4-Contracts Breakdown Pills (2x2 Grid Luminous Layout) */

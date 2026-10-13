@@ -55,6 +55,7 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
       - **Dock Unificado de Métricas**: Substituição das 3 caixas cinzas pesadas por uma faixa única com divisórias translúcidas discretas integrando `docs indexados`, `labs de pesquisa` e `proporção de contratos`.
       - **Hierarquia de Ações Refinada**: Botão `🚀 Workspace` com destaque luminoso de ação primária, e `🪐 Grafo 3D` / `🔬 Labs` / `⚙️ Gerenciar` como ações secundárias em estilo dark glass sofisticado.
       - **Sanitização de Dados**: Corrigida a duplicação textual no `PROJECT.md` do `OmniHealth_AI`.
+      - **Modernização Vetorial de Ícones de Governança (`.proj-gov-shield-icon` & `.proj-gov-info-btn`)**: Substituídos os emojis estáticos de sistema operacional (`🛡️` e `ℹ️`) por ícones SVG vetoriais de alta fidelidade: escudo de segurança geométrico com checkmark de conformidade em índigo luminoso (`#818cf8`) com drop-shadow sináptico, e botão de informação minimalista com traçado vetorial nítido de 10px, fundo dark glass translúcido e microinteração hover com glow e escala suave.
       - **Paridade Absoluta 100%**: Espelhado em `docs/brain-ui/` e `docs/brain-ui/demo/` (`index.html`, `app.js`, `style.css`).
     - **Interatividade Contextual no AI Decision Flow (`#aiDecisionFlowHelpModal`)**:
       - **Abertura e Rolagem por Bloco do Fluxograma**: Todos os nós (`TAREFA`, `Determinística?`, `Decisão?`, `Geração?`, `VALIDAÇÃO`) e ramificações (`SIM → CÓDIGO`, `SIM → AIJEV`, `SIM → LLM`) do card *AI Decision Flow* tornados interativos e clicáveis.
