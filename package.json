@@ -10,7 +10,8 @@
     "doctor": "node scripts/doctor.js",
     "check": "node scripts/doctor.js",
     "project:new": "node scripts/create-project.js",
-    "project:link": "node scripts/link-project.js"
+    "project:link": "node scripts/link-project.js",
+    "build:demo": "python docs/brain-ui/demo/tools/build_demo_vault.py"
   },
   "keywords": [
     "ai",
