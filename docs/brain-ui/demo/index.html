@@ -38,6 +38,7 @@
                     <input type="text" id="searchInput" placeholder="Buscar no cérebro..." autocomplete="off">
                     <button id="btnSidebarSearchClear" class="sidebar-search-clear" title="Limpar pesquisa (Esc)"
                         style="display: none;">✕</button>
+                    <button id="btnSidebarAskBrain" class="sidebar-search-ai-btn" onclick="openAskBrainModal()" title="Pergunte ao Cérebro com IA (Ctrl+K)">✨ IA</button>
                 </div>
             </div>
 
@@ -65,6 +66,13 @@
                     <span class="breadcrumb-item active">🧠 Visão Geral</span>
                 </div>
                 <div class="topbar-actions">
+                    <!-- Pergunte ao Cérebro (Global Semantic Search & Q&A) -->
+                    <button id="btnAskBrainTop" class="btn-ask-brain-trigger" onclick="openAskBrainModal()" title="Pergunte ao Cérebro com IA (Ctrl+K)">
+                        <span class="ask-spark">✨</span>
+                        <span>Pergunte ao Cérebro</span>
+                        <span class="ask-kbd">Ctrl+K</span>
+                    </button>
+
                     <!-- AI Gateway BYOK Pill -->
                     <button id="btnAiGatewayModal" class="ai-status-pill unconfigured"
                         title="Configurar Motor de Inteligência Artificial (BYOK)" onclick="openAiSettingsModal()">
@@ -2171,6 +2179,274 @@
                 <button type="button" class="btn-ai-quota-secondary" onclick="closeAiQuotaModal()">Entendido</button>
                 <button type="button" class="btn-ai-quota-primary" onclick="proceedFromQuotaToSettings()">Configurar
                     IA</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Pergunte ao Cérebro (Ask the Brain — Q&A Semântico & Citações) -->
+    <div id="askBrainModal" class="ask-brain-modal-backdrop" style="display: none;" onclick="handleAskBrainBackdrop(event)">
+        <div class="ask-brain-modal-card" role="dialog" aria-modal="true" aria-labelledby="askBrainTitle">
+            <div class="ask-brain-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="ask-brain-badge">AI VAULT Q&amp;A</span>
+                    <h3 id="askBrainTitle" style="font-size: 15px; font-weight: 700; color: #ffffff; margin: 0;">Pergunte ao Cérebro</h3>
+                </div>
+                <div class="ask-brain-header-actions">
+                    <button type="button" class="ask-brain-help-btn" onclick="openAskBrainHelpModal()" title="Entenda a inteligência do ranking e arquitetura RAG">
+                        <span class="ask-help-qmark">?</span>
+                        <span>Como Funciona</span>
+                    </button>
+                    <span class="ask-brain-shortcut-hint">ESC para fechar</span>
+                    <button type="button" class="ask-brain-close-btn" onclick="closeAskBrainModal()" title="Fechar (Esc)">✕</button>
+                </div>
+            </div>
+
+            <div class="ask-brain-input-container">
+                <div class="ask-brain-input-wrapper">
+                    <span class="ask-brain-input-icon">✨</span>
+                    <input type="text" id="askBrainQueryInput" class="ask-brain-query-input" placeholder="Faça uma pergunta sobre projetos, decisões, regras ou lições aprendidas..." autocomplete="off">
+                    <button type="button" id="btnAskBrainSubmit" class="btn-ask-brain-submit" onclick="submitAskBrainQuery()">
+                        <span>Perguntar</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+
+                <div class="ask-brain-filters-row">
+                    <div class="ask-brain-selector-group">
+                        <label for="askBrainScopeSelect" class="ask-scope-label">📁 Escopo:</label>
+                        <select id="askBrainScopeSelect" class="ask-scope-select">
+                            <option value="">Todo o Cérebro (Global)</option>
+                        </select>
+                    </div>
+                    <div class="ask-brain-selector-group">
+                        <label for="askBrainCategorySelect" class="ask-scope-label">🏷️ Categoria:</label>
+                        <select id="askBrainCategorySelect" class="ask-scope-select ask-cat-select" onchange="setAskBrainCategory(this.value)">
+                            <option value="all">Todas as Categorias</option>
+                            <option value="decision">⚖️ ADRs (Decisões Arquiteturais)</option>
+                            <option value="research">🔬 Research Lab (Pesquisas)</option>
+                            <option value="rules">🛡️ Regras Universais</option>
+                            <option value="lessons">🧠 Lições Aprendidas</option>
+                            <option value="project">📦 Contratos de Projetos</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="ask-brain-recents-row" id="askBrainRecentsRow" style="display: none;">
+                    <span class="ask-recents-label">🕒 Recentes:</span>
+                    <div class="ask-recents-list" id="askBrainRecentsList"></div>
+                    <button type="button" class="ask-recents-clear-btn" onclick="clearAskBrainRecents()" title="Limpar buscas recentes">✕</button>
+                </div>
+            </div>
+
+            <div id="askBrainBody" class="ask-brain-body">
+                <!-- Initial Empty State -->
+                <div id="askBrainEmptyState" class="ask-brain-empty-state">
+                    <div class="ask-empty-icon">🧠✨</div>
+                    <h3>Inteligência Cognitiva do Segundo Cérebro</h3>
+                    <p>Pesquise decisões arquiteturais (ADRs), regras determinísticas, lições aprendidas e estado de todos os projetos conectados com citação direta de fontes e <strong>Zero Fabricação</strong>.</p>
+                </div>
+
+                <!-- Loading State (hidden initially) -->
+                <div id="askBrainLoadingState" class="ask-brain-loading-state" style="display: none;">
+                    <div class="ask-loading-orb-wrap">
+                        <div class="ask-loading-glow"></div>
+                        <div class="ask-loading-orb"></div>
+                    </div>
+                    <h4 id="askLoadingTitle">Consultando sinapses neurais...</h4>
+                    <p id="askLoadingSubtitle">Recuperando trechos e sintetizando resposta verificada</p>
+                </div>
+
+                <!-- Results State (hidden initially) -->
+                <div id="askBrainResultsState" style="display: none;">
+                    <div class="ask-results-meta-bar">
+                        <span class="ask-meta-badge zero-fab">🛡️ Zero Fabricação</span>
+                        <span id="askMetaTime" class="ask-meta-badge">⏱️ 0.8s</span>
+                        <span id="askMetaSnippets" class="ask-meta-badge">📄 4 fontes relevantes</span>
+                        <span id="askMetaScope" class="ask-meta-badge">🎯 Global</span>
+                    </div>
+
+                    <div class="ask-answer-box">
+                        <div class="ask-answer-header">
+                            <span style="font-weight: 700; display: flex; align-items: center; gap: 6px;">
+                                <span>💡</span> Resposta Sintetizada
+                            </span>
+                            <button type="button" class="ask-copy-answer-btn" onclick="copyAskBrainAnswer(this)">📋 Copiar Resposta</button>
+                        </div>
+                        <div id="askAnswerContent" class="ask-answer-content markdown-body"></div>
+                    </div>
+
+                    <div class="ask-sources-section">
+                        <div class="ask-sources-header">
+                            <span style="font-weight: 700;">📚 Trechos &amp; Fontes Citadas:</span>
+                            <span id="askSourcesCount" style="font-size: 12px; color: var(--text-tertiary);"></span>
+                        </div>
+                        <div id="askSourcesList" class="ask-sources-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Como Funciona a Busca Cognitiva (Arquitetura RAG & Ranking) -->
+    <div id="askBrainHelpModal" class="ask-brain-help-backdrop" style="display: none;" onclick="handleAskBrainHelpBackdrop(event)">
+        <div class="ask-brain-help-card" role="dialog" aria-modal="true" aria-labelledby="askBrainHelpTitle">
+            <div class="ask-brain-help-header">
+                <div class="ask-brain-help-title-group">
+                    <span class="ask-brain-badge">ARQUITETURA &amp; RAG</span>
+                    <h3 id="askBrainHelpTitle" style="font-size: 15px; font-weight: 700; color: #ffffff; margin: 0;">Como Funciona a Busca Cognitiva</h3>
+                </div>
+                <button type="button" class="ask-brain-close-btn" onclick="closeAskBrainHelpModal()" title="Voltar ao Pergunte ao Cérebro (Esc)">✕</button>
+            </div>
+
+            <div class="ask-brain-help-body">
+                <!-- Seção 1: Inteligência e Ranking -->
+                <div class="ask-brain-help-section">
+                    <h4 class="ask-help-sec-title">
+                        <span>🧠 1. Existe inteligência para classificar os arquivos?</span>
+                    </h4>
+                    <p class="ask-help-sec-desc">
+                        <strong>Sim, e ela é multifatorial e determinística.</strong> O motor em <code>scripts/brain-search.js</code> não faz um simples <code>indexOf()</code>. Ele implementa uma adaptação de <strong>TF-IDF / BM25</strong> combinada com <strong>pesos semânticos de arquitetura</strong>:
+                    </p>
+
+                    <!-- A. Multiplicadores de Governança -->
+                    <div style="margin-bottom: 14px;">
+                        <div style="font-size: 12px; font-weight: 700; color: #d8b4fe; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
+                            A. Multiplicadores por Autoridade de Governança
+                        </div>
+                        <div class="ask-help-grid">
+                            <div class="ask-help-pill-item">
+                                <div class="ask-help-pill-header">
+                                    <span class="ask-help-pill-name">⚖️ ADRs &amp; Decisões</span>
+                                    <span class="ask-help-weight-badge">2.4x</span>
+                                </div>
+                                <span class="ask-help-pill-desc">Decisões arquiteturais oficiais têm prioridade máxima absoluta no cofre.</span>
+                            </div>
+                            <div class="ask-help-pill-item">
+                                <div class="ask-help-pill-header">
+                                    <span class="ask-help-pill-name">🟢 Estado Atual</span>
+                                    <span class="ask-help-weight-badge">2.2x</span>
+                                </div>
+                                <span class="ask-help-pill-desc"><code>CURRENT_STATE.md</code> reflete exatamente o que está rodando agora.</span>
+                            </div>
+                            <div class="ask-help-pill-item">
+                                <div class="ask-help-pill-header">
+                                    <span class="ask-help-pill-name">📦 Contratos &amp; Lições</span>
+                                    <span class="ask-help-weight-badge">2.0x</span>
+                                </div>
+                                <span class="ask-help-pill-desc"><code>PROJECT.md</code>, <code>ARCHITECTURE.md</code> e <code>LESSONS_LEARNED.md</code>.</span>
+                            </div>
+                            <div class="ask-help-pill-item">
+                                <div class="ask-help-pill-header">
+                                    <span class="ask-help-pill-name">🛡️ Regras Universais</span>
+                                    <span class="ask-help-weight-badge">1.8x</span>
+                                </div>
+                                <span class="ask-help-pill-desc">Diretrizes em <code>.agents/rules/</code> e governança determinística.</span>
+                            </div>
+                            <div class="ask-help-pill-item">
+                                <div class="ask-help-pill-header">
+                                    <span class="ask-help-pill-name">🛠️ Specs Acionáveis</span>
+                                    <span class="ask-help-weight-badge">1.5x</span>
+                                </div>
+                                <span class="ask-help-pill-desc">Códigos e schemas em <code>RESEARCH/.../actionable/</code>.</span>
+                            </div>
+                            <div class="ask-help-pill-item">
+                                <div class="ask-help-pill-header">
+                                    <span class="ask-help-pill-name">🔬 Pesquisas Gerais</span>
+                                    <span class="ask-help-weight-badge">1.0x</span>
+                                </div>
+                                <span class="ask-help-pill-desc">Fundamentos conceituais em <code>knowledge/</code> do Research Lab.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- B. Pontuação por Posição Estrutural -->
+                    <div>
+                        <div style="font-size: 12px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
+                            B. Pontuação por Posição Estrutural no Documento
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px;">
+                            <div class="ask-help-rule-row">
+                                <span class="ask-help-rule-tag">+90 / +70 pts</span>
+                                <span class="ask-help-rule-text"><strong>Match Exato da Pergunta</strong>: Se a frase inteira bater no título (+90) ou no corpo (+70).</span>
+                            </div>
+                            <div class="ask-help-rule-row">
+                                <span class="ask-help-rule-tag">+45 pts</span>
+                                <span class="ask-help-rule-text"><strong>Cabeçalhos Markdown (# H1, ## H2)</strong>: Se o termo for título de seção, o documento dedica um capítulo inteiro àquele tema.</span>
+                            </div>
+                            <div class="ask-help-rule-row">
+                                <span class="ask-help-rule-tag">+40 / +20 pts</span>
+                                <span class="ask-help-rule-text"><strong>Nome do Arquivo</strong>: +40 se for idêntico ao termo, +20 se contiver a palavra.</span>
+                            </div>
+                            <div class="ask-help-rule-row">
+                                <span class="ask-help-rule-tag">+35 pts</span>
+                                <span class="ask-help-rule-text"><strong>Bônus de Cobertura Total</strong>: Documentos que cobrem todas as palavras digitadas pelo desenvolvedor.</span>
+                            </div>
+                            <div class="ask-help-rule-row">
+                                <span class="ask-help-rule-tag">+4 pts / un</span>
+                                <span class="ask-help-rule-text"><strong>Frequência no Corpo</strong>: 4 pts por ocorrência (com teto anti-spam para evitar viés).</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção 2: Por Que Limitar aos Primeiros Documentos (Top 5 a 7)? -->
+                <div class="ask-brain-help-section">
+                    <h4 class="ask-help-sec-title">
+                        <span>🎯 2. Por que a síntese foca nos primeiros documentos (Top 5 a 7)?</span>
+                    </h4>
+                    <p class="ask-help-sec-desc">
+                        Essa calibração é o <strong>padrão ouro em engenharia RAG (Retrieval-Augmented Generation)</strong> por três razões fundamentais:
+                    </p>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div class="ask-help-rag-reason">
+                            <div class="ask-help-rag-badge">MOTIVO A</div>
+                            <div>
+                                <strong style="color: #f1f5f9;">O Efeito "Lost in the Middle" dos Modelos de IA:</strong>
+                                <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
+                                    Pesquisas acadêmicas consagradas (Stanford e Anthropic) comprovaram que ao enviar 15 ou 20 documentos a um LLM de uma vez só, o modelo foca apenas nos primeiros 2 e no último, ignorando ou alucinando sobre os dados do meio. Com <strong>3 a 5 fontes densas e focadas</strong>, a IA atinge o pico de precisão com <strong>Zero Fabricação</strong>.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="ask-help-rag-reason">
+                            <div class="ask-help-rag-badge">MOTIVO B</div>
+                            <div>
+                                <strong style="color: #f1f5f9;">Janela de Contexto, Latência e Custo:</strong>
+                                <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
+                                    Cada snippet do cofre é calibrado com 800 a 1.400 caracteres (ancorado em cabeçalhos para não truncar código ou listas). 5 trechos somam ~1.800 tokens de contexto, gerando respostas ultrarrápidas (~1.2s). Enviar 15 trechos elevaria a latência para 5s a 7s e esgotaria cotas (TPM).
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="ask-help-rag-reason">
+                            <div class="ask-help-rag-badge">MOTIVO C</div>
+                            <div>
+                                <strong style="color: #f1f5f9;">Carga Cognitiva e Ergonomia do Desenvolvedor:</strong>
+                                <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
+                                    O objetivo é tirar uma dúvida de arquitetura em menos de 30 segundos no meio do código. Exibir 15 blocos longos criaria uma "parede de texto" que poluiria o fluxo de trabalho.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção 3: Progressive Disclosure Ativo -->
+                <div class="ask-brain-help-section" style="border-color: rgba(34, 197, 94, 0.3); background: rgba(34, 197, 94, 0.03);">
+                    <h4 class="ask-help-sec-title" style="color: #4ade80;">
+                        <span>✨ 3. Progressive Disclosure (O Melhor dos Dois Mundos)</span>
+                    </h4>
+                    <p class="ask-help-sec-desc" style="margin-bottom: 0;">
+                        O sistema une o <strong>foco analítico da IA</strong> à <strong>liberdade de exploração do dev</strong>:
+                        o motor busca até <strong>12 documentos relevantes</strong>. A IA formula a resposta baseada nos mais densos (com badge <span class="ask-source-badge-synth" style="display:inline-block; padding:1px 6px;">Citada na Síntese</span>), e você pode abrir o botão <strong>"📄 Ver mais N fontes encontradas (+N)"</strong> para inspecionar todos os documentos correlacionados com 1 clique (com badge <span class="ask-source-badge-extra" style="display:inline-block; padding:1px 6px;">Fonte Adicional</span>), abrindo no editor ou focando no Grafo Neural 3D.
+                    </p>
+                </div>
+            </div>
+
+            <div class="ask-brain-help-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeAskBrainHelpModal()" style="font-size: 12.5px; padding: 7px 16px;">
+                    ← Voltar ao Pergunte ao Cérebro
+                </button>
             </div>
         </div>
     </div>

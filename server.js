@@ -1475,6 +1475,83 @@ Projeto externo vinculado ao AI Second Brain.
         return;
     }
 
+    // ============================================================
+    // PERGUNTE AO CÉREBRO — Q&A Semântico & Busca com Citações
+    // ============================================================
+    if (pathname === '/api/brain/ask' && req.method === 'POST') {
+        const sendJson = (status, payload) => {
+            res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify(payload));
+        };
+
+        try {
+            delete require.cache[require.resolve('./scripts/brain-search')];
+            const brainSearch = require('./scripts/brain-search');
+            const body = await readJsonBody(req);
+            const query = (body.query || '').trim();
+
+            if (!query) {
+                sendJson(400, { success: false, error: 'A pergunta não pode ficar vazia.' });
+                return;
+            }
+
+            const projectTarget = body.projectName || body.scope || '';
+            const categoryTarget = body.categoryFilter || body.category || '';
+            console.log(`🔍 [Pergunte ao Cérebro] Consulta recebida: "${query}" (projeto: ${projectTarget || 'geral'}, categoria: ${categoryTarget || 'todas'})`);
+            const answer = await brainSearch.askBrain(ROOT_DIR, query, {
+                projectName: projectTarget,
+                categoryFilter: categoryTarget,
+                fastOnly: !!body.fastOnly
+            });
+
+            sendJson(200, answer);
+        } catch (err) {
+            console.error('❌ [Pergunte ao Cérebro] Erro:', err.message);
+            const status = err.statusCode === 429 || err.quotaExceeded ? 429 : (err.statusCode || 500);
+            sendJson(status, {
+                success: false,
+                error: err.message,
+                quotaExceeded: status === 429,
+                statusCode: status
+            });
+        }
+        return;
+    }
+
+    if (pathname === '/api/brain/search' && req.method === 'GET') {
+        try {
+            delete require.cache[require.resolve('./scripts/brain-search')];
+            const brainSearch = require('./scripts/brain-search');
+            const q = parsedUrl.searchParams.get('q') || '';
+            const project = parsedUrl.searchParams.get('project') || parsedUrl.searchParams.get('scope') || '';
+            const category = parsedUrl.searchParams.get('category') || parsedUrl.searchParams.get('categoryFilter') || '';
+
+            const results = brainSearch.retrieveRelevantSnippets(ROOT_DIR, q, {
+                projectName: project,
+                categoryFilter: category,
+                limit: 10
+            });
+
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({
+                success: true,
+                query: q,
+                results: results.map(r => ({
+                    path: r.file.path,
+                    title: r.file.title,
+                    category: r.file.category,
+                    icon: r.file.icon,
+                    score: r.score,
+                    snippet: r.snippet
+                }))
+            }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ success: false, error: err.message }));
+        }
+        return;
+    }
+
     // API: List Research Labs for a Project
     if (pathname.startsWith('/api/projects/') && pathname.endsWith('/research') && req.method === 'GET') {
         try {

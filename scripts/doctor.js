@@ -71,15 +71,20 @@ function getAllMarkdownFiles(dir, visited = new Set()) {
 
 // 2. Extrai e valida links clicáveis em Markdown [label](target)
 function checkMarkdownLinks(filePath) {
-    const content = fs.readFileSync(filePath, 'utf-8');
+    const rawContent = fs.readFileSync(filePath, 'utf-8');
     const fileDir = path.dirname(filePath);
     const relSource = normalizePath(path.relative(ROOT_DIR, filePath));
     checkedFilesCount++;
 
+    // Remove blocos de código multiline (```...```) e inline (`...`) para não validar exemplos de sintaxe
+    const sanitizedContent = rawContent
+        .replace(/```[\s\S]*?```/g, '')
+        .replace(/`[^`\n]+`/g, '');
+
     const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
     let match;
 
-    while ((match = linkRegex.exec(content)) !== null) {
+    while ((match = linkRegex.exec(sanitizedContent)) !== null) {
         const linkRaw = match[2].trim();
         
         // Ignora links externos e âncoras locais

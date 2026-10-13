@@ -7529,6 +7529,704 @@ window.handleSessionCaptureBackdropClick = handleSessionCaptureBackdropClick;
 window.generateSessionDraft = generateSessionDraft;
 window.commitSessionDraft = commitSessionDraft;
 
+// ════════════════════════════════════════════════════════════
+// FRICÇÃO 5: PERGUNTE AO CÉREBRO ("Ask the Brain")
+// Busca Global Semântica e Q&A com Citações Clicáveis e Zero Fabricação
+// ════════════════════════════════════════════════════════════
+
+let askBrainActiveQuery = '';
+let askBrainLastAnswerMarkdown = '';
+let askBrainLoadingInterval = null;
+let askBrainActiveCategory = 'all';
+const ASK_BRAIN_RECENTS_KEY = 'brain_ask_recent_queries';
+
+const ASK_BRAIN_LOADING_MESSAGES = [
+    { title: 'Varrendo sinapses do cérebro...', sub: 'Recuperando contratos, ADRs e regras determinísticas' },
+    { title: 'Calculando relevância semântica...', sub: 'Ranqueando lições aprendidas e estado dos projetos' },
+    { title: 'Sintetizando com Zero Fabricação...', sub: 'Verificando citação estrita das fontes encontradas' },
+    { title: 'Formatando resposta executiva...', sub: 'Organizando links clicáveis para navegação no vault' }
+];
+
+function setAskBrainCategory(cat) {
+    askBrainActiveCategory = cat || 'all';
+    const catSelect = document.getElementById('askBrainCategorySelect');
+    if (catSelect && catSelect.value !== askBrainActiveCategory) {
+        catSelect.value = askBrainActiveCategory;
+    }
+
+    // Se o input já tem texto, re-executa a busca para aplicar o filtro de categoria
+    const input = document.getElementById('askBrainQueryInput');
+    if (input && input.value.trim().length > 1) {
+        submitAskBrainQuery();
+    }
+}
+
+function getAskBrainRecents() {
+    try {
+        const raw = sessionStorage.getItem(ASK_BRAIN_RECENTS_KEY);
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveAskBrainRecent(query) {
+    if (!query || query.trim().length < 2) return;
+    const clean = query.trim();
+    let recents = getAskBrainRecents();
+    recents = recents.filter(q => q.toLowerCase() !== clean.toLowerCase());
+    recents.unshift(clean);
+    if (recents.length > 5) recents = recents.slice(0, 5);
+    try {
+        sessionStorage.setItem(ASK_BRAIN_RECENTS_KEY, JSON.stringify(recents));
+    } catch (e) {}
+    renderAskBrainRecents();
+}
+
+function clearAskBrainRecents() {
+    try {
+        sessionStorage.removeItem(ASK_BRAIN_RECENTS_KEY);
+    } catch (e) {}
+    renderAskBrainRecents();
+}
+
+function renderAskBrainRecents() {
+    const row = document.getElementById('askBrainRecentsRow');
+    const list = document.getElementById('askBrainRecentsList');
+    if (!row || !list) return;
+
+    const recents = getAskBrainRecents();
+    if (!recents || recents.length === 0) {
+        row.style.display = 'none';
+        list.innerHTML = '';
+        return;
+    }
+
+    row.style.display = 'flex';
+    list.innerHTML = '';
+    recents.forEach(q => {
+        const pill = document.createElement('button');
+        pill.type = 'button';
+        pill.className = 'ask-recent-pill';
+        pill.title = q;
+        pill.textContent = q;
+        pill.onclick = () => {
+            askBrainFillQuery(q);
+        };
+        list.appendChild(pill);
+    });
+}
+
+function openAskBrainModal(initialQuery = '') {
+    const modal = document.getElementById('askBrainModal');
+    if (!modal) return;
+
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    // Popula select de escopo com projetos do vault se não populado
+    const scopeSelect = document.getElementById('askBrainScopeSelect');
+    if (scopeSelect && scopeSelect.options.length <= 1) {
+        const files = (window.VAULT && window.VAULT.data && window.VAULT.data.files) ||
+                      (window.VAULT_SNAPSHOT && window.VAULT_SNAPSHOT.files) || [];
+        const projectFolders = new Set();
+        files.forEach(f => {
+            const p = (f.path || '').replace(/\\/g, '/');
+            if (p.startsWith('projects/')) {
+                const parts = p.split('/');
+                if (parts.length > 2 && parts[1]) {
+                    projectFolders.add(parts[1]);
+                }
+            }
+        });
+
+        Array.from(projectFolders).sort().forEach(folderName => {
+            const opt = document.createElement('option');
+            opt.value = folderName;
+            opt.textContent = `Projeto: ${folderName}`;
+            scopeSelect.appendChild(opt);
+        });
+    }
+
+    // Sincroniza seletor de categoria
+    const catSelect = document.getElementById('askBrainCategorySelect');
+    if (catSelect) {
+        catSelect.value = askBrainActiveCategory || 'all';
+    }
+
+    // Renderiza buscas recentes da sessão
+    renderAskBrainRecents();
+
+    const input = document.getElementById('askBrainQueryInput');
+    if (input) {
+        if (initialQuery) {
+            input.value = initialQuery;
+        }
+        setTimeout(() => {
+            input.focus();
+            input.select();
+        }, 80);
+    }
+}
+
+function closeAskBrainModal() {
+    const modal = document.getElementById('askBrainModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    if (askBrainLoadingInterval) {
+        clearInterval(askBrainLoadingInterval);
+        askBrainLoadingInterval = null;
+    }
+}
+
+function handleAskBrainBackdrop(e) {
+    if (e.target && e.target.id === 'askBrainModal') {
+        closeAskBrainModal();
+    }
+}
+
+function askBrainFillQuery(text) {
+    const input = document.getElementById('askBrainQueryInput');
+    if (input) {
+        input.value = text;
+        input.focus();
+    }
+    submitAskBrainQuery();
+}
+
+function copyAskBrainAnswer(btnElement) {
+    if (!askBrainLastAnswerMarkdown) return;
+    const btn = btnElement || document.querySelector('.ask-copy-answer-btn');
+    navigator.clipboard.writeText(askBrainLastAnswerMarkdown).then(() => {
+        if (btn) {
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '✓ Copiada!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+                btn.classList.remove('copied');
+            }, 1800);
+        }
+        if (typeof showSecondBrainToast === 'function') {
+            showSecondBrainToast('📋 Resposta copiada para a área de transferência!');
+        } else if (typeof showToast === 'function') {
+            showToast('Resposta copiada!', 'success');
+        }
+    }).catch(() => {
+        if (typeof showToast === 'function') showToast('Não foi possível copiar.', 'error');
+    });
+}
+
+async function submitAskBrainQuery() {
+    const input = document.getElementById('askBrainQueryInput');
+    const query = (input?.value || '').trim();
+    if (!query) {
+        input?.focus();
+        return;
+    }
+
+    const scopeSelect = document.getElementById('askBrainScopeSelect');
+    const scope = scopeSelect ? scopeSelect.value : '';
+
+    const catSelect = document.getElementById('askBrainCategorySelect');
+    const categoryFilter = catSelect ? catSelect.value : (askBrainActiveCategory || 'all');
+    askBrainActiveCategory = categoryFilter;
+
+    const emptyState = document.getElementById('askBrainEmptyState');
+    const loadingState = document.getElementById('askBrainLoadingState');
+    const resultsState = document.getElementById('askBrainResultsState');
+    const submitBtn = document.getElementById('btnAskBrainSubmit');
+
+    if (emptyState) emptyState.style.display = 'none';
+    if (resultsState) resultsState.style.display = 'none';
+    if (loadingState) loadingState.style.display = 'block';
+    if (submitBtn) submitBtn.disabled = true;
+
+    // Salva no histórico de buscas recentes da sessão
+    saveAskBrainRecent(query);
+
+    // Dispara pulso visual nos neurônios do Grafo 3D
+    if (typeof triggerSynapticPulse === 'function') {
+        triggerSynapticPulse();
+    }
+
+    // Rotação de mensagens do loading
+    let msgIdx = 0;
+    const updateLoadingText = () => {
+        const item = ASK_BRAIN_LOADING_MESSAGES[msgIdx % ASK_BRAIN_LOADING_MESSAGES.length];
+        const titleEl = document.getElementById('askLoadingTitle');
+        const subEl = document.getElementById('askLoadingSubtitle');
+        if (titleEl) titleEl.textContent = item.title;
+        if (subEl) subEl.textContent = item.sub;
+        msgIdx++;
+    };
+    updateLoadingText();
+    if (askBrainLoadingInterval) clearInterval(askBrainLoadingInterval);
+    askBrainLoadingInterval = setInterval(updateLoadingText, 1400);
+
+    const t0 = performance.now();
+
+    try {
+        const res = await fetch('/api/brain/ask', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                query,
+                scope,
+                categoryFilter,
+                topK: 5
+            })
+        });
+
+        const data = await res.json();
+        if (askBrainLoadingInterval) clearInterval(askBrainLoadingInterval);
+
+        if (!res.ok || !data.success) {
+            throw new Error(data.error || 'Erro ao processar consulta com o Cérebro.');
+        }
+
+        const elapsed = ((performance.now() - t0) / 1000).toFixed(1);
+        const rawAnswerText = data.answer || data.answerMarkdown || '';
+        askBrainLastAnswerMarkdown = rawAnswerText;
+
+        // Renderiza Metadados
+        const metaTime = document.getElementById('askMetaTime');
+        const metaSnippets = document.getElementById('askMetaSnippets');
+        const metaScope = document.getElementById('askMetaScope');
+        const sourcesCount = document.getElementById('askSourcesCount');
+
+        const totalCount = data.sources?.length || 0;
+        const synthCount = data.synthesizedCount || Math.min(totalCount, 5);
+
+        if (metaTime) metaTime.textContent = `⏱️ ${elapsed}s`;
+        if (metaSnippets) {
+            if (totalCount > synthCount) {
+                metaSnippets.textContent = `📄 ${synthCount} citadas (${totalCount} no cofre)`;
+            } else {
+                metaSnippets.textContent = `📄 ${totalCount} fontes consultadas`;
+            }
+        }
+        const scopeLabel = scope ? `Projeto: ${scope}` : 'Global';
+        const catLabel = (askBrainActiveCategory && askBrainActiveCategory !== 'all') ? ` • Filtro: ${askBrainActiveCategory.toUpperCase()}` : '';
+        if (metaScope) metaScope.textContent = `🎯 ${scopeLabel}${catLabel}`;
+        if (sourcesCount) {
+            if (totalCount > synthCount) {
+                sourcesCount.textContent = `(${synthCount} citadas na síntese • ${totalCount - synthCount} adicionais)`;
+            } else {
+                sourcesCount.textContent = `(${totalCount} citações encontradas)`;
+            }
+        }
+
+        // Renderiza Markdown da Resposta
+        const answerContent = document.getElementById('askAnswerContent');
+        if (answerContent) {
+            let renderedHtml = '';
+            try {
+                if (window.marked && typeof window.marked.parse === 'function') {
+                    renderedHtml = window.marked.parse(rawAnswerText);
+                } else if (typeof window.marked === 'function') {
+                    renderedHtml = window.marked(rawAnswerText);
+                }
+            } catch (parseErr) {
+                console.warn('Erro ao processar markdown com marked.js:', parseErr);
+            }
+            if (!renderedHtml) {
+                renderedHtml = `<p>${escapeHtml(rawAnswerText).replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>')}</p>`;
+            }
+            renderedHtml = renderedHtml.replace(/<li>\s*\[ \]\s*/gi, '<li class="task-list-item"><input type="checkbox" disabled> ');
+            renderedHtml = renderedHtml.replace(/<li>\s*\[x\]\s*/gi, '<li class="task-list-item"><input type="checkbox" checked disabled> ');
+            answerContent.innerHTML = renderedHtml;
+
+            // Intercepta todos os links internos na resposta da IA para abrir no visualizador nativo do Cockpit
+            answerContent.querySelectorAll('a').forEach(anchor => {
+                const href = anchor.getAttribute('href') || '';
+                if (href && !href.startsWith('http://') && !href.startsWith('https://') && !href.startsWith('mailto:') && !href.startsWith('#')) {
+                    anchor.style.cursor = 'pointer';
+                    anchor.title = `Abrir no Cockpit: ${href}`;
+                    anchor.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        openAskSourceDoc(href);
+                    });
+                } else {
+                    anchor.setAttribute('target', '_blank');
+                    anchor.setAttribute('rel', 'noopener noreferrer');
+                }
+            });
+        }
+
+        // Renderiza Lista de Fontes com Citações Clicáveis e Design UAU
+        const sourcesList = document.getElementById('askSourcesList');
+        if (sourcesList) {
+            sourcesList.innerHTML = '';
+            if (Array.isArray(data.sources) && data.sources.length > 0) {
+                const initialVisible = 5;
+                const topSources = data.sources.slice(0, initialVisible);
+                const extraSources = data.sources.slice(initialVisible);
+
+                // Renderiza as primeiras 5 fontes
+                topSources.forEach((src, idx) => {
+                    const card = renderAskSourceCardElement(src, query, idx);
+                    sourcesList.appendChild(card);
+                });
+
+                // Se houver mais fontes, cria contêiner colapsável e botão expansor
+                if (extraSources.length > 0) {
+                    const extraContainer = document.createElement('div');
+                    extraContainer.id = 'askSourcesExtraContainer';
+                    extraContainer.style.display = 'none';
+                    extraContainer.style.flexDirection = 'column';
+                    extraContainer.style.gap = '12px';
+                    extraContainer.style.marginTop = '12px';
+
+                    extraSources.forEach((src, idx) => {
+                        const card = renderAskSourceCardElement(src, query, initialVisible + idx);
+                        extraContainer.appendChild(card);
+                    });
+                    sourcesList.appendChild(extraContainer);
+
+                    const toggleWrap = document.createElement('div');
+                    toggleWrap.className = 'ask-sources-toggle-wrap';
+                    toggleWrap.innerHTML = `
+                        <button type="button" id="btnToggleMoreSources" class="btn-toggle-more-sources" onclick="toggleMoreAskSources(${extraSources.length})">
+                            <span>📄 Ver mais ${extraSources.length} fontes encontradas no cofre</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+                    `;
+                    sourcesList.appendChild(toggleWrap);
+                }
+            } else {
+                sourcesList.innerHTML = '<div style="color: var(--text-tertiary); font-size: 13px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">Nenhum documento relevante encontrado para os filtros selecionados.</div>';
+            }
+        }
+
+        if (loadingState) loadingState.style.display = 'none';
+        if (resultsState) resultsState.style.display = 'block';
+    } catch (err) {
+        if (askBrainLoadingInterval) clearInterval(askBrainLoadingInterval);
+        if (loadingState) loadingState.style.display = 'none';
+        if (resultsState) resultsState.style.display = 'block';
+
+        const answerContent = document.getElementById('askAnswerContent');
+        if (answerContent) {
+            answerContent.innerHTML = `
+                <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 14px; color: #f87171;">
+                    <strong>⚠️ Falha na consulta cognitiva:</strong><br>
+                    ${escapeHtml(err.message)}
+                </div>
+            `;
+        }
+    } finally {
+        if (submitBtn) submitBtn.disabled = false;
+    }
+}
+
+function openAskSourceDoc(path) {
+    if (!path) return;
+    closeAskBrainModal();
+    const cleanPath = decodeURIComponent(path).replace(/^\.?\/+/, '');
+    if (typeof navigateTo === 'function') {
+        navigateTo(cleanPath);
+    } else if (typeof openFileEditor === 'function') {
+        openFileEditor(cleanPath);
+    }
+}
+
+function focusAskSourceGraph(path) {
+    closeAskBrainModal();
+    if (typeof showView === 'function') {
+        showView('graph');
+    }
+    const input = document.getElementById('graphSearchInput');
+    if (input) {
+        const filename = path.split('/').pop().replace(/\.md$/i, '');
+        input.value = filename;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    if (typeof triggerSynapticPulse === 'function') {
+        triggerSynapticPulse();
+    }
+}
+
+/**
+ * Renderiza o Card de Fonte Citada com Alta Fidelidade (UX UAU)
+ */
+function renderAskSourceCardElement(src, query, index) {
+    const card = document.createElement('div');
+    const path = src.path || '';
+    const normPath = path.toLowerCase();
+
+    // Determina categoria, ícone e badge semântico
+    let cat = 'project';
+    let catBadge = 'PROJETO CONECTADO';
+    let icon = src.icon || '📄';
+    const fileName = normPath.split('/').pop() || '';
+
+    if (normPath.includes('/research/') || normPath.startsWith('research/')) {
+        cat = 'research';
+        catBadge = 'RESEARCH LAB';
+        icon = '🔬';
+    } else if (normPath.includes('/decisions/') || normPath.startsWith('decisions/') || fileName.startsWith('adr-') || fileName.startsWith('adr_')) {
+        cat = 'decision';
+        catBadge = 'DECISÃO ARQUITETURAL';
+        icon = '⚖️';
+    } else if (normPath.includes('rules/') || normPath.endsWith('agents.md') || normPath.endsWith('gemini.md')) {
+        cat = 'rules';
+        catBadge = 'REGRA DETERMINÍSTICA';
+        icon = '🛡️';
+    } else if (normPath.includes('memory/') || normPath.includes('lessons')) {
+        cat = 'memory';
+        catBadge = 'MEMÓRIA & LIÇÕES';
+        icon = '🧠';
+    } else if (normPath.endsWith('project.md') || normPath.endsWith('current_state.md')) {
+        cat = 'project';
+        catBadge = 'CONTRATO PRINCIPAL';
+        icon = '📦';
+    }
+
+    card.className = `ask-source-card cat-${cat}`;
+
+    // Título legível
+    const displayTitle = src.title || path.split('/').pop().replace(/\.md$/i, '');
+
+    // Relevância calculada / score
+    let scoreBadgeHtml = '';
+    if (src.score) {
+        scoreBadgeHtml = `<span class="ask-source-score-badge">Relevância: ${Math.round(src.score)} pts</span>`;
+    }
+
+    // Badges de Sintetizada vs Adicional
+    let synthBadgeHtml = '';
+    if (src.isSynthesized === false) {
+        synthBadgeHtml = `<span class="ask-source-badge-extra" title="Documento relevante encontrado no ranking geral do cofre">Fonte Adicional</span>`;
+    } else if (src.isSynthesized === true) {
+        synthBadgeHtml = `<span class="ask-source-badge-synth" title="Documento utilizado diretamente no contexto da síntese da IA">Citada na Síntese</span>`;
+    }
+
+    // Highlight e sanitização do snippet
+    const rawSnippet = (src.snippet || '').trim();
+    const snippetHtml = highlightSearchTerms(rawSnippet, query);
+    const snippetLengthHint = `~${rawSnippet.length} caracteres`;
+
+    card.innerHTML = `
+        <div class="ask-source-header">
+            <div class="ask-source-row-top">
+                <div class="ask-source-identity">
+                    <div class="ask-source-icon-wrap" title="${catBadge}">${icon}</div>
+                    <div class="ask-source-title-meta">
+                        <span class="ask-source-cat-badge cat-${cat}">${catBadge}</span>
+                        <span class="ask-source-title">${escapeHtml(displayTitle)}</span>
+                        ${synthBadgeHtml}
+                        ${scoreBadgeHtml}
+                    </div>
+                </div>
+                <div class="ask-source-actions">
+                    <button type="button" class="ask-source-btn" onclick="openAskSourceDoc('${escapeHtml(path)}')" title="Abrir documento no leitor">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                        <span>Abrir Doc</span>
+                    </button>
+                    <button type="button" class="ask-source-btn graph" onclick="focusAskSourceGraph('${escapeHtml(path)}')" title="Localizar e focar este nó no Grafo 3D">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><circle cx="19" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><line x1="12" y1="9" x2="19" y2="5"/><line x1="12" y1="15" x2="5" y2="19"/></svg>
+                        <span>No Grafo</span>
+                    </button>
+                    <button type="button" class="ask-source-btn ask-source-btn-icon-only" onclick="copyAskSourceCitation('${escapeHtml(path)}', '${escapeHtml(displayTitle)}', this)" title="Copiar citação Markdown [Título](caminho)">
+                        📋
+                    </button>
+                </div>
+            </div>
+            <div class="ask-source-path-row" title="${escapeHtml(path)}">
+                <span class="ask-source-path-icon">📁</span>
+                <span>${escapeHtml(path)}</span>
+            </div>
+        </div>
+
+        <div class="ask-source-snippet-box collapsed" id="askSnippetBox_${index}">
+            <div class="ask-source-snippet-content">${snippetHtml}</div>
+            <div class="ask-snippet-fade-overlay"></div>
+        </div>
+
+        <div class="ask-source-footer">
+            <button type="button" class="btn-toggle-snippet" onclick="toggleAskSourceSnippet(${index})" id="btnToggleSnippet_${index}">
+                <span class="toggle-icon">👁️</span>
+                <span class="toggle-text">Expandir Trecho Completo</span>
+            </button>
+            <span class="ask-snippet-len-hint">${snippetLengthHint}</span>
+        </div>
+    `;
+
+    return card;
+}
+
+function toggleAskSourceSnippet(index) {
+    const box = document.getElementById(`askSnippetBox_${index}`);
+    const btn = document.getElementById(`btnToggleSnippet_${index}`);
+    if (!box || !btn) return;
+
+    const isCollapsed = box.classList.contains('collapsed');
+    if (isCollapsed) {
+        box.classList.remove('collapsed');
+        box.classList.add('expanded');
+        btn.innerHTML = `<span class="toggle-icon">🔼</span><span class="toggle-text">Recolher Trecho</span>`;
+    } else {
+        box.classList.remove('expanded');
+        box.classList.add('collapsed');
+        btn.innerHTML = `<span class="toggle-icon">👁️</span><span class="toggle-text">Expandir Trecho Completo</span>`;
+    }
+}
+
+function copyAskSourceCitation(path, title, btnElement) {
+    const citation = `[${title}](${path})`;
+    navigator.clipboard.writeText(citation).then(() => {
+        if (btnElement) {
+            const originalHtml = btnElement.innerHTML;
+            btnElement.innerHTML = '✓';
+            btnElement.classList.add('copied');
+            setTimeout(() => {
+                btnElement.innerHTML = originalHtml;
+                btnElement.classList.remove('copied');
+            }, 1800);
+        }
+        if (typeof showSecondBrainToast === 'function') {
+            showSecondBrainToast(`📋 Citação copiada: ${citation}`);
+        } else if (typeof showToast === 'function') {
+            showToast('Citação copiada!', 'success');
+        }
+    }).catch(() => {
+        if (typeof showToast === 'function') showToast('Não foi possível copiar.', 'error');
+    });
+}
+
+function highlightSearchTerms(rawText, query) {
+    if (!rawText) return '';
+    let sanitized = escapeHtml(rawText);
+
+    sanitized = sanitized.replace(/\|\s*-{3,}\s*\|/g, '');
+    sanitized = sanitized.replace(/\|\s*:\s*-{3,}\s*:\s*\|/g, '');
+
+    if (!query) return sanitized;
+
+    const terms = query
+        .toLowerCase()
+        .split(/\s+/)
+        .map(t => t.replace(/[^\w\u00C0-\u00FF]/g, '').trim())
+        .filter(t => t.length >= 3 && !['qual', 'quais', 'onde', 'como', 'para', 'com', 'que', 'dos', 'das', 'uma', 'sobre', 'qualquer'].includes(t));
+
+    if (terms.length === 0) return sanitized;
+
+    try {
+        const pattern = new RegExp(`(${terms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi');
+        return sanitized.replace(pattern, '<mark class="ask-kw-highlight">$1</mark>');
+    } catch (e) {
+        return sanitized;
+    }
+}
+
+/**
+ * Alterna a visibilidade das fontes adicionais do cofre
+ */
+function toggleMoreAskSources(extraCount) {
+    const extraContainer = document.getElementById('askSourcesExtraContainer');
+    const btn = document.getElementById('btnToggleMoreSources');
+    if (!extraContainer || !btn) return;
+
+    const isExpanded = extraContainer.style.display !== 'none';
+    if (isExpanded) {
+        extraContainer.style.display = 'none';
+        btn.classList.remove('expanded');
+        btn.innerHTML = `
+            <span>📄 Ver mais ${extraCount} fontes encontradas no cofre</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        `;
+    } else {
+        extraContainer.style.display = 'flex';
+        btn.classList.add('expanded');
+        btn.innerHTML = `
+            <span>🔼 Recolher fontes adicionais</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        `;
+    }
+}
+
+function openAskBrainHelpModal() {
+    const modal = document.getElementById('askBrainHelpModal');
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+}
+
+function closeAskBrainHelpModal() {
+    const modal = document.getElementById('askBrainHelpModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function handleAskBrainHelpBackdrop(event) {
+    if (event.target && event.target.id === 'askBrainHelpModal') {
+        closeAskBrainHelpModal();
+    }
+}
+
+// Atalho de Teclado Global: Ctrl + K (ou Cmd + K) e Enter no input
+window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        const helpModal = document.getElementById('askBrainHelpModal');
+        if (helpModal && helpModal.style.display === 'flex') {
+            closeAskBrainHelpModal();
+        }
+        const modal = document.getElementById('askBrainModal');
+        if (modal && modal.style.display === 'flex') {
+            closeAskBrainModal();
+        } else {
+            openAskBrainModal();
+        }
+        return;
+    }
+
+    if (e.key === 'Escape') {
+        const helpModal = document.getElementById('askBrainHelpModal');
+        if (helpModal && helpModal.style.display === 'flex') {
+            closeAskBrainHelpModal();
+            return;
+        }
+        const modal = document.getElementById('askBrainModal');
+        if (modal && modal.style.display === 'flex') {
+            closeAskBrainModal();
+        }
+    }
+});
+
+// Listener de Enter no input
+document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('askBrainQueryInput');
+    if (input) {
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                submitAskBrainQuery();
+            }
+        });
+    }
+});
+
+window.openAskBrainModal = openAskBrainModal;
+window.closeAskBrainModal = closeAskBrainModal;
+window.handleAskBrainBackdrop = handleAskBrainBackdrop;
+window.openAskBrainHelpModal = openAskBrainHelpModal;
+window.closeAskBrainHelpModal = closeAskBrainHelpModal;
+window.handleAskBrainHelpBackdrop = handleAskBrainHelpBackdrop;
+window.askBrainFillQuery = askBrainFillQuery;
+window.copyAskBrainAnswer = copyAskBrainAnswer;
+window.submitAskBrainQuery = submitAskBrainQuery;
+window.openAskSourceDoc = openAskSourceDoc;
+window.focusAskSourceGraph = focusAskSourceGraph;
+window.toggleAskSourceSnippet = toggleAskSourceSnippet;
+window.toggleMoreAskSources = toggleMoreAskSources;
+window.copyAskSourceCitation = copyAskSourceCitation;
+window.setAskBrainCategory = setAskBrainCategory;
+window.clearAskBrainRecents = clearAskBrainRecents;
 
 // Carrega status da IA automaticamente após carregar a interface
 if (document.readyState === 'loading') {

@@ -129,6 +129,126 @@
                 }
             })), 1400));
         }
+        if (u.startsWith('/api/brain/ask') || u.startsWith('/api/brain/search')) {
+            let reqBody = {};
+            let categoryFilter = '';
+            if (opts?.body) {
+                try {
+                    reqBody = JSON.parse(opts.body);
+                    categoryFilter = (reqBody.categoryFilter || '').toLowerCase().trim();
+                } catch(e) {}
+            } else if (u.includes('?')) {
+                const sp = new URLSearchParams(u.split('?')[1]);
+                reqBody.query = sp.get('q') || '';
+                reqBody.scope = sp.get('scope') || '';
+                categoryFilter = (sp.get('category') || sp.get('categoryFilter') || '').toLowerCase().trim();
+            }
+            const q = (reqBody.query || '').toLowerCase().trim();
+            const scope = (reqBody.scope || '').trim();
+            const allFiles = (window.VAULT_SNAPSHOT && window.VAULT_SNAPSHOT.files) || [];
+
+            const scored = allFiles.map(f => {
+                let score = 0;
+                const pathLower = f.path.toLowerCase();
+                const contentLower = (f.content || '').toLowerCase();
+                const title = f.path.split('/').pop().replace(/\.md$/i, '');
+                
+                const terms = q.split(/\s+/).filter(t => t.length > 2);
+                terms.forEach(term => {
+                    if (pathLower.includes(term)) score += 15;
+                    const matches = (contentLower.match(new RegExp(term, 'g')) || []).length;
+                    score += Math.min(matches, 10) * 2;
+                });
+
+                if (pathLower.includes('adr') || pathLower.includes('decision')) score *= 1.5;
+                if (pathLower.includes('current_state')) score *= 1.4;
+                if (pathLower.includes('project.md')) score *= 1.3;
+
+                const rawPathNorm = pathLower.replace(/\\/g, '/');
+                if (scope && !rawPathNorm.includes(`projects/${scope.toLowerCase()}/`) && !rawPathNorm.startsWith(`projects/${scope.toLowerCase()}`)) {
+                    return { ...f, title, score: -1 };
+                }
+
+                if (categoryFilter && categoryFilter !== 'all') {
+                    let fileCat = 'other';
+                    const fileName = rawPathNorm.split('/').pop() || '';
+                    if (rawPathNorm.includes('/research/') || rawPathNorm.startsWith('research/')) {
+                        fileCat = 'research';
+                    } else if (rawPathNorm.includes('/decisions/') || rawPathNorm.startsWith('decisions/') || fileName.startsWith('adr-') || fileName.startsWith('adr_')) {
+                        fileCat = 'decision';
+                    } else if (rawPathNorm.startsWith('.agents/rules/') || rawPathNorm.endsWith('agents.md') || rawPathNorm.endsWith('gemini.md') || rawPathNorm.includes('/rules/')) {
+                        fileCat = 'rules';
+                    } else if (rawPathNorm.includes('lessons_learned') || rawPathNorm.includes('lessons-learned') || fileName === 'lessons.md' || rawPathNorm.includes('/memory/lessons')) {
+                        fileCat = 'lessons';
+                    } else if (rawPathNorm.endsWith('project.md') || rawPathNorm.endsWith('current_state.md') || rawPathNorm.endsWith('architecture.md')) {
+                        fileCat = 'project';
+                    }
+
+                    if (fileCat !== categoryFilter) {
+                        return { ...f, title, score: -1 };
+                    }
+                }
+
+                return { ...f, title, score };
+            }).filter(f => f.score > 0).sort((a, b) => b.score - a.score).slice(0, 12);
+
+            const isBroadQuery = q.split(/\s+/).filter(Boolean).length <= 2;
+            const synthesisLimit = Math.min(scored.length, isBroadQuery ? 7 : 5);
+
+            const sources = scored.map((f, idx) => {
+                const lines = (f.content || '').split('\n').filter(l => l.trim().length > 10 && !l.startsWith('#'));
+                const snippet = lines.slice(0, 3).join(' ').slice(0, 260) + '...';
+                return {
+                    path: f.path,
+                    title: f.title,
+                    icon: f.path.includes('adr') ? '⚖️' : (f.path.includes('PROJECT') ? '📦' : '📄'),
+                    score: f.score,
+                    snippet,
+                    isSynthesized: idx < synthesisLimit
+                };
+            });
+
+            if (u.startsWith('/api/brain/search')) {
+                return Promise.resolve(json({ success: true, count: sources.length, results: sources }));
+            }
+
+            let answer = '';
+            if (sources.length === 0) {
+                let filterHint = '';
+                if (categoryFilter && categoryFilter !== 'all') {
+                    const catNames = {
+                        decision: '⚖️ ADRs (Decisões Arquiteturais)',
+                        research: '🔬 Research Lab (Pesquisas)',
+                        rules: '🛡️ Regras Universais',
+                        lessons: '🧠 Lições Aprendidas',
+                        project: '📦 Contratos de Projetos'
+                    };
+                    filterHint += ` na categoria **${catNames[categoryFilter] || categoryFilter}**`;
+                }
+                if (scope) {
+                    filterHint += ` no projeto **${scope}**`;
+                }
+                answer = `Não foram encontrados documentos relevantes no cofre com informações sobre **"${reqBody.query}"**${filterHint}.\n\n💡 **Dica de Usabilidade**: Tente alternar a categoria para **[Todas as Categorias]** ou o escopo para **[Global]** para expandir a busca a outros documentos do Segundo Cérebro.`;
+            } else {
+                const synthSources = sources.filter(s => s.isSynthesized);
+                answer = `Com base na recuperação verificada do vault (${synthSources.length} fonte${synthSources.length > 1 ? 's' : ''} sintetizada${synthSources.length > 1 ? 's' : ''} de ${sources.length} encontrada${sources.length > 1 ? 's' : ''}):\n\n`;
+                synthSources.forEach(s => {
+                    answer += `- **[${s.title}](${s.path})**: ${s.snippet}\n\n`;
+                });
+                answer += `\n> *Consulta processada em modo de demonstração sobre o snapshot estático com Zero Fabricação.*`;
+            }
+
+            return new Promise(resolve => setTimeout(() => resolve(json({
+                success: true,
+                query: reqBody.query,
+                answer,
+                answerMarkdown: answer,
+                sources,
+                totalFound: scored.length,
+                synthesizedCount: Math.min(scored.length, synthesisLimit),
+                inferenceMs: 820
+            })), 600));
+        }
         toast('🔒 Demo somente leitura — instale localmente para criar, editar e rodar o Research Lab.');
         return Promise.resolve(json({ ok: false, error: 'Modo demonstração (somente leitura)' }, 403));
     };

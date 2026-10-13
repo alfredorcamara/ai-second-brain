@@ -2,9 +2,9 @@
 
 > Última atualização: 2026-10-12
 
-## Status do Framework: 🟢 Operacional & Cockpit Avançado + 🔬 Research Lab + ⚡ AI Gateway Multi-Provedor (BYOK Ativo) + 🧠 Session Capture com IA
+## Status do Framework: 🟢 Operacional & Cockpit Avançado + 🔬 Research Lab + ⚡ AI Gateway Multi-Provedor (BYOK Ativo) + 🧠 Session Capture + ✨ Pergunte ao Cérebro (Global Q&A)
 
-O AI Second Brain está estruturado como uma plataforma universal de governança e desenvolvimento com IA, livre de acoplamento a projetos específicos e equipada com um portal web moderno, motor de pesquisa autônoma resiliente, AI Gateway multi-provedor (BYOK) e captura inteligente de sessões.
+O AI Second Brain está estruturado como uma plataforma universal de governança e desenvolvimento com IA, livre de acoplamento a projetos específicos e equipada com um portal web moderno, motor de pesquisa autônoma resiliente, AI Gateway multi-provedor (BYOK), captura inteligente de sessões e busca semântica global com citação de fontes ("Pergunte ao Cérebro").
 
 ## Estrutura do Workspace
 
@@ -16,11 +16,71 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 | `projects/` | Projetos conectados pelo desenvolvedor | 🟢 Suporta Greenfield & Brownfield + RESEARCH/ |
 | `memory/` | Memória de continuidade entre sessões | ✅ Operacional |
 | `templates/` | Modelos para novos projetos, specs e ADRs | ✅ Disponíveis |
-| `docs/brain-ui/` | Portal web interativo de visualização e governança | 🚀 UX/UI com Project Workspace, Grafo 3D, AI BYOK & Session Capture |
-| `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway, Research Engine, Session Capture) |
+| `docs/brain-ui/` | Portal web interativo de visualização e governança | 🚀 UX/UI com Project Workspace, Grafo 3D, AI BYOK, Session Capture & Pergunte ao Cérebro |
+| `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway, Research Engine, Session Capture, Brain Search) |
 
 ## Sessões Recentes
 - **Data**: 2026-10-12
+  - **Progressive Disclosure & Central de Ajuda Cognitiva ("? Como Funciona")**:
+    - **Botão e Modal Dedicado de Arquitetura RAG (`#askBrainHelpModal`)**:
+      - Adicionado botão `? Como Funciona` no cabeçalho do modal "Pergunte ao Cérebro" com abertura em camada superior (`z-index: 10050`).
+      - Ao fechar via ✕, backdrop ou tecla ESC, retorna suavemente para o modal de busca sem fechar o fluxo de consulta.
+      - Explicações claras e organizadas em cards visuais para o desenvolvedor:
+        - **Inteligência do Ranking**: Adaptação de TF-IDF/BM25 com multiplicadores de governança (2.4x ADRs, 2.2x Estado Atual, 2.0x Contratos e Lições, 1.8x Regras, 1.5x Actionable, 1.0x Research) e pontuação estrutural (match exato, cabeçalhos `# H1`/`## H2`, nome de arquivo e bônus de cobertura).
+        - **Padrão Ouro RAG (Top 5 a 7)**: O efeito "Lost in the Middle" dos LLMs (evitando alucinações), janela de contexto/latência (~1.2s com Zero Fabricação) e ergonomia do dev.
+        - **Progressive Disclosure Ativo**: Recuperação de até 12 fontes, síntese nos documentos principais e expansão suave de fontes adicionais com 1 clique (`📄 Ver mais N fontes encontradas (+N)`).
+    - **Paridade Absoluta & Integridade**: Sincronizado em `docs/brain-ui/` e `docs/brain-ui/demo/`; validado com subagente de browser no Chromium real; `npm run scan` e `npm run doctor` com 100% de integridade (0 erros).
+  - **Refinamento Crítico de Usabilidade & Arquitetura Cognitiva (v3.2 — Soluções para os 6 Pontos do Usuário)**:
+    - **1. Remoção de Sugestões Estáticas**: Eliminada a linha `#askBrainSuggestionsRow` para despoluir o cabeçalho e eliminar ruído visual ("banner blindness").
+    - **2. População Dinâmica do Escopo de Projetos**: Corrigida a descoberta de projetos no `<select id="askBrainScopeSelect">` lendo as pastas reais de `projects/` a partir dos arquivos do vault (`window.VAULT.data.files` e `window.VAULT_SNAPSHOT`), habilitando a filtragem por projetos reais (`Alfredo_teste`, `teste_alfredo_22`, etc.).
+    - **3. Transformação dos Chips de Categoria em Dropdown Escalável**: Substituídos os botões soltos por `<select id="askBrainCategorySelect">`, criando uma barra de controles compacta em linha única (`📁 Escopo:` e `🏷️ Categoria:`) infinitamente expansível para novas tipologias sem quebras visuais.
+    - **4. Interceptação de Links na Resposta Sintetizada**: Todos os links markdown internos gerados na resposta da IA (`#askAnswerContent a`) agora são interceptados com `e.preventDefault()` e roteados para `openAskSourceDoc(href)`, abrindo diretamente no leitor nativo do Cockpit com syntax highlighting e fundo escuro profissional, eliminando a abertura de arquivos crus/telas pretas no navegador.
+    - **5. Filtro Estrito de Categoria (Hard Filter & Zero Fabricação)**: O motor de busca (`scripts/brain-search.js` e `demo-mode.js`) agora descarta 100% de qualquer documento que não pertença à categoria selecionada (descarte estrito), e gera mensagem amigável e orientativa quando não houver ocorrências na categoria restrita, eliminando misturas indevidas de Research em buscas por Regras. Corrigido também falso positivo sutil onde a substring `'adr'` dentro de palavras em português como `'padroes'` (`03-arquitetura-padroes-design.md`) fazia arquivos do Research Lab serem erroneamente rotulados como ADRs.
+    - **6. Avaliação Arquitetural Modal vs Chat**: Mapeada a estratégia de evolução híbrida: preservação do modal rápido `Ctrl+K` para lookups instantâneos de um tiro + evolução para suporte a threads/follow-up de perguntas encadeadas.
+    - **Validação Automatizada & Saúde Técnica**: Validado no Chromium com subagente de browser; `npm run scan` e `npm run doctor` com 100% de conformidade (0 erros).
+  - **Refinamento de UX & Alta Fidelidade Visual ("Pergunte ao Cérebro" & Fontes Citadas)**:
+    - **Reestruturação Visual "UAU" da Seção "Trechos & Fontes Citadas"**:
+      - Eliminação total de quebras e distorções nos botões (`📖 Abrir Doc`, `🪐 No Grafo`, `📋 Copiar Citação`) utilizando layout flexbox blindado (`flex-shrink: 0`, `white-space: nowrap`) e ícones minimalistas.
+      - Caminho do arquivo movido para linha dedicada com visual de terminal (`📁 projects/...`) e truncamento inteligente.
+      - Legibilidade tipográfica aprimorada com `white-space: pre-wrap` e parágrafos reais.
+      - **Marcação Automática de Destaques (`<mark class="ask-kw-highlight">`)**: Termos da consulta realçados em âmbar suave para escaneabilidade instantânea.
+      - **Accordion Inteligente**: Exibição inicial compacta com efeito gradiente de fade-out inferior + botão de alternância `👁️ Expandir Trecho Completo` ⇄ `🔼 Recolher Trecho`.
+      - **Acentos e Badges por Categoria**: Púrpura (ADRs), Ciano (Research Lab), Verde (Regras), Âmbar (Lições Aprendidas), Azul (Projetos/Contratos).
+    - **Filtro Rápido por Tipo de Documento no Modal "Pergunte ao Cérebro"**:
+      - Adicionados chips interativos de categoria: `[Todos]`, `[⚖️ ADRs]`, `[🔬 Research]`, `[🛡️ Regras]`, `[🧠 Lições]`, `[📦 Contratos]`.
+      - Boost ponderado de relevância (+80 pts / 1.8x) ou penalidade (-60 pts) no algoritmo de busca determinística de snippets (`scripts/brain-search.js` e `server.js`).
+    - **Histórico de Buscas Recentes da Sessão**:
+      - Persistência das últimas 5 buscas da sessão em `sessionStorage` (`#askBrainRecentsRow`).
+      - Renderização de pílulas interativas clicáveis com atalho para reconsulta imediata e botão de limpeza (`Limpar`).
+    - **Micro-Feedback Visual nos Botões de Cópia**:
+      - Micro-animação pulsante nos botões de citação individual e botão geral de resposta: transição imediata para `✓` verde / `✓ Copiada!` pulsante por 1.8 segundos com keyframe `@keyframes copiedPulse`.
+    - **Paridade 100% no Modo Demo**:
+      - Sincronização completa em `docs/brain-ui/demo/app.js`, `style.css` e `demo-mode.js` para execução estática offline no GitHub Pages.
+    - **Validação Visual & Automação**:
+      - Validado via teste automatizado de navegação real com gravação de sessão WebP e capturas de tela.
+      - Linter de integridade `npm run doctor` e scanner `npm run scan` com 100% de conformidade (0 erros).
+  - **Implementação da Fricção 5: Busca Global de Conteúdo ("Pergunte ao Cérebro")**:
+    - **Motor Determinístico de Recuperação & Citações (`scripts/brain-search.js`)**:
+      - Algoritmo de busca por palavras-chave com descarte de stopwords, pesos calibrados por relevância de contrato (ADR 2.4x, `CURRENT_STATE.md` 2.2x, `PROJECT.md` 2.0x, lições aprendidas 2.0x, regras 1.8x).
+      - Extração inteligente de snippets (até 1400 caracteres) ancorada em cabeçalhos Markdown e parágrafos correspondentes para não perder contexto de bullets e listas.
+      - Prompt especializado do sistema com imposição rigorosa de **Zero Fabricação**: citação explícita das fontes e recusa formal caso a informação não esteja documentada no vault.
+    - **Endpoints REST no Backend (`server.js`)**:
+      - `POST /api/brain/ask`: Orquestra a recuperação de trechos e síntese com IA via Gateway em tempo real.
+      - `GET /api/brain/search`: Busca rápida determinística pura retornando trechos e scores sem inferência de LLM.
+    - **Interface de Alta Fidelidade no Cockpit (`docs/brain-ui/` e `docs/brain-ui/demo/`)**:
+      - Botão destacado na topbar (`✨ Pergunte ao Cérebro Ctrl+K`).
+      - Botão rápido na barra de busca da sidebar (`✨ IA`).
+      - Atalho global de teclado `Ctrl+K` / `Cmd+K` para abrir e fechar o modal instantaneamente.
+      - Modal interativo (`#askBrainModal`) com glassmorphism, orbe neon pulsante de carregamento com frases rotativas, seletor de escopo de projeto e sugestões rápidas em chips.
+      - Renderização rica de resposta sintetizada com botão `📋 Copiar Resposta` e suporte completo a Markdown.
+      - Cards de fontes citadas com prévia de snippet e botões de ação:
+        - `📖 Abrir Doc`: Navega diretamente para o arquivo markdown no leitor visual.
+        - `🪐 No Grafo`: Alterna para a visualização orbital 3D do Three.js, foca no documento pesquisado e dispara o pulso sináptico nos neurônios.
+    - **Paridade Absoluta com o Modo Demonstração (`docs/brain-ui/demo/demo-mode.js`)**:
+      - Interceptação de `/api/brain/ask` e `/api/brain/search` executando busca e recuperação determinística offline sobre o `window.VAULT_SNAPSHOT` no GitHub Pages.
+    - **Validação End-to-End**:
+      - Validado via Node.js e no navegador real através de agente de testes (`browser_subagent`) comprovando renderização de resposta, badges e ausência de erros.
+      - `npm run doctor`: 100% dos links e contratos válidos (0 erros).
   - **Sincronização & Atualização Completa das Documentações de Usuário e Landing Page**:
     - **Landing Page (`docs/brain-ui/landing/index.html` e `i18n.dict.js`)**:
       - Atualizado Bento Grid (`#vantagens`) com novos cards dedicados ao **Session Capture com IA (Draft & Commit)** e ao **Prompt Bootstrap & IDE Hooks (VS Code / Cursor)**.
