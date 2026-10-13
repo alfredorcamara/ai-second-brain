@@ -1260,13 +1260,13 @@ function renderSingleProjectCardHtml(p) {
                 </div>
                 <!-- Pílulas dos 4 Contratos (+25% cada) -->
                 <div class="proj-gov-pills">
-                    <span class="gov-pill ${p.hasProjectMd ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${p.hasProjectMd ? `navigateTo('projects/${folderName}/PROJECT.md')` : `initializeContract('PROJECT.md')`}" title="${p.hasProjectMd ? '✓ PROJECT.md ativo (Clique para visualizar)' : '⚠️ Clique para inicializar PROJECT.md'}">
+                    <span class="gov-pill ${p.hasProjectMd ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${p.hasProjectMd ? `navigateTo('projects/${p.folderName}/PROJECT.md')` : `initializeContract('PROJECT.md')`}" title="${p.hasProjectMd ? '✓ PROJECT.md ativo (Clique para visualizar)' : '⚠️ Clique para inicializar PROJECT.md'}">
                         ${p.hasProjectMd ? '✓ PROJECT' : '+ PROJECT'}
                     </span>
-                    <span class="gov-pill ${p.hasCurrentState ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${p.hasCurrentState ? `navigateTo('projects/${folderName}/CURRENT_STATE.md')` : `initializeContract('CURRENT_STATE.md')`}" title="${p.hasCurrentState ? '✓ CURRENT_STATE.md ativo (Clique para visualizar)' : '⚠️ Clique para inicializar CURRENT_STATE.md'}">
+                    <span class="gov-pill ${p.hasCurrentState ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${p.hasCurrentState ? `navigateTo('projects/${p.folderName}/CURRENT_STATE.md')` : `initializeContract('CURRENT_STATE.md')`}" title="${p.hasCurrentState ? '✓ CURRENT_STATE.md ativo (Clique para visualizar)' : '⚠️ Clique para inicializar CURRENT_STATE.md'}">
                         ${p.hasCurrentState ? '✓ STATE' : '+ STATE'}
                     </span>
-                    <span class="gov-pill ${p.hasArchitecture ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${p.hasArchitecture ? `navigateTo('projects/${folderName}/ARCHITECTURE.md')` : `initializeContract('ARCHITECTURE.md')`}" title="${p.hasArchitecture ? '✓ ARCHITECTURE.md ativo (Clique para visualizar)' : '⚠️ Clique para inicializar ARCHITECTURE.md'}">
+                    <span class="gov-pill ${p.hasArchitecture ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${p.hasArchitecture ? `navigateTo('projects/${p.folderName}/ARCHITECTURE.md')` : `initializeContract('ARCHITECTURE.md')`}" title="${p.hasArchitecture ? '✓ ARCHITECTURE.md ativo (Clique para visualizar)' : '⚠️ Clique para inicializar ARCHITECTURE.md'}">
                         ${p.hasArchitecture ? '✓ ARCH' : '+ ARCH'}
                     </span>
                     <span class="gov-pill ${p.hasDecisions ? 'valid' : 'pending'}" onclick="event.stopPropagation(); ${p.hasDecisions ? `openProjectWorkspace('${p.folderName}', 'overview')` : `createNewDecisionRecord('${p.folderName}')`}" title="${p.hasDecisions ? '✓ Decisões registradas (Clique para ver no Workspace)' : '⚠️ Clique para registrar a primeira decisão (ADR-001) e bater 100%!'}">

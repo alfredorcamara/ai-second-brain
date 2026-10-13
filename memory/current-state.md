@@ -42,8 +42,9 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
       - Botão contextual `↺ Limpar Filtros` exibido apenas quando filtros ou ordenações não-padrão estão ativos.
     - **Empty State Sofisticado (`.dash-projects-empty-card`)**:
       - Apresenta card com ícone de lupa, mensagem orientativa amigável e botão `↺ Limpar Filtros e Ver Todos (N)` para restauração em 1 clique quando uma busca não retorna resultados.
-    - **Paridade Absoluta 100%**:
+    - **Paridade Absoluta 100% & Correção de Escopo de Renderização (`renderSingleProjectCardHtml`)**:
       - Replicado integralmente em `docs/brain-ui/` e `docs/brain-ui/demo/` (`index.html`, `app.js`, `style.css`).
+      - **Bugfix (Exibição de Projetos no Demo/Landing)**: Corrigida inconsistência de escopo em `docs/brain-ui/demo/app.js` onde referências a `folderName` nas pílulas de governança foram atualizadas para `p.folderName`, eliminando o `ReferenceError` que impedia a montagem dos cards de projeto no slot dinâmico da demonstração. Restabelecida a exibição imediata do projeto de exemplo (`demo-app`).
   - **Refinamento de UX, Consistência de Ícones de IA e Central de Ajuda Cognitiva**:
     - **Modais Educativos nos Cards de Governança (`#aiDecisionFlowHelpModal` & `#brainMetricsHelpModal`)**:
       - Adicionados modais explicativos de alta fidelidade visual nos cards *AI Decision Flow* e *Métricas do Cérebro*, detalhando a hierarquia determinística (Código determinístico vs AIJev vs LLM vs Validação) e o papel prático das 6 métricas fundamentais (Regras, Skills, Projetos, Conhecimento, Decisões, Memória).
