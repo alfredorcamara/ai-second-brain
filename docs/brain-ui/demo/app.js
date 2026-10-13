@@ -3104,6 +3104,8 @@ async function openProjectWorkspace(projectName, defaultTab = 'overview') {
         if (badgeStack) badgeStack.textContent = currentProjectData.stack || 'Livre';
         if (badgeStatus) badgeStatus.textContent = currentProjectData.status || 'Ativo';
 
+        updateIdeMainButtonUI();
+
         const openDocBtn = document.getElementById('btnPwOpenDoc');
         if (openDocBtn) {
             openDocBtn.onclick = () => navigateTo(`projects/${projectName}/PROJECT.md`);
@@ -4429,6 +4431,14 @@ function renderProjectSettingsTab() {
 }
 
 // ── Project Action Handlers ───────────────────────
+function openProjectFolder(e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    openProjectInIde('explorer');
+}
+
 function copyProjectPath() {
     if (!currentProjectData || !currentProjectData.realPath) return;
     navigator.clipboard.writeText(currentProjectData.realPath).then(() => {
@@ -4442,6 +4452,78 @@ function copyProjectPath() {
         alert('Caminho: ' + currentProjectData.realPath);
     });
 }
+
+const IDE_REGISTRY = {
+    'code': { label: 'VS Code', icon: '💻', cmd: 'code' },
+    'cursor': { label: 'Cursor', icon: '⚡', cmd: 'cursor' },
+    'antigravity': { label: 'Antigravity', icon: '🪐', cmd: 'antigravity' },
+    'windsurf': { label: 'Windsurf', icon: '🌊', cmd: 'windsurf' },
+    'idea': { label: 'JetBrains', icon: '🧩', cmd: 'idea' },
+    'explorer': { label: 'Pasta', icon: '📂', cmd: 'explorer' }
+};
+
+function getPreferredIde() {
+    return localStorage.getItem('sb_preferred_ide') || 'code';
+}
+
+function setPreferredIde(ide) {
+    if (!IDE_REGISTRY[ide]) ide = 'code';
+    localStorage.setItem('sb_preferred_ide', ide);
+    updateIdeMainButtonUI(ide);
+}
+
+function updateIdeMainButtonUI(ide = getPreferredIde()) {
+    const info = IDE_REGISTRY[ide] || IDE_REGISTRY['code'];
+    const iconEl = document.getElementById('pwIdeMainIcon');
+    const labelEl = document.getElementById('pwIdeMainLabel');
+    const mainBtn = document.getElementById('pwIdeMainBtn');
+    if (iconEl) iconEl.textContent = info.icon;
+    if (labelEl) labelEl.textContent = info.label;
+    if (mainBtn) mainBtn.title = `Abrir projeto no ${info.label}${ide === 'code' ? ' (Padrão)' : ''}`;
+
+    document.querySelectorAll('.pw-ide-menu-item').forEach(item => {
+        const itemIde = item.getAttribute('data-ide');
+        item.classList.toggle('active', itemIde === ide);
+    });
+}
+
+function triggerPreferredIde() {
+    const ide = getPreferredIde();
+    openProjectInIde(ide);
+}
+
+function toggleIdeDropdown(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('pwIdeMenu');
+    const arrowBtn = document.getElementById('pwIdeArrowBtn');
+    if (!menu) return;
+    const isShown = menu.style.display !== 'none';
+    menu.style.display = isShown ? 'none' : 'block';
+    if (arrowBtn) arrowBtn.setAttribute('aria-expanded', !isShown ? 'true' : 'false');
+}
+
+function closeIdeDropdown() {
+    const menu = document.getElementById('pwIdeMenu');
+    const arrowBtn = document.getElementById('pwIdeArrowBtn');
+    if (menu) menu.style.display = 'none';
+    if (arrowBtn) arrowBtn.setAttribute('aria-expanded', 'false');
+}
+
+function selectAndLaunchIde(ide, icon, label) {
+    const chk = document.getElementById('pwSaveIdeAsDefaultCheckbox');
+    if (chk && chk.checked) {
+        setPreferredIde(ide);
+    }
+    closeIdeDropdown();
+    openProjectInIde(ide);
+}
+
+document.addEventListener('click', (e) => {
+    const wrap = document.getElementById('pwIdeDropdownWrap');
+    if (wrap && !wrap.contains(e.target)) {
+        closeIdeDropdown();
+    }
+});
 
 async function openProjectInIde(ide = 'code') {
     const project = currentProjectData ? currentProjectData.name : currentProject;
@@ -4465,12 +4547,26 @@ async function openProjectInIde(ide = 'code') {
             return;
         }
 
-        const editorName = ide === 'cursor' ? 'Cursor AI' : ide === 'code' ? 'VS Code' : 'Explorador de Arquivos';
+        const editorNames = {
+            'code': 'VS Code',
+            'cursor': 'Cursor AI',
+            'antigravity': 'Google Antigravity',
+            'windsurf': 'Windsurf',
+            'idea': 'JetBrains',
+            'explorer': 'Explorador de Arquivos'
+        };
+        const editorName = editorNames[ide] || 'VS Code';
         showToast(`💻 Projeto aberto no ${editorName}!`, 'success', 3500);
     } catch (err) {
         showToast(`❌ Falha ao comunicar com o servidor: ${err.message}`, 'error', 4000);
     }
 }
+window.openProjectInIde = openProjectInIde;
+window.triggerPreferredIde = triggerPreferredIde;
+window.toggleIdeDropdown = toggleIdeDropdown;
+window.closeIdeDropdown = closeIdeDropdown;
+window.selectAndLaunchIde = selectAndLaunchIde;
+window.updateIdeMainButtonUI = updateIdeMainButtonUI;
 window.openProjectInIde = openProjectInIde;
 
 async function copySessionStartPrompt() {

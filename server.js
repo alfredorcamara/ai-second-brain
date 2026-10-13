@@ -1167,7 +1167,18 @@ Projeto externo vinculado ao AI Second Brain.
                 return;
             }
 
-            const ideCmd = preferredIde === 'cursor' ? 'cursor' : 'code';
+            const ideCommandMap = {
+                'cursor': 'cursor',
+                'code': 'code',
+                'vscode': 'code',
+                'antigravity': 'agy',
+                'windsurf': 'windsurf',
+                'idea': 'idea',
+                'jetbrains': 'idea',
+                'pycharm': 'pycharm',
+                'webstorm': 'webstorm'
+            };
+            const ideCmd = ideCommandMap[preferredIde] || 'code';
 
             console.log(`💻 [System] Abrindo projeto na IDE (${ideCmd}): ${cleanPath}`);
 
@@ -1175,7 +1186,7 @@ Projeto externo vinculado ao AI Second Brain.
                 exec(`cmd.exe /c ${ideCmd} "${cleanPath}"`, (err) => {
                     if (err) {
                         console.warn(`⚠️ [System] Falha ao abrir com ${ideCmd}, tentando fallback para code/explorer:`, err.message);
-                        if (ideCmd === 'cursor') {
+                        if (ideCmd !== 'code') {
                             exec(`cmd.exe /c code "${cleanPath}"`, (err2) => {
                                 if (err2) exec(`cmd.exe /c start "" "${cleanPath}"`);
                             });

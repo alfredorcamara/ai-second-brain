@@ -37,7 +37,8 @@
                     <input type="text" id="searchInput" placeholder="Buscar no cérebro..." autocomplete="off">
                     <button id="btnSidebarSearchClear" class="sidebar-search-clear" title="Limpar pesquisa (Esc)"
                         style="display: none;">✕</button>
-                    <button id="btnSidebarAskBrain" class="sidebar-search-ai-btn" onclick="openAskBrainModal()" title="Pergunte ao Cérebro com IA (Ctrl+K)">✨ IA</button>
+                    <button id="btnSidebarAskBrain" class="sidebar-search-ai-btn" onclick="openAskBrainModal()"
+                        title="Pergunte ao Cérebro com IA (Ctrl+K)">✨ IA</button>
                 </div>
             </div>
 
@@ -66,20 +67,22 @@
                 </div>
                 <div class="topbar-actions">
                     <!-- Pergunte ao Cérebro (Global Semantic Search & Q&A) -->
-                    <button id="btnAskBrainTop" class="btn-ask-brain-trigger" onclick="openAskBrainModal()" title="Pergunte ao Cérebro com IA (Ctrl+K)">
+                    <button id="btnAskBrainTop" class="btn-ask-brain-trigger" onclick="openAskBrainModal()"
+                        title="Pergunte ao Cérebro com IA (Ctrl+K)">
                         <span class="ask-spark">✨</span>
                         <span>Pergunte ao Cérebro</span>
                         <span class="ask-kbd">Ctrl+K</span>
                     </button>
 
                     <!-- AI Gateway Status Pill -->
-                    <button id="btnAiGatewayModal" class="ai-status-pill unconfigured"
-                        title="Configurar Conexão de IA" onclick="openAiSettingsModal()">
+                    <button id="btnAiGatewayModal" class="ai-status-pill unconfigured" title="Configurar Conexão de IA"
+                        onclick="openAiSettingsModal()">
                         <span class="ai-pill-icon">
                             <svg class="ai-pill-sparkle-svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4L12 2z" />
-                                <path d="M19 16l1 2.5L22.5 19.5 20 20.5 19 23l-1-2.5-2.5-1 2.5-1 1-2.5z" stroke-width="1.5" />
+                                <path d="M19 16l1 2.5L22.5 19.5 20 20.5 19 23l-1-2.5-2.5-1 2.5-1 1-2.5z"
+                                    stroke-width="1.5" />
                             </svg>
                         </span>
                         <span class="ai-pill-provider" id="aiStatusPillProvider">AI Gateway</span>
@@ -262,30 +265,15 @@
                             <div class="pw-title-group">
                                 <span class="pw-icon" id="pwIcon">🚀</span>
                                 <div>
+                                    <h1 class="pw-title" id="pwTitle">Nome do Projeto</h1>
                                     <div class="pw-meta-tags">
                                         <span class="pw-badge" id="pwTypeBadge">Brownfield 🔗</span>
                                         <span class="pw-badge stack" id="pwStackBadge">Node.js</span>
                                         <span class="pw-badge status" id="pwStatusBadge">🟢 Ativo</span>
                                     </div>
-                                    <h1 class="pw-title" id="pwTitle">Nome do Projeto</h1>
                                 </div>
                             </div>
                             <div class="pw-header-actions">
-                                <div class="pw-ide-actions">
-                                    <button class="btn btn-secondary btn-sm" onclick="openProjectInIde('code')" title="Abrir pasta do projeto no VS Code">
-                                        💻 VS Code
-                                    </button>
-                                    <button class="btn btn-secondary btn-sm" onclick="openProjectInIde('cursor')" title="Abrir pasta do projeto no Cursor AI">
-                                        ⚡ Cursor
-                                    </button>
-                                    <button class="btn btn-secondary btn-sm" onclick="openProjectInIde('explorer')" title="Abrir pasta no Explorador de Arquivos">
-                                        📂 Pasta
-                                    </button>
-                                </div>
-                                <button class="btn btn-secondary btn-sm" id="btnPwOpenDoc"
-                                    title="Ver arquivo Markdown raw">
-                                    📄 Ver Markdown
-                                </button>
                                 <button class="btn btn-accent btn-sm" onclick="showDashboard()">
                                     🧠 Dashboard Geral
                                 </button>
@@ -293,12 +281,20 @@
                         </div>
 
                         <div class="pw-path-row">
-                            <span class="pw-path-label">Localização no Computador:</span>
-                            <code class="pw-path-code" id="pwRealPath">Carregando caminho...</code>
-                            <button class="pw-copy-btn" id="btnPwCopyPath" onclick="copyProjectPath()"
-                                title="Copiar caminho da pasta">📋 Copiar Caminho</button>
-                            <button class="pw-copy-btn pw-prompt-btn" id="btnPwCopyPrompt" onclick="copySessionStartPrompt()"
-                                title="Copiar prompt com contexto completo para colar na sua IDE ou agente de IA">✨ Copiar Prompt para Agente</button>
+                            <a href="javascript:void(0)" class="pw-path-link" id="pwPathLink"
+                                onclick="openProjectFolder(event)"
+                                title="Clique para abrir esta pasta no Explorador de Arquivos">
+                                <span class="pw-path-icon">📂</span>
+                                <code class="pw-path-code" id="pwRealPath">Carregando caminho...</code>
+                            </a>
+                            <div class="pw-path-actions">
+                                <button class="pw-copy-btn" id="btnPwCopyPath" onclick="copyProjectPath()"
+                                    title="Copiar caminho da pasta">📋 Copiar Caminho</button>
+                                <button class="pw-copy-btn pw-prompt-btn" id="btnPwCopyPrompt"
+                                    onclick="copySessionStartPrompt()"
+                                    title="Copiar prompt com contexto completo para colar na sua IDE ou agente de IA">✨
+                                    Copiar Prompt para Agente</button>
+                            </div>
                         </div>
 
                         <!-- Workspace Navigation Tabs -->
@@ -557,7 +553,8 @@
                                 <button type="button" class="ai-engine-help-btn" onclick="openAiEngineHelpModal()"
                                     title="Como funciona a troca de motor de IA e as pontes no disco?"
                                     aria-label="Ajuda sobre Arquitetura do Sistema">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                         <circle cx="12" cy="12" r="10"></circle>
                                         <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
                                         <line x1="12" y1="17" x2="12.01" y2="17"></line>
@@ -616,7 +613,8 @@
                                 <button type="button" class="ai-engine-help-btn" onclick="openAiDecisionFlowHelpModal()"
                                     title="Como funciona o fluxo de decisão e roteamento de IA?"
                                     aria-label="Ajuda sobre AI Decision Flow">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                         <circle cx="12" cy="12" r="10"></circle>
                                         <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
                                         <line x1="12" y1="17" x2="12.01" y2="17"></line>
@@ -626,39 +624,48 @@
                             <div class="flow-diagram">
                                 <div class="flow-step">
                                     <div class="flow-node start" onclick="openAiDecisionFlowHelpModal('intro')"
-                                        title="Clique para ver o princípio central da árvore de decisão" role="button" tabindex="0">TAREFA</div>
+                                        title="Clique para ver o princípio central da árvore de decisão" role="button"
+                                        tabindex="0">TAREFA</div>
                                     <div class="flow-arrow">↓</div>
                                 </div>
                                 <div class="flow-step">
-                                    <div class="flow-node decision" onclick="openAiDecisionFlowHelpModal('deterministic')"
-                                        title="Etapa 1: É Determinística? Clique para ver detalhes" role="button" tabindex="0">Determinística?</div>
+                                    <div class="flow-node decision"
+                                        onclick="openAiDecisionFlowHelpModal('deterministic')"
+                                        title="Etapa 1: É Determinística? Clique para ver detalhes" role="button"
+                                        tabindex="0">Determinística?</div>
                                     <div class="flow-branch" onclick="openAiDecisionFlowHelpModal('deterministic')"
-                                        title="Clique para ver: Código Determinístico Puro (Custo zero / &lt;1ms)" role="button" tabindex="0">
+                                        title="Clique para ver: Código Determinístico Puro (Custo zero / &lt;1ms)"
+                                        role="button" tabindex="0">
                                         <span class="flow-yes">SIM → CÓDIGO</span>
                                     </div>
                                     <div class="flow-arrow">NÃO ↓</div>
                                 </div>
                                 <div class="flow-step">
                                     <div class="flow-node decision" onclick="openAiDecisionFlowHelpModal('decision')"
-                                        title="Etapa 2: É Decisão ou Classificação? Clique para ver detalhes" role="button" tabindex="0">Decisão?</div>
+                                        title="Etapa 2: É Decisão ou Classificação? Clique para ver detalhes"
+                                        role="button" tabindex="0">Decisão?</div>
                                     <div class="flow-branch" onclick="openAiDecisionFlowHelpModal('decision')"
-                                        title="Clique para ver: AIJev / Jev (Alta velocidade / Auditável)" role="button" tabindex="0">
+                                        title="Clique para ver: AIJev / Jev (Alta velocidade / Auditável)" role="button"
+                                        tabindex="0">
                                         <span class="flow-yes">SIM → AIJEV</span>
                                     </div>
                                     <div class="flow-arrow">NÃO ↓</div>
                                 </div>
                                 <div class="flow-step">
                                     <div class="flow-node decision" onclick="openAiDecisionFlowHelpModal('generation')"
-                                        title="Etapa 3: Precisa Gerar Linguagem? Clique para ver detalhes" role="button" tabindex="0">Geração?</div>
+                                        title="Etapa 3: Precisa Gerar Linguagem? Clique para ver detalhes" role="button"
+                                        tabindex="0">Geração?</div>
                                     <div class="flow-branch" onclick="openAiDecisionFlowHelpModal('generation')"
-                                        title="Clique para ver: LLM via AI Gateway (Linguagem natural)" role="button" tabindex="0">
+                                        title="Clique para ver: LLM via AI Gateway (Linguagem natural)" role="button"
+                                        tabindex="0">
                                         <span class="flow-yes">SIM → LLM</span>
                                     </div>
                                     <div class="flow-arrow">↓</div>
                                 </div>
                                 <div class="flow-step">
                                     <div class="flow-node end" onclick="openAiDecisionFlowHelpModal('validation')"
-                                        title="Etapa 4: Validação Programática Obrigatória. Clique para ver detalhes" role="button" tabindex="0">VALIDAÇÃO</div>
+                                        title="Etapa 4: Validação Programática Obrigatória. Clique para ver detalhes"
+                                        role="button" tabindex="0">VALIDAÇÃO</div>
                                 </div>
                             </div>
                         </div>
@@ -670,7 +677,8 @@
                                 <button type="button" class="ai-engine-help-btn" onclick="openBrainMetricsHelpModal()"
                                     title="O que significa cada métrica de governança do cérebro?"
                                     aria-label="Ajuda sobre Métricas do Cérebro">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                         <circle cx="12" cy="12" r="10"></circle>
                                         <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
                                         <line x1="12" y1="17" x2="12.01" y2="17"></line>
@@ -732,19 +740,22 @@
                                 <!-- Search Box -->
                                 <div class="proj-search-box">
                                     <span class="proj-search-icon">🔍</span>
-                                    <input type="text" id="projSearchInput" class="proj-search-input" 
-                                           placeholder="Buscar por nome, pasta, descrição ou tecnologia... (Pressione / para focar)" 
-                                           autocomplete="off" spellcheck="false" oninput="handleProjectSearchInput(event)">
+                                    <input type="text" id="projSearchInput" class="proj-search-input"
+                                        placeholder="Buscar por nome, pasta, descrição ou tecnologia... (Pressione / para focar)"
+                                        autocomplete="off" spellcheck="false" oninput="handleProjectSearchInput(event)">
                                     <span class="proj-search-kbd-hint" id="projSearchKbdHint">/</span>
-                                    <button type="button" class="proj-search-clear-btn" id="projSearchClearBtn" 
-                                            onclick="clearProjectSearch()" title="Limpar busca" style="display: none;">✕</button>
+                                    <button type="button" class="proj-search-clear-btn" id="projSearchClearBtn"
+                                        onclick="clearProjectSearch()" title="Limpar busca"
+                                        style="display: none;">✕</button>
                                 </div>
 
                                 <!-- Quick Summary & Reset -->
                                 <div class="proj-toolbar-summary">
-                                    <span class="proj-results-counter" id="projResultsCounter">Carregando projetos...</span>
-                                    <button type="button" class="btn-proj-reset-filters" id="btnProjResetFilters" 
-                                            onclick="resetProjectFilters()" style="display: none;" title="Restaurar todos os filtros">
+                                    <span class="proj-results-counter" id="projResultsCounter">Carregando
+                                        projetos...</span>
+                                    <button type="button" class="btn-proj-reset-filters" id="btnProjResetFilters"
+                                        onclick="resetProjectFilters()" style="display: none;"
+                                        title="Restaurar todos os filtros">
                                         <span>↺</span> Limpar Filtros
                                     </button>
                                 </div>
@@ -757,7 +768,8 @@
                                         <span class="proj-filter-label-icon">🚦</span> Status
                                     </label>
                                     <div class="proj-select-wrapper">
-                                        <select id="projStatusFilter" class="proj-filter-select" onchange="handleProjectFilterChange()">
+                                        <select id="projStatusFilter" class="proj-filter-select"
+                                            onchange="handleProjectFilterChange()">
                                             <option value="all">Todos os Status</option>
                                             <option value="active">🟢 Ativo / Produção</option>
                                             <option value="planning">🟡 Planejamento</option>
@@ -772,7 +784,8 @@
                                         <span class="proj-filter-label-icon">⚡</span> Stack
                                     </label>
                                     <div class="proj-select-wrapper">
-                                        <select id="projStackFilter" class="proj-filter-select" onchange="handleProjectFilterChange()">
+                                        <select id="projStackFilter" class="proj-filter-select"
+                                            onchange="handleProjectFilterChange()">
                                             <option value="all">Todas as Stacks</option>
                                         </select>
                                     </div>
@@ -784,7 +797,8 @@
                                         <span class="proj-filter-label-icon">🛡️</span> Governança
                                     </label>
                                     <div class="proj-select-wrapper">
-                                        <select id="projGovFilter" class="proj-filter-select" onchange="handleProjectFilterChange()">
+                                        <select id="projGovFilter" class="proj-filter-select"
+                                            onchange="handleProjectFilterChange()">
                                             <option value="all">Todas as Conformidades</option>
                                             <option value="100">🛡️ 100% Conforme (Ouro)</option>
                                             <option value="partial">⚠️ Pendente (&lt; 100%)</option>
@@ -799,7 +813,8 @@
                                         <span class="proj-filter-label-icon">⇅</span> Ordenar
                                     </label>
                                     <div class="proj-select-wrapper">
-                                        <select id="projSortSelect" class="proj-filter-select" onchange="handleProjectFilterChange()">
+                                        <select id="projSortSelect" class="proj-filter-select"
+                                            onchange="handleProjectFilterChange()">
                                             <option value="name_asc">Nome (A → Z)</option>
                                             <option value="name_desc">Nome (Z → A)</option>
                                             <option value="gov_desc">Governança (Maior → Menor)</option>
@@ -1119,7 +1134,10 @@
                                     <div class="sdoc-step-badge">Etapa 1</div>
                                     <div class="sdoc-step-text">
                                         <h4>Início da Sessão (Prompt Bootstrap &amp; IDE Hooks)</h4>
-                                        <p>No Cockpit, clique em <code>✨ Copiar Prompt para Agente</code> para colar o contexto pré-aquecido (regras, restrições e estado atual) no chat do agente. Em seguida, clique em <code>💻 VS Code</code> ou <code>⚡ Cursor</code> para abrir a pasta do projeto diretamente do navegador.
+                                        <p>No Cockpit, clique em <code>✨ Copiar Prompt para Agente</code> para colar o
+                                            contexto pré-aquecido (regras, restrições e estado atual) no chat do agente.
+                                            Em seguida, clique em <code>💻 VS Code</code> ou <code>⚡ Cursor</code> para
+                                            abrir a pasta do projeto diretamente do navegador.
                                         </p>
                                     </div>
                                 </div>
@@ -1144,7 +1162,11 @@
                                     <div class="sdoc-step-badge">Etapa 4</div>
                                     <div class="sdoc-step-text">
                                         <h4>Fechamento &amp; Session Capture com IA (Draft &amp; Commit)</h4>
-                                        <p>Ao concluir o trabalho, clique em <code>🧠 Registrar Sessão</code>. A IA inspeciona seus commits Git e arquivos alterados, sintetizando um rascunho com entregas e pendências. O desenvolvedor revisa e aprova o rascunho antes da gravação em <code>CURRENT_STATE.md</code> e <code>MEMORY/sessions/</code>.
+                                        <p>Ao concluir o trabalho, clique em <code>🧠 Registrar Sessão</code>. A IA
+                                            inspeciona seus commits Git e arquivos alterados, sintetizando um rascunho
+                                            com entregas e pendências. O desenvolvedor revisa e aprova o rascunho antes
+                                            da gravação em <code>CURRENT_STATE.md</code> e
+                                            <code>MEMORY/sessions/</code>.
                                         </p>
                                     </div>
                                 </div>
@@ -1212,7 +1234,10 @@
                             </div>
                             <div class="sdoc-faq-item">
                                 <h4>Como o Session Capture garante a segurança de senhas e segredos (.env)?</h4>
-                                <p>O motor do Session Capture opera sob o padrão <strong>Draft &amp; Commit</strong> com inspeção segura: arquivos de variáveis sensíveis como <code>.env</code>, chaves de API e credenciais são excluídos do diff. Além disso, nenhuma alteração é persistida na memória sem a revisão e aprovação explícita do desenvolvedor no modal.</p>
+                                <p>O motor do Session Capture opera sob o padrão <strong>Draft &amp; Commit</strong> com
+                                    inspeção segura: arquivos de variáveis sensíveis como <code>.env</code>, chaves de
+                                    API e credenciais são excluídos do diff. Além disso, nenhuma alteração é persistida
+                                    na memória sem a revisão e aprovação explícita do desenvolvedor no modal.</p>
                             </div>
                             <div class="sdoc-faq-item">
                                 <h4>O que acontece se a Groq Cloud ficar indisponível?</h4>
@@ -1321,25 +1346,30 @@
                         <div class="qs-field">
                             <label for="qsNewStack">Stack Tecnológica Principal</label>
                             <div class="qs-stack-chips" id="qsStackChips">
-                                <button type="button" class="qs-chip active" data-stack="Node.js / TypeScript">Node.js / TS</button>
+                                <button type="button" class="qs-chip active" data-stack="Node.js / TypeScript">Node.js /
+                                    TS</button>
                                 <button type="button" class="qs-chip" data-stack="C# / .NET">C# / .NET</button>
                                 <button type="button" class="qs-chip" data-stack="Python">Python</button>
-                                <button type="button" class="qs-chip" data-stack="React / Next.js">React / Next.js</button>
+                                <button type="button" class="qs-chip" data-stack="React / Next.js">React /
+                                    Next.js</button>
                                 <button type="button" class="qs-chip" data-stack="Go">Go</button>
                                 <button type="button" class="qs-chip" data-stack="Rust">Rust</button>
-                                <button type="button" class="qs-chip" data-stack="Livre / Multi-stack">Livre / Outro</button>
+                                <button type="button" class="qs-chip" data-stack="Livre / Multi-stack">Livre /
+                                    Outro</button>
                             </div>
                             <input type="text" id="qsNewStack" class="qs-input" value="Node.js / TypeScript"
                                 placeholder="ex: Node.js / TypeScript, FastAPI + Next.js, .NET 9 + SQL Server"
                                 autocomplete="off" style="margin-top: 8px;">
-                            <small class="qs-hint">Clique em um chip para preencher rápido ou edite livremente para stacks customizadas.</small>
+                            <small class="qs-hint">Clique em um chip para preencher rápido ou edite livremente para
+                                stacks customizadas.</small>
                         </div>
                         <div class="qs-field qs-checkbox-field">
                             <label class="qs-checkbox-label">
                                 <input type="checkbox" id="qsNewInitGit" checked>
                                 <span>Inicializar repositório Git local automaticamente (<code>git init</code>)</span>
                             </label>
-                            <small class="qs-hint">Cria o versionamento Git, gera o <code>.gitignore</code> padrão e as pontes de IA instantaneamente.</small>
+                            <small class="qs-hint">Cria o versionamento Git, gera o <code>.gitignore</code> padrão e as
+                                pontes de IA instantaneamente.</small>
                         </div>
                         <div class="qs-field">
                             <label for="qsNewDesc">Descrição Rápida (Opcional)</label>
@@ -1523,16 +1553,27 @@
                 <!-- Etapa 1: Entrada -->
                 <div id="scStepInput">
                     <div class="sc-sources">
-                        <div class="sc-source"><span class="sc-source-icon">🌿</span><div><strong>Git do projeto</strong><span>Commits desde a última sessão, arquivos alterados e diffstat. O conteúdo do código nunca é enviado.</span></div></div>
-                        <div class="sc-source"><span class="sc-source-icon">📄</span><div><strong>Contratos</strong><span>PROJECT.md, CURRENT_STATE.md e sessões recentes de <b id="scProjectLabel">projeto</b>.</span></div></div>
-                        <div class="sc-source"><span class="sc-source-icon">✍️</span><div><strong>Suas notas</strong><span>Cole o resumo do chat com o agente ou escreva livremente (opcional se houver commits).</span></div></div>
+                        <div class="sc-source"><span class="sc-source-icon">🌿</span>
+                            <div><strong>Git do projeto</strong><span>Commits desde a última sessão, arquivos alterados
+                                    e diffstat. O conteúdo do código nunca é enviado.</span></div>
+                        </div>
+                        <div class="sc-source"><span class="sc-source-icon">📄</span>
+                            <div><strong>Contratos</strong><span>PROJECT.md, CURRENT_STATE.md e sessões recentes de <b
+                                        id="scProjectLabel">projeto</b>.</span></div>
+                        </div>
+                        <div class="sc-source"><span class="sc-source-icon">✍️</span>
+                            <div><strong>Suas notas</strong><span>Cole o resumo do chat com o agente ou escreva
+                                    livremente (opcional se houver commits).</span></div>
+                        </div>
                     </div>
 
                     <div class="rl-form-group">
-                        <label class="rl-form-label" for="scNotesInput">Notas da sessão <span class="rl-hint" style="display:inline;margin-left:6px;">(opcional)</span></label>
+                        <label class="rl-form-label" for="scNotesInput">Notas da sessão <span class="rl-hint"
+                                style="display:inline;margin-left:6px;">(opcional)</span></label>
                         <textarea id="scNotesInput" class="rl-form-textarea" rows="7" maxlength="12000"
                             placeholder="Ex.: Implementei o login com JWT. Decidimos usar refresh token em cookie httpOnly. Falta cobrir expiração com testes."></textarea>
-                        <span class="rl-hint">A IA usa apenas o que estiver aqui, nos commits e nos contratos — nada é inventado. Você revisa tudo antes de gravar.</span>
+                        <span class="rl-hint">A IA usa apenas o que estiver aqui, nos commits e nos contratos — nada é
+                            inventado. Você revisa tudo antes de gravar.</span>
                     </div>
                 </div>
 
@@ -1541,7 +1582,8 @@
                     <div class="sc-loading">
                         <div class="sc-orb"></div>
                         <h3 id="scLoadingTitle">Escrevendo a memória da sessão…</h3>
-                        <p id="scLoadingLiveMsg" class="sc-loading-live-msg">🔍 Lendo commits e arquivos alterados no Git...</p>
+                        <p id="scLoadingLiveMsg" class="sc-loading-live-msg">🔍 Lendo commits e arquivos alterados no
+                            Git...</p>
                         <ul id="scLoadingSteps" class="sc-loading-steps">
                             <li id="scStep1" class="active">Lendo histórico Git e arquivos modificados</li>
                             <li id="scStep2">Cruzando com contratos (PROJECT.md, CURRENT_STATE.md)</li>
@@ -1558,7 +1600,8 @@
             <div class="sc-footer">
                 <div class="rl-modal-status" id="scStatus"></div>
                 <div class="rl-modal-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeSessionCaptureModal()">Cancelar</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeSessionCaptureModal()">Cancelar</button>
                     <button type="button" class="btn btn-secondary" id="btnScRegenerate" style="display: none;"
                         onclick="generateSessionDraft(true)">🔄 Regenerar</button>
                     <button type="button" class="btn btn-primary" id="btnScGenerate"
@@ -2031,10 +2074,15 @@
                         <span>⚖️</span> O Princípio da Prioridade Determinística (AIJev First)
                     </h3>
                     <p style="margin: 0 0 10px 0; color: var(--text-secondary);">
-                        No desenvolvimento assistido por IA, o erro mais comum e custoso é usar <strong>LLMs generativos para tudo</strong>. Modelos generativos trazem latência em segundos, custos contínuos de tokens e risco de alucinação em regras de negócio críticas.
+                        No desenvolvimento assistido por IA, o erro mais comum e custoso é usar <strong>LLMs generativos
+                            para tudo</strong>. Modelos generativos trazem latência em segundos, custos contínuos de
+                        tokens e risco de alucinação em regras de negócio críticas.
                     </p>
                     <p style="margin: 0; color: var(--text-secondary);">
-                        O <strong>AI Decision Flow</strong> estabelece uma hierarquia rigorosa: <strong style="color: #f8fafc;">código puro sempre que possível, árvores de decisão estruturadas (AIJev) para classificações, e LLMs apenas para geração textual aberta ou raciocínio não-estruturado.</strong>
+                        O <strong>AI Decision Flow</strong> estabelece uma hierarquia rigorosa: <strong
+                            style="color: #f8fafc;">código puro sempre que possível, árvores de decisão estruturadas
+                            (AIJev) para classificações, e LLMs apenas para geração textual aberta ou raciocínio
+                            não-estruturado.</strong>
                     </p>
                 </div>
 
@@ -2047,46 +2095,74 @@
 
                     <div style="display: flex; flex-direction: column; gap: 12px;">
                         <!-- Etapa 1 -->
-                        <div id="aiFlowStep_deterministic" style="background: rgba(0,0,0,0.3); border-left: 3px solid #10b981; border-radius: 6px; padding: 12px 14px; transition: all 0.3s ease;">
-                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                                <strong style="color: #6ee7b7; font-size: 13.5px;">1. É Determinística? → CÓDIGO PURO / REGRA</strong>
-                                <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 600;">Custo Zero · Latência &lt;1ms</span>
+                        <div id="aiFlowStep_deterministic"
+                            style="background: rgba(0,0,0,0.3); border-left: 3px solid #10b981; border-radius: 6px; padding: 12px 14px; transition: all 0.3s ease;">
+                            <div
+                                style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                                <strong style="color: #6ee7b7; font-size: 13.5px;">1. É Determinística? → CÓDIGO PURO /
+                                    REGRA</strong>
+                                <span
+                                    style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(16, 185, 129, 0.15); color: #34d399; font-weight: 600;">Custo
+                                    Zero · Latência &lt;1ms</span>
                             </div>
                             <p style="margin: 0; font-size: 12.5px; color: var(--text-secondary);">
-                                Cálculos matemáticos, validação de campos, expressões regulares, operadores lógicos (<code>if/else</code>) e consultas SQL padrão. Se a resposta pode ser expressa por matemática ou regras exatas, <strong>NUNCA use IA</strong>.
+                                Cálculos matemáticos, validação de campos, expressões regulares, operadores lógicos
+                                (<code>if/else</code>) e consultas SQL padrão. Se a resposta pode ser expressa por
+                                matemática ou regras exatas, <strong>NUNCA use IA</strong>.
                             </p>
                         </div>
 
                         <!-- Etapa 2 -->
-                        <div id="aiFlowStep_decision" style="background: rgba(0,0,0,0.3); border-left: 3px solid #f59e0b; border-radius: 6px; padding: 12px 14px; transition: all 0.3s ease;">
-                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                                <strong style="color: #fcd34d; font-size: 13.5px;">2. É Decisão ou Classificação? → AIJEV / JEV</strong>
-                                <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-weight: 600;">Alta Velocidade · 100% Auditável</span>
+                        <div id="aiFlowStep_decision"
+                            style="background: rgba(0,0,0,0.3); border-left: 3px solid #f59e0b; border-radius: 6px; padding: 12px 14px; transition: all 0.3s ease;">
+                            <div
+                                style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                                <strong style="color: #fcd34d; font-size: 13.5px;">2. É Decisão ou Classificação? →
+                                    AIJEV / JEV</strong>
+                                <span
+                                    style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(245, 158, 11, 0.15); color: #fbbf24; font-weight: 600;">Alta
+                                    Velocidade · 100% Auditável</span>
                             </div>
                             <p style="margin: 0; font-size: 12.5px; color: var(--text-secondary);">
-                                Roteamento de eventos, triagem de severidade de erros, aprovação de pedidos, classificação de risco ou priorização de alertas. O AIJev avalia o estado atual contra opções tipadas e retorna probabilidades numéricas explicáveis, sem texto prolixo.
+                                Roteamento de eventos, triagem de severidade de erros, aprovação de pedidos,
+                                classificação de risco ou priorização de alertas. O AIJev avalia o estado atual contra
+                                opções tipadas e retorna probabilidades numéricas explicáveis, sem texto prolixo.
                             </p>
                         </div>
 
                         <!-- Etapa 3 -->
-                        <div id="aiFlowStep_generation" style="background: rgba(0,0,0,0.3); border-left: 3px solid #38bdf8; border-radius: 6px; padding: 12px 14px; transition: all 0.3s ease;">
-                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                                <strong style="color: #7dd3fc; font-size: 13.5px;">3. Precisa Gerar Linguagem? → LLM (AI GATEWAY)</strong>
-                                <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-weight: 600;">Raciocínio Aberto · Linguagem Natural</span>
+                        <div id="aiFlowStep_generation"
+                            style="background: rgba(0,0,0,0.3); border-left: 3px solid #38bdf8; border-radius: 6px; padding: 12px 14px; transition: all 0.3s ease;">
+                            <div
+                                style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                                <strong style="color: #7dd3fc; font-size: 13.5px;">3. Precisa Gerar Linguagem? → LLM (AI
+                                    GATEWAY)</strong>
+                                <span
+                                    style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-weight: 600;">Raciocínio
+                                    Aberto · Linguagem Natural</span>
                             </div>
                             <p style="margin: 0; font-size: 12.5px; color: var(--text-secondary);">
-                                Redigir e-mails, resumir históricos técnicos, sintetizar relatórios ou gerar código. Acesso via <strong>AI Gateway</strong> com provedores dinâmicos (Claude, Gemini, OpenAI, Groq, Ollama) com fallback automático, cache e observabilidade.
+                                Redigir e-mails, resumir históricos técnicos, sintetizar relatórios ou gerar código.
+                                Acesso via <strong>AI Gateway</strong> com provedores dinâmicos (Claude, Gemini, OpenAI,
+                                Groq, Ollama) com fallback automático, cache e observabilidade.
                             </p>
                         </div>
 
                         <!-- Etapa 4 -->
-                        <div id="aiFlowStep_validation" style="background: rgba(0,0,0,0.3); border-left: 3px solid #a855f7; border-radius: 6px; padding: 12px 14px; transition: all 0.3s ease;">
-                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                                <strong style="color: #d8b4fe; font-size: 13.5px;">4. Fechamento Obrigatório: VALIDAÇÃO PROGRAMÁTICA</strong>
-                                <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(168, 85, 247, 0.15); color: #c084fc; font-weight: 600;">Blindagem de Segurança</span>
+                        <div id="aiFlowStep_validation"
+                            style="background: rgba(0,0,0,0.3); border-left: 3px solid #a855f7; border-radius: 6px; padding: 12px 14px; transition: all 0.3s ease;">
+                            <div
+                                style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                                <strong style="color: #d8b4fe; font-size: 13.5px;">4. Fechamento Obrigatório: VALIDAÇÃO
+                                    PROGRAMÁTICA</strong>
+                                <span
+                                    style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(168, 85, 247, 0.15); color: #c084fc; font-weight: 600;">Blindagem
+                                    de Segurança</span>
                             </div>
                             <p style="margin: 0; font-size: 12.5px; color: var(--text-secondary);">
-                                Nenhum output produzido por LLM é gravado em disco ou executado cegamente. O resultado passa por validação determinística de schemas (JSON Schema / Zod), checagem de tipos e revisão humana de segurança.
+                                Nenhum output produzido por LLM é gravado em disco ou executado cegamente. O resultado
+                                passa por validação determinística de schemas (JSON Schema / Zod), checagem de tipos e
+                                revisão humana de segurança.
                             </p>
                         </div>
                     </div>
@@ -2101,7 +2177,8 @@
                     <div class="ai-help-table-wrap" style="overflow-x: auto;">
                         <table class="ai-help-table">
                             <thead>
-                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 12px; color: #94a3b8;">
+                                <tr
+                                    style="border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 12px; color: #94a3b8;">
                                     <th>Necessidade de Software</th>
                                     <th>Destino no Flow</th>
                                     <th>Motivo de Engenharia</th>
@@ -2144,7 +2221,9 @@
                         style="background: rgba(16, 185, 129, 0.08); border-left: 3px solid #10b981; border-radius: 6px; padding: 12px 16px; font-size: 13px; color: #34d399;">
                         <strong style="color: #6ee7b7; display: block; margin-bottom: 4px; font-size: 13.5px;">💡
                             Como Usar no Seu Dia a Dia:</strong>
-                        Ao pedir uma nova funcionalidade no chat do agente, ative a skill <code>ai-decision-gate</code>. O agente analisará a demanda e apresentará a divisão exata entre regras determinísticas, AIJev e LLM antes de escrever o código.
+                        Ao pedir uma nova funcionalidade no chat do agente, ative a skill <code>ai-decision-gate</code>.
+                        O agente analisará a demanda e apresentará a divisão exata entre regras determinísticas, AIJev e
+                        LLM antes de escrever o código.
                     </div>
                 </div>
 
@@ -2200,7 +2279,9 @@
                         <span>🧠</span> O Índice de Inteligência &amp; Governança
                     </h3>
                     <p style="margin: 0; color: var(--text-secondary);">
-                        As <strong>Métricas do Cérebro</strong> refletem o volume e a densidade de inteligência do seu workspace. Elas monitoram os 6 pilares estruturais que mantêm o desenvolvimento com IA seguro, ágil e livre de amnésia técnica entre sessões.
+                        As <strong>Métricas do Cérebro</strong> refletem o volume e a densidade de inteligência do seu
+                        workspace. Elas monitoram os 6 pilares estruturais que mantêm o desenvolvimento com IA seguro,
+                        ágil e livre de amnésia técnica entre sessões.
                     </p>
                 </div>
 
@@ -2213,68 +2294,92 @@
 
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
                         <!-- Métrica 1: Rules -->
-                        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 12px 14px;">
+                        <div
+                            style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 12px 14px;">
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
                                 <span style="font-size: 16px;">📜</span>
                                 <strong style="color: #f8fafc; font-size: 13.5px;">RULES (Regras Absolutas)</strong>
                             </div>
                             <p style="margin: 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
-                                Diretrizes invioláveis em <code>.agents/rules/</code> (Segurança, C#, SQL Server, Zero Fabricação de Contexto). O agente é obrigado a consultá-las antes de propor qualquer alteração de código.
+                                Diretrizes invioláveis em <code>.agents/rules/</code> (Segurança, C#, SQL Server, Zero
+                                Fabricação de Contexto). O agente é obrigado a consultá-las antes de propor qualquer
+                                alteração de código.
                             </p>
                         </div>
 
                         <!-- Métrica 2: Skills -->
-                        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 12px 14px;">
+                        <div
+                            style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 12px 14px;">
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
                                 <span style="font-size: 16px;">⚡</span>
-                                <strong style="color: #f8fafc; font-size: 13.5px;">SKILLS (Playbooks Operacionais)</strong>
+                                <strong style="color: #f8fafc; font-size: 13.5px;">SKILLS (Playbooks
+                                    Operacionais)</strong>
                             </div>
                             <p style="margin: 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
-                                Procedimentos padronizados em <code>.agents/skills/</code> (como <code>project-onboarding</code>, <code>new-feature</code>, <code>bug-investigation</code>, <code>session-memory</code>). Garantem processos consistentes de engenharia.
+                                Procedimentos padronizados em <code>.agents/skills/</code> (como
+                                <code>project-onboarding</code>, <code>new-feature</code>,
+                                <code>bug-investigation</code>, <code>session-memory</code>). Garantem processos
+                                consistentes de engenharia.
                             </p>
                         </div>
 
                         <!-- Métrica 3: Projects -->
-                        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 12px 14px;">
+                        <div
+                            style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 12px 14px;">
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
                                 <span style="font-size: 16px;">🚀</span>
-                                <strong style="color: #f8fafc; font-size: 13.5px;">PROJECTS (Projetos Conectados)</strong>
+                                <strong style="color: #f8fafc; font-size: 13.5px;">PROJECTS (Projetos
+                                    Conectados)</strong>
                             </div>
                             <p style="margin: 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
-                                O total de repositórios governados em <code>projects/</code> (Greenfield e Brownfield). Cada projeto mantém seus contratos (<code>PROJECT.md</code>, <code>CURRENT_STATE.md</code>) e histórico totalmente isolados.
+                                O total de repositórios governados em <code>projects/</code> (Greenfield e Brownfield).
+                                Cada projeto mantém seus contratos (<code>PROJECT.md</code>,
+                                <code>CURRENT_STATE.md</code>) e histórico totalmente isolados.
                             </p>
                         </div>
 
                         <!-- Métrica 4: Knowledge -->
-                        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 12px 14px;">
+                        <div
+                            style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 12px 14px;">
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
                                 <span style="font-size: 16px;">📚</span>
-                                <strong style="color: #f8fafc; font-size: 13.5px;">KNOWLEDGE (Base de Conhecimento)</strong>
+                                <strong style="color: #f8fafc; font-size: 13.5px;">KNOWLEDGE (Base de
+                                    Conhecimento)</strong>
                             </div>
                             <p style="margin: 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
-                                Guias conceituais e padrões arquiteturais em <code>knowledge/</code> (AI Gateway, AIJev, Seleção de Modelos). Serve de base teórica compartilhada para todos os projetos do workspace.
+                                Guias conceituais e padrões arquiteturais em <code>knowledge/</code> (AI Gateway, AIJev,
+                                Seleção de Modelos). Serve de base teórica compartilhada para todos os projetos do
+                                workspace.
                             </p>
                         </div>
 
                         <!-- Métrica 5: Decisions -->
-                        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 12px 14px;">
+                        <div
+                            style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 12px 14px;">
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
                                 <span style="font-size: 16px;">🏛️</span>
-                                <strong style="color: #f8fafc; font-size: 13.5px;">DECISIONS (ADRs Arquiteturais)</strong>
+                                <strong style="color: #f8fafc; font-size: 13.5px;">DECISIONS (ADRs
+                                    Arquiteturais)</strong>
                             </div>
                             <p style="margin: 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
-                                Registros Imutáveis de Decisões Arquiteturais em <code>DECISIONS/</code>. Registram por que uma tecnologia foi adotada, impedindo que IAs futuras revertam decisões tomadas no passado.
+                                Registros Imutáveis de Decisões Arquiteturais em <code>DECISIONS/</code>. Registram por
+                                que uma tecnologia foi adotada, impedindo que IAs futuras revertam decisões tomadas no
+                                passado.
                             </p>
                         </div>
 
                         <!-- Métrica 6: Memory -->
-                        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 12px 14px;">
+                        <div
+                            style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 12px 14px;">
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
                                 <span style="font-size: 16px;">💾</span>
-                                <strong style="color: #f8fafc; font-size: 13.5px;">MEMORY (Memória &amp; Sessões)</strong>
+                                <strong style="color: #f8fafc; font-size: 13.5px;">MEMORY (Memória &amp;
+                                    Sessões)</strong>
                             </div>
                             <p style="margin: 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
-                                Registros diários de trabalho (<code>MEMORY/sessions/</code>) e lições aprendidas (<code>LESSONS_LEARNED.md</code>). Permitem que qualquer agente retome o contexto sem perda de tempo.
+                                Registros diários de trabalho (<code>MEMORY/sessions/</code>) e lições aprendidas
+                                (<code>LESSONS_LEARNED.md</code>). Permitem que qualquer agente retome o contexto sem
+                                perda de tempo.
                             </p>
                         </div>
                     </div>
@@ -2286,7 +2391,9 @@
                         style="background: rgba(56, 189, 248, 0.08); border-left: 3px solid #38bdf8; border-radius: 6px; padding: 12px 16px; font-size: 13px; color: #38bdf8;">
                         <strong style="color: #7dd3fc; display: block; margin-bottom: 4px; font-size: 13.5px;">🔄
                             Sincronização Automática em Tempo Real:</strong>
-                        Esses contadores são computados a partir dos arquivos físicos do seu workspace e atualizados no carregamento do Cockpit. Eles alimentam diretamente os nós visíveis no <strong>Grafo Neural 3D</strong>.
+                        Esses contadores são computados a partir dos arquivos físicos do seu workspace e atualizados no
+                        carregamento do Cockpit. Eles alimentam diretamente os nós visíveis no <strong>Grafo Neural
+                            3D</strong>.
                     </div>
                 </div>
 
@@ -2384,7 +2491,8 @@
                                 <option value="custom">Endpoint Customizado (OpenAI-Compatible)</option>
                             </select>
                             <span class="ai-select-arrow" aria-hidden="true">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="6 9 12 15 18 9"></polyline>
                                 </svg>
                             </span>
@@ -2410,8 +2518,8 @@
                                         <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                                     </svg>
                                 </span>
-                                <input type="password" id="aiApiKeyInput" class="ai-key-input" placeholder="Cole sua chave aqui..."
-                                    autocomplete="new-password" spellcheck="false">
+                                <input type="password" id="aiApiKeyInput" class="ai-key-input"
+                                    placeholder="Cole sua chave aqui..." autocomplete="new-password" spellcheck="false">
                                 <button type="button" id="btnToggleAiKeyVisibility" class="btn-ai-key-eye"
                                     onclick="toggleAiKeyVisibility()" title="Mostrar/ocultar chave">
                                     <svg id="aiEyeIconSvg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -2425,8 +2533,10 @@
                             <button type="button" id="btnTestAiConnection" class="btn-ai-test-key"
                                 onclick="testCurrentAiConnection()" title="Testar e validar chave da API">
                                 <svg class="ai-key-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z" />
+                                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path
+                                        d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z" />
                                 </svg>
                             </button>
                         </div>
@@ -2435,7 +2545,8 @@
                     <!-- 3. Modelo de IA -->
                     <div class="ai-settings-section">
                         <div class="ai-step-header-row">
-                            <label class="ai-step-title" id="aiModelStepTitle" for="aiModelSelect">3. Modelo de IA</label>
+                            <label class="ai-step-title" id="aiModelStepTitle" for="aiModelSelect">3. Modelo de
+                                IA</label>
                             <button type="button" id="btnToggleManualModel" class="btn-ai-model-mode-link"
                                 onclick="toggleManualModelMode()">
                                 ✏️ Digitar ID manualmente
@@ -2448,7 +2559,8 @@
                                 <option value="">Clique em "Testar" acima para listar os modelos disponíveis...</option>
                             </select>
                             <span class="ai-select-arrow" aria-hidden="true">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="6 9 12 15 18 9"></polyline>
                                 </svg>
                             </span>
@@ -2479,11 +2591,14 @@
                                         </div>
                                     </div>
                                     <div class="ai-param-detail-input-wrap">
-                                        <input type="text" id="aiCacheHoursInput" class="ai-param-input" value="24h" placeholder="24h" maxlength="5" autocomplete="off" spellcheck="false" title="Tempo de vida do cache em horas (ex: 24h, mín. 1h, máx. 720h)">
+                                        <input type="text" id="aiCacheHoursInput" class="ai-param-input" value="24h"
+                                            placeholder="24h" maxlength="5" autocomplete="off" spellcheck="false"
+                                            title="Tempo de vida do cache em horas (ex: 24h, mín. 1h, máx. 720h)">
                                     </div>
                                 </div>
                                 <p class="ai-param-detail-desc">
-                                    Respostas de prompts idênticos são guardadas em memória pelo período configurado. Poupa tokens da sua cota e entrega sínteses repetidas com latência zero (0ms).
+                                    Respostas de prompts idênticos são guardadas em memória pelo período configurado.
+                                    Poupa tokens da sua cota e entrega sínteses repetidas com latência zero (0ms).
                                 </p>
                             </div>
 
@@ -2497,11 +2612,14 @@
                                         </div>
                                     </div>
                                     <div class="ai-param-detail-input-wrap">
-                                        <input type="number" id="aiMaxRetriesInput" class="ai-param-input" value="2" min="0" max="5" step="1" autocomplete="off" title="Tentativas automáticas em caso de erro 429 (0 a 5)">
+                                        <input type="number" id="aiMaxRetriesInput" class="ai-param-input" value="2"
+                                            min="0" max="5" step="1" autocomplete="off"
+                                            title="Tentativas automáticas em caso de erro 429 (0 a 5)">
                                     </div>
                                 </div>
                                 <p class="ai-param-detail-desc">
-                                    Em instabilidades de rede ou saturação momentânea (<code>HTTP 429</code>), o Gateway efetua tentativas adicionais com backoff exponencial antes de falhar.
+                                    Em instabilidades de rede ou saturação momentânea (<code>HTTP 429</code>), o Gateway
+                                    efetua tentativas adicionais com backoff exponencial antes de falhar.
                                 </p>
                             </div>
                         </div>
@@ -2551,7 +2669,9 @@
                     </div>
                     <div class="ai-card-body-content">
                         <p class="ai-card-body-text">
-                            <strong>Armazenamento 100% Local &amp; Seguro</strong> — Sua chave de API é gravada exclusivamente no arquivo <code>.env</code> local na máquina. Zero envio a servidores intermediários e protegida no <code>.gitignore</code>.
+                            <strong>Armazenamento 100% Local &amp; Seguro</strong> — Sua chave de API é gravada
+                            exclusivamente no arquivo <code>.env</code> local na máquina. Zero envio a servidores
+                            intermediários e protegida no <code>.gitignore</code>.
                         </p>
                         <ul class="ai-card-features-list">
                             <li><span>🛡️ Chaves blindadas sem telemetria em nuvem</span></li>
@@ -2573,7 +2693,8 @@
                     </div>
                     <div class="ai-card-body-content">
                         <p class="ai-card-body-text">
-                            <strong>O que a IA fará no Workspace</strong> — Auxilia em pesquisas conceituais e síntese de especificações no Research Lab com rígido controle arquitetural.
+                            <strong>O que a IA fará no Workspace</strong> — Auxilia em pesquisas conceituais e síntese
+                            de especificações no Research Lab com rígido controle arquitetural.
                         </p>
                         <ul class="ai-card-features-list">
                             <li><span>🔬 Geração autônoma de especificações e artigos técnicos</span></li>
@@ -2622,30 +2743,40 @@
     </div>
 
     <!-- Modal: Pergunte ao Cérebro (Ask the Brain — Q&A Semântico & Citações) -->
-    <div id="askBrainModal" class="ask-brain-modal-backdrop" style="display: none;" onclick="handleAskBrainBackdrop(event)">
+    <div id="askBrainModal" class="ask-brain-modal-backdrop" style="display: none;"
+        onclick="handleAskBrainBackdrop(event)">
         <div class="ask-brain-modal-card" role="dialog" aria-modal="true" aria-labelledby="askBrainTitle">
             <div class="ask-brain-header">
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <span class="ask-brain-badge">AI VAULT Q&amp;A</span>
-                    <h3 id="askBrainTitle" style="font-size: 15px; font-weight: 700; color: #ffffff; margin: 0;">Pergunte ao Cérebro</h3>
+                    <h3 id="askBrainTitle" style="font-size: 15px; font-weight: 700; color: #ffffff; margin: 0;">
+                        Pergunte ao Cérebro</h3>
                 </div>
                 <div class="ask-brain-header-actions">
-                    <button type="button" class="ask-brain-help-btn" onclick="openAskBrainHelpModal()" title="Entenda a inteligência do ranking e arquitetura RAG">
+                    <button type="button" class="ask-brain-help-btn" onclick="openAskBrainHelpModal()"
+                        title="Entenda a inteligência do ranking e arquitetura RAG">
                         <span class="ask-help-qmark">?</span>
                         <span>Como Funciona</span>
                     </button>
                     <span class="ask-brain-shortcut-hint">ESC para fechar</span>
-                    <button type="button" class="ask-brain-close-btn" onclick="closeAskBrainModal()" title="Fechar (Esc)">✕</button>
+                    <button type="button" class="ask-brain-close-btn" onclick="closeAskBrainModal()"
+                        title="Fechar (Esc)">✕</button>
                 </div>
             </div>
 
             <div class="ask-brain-input-container">
                 <div class="ask-brain-input-wrapper">
                     <span class="ask-brain-input-icon">✨</span>
-                    <input type="text" id="askBrainQueryInput" class="ask-brain-query-input" placeholder="Faça uma pergunta sobre projetos, decisões, regras ou lições aprendidas..." autocomplete="off">
-                    <button type="button" id="btnAskBrainSubmit" class="btn-ask-brain-submit" onclick="submitAskBrainQuery()">
+                    <input type="text" id="askBrainQueryInput" class="ask-brain-query-input"
+                        placeholder="Faça uma pergunta sobre projetos, decisões, regras ou lições aprendidas..."
+                        autocomplete="off">
+                    <button type="button" id="btnAskBrainSubmit" class="btn-ask-brain-submit"
+                        onclick="submitAskBrainQuery()">
                         <span>Perguntar</span>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
                     </button>
                 </div>
 
@@ -2658,7 +2789,8 @@
                     </div>
                     <div class="ask-brain-selector-group">
                         <label for="askBrainCategorySelect" class="ask-scope-label">🏷️ Categoria:</label>
-                        <select id="askBrainCategorySelect" class="ask-scope-select ask-cat-select" onchange="setAskBrainCategory(this.value)">
+                        <select id="askBrainCategorySelect" class="ask-scope-select ask-cat-select"
+                            onchange="setAskBrainCategory(this.value)">
                             <option value="all">Todas as Categorias</option>
                             <option value="decision">⚖️ ADRs (Decisões Arquiteturais)</option>
                             <option value="research">🔬 Research Lab (Pesquisas)</option>
@@ -2672,7 +2804,8 @@
                 <div class="ask-brain-recents-row" id="askBrainRecentsRow" style="display: none;">
                     <span class="ask-recents-label">🕒 Recentes:</span>
                     <div class="ask-recents-list" id="askBrainRecentsList"></div>
-                    <button type="button" class="ask-recents-clear-btn" onclick="clearAskBrainRecents()" title="Limpar buscas recentes">✕</button>
+                    <button type="button" class="ask-recents-clear-btn" onclick="clearAskBrainRecents()"
+                        title="Limpar buscas recentes">✕</button>
                 </div>
             </div>
 
@@ -2681,7 +2814,9 @@
                 <div id="askBrainEmptyState" class="ask-brain-empty-state">
                     <div class="ask-empty-icon">🧠✨</div>
                     <h3>Inteligência Cognitiva do Segundo Cérebro</h3>
-                    <p>Pesquise decisões arquiteturais (ADRs), regras determinísticas, lições aprendidas e estado de todos os projetos conectados com citação direta de fontes e <strong>Zero Fabricação</strong>.</p>
+                    <p>Pesquise decisões arquiteturais (ADRs), regras determinísticas, lições aprendidas e estado de
+                        todos os projetos conectados com citação direta de fontes e <strong>Zero Fabricação</strong>.
+                    </p>
                 </div>
 
                 <!-- Loading State (hidden initially) -->
@@ -2708,7 +2843,8 @@
                             <span style="font-weight: 700; display: flex; align-items: center; gap: 6px;">
                                 <span>💡</span> Resposta Sintetizada
                             </span>
-                            <button type="button" class="ask-copy-answer-btn" onclick="copyAskBrainAnswer(this)">📋 Copiar Resposta</button>
+                            <button type="button" class="ask-copy-answer-btn" onclick="copyAskBrainAnswer(this)">📋
+                                Copiar Resposta</button>
                         </div>
                         <div id="askAnswerContent" class="ask-answer-content markdown-body"></div>
                     </div>
@@ -2726,14 +2862,17 @@
     </div>
 
     <!-- Modal: Como Funciona a Busca Cognitiva (Arquitetura RAG & Ranking) -->
-    <div id="askBrainHelpModal" class="ask-brain-help-backdrop" style="display: none;" onclick="handleAskBrainHelpBackdrop(event)">
+    <div id="askBrainHelpModal" class="ask-brain-help-backdrop" style="display: none;"
+        onclick="handleAskBrainHelpBackdrop(event)">
         <div class="ask-brain-help-card" role="dialog" aria-modal="true" aria-labelledby="askBrainHelpTitle">
             <div class="ask-brain-help-header">
                 <div class="ask-brain-help-title-group">
                     <span class="ask-brain-badge">ARQUITETURA &amp; RAG</span>
-                    <h3 id="askBrainHelpTitle" style="font-size: 15px; font-weight: 700; color: #ffffff; margin: 0;">Como Funciona a Busca Cognitiva</h3>
+                    <h3 id="askBrainHelpTitle" style="font-size: 15px; font-weight: 700; color: #ffffff; margin: 0;">
+                        Como Funciona a Busca Cognitiva</h3>
                 </div>
-                <button type="button" class="ask-brain-close-btn" onclick="closeAskBrainHelpModal()" title="Voltar ao Pergunte ao Cérebro (Esc)">✕</button>
+                <button type="button" class="ask-brain-close-btn" onclick="closeAskBrainHelpModal()"
+                    title="Voltar ao Pergunte ao Cérebro (Esc)">✕</button>
             </div>
 
             <div class="ask-brain-help-body">
@@ -2743,12 +2882,16 @@
                         <span>🧠 1. Existe inteligência para classificar os arquivos?</span>
                     </h4>
                     <p class="ask-help-sec-desc">
-                        <strong>Sim, e ela é multifatorial e determinística.</strong> O motor em <code>scripts/brain-search.js</code> não faz um simples <code>indexOf()</code>. Ele implementa uma adaptação de <strong>TF-IDF / BM25</strong> combinada com <strong>pesos semânticos de arquitetura</strong>:
+                        <strong>Sim, e ela é multifatorial e determinística.</strong> O motor em
+                        <code>scripts/brain-search.js</code> não faz um simples <code>indexOf()</code>. Ele implementa
+                        uma adaptação de <strong>TF-IDF / BM25</strong> combinada com <strong>pesos semânticos de
+                            arquitetura</strong>:
                     </p>
 
                     <!-- A. Multiplicadores de Governança -->
                     <div style="margin-bottom: 14px;">
-                        <div style="font-size: 12px; font-weight: 700; color: #d8b4fe; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
+                        <div
+                            style="font-size: 12px; font-weight: 700; color: #d8b4fe; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
                             A. Multiplicadores por Autoridade de Governança
                         </div>
                         <div class="ask-help-grid">
@@ -2757,71 +2900,85 @@
                                     <span class="ask-help-pill-name">⚖️ ADRs &amp; Decisões</span>
                                     <span class="ask-help-weight-badge">2.4x</span>
                                 </div>
-                                <span class="ask-help-pill-desc">Decisões arquiteturais oficiais têm prioridade máxima absoluta no cofre.</span>
+                                <span class="ask-help-pill-desc">Decisões arquiteturais oficiais têm prioridade máxima
+                                    absoluta no cofre.</span>
                             </div>
                             <div class="ask-help-pill-item">
                                 <div class="ask-help-pill-header">
                                     <span class="ask-help-pill-name">🟢 Estado Atual</span>
                                     <span class="ask-help-weight-badge">2.2x</span>
                                 </div>
-                                <span class="ask-help-pill-desc"><code>CURRENT_STATE.md</code> reflete exatamente o que está rodando agora.</span>
+                                <span class="ask-help-pill-desc"><code>CURRENT_STATE.md</code> reflete exatamente o que
+                                    está rodando agora.</span>
                             </div>
                             <div class="ask-help-pill-item">
                                 <div class="ask-help-pill-header">
                                     <span class="ask-help-pill-name">📦 Contratos &amp; Lições</span>
                                     <span class="ask-help-weight-badge">2.0x</span>
                                 </div>
-                                <span class="ask-help-pill-desc"><code>PROJECT.md</code>, <code>ARCHITECTURE.md</code> e <code>LESSONS_LEARNED.md</code>.</span>
+                                <span class="ask-help-pill-desc"><code>PROJECT.md</code>, <code>ARCHITECTURE.md</code> e
+                                    <code>LESSONS_LEARNED.md</code>.</span>
                             </div>
                             <div class="ask-help-pill-item">
                                 <div class="ask-help-pill-header">
                                     <span class="ask-help-pill-name">🛡️ Regras Universais</span>
                                     <span class="ask-help-weight-badge">1.8x</span>
                                 </div>
-                                <span class="ask-help-pill-desc">Diretrizes em <code>.agents/rules/</code> e governança determinística.</span>
+                                <span class="ask-help-pill-desc">Diretrizes em <code>.agents/rules/</code> e governança
+                                    determinística.</span>
                             </div>
                             <div class="ask-help-pill-item">
                                 <div class="ask-help-pill-header">
                                     <span class="ask-help-pill-name">🛠️ Specs Acionáveis</span>
                                     <span class="ask-help-weight-badge">1.5x</span>
                                 </div>
-                                <span class="ask-help-pill-desc">Códigos e schemas em <code>RESEARCH/.../actionable/</code>.</span>
+                                <span class="ask-help-pill-desc">Códigos e schemas em
+                                    <code>RESEARCH/.../actionable/</code>.</span>
                             </div>
                             <div class="ask-help-pill-item">
                                 <div class="ask-help-pill-header">
                                     <span class="ask-help-pill-name">🔬 Pesquisas Gerais</span>
                                     <span class="ask-help-weight-badge">1.0x</span>
                                 </div>
-                                <span class="ask-help-pill-desc">Fundamentos conceituais em <code>knowledge/</code> do Research Lab.</span>
+                                <span class="ask-help-pill-desc">Fundamentos conceituais em <code>knowledge/</code> do
+                                    Research Lab.</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- B. Pontuação por Posição Estrutural -->
                     <div>
-                        <div style="font-size: 12px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
+                        <div
+                            style="font-size: 12px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">
                             B. Pontuação por Posição Estrutural no Documento
                         </div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px;">
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px;">
                             <div class="ask-help-rule-row">
                                 <span class="ask-help-rule-tag">+90 / +70 pts</span>
-                                <span class="ask-help-rule-text"><strong>Match Exato da Pergunta</strong>: Se a frase inteira bater no título (+90) ou no corpo (+70).</span>
+                                <span class="ask-help-rule-text"><strong>Match Exato da Pergunta</strong>: Se a frase
+                                    inteira bater no título (+90) ou no corpo (+70).</span>
                             </div>
                             <div class="ask-help-rule-row">
                                 <span class="ask-help-rule-tag">+45 pts</span>
-                                <span class="ask-help-rule-text"><strong>Cabeçalhos Markdown (# H1, ## H2)</strong>: Se o termo for título de seção, o documento dedica um capítulo inteiro àquele tema.</span>
+                                <span class="ask-help-rule-text"><strong>Cabeçalhos Markdown (# H1, ## H2)</strong>: Se
+                                    o termo for título de seção, o documento dedica um capítulo inteiro àquele
+                                    tema.</span>
                             </div>
                             <div class="ask-help-rule-row">
                                 <span class="ask-help-rule-tag">+40 / +20 pts</span>
-                                <span class="ask-help-rule-text"><strong>Nome do Arquivo</strong>: +40 se for idêntico ao termo, +20 se contiver a palavra.</span>
+                                <span class="ask-help-rule-text"><strong>Nome do Arquivo</strong>: +40 se for idêntico
+                                    ao termo, +20 se contiver a palavra.</span>
                             </div>
                             <div class="ask-help-rule-row">
                                 <span class="ask-help-rule-tag">+35 pts</span>
-                                <span class="ask-help-rule-text"><strong>Bônus de Cobertura Total</strong>: Documentos que cobrem todas as palavras digitadas pelo desenvolvedor.</span>
+                                <span class="ask-help-rule-text"><strong>Bônus de Cobertura Total</strong>: Documentos
+                                    que cobrem todas as palavras digitadas pelo desenvolvedor.</span>
                             </div>
                             <div class="ask-help-rule-row">
                                 <span class="ask-help-rule-tag">+4 pts / un</span>
-                                <span class="ask-help-rule-text"><strong>Frequência no Corpo</strong>: 4 pts por ocorrência (com teto anti-spam para evitar viés).</span>
+                                <span class="ask-help-rule-text"><strong>Frequência no Corpo</strong>: 4 pts por
+                                    ocorrência (com teto anti-spam para evitar viés).</span>
                             </div>
                         </div>
                     </div>
@@ -2833,16 +2990,23 @@
                         <span>🎯 2. Por que a síntese foca nos primeiros documentos (Top 5 a 7)?</span>
                     </h4>
                     <p class="ask-help-sec-desc">
-                        Essa calibração é o <strong>padrão ouro em engenharia RAG (Retrieval-Augmented Generation)</strong> por três razões fundamentais:
+                        Essa calibração é o <strong>padrão ouro em engenharia RAG (Retrieval-Augmented
+                            Generation)</strong> por três razões fundamentais:
                     </p>
 
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <div class="ask-help-rag-reason">
                             <div class="ask-help-rag-badge">MOTIVO A</div>
                             <div>
-                                <strong style="color: #f1f5f9;">O Efeito "Lost in the Middle" dos Modelos de IA:</strong>
-                                <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
-                                    Pesquisas acadêmicas consagradas (Stanford e Anthropic) comprovaram que ao enviar 15 ou 20 documentos a um LLM de uma vez só, o modelo foca apenas nos primeiros 2 e no último, ignorando ou alucinando sobre os dados do meio. Com <strong>3 a 5 fontes densas e focadas</strong>, a IA atinge o pico de precisão com <strong>Zero Fabricação</strong>.
+                                <strong style="color: #f1f5f9;">O Efeito "Lost in the Middle" dos Modelos de
+                                    IA:</strong>
+                                <p
+                                    style="margin: 4px 0 0 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
+                                    Pesquisas acadêmicas consagradas (Stanford e Anthropic) comprovaram que ao enviar 15
+                                    ou 20 documentos a um LLM de uma vez só, o modelo foca apenas nos primeiros 2 e no
+                                    último, ignorando ou alucinando sobre os dados do meio. Com <strong>3 a 5 fontes
+                                        densas e focadas</strong>, a IA atinge o pico de precisão com <strong>Zero
+                                        Fabricação</strong>.
                                 </p>
                             </div>
                         </div>
@@ -2851,8 +3015,12 @@
                             <div class="ask-help-rag-badge">MOTIVO B</div>
                             <div>
                                 <strong style="color: #f1f5f9;">Janela de Contexto, Latência e Custo:</strong>
-                                <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
-                                    Cada snippet do cofre é calibrado com 800 a 1.400 caracteres (ancorado em cabeçalhos para não truncar código ou listas). 5 trechos somam ~1.800 tokens de contexto, gerando respostas ultrarrápidas (~1.2s). Enviar 15 trechos elevaria a latência para 5s a 7s e esgotaria cotas (TPM).
+                                <p
+                                    style="margin: 4px 0 0 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
+                                    Cada snippet do cofre é calibrado com 800 a 1.400 caracteres (ancorado em cabeçalhos
+                                    para não truncar código ou listas). 5 trechos somam ~1.800 tokens de contexto,
+                                    gerando respostas ultrarrápidas (~1.2s). Enviar 15 trechos elevaria a latência para
+                                    5s a 7s e esgotaria cotas (TPM).
                                 </p>
                             </div>
                         </div>
@@ -2861,8 +3029,11 @@
                             <div class="ask-help-rag-badge">MOTIVO C</div>
                             <div>
                                 <strong style="color: #f1f5f9;">Carga Cognitiva e Ergonomia do Desenvolvedor:</strong>
-                                <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
-                                    O objetivo é tirar uma dúvida de arquitetura em menos de 30 segundos no meio do código. Exibir 15 blocos longos criaria uma "parede de texto" que poluiria o fluxo de trabalho.
+                                <p
+                                    style="margin: 4px 0 0 0; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
+                                    O objetivo é tirar uma dúvida de arquitetura em menos de 30 segundos no meio do
+                                    código. Exibir 15 blocos longos criaria uma "parede de texto" que poluiria o fluxo
+                                    de trabalho.
                                 </p>
                             </div>
                         </div>
@@ -2870,19 +3041,28 @@
                 </div>
 
                 <!-- Seção 3: Progressive Disclosure Ativo -->
-                <div class="ask-brain-help-section" style="border-color: rgba(34, 197, 94, 0.3); background: rgba(34, 197, 94, 0.03);">
+                <div class="ask-brain-help-section"
+                    style="border-color: rgba(34, 197, 94, 0.3); background: rgba(34, 197, 94, 0.03);">
                     <h4 class="ask-help-sec-title" style="color: #4ade80;">
                         <span>✨ 3. Progressive Disclosure (O Melhor dos Dois Mundos)</span>
                     </h4>
                     <p class="ask-help-sec-desc" style="margin-bottom: 0;">
-                        O sistema une o <strong>foco analítico da IA</strong> à <strong>liberdade de exploração do dev</strong>:
-                        o motor busca até <strong>12 documentos relevantes</strong>. A IA formula a resposta baseada nos mais densos (com badge <span class="ask-source-badge-synth" style="display:inline-block; padding:1px 6px;">Citada na Síntese</span>), e você pode abrir o botão <strong>"📄 Ver mais N fontes encontradas (+N)"</strong> para inspecionar todos os documentos correlacionados com 1 clique (com badge <span class="ask-source-badge-extra" style="display:inline-block; padding:1px 6px;">Fonte Adicional</span>), abrindo no editor ou focando no Grafo Neural 3D.
+                        O sistema une o <strong>foco analítico da IA</strong> à <strong>liberdade de exploração do
+                            dev</strong>:
+                        o motor busca até <strong>12 documentos relevantes</strong>. A IA formula a resposta baseada nos
+                        mais densos (com badge <span class="ask-source-badge-synth"
+                            style="display:inline-block; padding:1px 6px;">Citada na Síntese</span>), e você pode abrir
+                        o botão <strong>"📄 Ver mais N fontes encontradas (+N)"</strong> para inspecionar todos os
+                        documentos correlacionados com 1 clique (com badge <span class="ask-source-badge-extra"
+                            style="display:inline-block; padding:1px 6px;">Fonte Adicional</span>), abrindo no editor ou
+                        focando no Grafo Neural 3D.
                     </p>
                 </div>
             </div>
 
             <div class="ask-brain-help-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeAskBrainHelpModal()" style="font-size: 12.5px; padding: 7px 16px;">
+                <button type="button" class="btn btn-secondary" onclick="closeAskBrainHelpModal()"
+                    style="font-size: 12.5px; padding: 7px 16px;">
                     ← Voltar ao Pergunte ao Cérebro
                 </button>
             </div>

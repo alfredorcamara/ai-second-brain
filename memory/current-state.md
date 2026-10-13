@@ -21,6 +21,12 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 
 ## Sessões Recentes
 - **Data**: 2026-10-13
+  - **Redesign Minimalista do Cabeçalho do Project Workspace (Abertura Nativa & Zero Poluição)**:
+    - **Remoção de Dropdowns Arbitrários**: Eliminado o split button e o catálogo fixo de IDEs, adotando uma abordagem limpa e agnóstica de ferramenta.
+    - **Abertura Nativa via Hiperlink**: A linha de caminho do projeto foi simplificada para `📂 [caminho]`, atuando como um hiperlink que aciona o Explorador de Arquivos nativo (`explorer.exe`) ao clicar.
+    - **Limpeza do Cabeçalho Superior**: Removido o botão redundante `📄 Ver Markdown`, concentrando as ações do topo unicamente no essencial `🧠 Dashboard Geral`.
+    - **Alinhamento das Ações**: O botão `📋 Copiar Caminho` foi posicionado imediatamente à esquerda de `✨ Copiar Prompt para Agente`.
+    - **Paridade Absoluta 100%**: Sincronizado integralmente entre `docs/brain-ui/` e `docs/brain-ui/demo/` (`index.html`, `app.js`, `style.css`).
   - **Implementação da Toolbar de Governança de Projetos (Busca em Tempo Real, Filtros Dinâmicos e Ordenação)**:
     - **Toolbar Executiva em Dark Glassmorphism (`.proj-toolbar-wrap`)**:
       - Adicionada barra de controles integrada entre o cabeçalho de *Projetos Sob Governança* e a grade de cards (`#dynamicProjectsSlot`), com fundo translúcido (`rgba(20, 24, 38, 0.75)`), blur de 14px, bordas suaves e acentos luminosos em índigo/esmeralda.

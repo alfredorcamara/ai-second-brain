@@ -1939,6 +1939,7 @@ body {
         opacity: 0;
         transform: translateY(8px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -2386,10 +2387,10 @@ body {
     min-width: 140px;
     cursor: pointer;
     transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-                filter 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-                border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-                background 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        filter 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        background 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     user-select: none;
 }
 
@@ -2484,10 +2485,12 @@ body {
         box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.55);
         outline: 2px solid rgba(168, 85, 247, 0.85);
     }
+
     50% {
         box-shadow: 0 0 18px 4px rgba(168, 85, 247, 0.45);
         outline: 2px solid rgba(192, 132, 252, 1);
     }
+
     100% {
         box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
         outline: 2px solid transparent;
@@ -3924,7 +3927,7 @@ body {
     padding: 24px 28px 0;
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(99, 102, 241, 0.12);
     position: relative;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .pw-header-card::before {
@@ -3935,6 +3938,8 @@ body {
     right: 0;
     height: 3px;
     background: var(--gradient-primary);
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
 }
 
 .pw-header-top {
@@ -3969,7 +3974,7 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 6px;
+    margin-top: 6px;
     flex-wrap: wrap;
 }
 
@@ -4012,18 +4017,42 @@ body {
 .pw-path-row {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     background: rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 8px;
-    padding: 8px 14px;
+    padding: 8px 8px;
     margin-bottom: 20px;
     flex-wrap: wrap;
 }
 
-.pw-path-label {
-    font-size: 12px;
-    color: var(--text-tertiary);
+.pw-path-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 6px;
+    padding: 3px 8px;
+    margin-left: -6px;
+    transition: all var(--transition-fast);
+}
+
+.pw-path-link:hover {
+    background: rgba(99, 102, 241, 0.12);
+}
+
+.pw-path-icon {
+    font-size: 15px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--transition-fast);
+}
+
+.pw-path-link:hover .pw-path-icon {
+    transform: scale(1.18);
 }
 
 .pw-path-code {
@@ -4033,6 +4062,20 @@ body {
     background: transparent;
     padding: 0;
     word-break: break-all;
+    transition: color var(--transition-fast);
+}
+
+.pw-path-link:hover .pw-path-code {
+    color: #ffffff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.pw-path-actions {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .pw-copy-btn {
@@ -4041,16 +4084,33 @@ body {
     color: var(--text-secondary);
     font-size: 11px;
     font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 4px;
+    padding: 4px 10px;
+    border-radius: 6px;
     cursor: pointer;
-    margin-left: auto;
     transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
 }
 
 .pw-copy-btn:hover {
     background: var(--accent-primary);
     color: #fff;
+    border-color: var(--accent-primary);
+}
+
+.pw-copy-btn.pw-prompt-btn {
+    background: rgba(99, 102, 241, 0.12);
+    border-color: rgba(99, 102, 241, 0.25);
+    color: var(--accent-tertiary);
+}
+
+.pw-copy-btn.pw-prompt-btn:hover {
+    background: var(--accent-primary);
+    color: #ffffff;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.35);
 }
 
 /* Tabs Bar */
@@ -4066,7 +4126,7 @@ body {
     border: none;
     border-bottom: 2px solid transparent;
     color: var(--text-secondary);
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     padding: 12px 18px;
     cursor: pointer;
@@ -10707,7 +10767,181 @@ body::-webkit-scrollbar-thumb:hover {
     }
 }
 
-/* ── UX Enhancements: IDE Launcher & Prompt Bootstrap ───────── */
+/* ── UX Enhancements: Unified IDE Launcher (Split Button & Dropdown) ── */
+.pw-ide-dropdown-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    z-index: 100;
+}
+
+.pw-ide-split-btn {
+    display: inline-flex;
+    align-items: stretch;
+    border-radius: 6px;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid var(--border-color);
+    box-sizing: border-box;
+    transition: all var(--transition-fast);
+    overflow: hidden;
+}
+
+.pw-ide-split-btn:hover {
+    background: rgba(99, 102, 241, 0.18);
+    border-color: var(--border-hover);
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.25);
+}
+
+.pw-ide-split-btn .pw-ide-main-btn {
+    border: none !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    padding: 5px 9px !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    color: var(--accent-tertiary) !important;
+    cursor: pointer;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    transition: all var(--transition-fast);
+}
+
+.pw-ide-split-btn .pw-ide-main-btn:hover {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.pw-ide-split-btn .pw-ide-arrow-btn {
+    border: none !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    padding: 5px 7px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px !important;
+    color: var(--text-secondary) !important;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.pw-ide-split-btn .pw-ide-arrow-btn:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+}
+
+.pw-ide-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 240px;
+    background: #111422;
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    border-radius: 8px;
+    padding: 6px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 24px rgba(99, 102, 241, 0.25);
+    z-index: 99999;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    animation: fadeInIdeMenu 0.15s ease-out;
+}
+
+@keyframes fadeInIdeMenu {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pw-ide-menu-header {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+    padding: 6px 8px 4px;
+}
+
+.pw-ide-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 7px 9px;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s ease;
+    box-sizing: border-box;
+}
+
+.pw-ide-menu-item:hover {
+    background: rgba(99, 102, 241, 0.18);
+    color: #ffffff;
+}
+
+.pw-ide-menu-item.active {
+    background: rgba(99, 102, 241, 0.14);
+    color: #c4b5fd;
+    font-weight: 600;
+}
+
+.pw-ide-item-icon {
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.pw-ide-item-label {
+    flex: 1;
+}
+
+.pw-ide-item-tag {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #34d399;
+}
+
+.pw-ide-menu-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.07);
+    margin: 4px 0;
+}
+
+.pw-ide-default-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    padding: 6px 8px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.pw-ide-default-toggle input[type="checkbox"] {
+    accent-color: #6366f1;
+    cursor: pointer;
+}
+
 .pw-ide-actions {
     display: inline-flex;
     align-items: center;

@@ -160,3 +160,12 @@
 3. **Feedback Ativo e Rotativo em Chamadas Longas de IA**: Inferências de IA para síntese de documentos levam de 1,5 a 5 segundos. Um spinner estático gera insegurança de que a aplicação travou. Substituir por mensagens rotativas sincronizadas com as fases de trabalho ("Lendo commits...", "Cruzando contratos...", "Sintetizando resumo...") transmite transparência e melhora a percepção de performance.
 **Ação**: Sempre fornecer atalhos de abertura no ambiente local do usuário, prompts de início pré-parametrizados e indicadores de progresso com mensagens de estado dinâmicas em todas as operações de inferência.
 
+---
+
+## 2026-10-13 — Ergonomia de Ferramentas Locais & Abertura Nativa
+
+### Lição 21: Evitar catálogos opinativos de software quando o SO já resolve nativamente
+**Contexto**: O cabeçalho do Workspace de Projetos continha um split button com menu suspenso de 6 editores de código (VS Code, Cursor, Antigravity, Windsurf, JetBrains, Explorer).
+**Aprendizado**: Catálogos estáticos ou semi-estáticos de IDEs sempre parecem arbitrários ou incompletos diante da diversidade de ferramentas do mercado (Neovim, Zed, Sublime, Visual Studio, etc.) e trazem complexidade desnecessária para web apps locais (menus suspensos que podem sofrer clipping de overflow, detecção frágil de CLIs no PATH e necessidade de persistência de preferências). Um único hiperlink nativo com ícone de pasta (`📂`) que aciona o Explorador de Arquivos do sistema operacional (`Invoke-Item` / `explorer.exe`) reduz a poluição visual a zero e dá liberdade irrestrita para o desenvolvedor abrir o projeto com qualquer ferramenta através do menu de contexto nativo do SO.
+**Ação**: Priorize abertura nativa pelo explorador de arquivos e caminhos copiáveis (`Clipboard`) em vez de construir lançadores embutidos com listas de aplicativos.
+
