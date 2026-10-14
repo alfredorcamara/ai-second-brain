@@ -649,10 +649,53 @@ window.alert = function(msg) {
     }
 };
 
+// ── Synaptic Boot HUD Controller (Efeito UAU) ───────
+function updateBootProgress(percent, message, activeDotId) {
+    const fill = document.getElementById('brainBootProgressFill');
+    const stepText = document.getElementById('brainBootStepText');
+    const pctText = document.getElementById('brainBootPercentText');
+
+    if (fill) fill.style.width = `${Math.min(100, Math.max(0, percent))}%`;
+    if (stepText && message) stepText.textContent = message;
+    if (pctText) pctText.textContent = `${Math.round(percent)}%`;
+
+    if (activeDotId) {
+        const dot = document.getElementById(activeDotId);
+        if (dot) dot.classList.add('active');
+    }
+}
+
+async function dismissBootScreen() {
+    const overlay = document.getElementById('brainBootOverlay');
+    if (!overlay) return;
+
+    updateBootProgress(100, 'Sinapses prontas. Bem-vindo!', 'bootTelDotAI');
+    await new Promise(r => setTimeout(r, 260));
+
+    overlay.classList.add('boot-fade-out');
+    setTimeout(() => {
+        if (overlay && overlay.parentNode) {
+            overlay.style.display = 'none';
+        }
+    }, 550);
+}
+
 // ── Initialize ────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Initialize Dynamic Vault (Live Server -> Folder -> Snapshot)
+    // 0. Synaptic Boot HUD (Feedback imediato com estética premium)
+    updateBootProgress(20, 'Carregando cofre neural e contratos...');
+
+    // 1. Instant Pre-Render (0ms) a partir do Snapshot em memória
+    // Menu e Projetos são montados imediatamente por trás do HUD, eliminando qualquer tela em branco
+    if (window.VAULT && window.VAULT.data) {
+        buildSidebar();
+        buildStats();
+        renderDashboardProjects();
+    }
+
+    // 2. Conexão ao vivo com o servidor (/api/vault)
     if (window.VAULT) {
+        updateBootProgress(55, 'Conectando ao cofre ao vivo (/api/vault)...', 'bootTelDotVault');
         await window.VAULT.init();
         window.VAULT.onVaultUpdated = (info) => {
             console.log('🔄 [App] Recarregando interface após atualização do Vault:', info);
@@ -660,13 +703,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
     }
 
-    // 2. Build UI from Vault data
+    // 3. Atualiza componentes com os dados mais recentes do disco
+    updateBootProgress(85, 'Sincronizando projetos sob governança e telemetria...', 'bootTelDotContracts');
     buildSidebar();
     buildStats();
     renderDashboardProjects();
     initGraph();
     setupEventListeners();
     setupSearch();
+
     try {
         const engineRes = await fetch('/api/engine/current');
         if (engineRes.ok) {
@@ -677,11 +722,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     } catch (e) {}
     onAiEngineChange(getSelectedAiEngine(), true);
+
     if (window.location.hash === '#graph' || window.location.search.includes('view=graph')) {
         showView('graph');
     } else {
         showDashboard();
     }
+
+    // 4. Conclui com animação cinematográfica suave
+    await dismissBootScreen();
 });
 
 // ── Sidebar ───────────────────────────────────────

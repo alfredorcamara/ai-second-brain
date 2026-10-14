@@ -21,6 +21,20 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 
 ## Sessões Recentes
 - **Data**: 2026-10-14
+  - **Experiência de Carregamento & Percepção de Performance (Synaptic Boot HUD & Instant Pre-Render)**:
+    - **Diagnóstico da Percepção de Lentidão**:
+      - Identificado que o carregamento da página aguardava a resposta de rede do endpoint assíncrono `/api/vault` antes de chamar `buildSidebar()`, `buildStats()` e `renderDashboardProjects()`. Durante esse intervalo de 300-800ms, o usuário deparava-se com o menu e a área de projetos completamente em branco e sem feedback, criando a falsa impressão de que a plataforma era lenta.
+    - **Instant Pre-Render a 0ms (Zero Tela em Branco)**:
+      - O constructor de `VaultManager` (`vault.js`) agora carrega síncronamente os dados do snapshot estático (`window.VAULT_SNAPSHOT`) assim que o script é instanciado.
+      - No evento `DOMContentLoaded` (`app.js`), o menu lateral, métricas do cérebro e cards de projetos são montados e desenhados a 0ms, garantindo que o DOM já esteja 100% pronto e pintado em segundo plano.
+    - **Synaptic Boot HUD ("Efeito UAU")**:
+      - Criado overlay cinematográfico de alta fidelidade visual (`#brainBootOverlay`) com backdrop escuro e blur de 24px (`backdrop-filter`), anéis concêntricos orbitais neon em contra-rotação (`.ring-1`, `.ring-2`, `.ring-3`) e o ícone de cérebro com pulso elétrico (`assets/cerebro_neon_animado.svg`).
+      - Barra de progresso com shimmer de gradiente ciano/esmeralda/índigo (`.brain-boot-progress-fill`) com telemetria viva (`[●] Cofre Ativo`, `[●] Contratos Vivos`, `[●] AI Gateways`) e mensagens de transição contextualizadas.
+      - Transição de encerramento suave (`.boot-fade-out`) com micro-pausa de 260ms no 100% e fade-out com desfoque e escala, revelando a interface já totalmente montada.
+    - **Placeholders Defensivos Shimmer (Skeletons)**:
+      - Adicionados skeletons com animação de varredura de luz (`skeletonSweep`) no HTML nativo tanto para a barra de navegação (`.nav-skeleton-wrap`) quanto para a grade de projetos (`.skeleton-card`), prevenindo qualquer layout shift (CLS).
+    - **Paridade Absoluta 100%**:
+      - Implementado identicamente em `docs/brain-ui/` e `docs/brain-ui/demo/` (`index.html`, `app.js`, `style.css`, `vault.js`).
   - **Unificação da Fonte Única da Verdade para Status de Projetos (`config/project-statuses.json`)**:
     - **Criação do Catálogo Central (SSOT / DRY)**:
       - Criado o arquivo `config/project-statuses.json` contendo a especificação unificada de status (`id`, `label`, `fullText`, `icon`, `color`, `badgeClass`, `description`, `aliases`), permitindo que qualquer desenvolvedor altere, adicione ou remova status sem tocar em código JS ou CSS.

@@ -12,6 +12,11 @@ class VaultManager {
         this.eventSource = null;
         this.onVaultUpdated = null;
         this.activeFilePath = null;
+
+        // Pré-carregamento síncrono imediato do Snapshot (0ms de latência)
+        if (typeof window !== 'undefined' && window.VAULT_SNAPSHOT) {
+            this._loadSnapshot();
+        }
     }
 
     async init() {

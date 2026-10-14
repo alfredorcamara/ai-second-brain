@@ -180,4 +180,18 @@
 2. **Papel Estrito de Constantes Padrão (`DEFAULT_*`)**: Constantes padrão hardcoded no código JavaScript não devem competir com a fonte de dados. Elas devem atuar estritamente como *circuit breakers / defensive fallbacks* de engenharia para evitar quebras com erro de runtime (`undefined` ou tela preta) caso o arquivo de configuração seja excluído, corrompido ou esteja temporariamente vazio. Em condições normais de operação, 100% dos dados devem fluir da configuração dinâmica.
 **Ação**: Mantenha sempre um único arquivo de configuração editável no projeto, compile-o no snapshot/API e use defaults no código apenas como fallback de resiliência.
 
+---
+
+## 2026-10-14 — Percepção de Performance & Synaptic Boot HUD
+
+### Lição 23: Percepção de Performance em SPAs — Instant Pre-Render (0ms) e Synaptic Boot HUD
+**Contexto**: O carregamento inicial da página aguardava a resposta de rede do endpoint `/api/vault` antes de construir o menu lateral e os cards de projetos, deixando a interface temporariamente vazia e gerando uma falsa impressão de lentidão no projeto.
+**Aprendizado**:
+1. **Instant Pre-Render (0ms)**: O carregamento de dados já presentes em memória (`window.VAULT_SNAPSHOT`) deve ocorrer de forma síncrona no constructor do `VaultManager` e no primeiro ciclo de `DOMContentLoaded`, pré-renderizando 100% da árvore de navegação e dos cards em 0ms.
+2. **Synaptic Boot HUD (Efeito UAU)**: A inclusão de um overlay visual de inicialização de alta fidelidade com micro-telemetria, anéis orbitais neon pulsantes e barra de progresso preenche a fração de segundo em que o servidor em disco sincroniza, transformando uma espera vazia em uma experiência de cockpit e carregamento de sistema operacional de IA.
+3. **Defensividade com Skeletons Shimmer**: A presença de skeletons no HTML original garante que mesmo se o overlay não estiver disponível ou for desativado, o layout da página não sofra shifts bruscos.
+**Ação**: Sempre realizar instant pre-render a partir do snapshot em memória antes de requisições assíncronas de rede e utilizar loaders com identidade visual rica e telemetria real.
+
+
+
 

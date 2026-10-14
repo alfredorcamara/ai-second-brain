@@ -18,6 +18,47 @@
 </head>
 
 <body>
+    <!-- SYNAPTIC BOOT HUD (EFEITO UAU) -->
+    <div id="brainBootOverlay" class="brain-boot-overlay">
+        <div class="brain-boot-backdrop"></div>
+        <div class="brain-boot-card">
+            <div class="brain-boot-core">
+                <div class="brain-boot-pulse-ring ring-1"></div>
+                <div class="brain-boot-pulse-ring ring-2"></div>
+                <div class="brain-boot-pulse-ring ring-3"></div>
+                <div class="brain-boot-avatar">
+                    <img src="assets/cerebro_neon_animado.svg" alt="Brain Core" class="brain-boot-svg">
+                </div>
+            </div>
+            <div class="brain-boot-badge">AI Operacional OS • v2.4</div>
+            <h2 class="brain-boot-title">AI SECOND BRAIN</h2>
+            <p class="brain-boot-subtitle">Sincronizando contratos de governança e sinapses neurais...</p>
+            <div class="brain-boot-progress-wrap">
+                <div class="brain-boot-progress-bar">
+                    <div id="brainBootProgressFill" class="brain-boot-progress-fill"></div>
+                </div>
+                <div class="brain-boot-progress-meta">
+                    <span id="brainBootStepText" class="brain-boot-step-text">Inicializando conexões...</span>
+                    <span id="brainBootPercentText" class="brain-boot-percent-text">0%</span>
+                </div>
+            </div>
+            <div class="brain-boot-telemetry">
+                <div class="boot-tel-item">
+                    <span id="bootTelDotVault" class="boot-tel-dot active"></span>
+                    <span>Cofre Ativo</span>
+                </div>
+                <div class="boot-tel-item">
+                    <span id="bootTelDotContracts" class="boot-tel-dot"></span>
+                    <span>Contratos Vivos</span>
+                </div>
+                <div class="boot-tel-item">
+                    <span id="bootTelDotAI" class="boot-tel-dot"></span>
+                    <span>AI Gateways</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="app">
         <!-- Sidebar -->
         <aside id="sidebar" class="sidebar">
@@ -43,7 +84,16 @@
             </div>
 
             <nav class="sidebar-nav" id="sidebarNav">
-                <!-- Populated by JS -->
+                <!-- Skeleton Shimmer Placeholder -->
+                <div class="nav-skeleton-wrap">
+                    <div class="nav-skeleton-header"></div>
+                    <div class="nav-skeleton-item"></div>
+                    <div class="nav-skeleton-item short"></div>
+                    <div class="nav-skeleton-item"></div>
+                    <div class="nav-skeleton-header" style="margin-top: 14px; width: 40%;"></div>
+                    <div class="nav-skeleton-item"></div>
+                    <div class="nav-skeleton-item short"></div>
+                </div>
             </nav>
 
             <div class="sidebar-footer">
@@ -829,7 +879,35 @@
                         </div>
 
                         <!-- Dynamic Projects Grid (Rendered via App Controller) -->
-                        <div class="dash-projects-grid" id="dynamicProjectsSlot"></div>
+                        <div class="dash-projects-grid" id="dynamicProjectsSlot">
+                            <div class="dash-card proj-dashboard-card skeleton-card">
+                                <div class="skeleton-header">
+                                    <div class="skeleton-title"></div>
+                                    <div class="skeleton-chip"></div>
+                                </div>
+                                <div class="skeleton-line" style="width: 75%; margin-top: 14px;"></div>
+                                <div class="skeleton-line" style="width: 90%; margin-top: 8px;"></div>
+                                <div class="skeleton-bar" style="margin-top: 24px;"></div>
+                            </div>
+                            <div class="dash-card proj-dashboard-card skeleton-card">
+                                <div class="skeleton-header">
+                                    <div class="skeleton-title" style="width: 40%;"></div>
+                                    <div class="skeleton-chip"></div>
+                                </div>
+                                <div class="skeleton-line" style="width: 80%; margin-top: 14px;"></div>
+                                <div class="skeleton-line" style="width: 60%; margin-top: 8px;"></div>
+                                <div class="skeleton-bar" style="margin-top: 24px;"></div>
+                            </div>
+                            <div class="dash-card proj-dashboard-card skeleton-card">
+                                <div class="skeleton-header">
+                                    <div class="skeleton-title" style="width: 60%;"></div>
+                                    <div class="skeleton-chip"></div>
+                                </div>
+                                <div class="skeleton-line" style="width: 70%; margin-top: 14px;"></div>
+                                <div class="skeleton-line" style="width: 85%; margin-top: 8px;"></div>
+                                <div class="skeleton-bar" style="margin-top: 24px;"></div>
+                            </div>
+                        </div>
                     </section>
                 </div>
             </div>
