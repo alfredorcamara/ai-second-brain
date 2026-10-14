@@ -51,4 +51,4 @@ AI_SECOND_BRAIN/
 **R:** **Não.** O agente de IA consulta as regras de governança e lê prioritariamente o arquivo `projects/<seu-projeto>/PROJECT.md` e `CURRENT_STATE.md` do projeto em que você está trabalhando. A memória da pasta raiz serve como histórico de versão e maturidade do próprio AI Second Brain, funcionando como uma garantia de que o motor está estável e atualizado.
 
 ### P: Posso limpar os projetos de teste que vieram no repositório?
-**R:** Sim. A pasta `projects/` foi projetada para conter apenas os seus projetos. Pastas de exemplo ou testes (como `teste_alfredo_22`) podem ser removidas ou substituídas pelos seus próprios projetos greenfield ou repositórios vinculados (brownfield).
+**R:** Sim. A pasta `projects/` foi projetada para conter apenas os seus projetos. Pastas de exemplo ou testes (como `exemplo-app` ou `demo-app`) podem ser removidas ou substituídas pelos seus próprios projetos greenfield ou repositórios vinculados (brownfield).

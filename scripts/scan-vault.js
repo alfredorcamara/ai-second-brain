@@ -98,7 +98,8 @@ function extractLinks(content) {
     return Array.from(links);
 }
 
-function scanVault(rootDir = ROOT_DIR) {
+function scanVault(rootDir = ROOT_DIR, options = {}) {
+    const { includeProjects = true } = options;
     const files = [];
     const visitedDirs = new Set();
     const ignoredFolders = new Set(['node_modules', '.git', 'bin', 'obj', 'dist', 'build', 'vendor', '.vs', '.vscode']);
@@ -125,6 +126,13 @@ function scanVault(rootDir = ROOT_DIR) {
             if (ignoredFolders.has(name.toLowerCase())) continue;
 
             const fullPath = path.join(currentDir, name);
+            const relPathFromRoot = normalizePath(path.relative(rootDir, fullPath));
+
+            // Se includeProjects for falso, não entra em subpastas de projects/ (apenas processa projects/README.md)
+            if (!includeProjects && relPathFromRoot.startsWith('projects/') && !relPathFromRoot.endsWith('README.md') && (entry.isDirectory() || entry.isSymbolicLink())) {
+                continue;
+            }
+
             let isDirectory = entry.isDirectory();
             if (!isDirectory && entry.isSymbolicLink()) {
                 try {
@@ -635,9 +643,10 @@ function scanVault(rootDir = ROOT_DIR) {
     };
 }
 
-// If executed directly, output vault-data.js
+// If executed directly, output vault-data.js (Snapshot Público Limpo para Git/GitHub Pages)
 if (require.main === module) {
-    const vault = scanVault();
+    const includeProjects = process.argv.includes('--all') || process.argv.includes('--include-projects');
+    const vault = scanVault(ROOT_DIR, { includeProjects });
     const outputPath = path.resolve(__dirname, '../docs/brain-ui/vault-data.js');
     const jsContent = `// ═══════════════════════════════════════════════════\n// AI SECOND BRAIN — Dynamic Vault Snapshot\n// Auto-generated: ${new Date().toISOString()}\n// ═══════════════════════════════════════════════════\n\nwindow.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`;
 

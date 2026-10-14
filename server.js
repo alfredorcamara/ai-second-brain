@@ -37,6 +37,17 @@ const MIME_TYPES = {
 // SSE Clients for live file changes
 const sseClients = new Set();
 
+
+function updateSnapshotIfConfigured(vault) {
+    if (process.env.PERSIST_LOCAL_SNAPSHOT === 'true') {
+        try {
+            updateSnapshotIfConfigured(vault);
+        } catch (e) {
+            console.warn('⚠️ Falha ao salvar snapshot local:', e.message);
+        }
+    }
+}
+
 function broadcastEvent(type, data) {
     const message = `event: ${type}\ndata: ${JSON.stringify(data)}\n\n`;
     for (const res of sseClients) {
@@ -339,8 +350,7 @@ Thumbs.db
             delete require.cache[require.resolve('./scripts/scan-vault')];
             const { scanVault } = require('./scripts/scan-vault');
             const vault = scanVault(ROOT_DIR);
-            const snapshotPath = path.join(UI_DIR, 'vault-data.js');
-            fs.writeFileSync(snapshotPath, `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+            updateSnapshotIfConfigured(vault);
 
             // Dispara evento SSE
             broadcastEvent('vault-updated', { project: safeName, type: 'new-project', time: Date.now() });
@@ -443,8 +453,7 @@ Thumbs.db
             delete require.cache[require.resolve('./scripts/scan-vault')];
             const { scanVault } = require('./scripts/scan-vault');
             const vault = scanVault(ROOT_DIR);
-            const snapshotPath = path.join(UI_DIR, 'vault-data.js');
-            fs.writeFileSync(snapshotPath, `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+            updateSnapshotIfConfigured(vault);
 
             broadcastEvent('vault-updated', { project: result.name, type: 'new-project', time: Date.now() });
 
@@ -538,8 +547,7 @@ Projeto externo vinculado ao AI Second Brain.
             delete require.cache[require.resolve('./scripts/scan-vault')];
             const { scanVault } = require('./scripts/scan-vault');
             const vault = scanVault(ROOT_DIR);
-            const snapshotPath = path.join(UI_DIR, 'vault-data.js');
-            fs.writeFileSync(snapshotPath, `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+            updateSnapshotIfConfigured(vault);
 
             // Dispara evento SSE
             broadcastEvent('vault-updated', { project: safeName, type: 'link-project', time: Date.now() });
@@ -813,8 +821,7 @@ Projeto externo vinculado ao AI Second Brain.
             delete require.cache[require.resolve('./scripts/scan-vault')];
             const { scanVault } = require('./scripts/scan-vault');
             const vault = scanVault(ROOT_DIR);
-            const snapshotPath = path.join(UI_DIR, 'vault-data.js');
-            fs.writeFileSync(snapshotPath, `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+            updateSnapshotIfConfigured(vault);
 
             broadcastEvent('vault-updated', { project: projectName, type: 'clear-memory', time: Date.now() });
 
@@ -960,8 +967,7 @@ Projeto externo vinculado ao AI Second Brain.
             delete require.cache[require.resolve('./scripts/scan-vault')];
             const { scanVault } = require('./scripts/scan-vault');
             const vault = scanVault(ROOT_DIR);
-            const snapshotPath = path.join(UI_DIR, 'vault-data.js');
-            fs.writeFileSync(snapshotPath, `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+            updateSnapshotIfConfigured(vault);
 
             broadcastEvent('vault-updated', { project: projectName, type: 'unlink-project', time: Date.now() });
 
@@ -1030,8 +1036,7 @@ Projeto externo vinculado ao AI Second Brain.
                 delete require.cache[require.resolve('./scripts/scan-vault')];
                 const { scanVault } = require('./scripts/scan-vault');
                 const vault = scanVault(ROOT_DIR);
-                const snapshotPath = path.join(UI_DIR, 'vault-data.js');
-                fs.writeFileSync(snapshotPath, `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+                updateSnapshotIfConfigured(vault);
 
                 broadcastEvent('vault-updated', { type: 'statuses-updated', time: Date.now() });
 
@@ -1116,8 +1121,7 @@ Projeto externo vinculado ao AI Second Brain.
             delete require.cache[require.resolve('./scripts/scan-vault')];
             const { scanVault } = require('./scripts/scan-vault');
             const vault = scanVault(ROOT_DIR);
-            const snapshotPath = path.join(UI_DIR, 'vault-data.js');
-            fs.writeFileSync(snapshotPath, `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+            updateSnapshotIfConfigured(vault);
 
             broadcastEvent('vault-updated', { file: relPath, type: 'file-saved', time: Date.now() });
 
@@ -1619,7 +1623,7 @@ Projeto externo vinculado ao AI Second Brain.
                 delete require.cache[require.resolve('./scripts/scan-vault')];
                 const { scanVault } = require('./scripts/scan-vault');
                 const vault = scanVault(ROOT_DIR);
-                fs.writeFileSync(path.join(UI_DIR, 'vault-data.js'), `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+                updateSnapshotIfConfigured(vault);
             } catch (snapErr) {
                 console.warn('⚠️ [Session Capture] Falha ao atualizar snapshot do vault:', snapErr.message);
             }
@@ -1881,8 +1885,7 @@ Projeto externo vinculado ao AI Second Brain.
             delete require.cache[require.resolve('./scripts/scan-vault')];
             const { scanVault } = require('./scripts/scan-vault');
             const vault = scanVault(ROOT_DIR);
-            const snapshotPath = path.join(UI_DIR, 'vault-data.js');
-            fs.writeFileSync(snapshotPath, `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+            updateSnapshotIfConfigured(vault);
 
             broadcastEvent('vault-updated', { project: projectName, type: 'new-research', research: slug, time: Date.now() });
 
@@ -1986,8 +1989,7 @@ Projeto externo vinculado ao AI Second Brain.
             delete require.cache[require.resolve('./scripts/scan-vault')];
             const { scanVault } = require('./scripts/scan-vault');
             const vault = scanVault(ROOT_DIR);
-            const snapshotPath = path.join(UI_DIR, 'vault-data.js');
-            fs.writeFileSync(snapshotPath, `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+            updateSnapshotIfConfigured(vault);
 
             broadcastEvent('vault-updated', { project: projectName, type: 'research-completed', slug: researchSlug, time: Date.now() });
 
@@ -2075,8 +2077,7 @@ Projeto externo vinculado ao AI Second Brain.
             delete require.cache[require.resolve('./scripts/scan-vault')];
             const { scanVault } = require('./scripts/scan-vault');
             const vault = scanVault(ROOT_DIR);
-            const snapshotPath = path.join(UI_DIR, 'vault-data.js');
-            fs.writeFileSync(snapshotPath, `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+            updateSnapshotIfConfigured(vault);
 
             broadcastEvent('vault-updated', { project: projectName, type: 'research-file-deleted', time: Date.now() });
 
@@ -2109,8 +2110,7 @@ Projeto externo vinculado ao AI Second Brain.
             delete require.cache[require.resolve('./scripts/scan-vault')];
             const { scanVault } = require('./scripts/scan-vault');
             const vault = scanVault(ROOT_DIR);
-            const snapshotPath = path.join(UI_DIR, 'vault-data.js');
-            fs.writeFileSync(snapshotPath, `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+            updateSnapshotIfConfigured(vault);
 
             broadcastEvent('vault-updated', { project: projectName, type: 'research-deleted', time: Date.now() });
 
@@ -2154,8 +2154,7 @@ Projeto externo vinculado ao AI Second Brain.
             delete require.cache[require.resolve('./scripts/scan-vault')];
             const { scanVault } = require('./scripts/scan-vault');
             const vault = scanVault(ROOT_DIR);
-            const snapshotPath = path.join(UI_DIR, 'vault-data.js');
-            fs.writeFileSync(snapshotPath, `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+            updateSnapshotIfConfigured(vault);
 
             broadcastEvent('vault-updated', { project: projectName, type: 'research-subtopics-updated', time: Date.now() });
 
@@ -2234,8 +2233,7 @@ Projeto externo vinculado ao AI Second Brain.
             delete require.cache[require.resolve('./scripts/scan-vault')];
             const { scanVault } = require('./scripts/scan-vault');
             const vault = scanVault(ROOT_DIR);
-            const snapshotPath = path.join(UI_DIR, 'vault-data.js');
-            fs.writeFileSync(snapshotPath, `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+            updateSnapshotIfConfigured(vault);
 
             broadcastEvent('vault-updated', { project: projectName, type: 'research-files-cleared', time: Date.now() });
 
