@@ -2955,7 +2955,12 @@ function closeQuickstartWizard() {
     if (modal) {
         modal.style.display = 'none';
         document.body.style.overflow = '';
+        const card = modal.querySelector('.quickstart-modal-card');
+        if (card) card.classList.remove('wide');
     }
+    const headerBackBtn = document.getElementById('qsHeaderBackBtn');
+    if (headerBackBtn) headerBackBtn.style.display = 'none';
+    resetQuickstartGrillPanes();
 }
 
 function handleModalBackdropClick(e) {
@@ -2964,8 +2969,29 @@ function handleModalBackdropClick(e) {
     }
 }
 
+function onHeaderBackClick() {
+    const dPane = document.getElementById('qsGrillDraftPane');
+    const qPane = document.getElementById('qsGrillQuestionsPane');
+
+    if (dPane && dPane.style.display !== 'none') {
+        backToGrillQuestions();
+    } else if (qPane && qPane.style.display !== 'none') {
+        backFromGrillQuestions();
+    } else {
+        goToQuickstartStep(1);
+    }
+}
+
 function goToQuickstartStep(step) {
     quickstartStep = step;
+    if (step <= 2) {
+        resetQuickstartGrillPanes();
+    }
+
+    const modalCard = document.querySelector('.quickstart-modal-card');
+    if (modalCard) {
+        modalCard.classList.toggle('wide', step === 2);
+    }
 
     // Stepper indicators
     for (let i = 1; i <= 3; i++) {
@@ -2991,11 +3017,17 @@ function goToQuickstartStep(step) {
             titleEl.textContent = 'Adicionar Projeto ao AI Second Brain';
         } else if (step === 2) {
             titleEl.textContent = quickstartMode === 'new' 
-                ? 'Criar Novo Projeto com IA' 
+                ? 'Criando Projeto do Zero' 
                 : 'Vincular Repositório Existente';
         } else if (step === 3) {
             titleEl.textContent = 'Projeto Conectado com Sucesso!';
         }
+    }
+
+    const headerBackBtn = document.getElementById('qsHeaderBackBtn');
+    if (headerBackBtn) {
+        headerBackBtn.style.display = (step === 2) ? 'inline-flex' : 'none';
+        headerBackBtn.textContent = '← Trocar modo';
     }
 }
 
@@ -3084,9 +3116,38 @@ async function validatePathLive() {
     }
 }
 
-async function submitQuickstartNew(e) {
-    e.preventDefault();
-    const btn = document.getElementById('btnSubmitNew');
+// ============================================================
+// QUICKSTART GRILL ENGINE & DUAL-MODE LOGIC
+// ============================================================
+
+let quickstartSubMode = 'assisted'; // 'assisted' | 'express'
+let currentGrillProjectInfo = null;
+let currentGrillQuestions = [];
+let currentGrillDraft = { projectMd: '', architectureMd: '', currentStateMd: '', adrMd: '' };
+let currentActiveContract = 'projectMd';
+let currentQsContractMode = 'preview'; // 'preview' | 'write'
+let isQuickstartEditorActive = false;
+
+function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function setQuickstartSubMode(mode) {
+    quickstartSubMode = mode;
+    const cardAssisted = document.getElementById('cardModeAssisted');
+    const cardExpress = document.getElementById('cardModeExpress');
+    if (cardAssisted) cardAssisted.classList.toggle('active', mode === 'assisted');
+    if (cardExpress) cardExpress.classList.toggle('active', mode === 'express');
+}
+
+async function triggerQuickstartChoice(mode) {
+    quickstartSubMode = mode;
     const nameInput = document.getElementById('qsNewName');
     const stackInput = document.getElementById('qsNewStack');
     const descInput = document.getElementById('qsNewDesc');
@@ -3098,7 +3159,16 @@ async function submitQuickstartNew(e) {
     const initGit = initGitCheckbox ? initGitCheckbox.checked : true;
 
     if (!name) {
-        alert('Por favor, digite um nome para o projeto.');
+        if (nameInput) {
+            nameInput.focus();
+            nameInput.classList.add('input-error-shake');
+            setTimeout(() => nameInput.classList.remove('input-error-shake'), 600);
+        }
+        if (typeof showToast === 'function') {
+            showToast('Por favor, informe o nome do projeto para prosseguir.', 'warning', 4500);
+        } else {
+            alert('Por favor, digite um nome para o projeto.');
+        }
         return;
     }
 
@@ -3107,36 +3177,1146 @@ async function submitQuickstartNew(e) {
         return;
     }
 
-    const originalText = btn.innerHTML;
+    if (mode === 'assisted') {
+        const spAssisted = document.getElementById('spinnerModeAssisted');
+        if (spAssisted) spAssisted.style.display = 'inline-block';
+        startGrillQuestionsFlow({ name, stack, description: desc, initGit });
+        return;
+    }
+
+    if (mode === 'express') {
+        const cardExpress = document.getElementById('cardModeExpress');
+        const spinnerExpress = document.getElementById('spinnerModeExpress');
+        const textExpress = document.getElementById('textModeExpress');
+        const origText = textExpress ? textExpress.innerHTML : '⚡ Criar Projeto Imediato (50ms) →';
+
+        if (cardExpress) cardExpress.classList.add('disabled');
+        if (spinnerExpress) spinnerExpress.style.display = 'inline-block';
+        if (textExpress) textExpress.textContent = 'Criando projeto (Express)...';
+
+        try {
+            const res = await fetch('/api/projects/new', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, stack, description: desc, initGit })
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert(data.error || 'Erro ao criar projeto.');
+                if (cardExpress) cardExpress.classList.remove('disabled');
+                if (spinnerExpress) spinnerExpress.style.display = 'none';
+                if (textExpress) textExpress.innerHTML = origText;
+                return;
+            }
+
+            renderQuickstartSuccess({
+                name: data.name,
+                path: data.path,
+                mode: 'new',
+                stack: stack
+            });
+        } catch (err) {
+            alert('Erro ao conectar com servidor local: ' + err.message);
+            if (cardExpress) cardExpress.classList.remove('disabled');
+            if (spinnerExpress) spinnerExpress.style.display = 'none';
+            if (textExpress) textExpress.innerHTML = origText;
+        }
+    }
+}
+
+function resetQuickstartGrillPanes() {
+    const formNew = document.getElementById('qsFormNew');
+    const qPane = document.getElementById('qsGrillQuestionsPane');
+    const dPane = document.getElementById('qsGrillDraftPane');
+    const spAssisted = document.getElementById('spinnerModeAssisted');
+    const spExpress = document.getElementById('spinnerModeExpress');
+    const cardExpress = document.getElementById('cardModeExpress');
+    const textExpress = document.getElementById('textModeExpress');
+    if (spAssisted) spAssisted.style.display = 'none';
+    if (spExpress) spExpress.style.display = 'none';
+    if (cardExpress) cardExpress.classList.remove('disabled');
+    if (textExpress) textExpress.textContent = '⚡ Criar Projeto Imediato (50ms) →';
+
+    if (formNew && quickstartMode === 'new') formNew.style.display = 'flex';
+    if (qPane) qPane.style.display = 'none';
+    if (dPane) dPane.style.display = 'none';
+    switchQsContractMode('preview');
+    if (quickstartStep === 2) {
+        const headerBackBtn = document.getElementById('qsHeaderBackBtn');
+        if (headerBackBtn) {
+            headerBackBtn.style.display = 'inline-flex';
+            headerBackBtn.textContent = '← Trocar modo';
+        }
+        const titleEl = document.getElementById('qsTitle');
+        if (titleEl) {
+            titleEl.textContent = quickstartMode === 'new' 
+                ? 'Criando Projeto do Zero' 
+                : 'Vincular Repositório Existente';
+        }
+    }
+}
+
+function backFromGrillQuestions() {
+    const formNew = document.getElementById('qsFormNew');
+    const qPane = document.getElementById('qsGrillQuestionsPane');
+    const spAssisted = document.getElementById('spinnerModeAssisted');
+    const spExpress = document.getElementById('spinnerModeExpress');
+    const cardExpress = document.getElementById('cardModeExpress');
+    const textExpress = document.getElementById('textModeExpress');
+    if (spAssisted) spAssisted.style.display = 'none';
+    if (spExpress) spExpress.style.display = 'none';
+    if (cardExpress) cardExpress.classList.remove('disabled');
+    if (textExpress) textExpress.textContent = '⚡ Criar Projeto Imediato (50ms) →';
+
+    if (formNew) formNew.style.display = 'flex';
+    if (qPane) qPane.style.display = 'none';
+    const headerBackBtn = document.getElementById('qsHeaderBackBtn');
+    if (headerBackBtn) {
+        headerBackBtn.style.display = 'inline-flex';
+        headerBackBtn.textContent = '← Trocar modo';
+    }
+    const titleEl = document.getElementById('qsTitle');
+    if (titleEl) {
+        titleEl.textContent = quickstartMode === 'new' 
+            ? 'Criando Projeto do Zero' 
+            : 'Vincular Repositório Existente';
+    }
+}
+
+function backToGrillQuestions() {
+    const qPane = document.getElementById('qsGrillQuestionsPane');
+    const dPane = document.getElementById('qsGrillDraftPane');
+    if (qPane) qPane.style.display = 'flex';
+    if (dPane) dPane.style.display = 'none';
+    const headerBackBtn = document.getElementById('qsHeaderBackBtn');
+    if (headerBackBtn) {
+        headerBackBtn.style.display = 'inline-flex';
+        headerBackBtn.textContent = '← Voltar aos dados';
+    }
+    const titleEl = document.getElementById('qsTitle');
+    if (titleEl) {
+        titleEl.textContent = '🎯 Sabatina Técnica com IA (Grill Studio)';
+    }
+}
+
+function onQsContractTextareaInput() {
+    const textarea = document.getElementById('qsContractTextarea');
+    if (textarea && currentActiveContract && currentGrillDraft) {
+        currentGrillDraft[currentActiveContract] = textarea.value;
+    }
+}
+
+function switchQsContractMode(mode) {
+    currentQsContractMode = mode;
+    const btnPreview = document.getElementById('btnQsContractTabPreview');
+    const btnWrite = document.getElementById('btnQsContractTabWrite');
+    const previewPane = document.getElementById('qsContractPreviewPane');
+    const textarea = document.getElementById('qsContractTextarea');
+
+    if (btnPreview) btnPreview.classList.toggle('active', mode === 'preview');
+    if (btnWrite) btnWrite.classList.toggle('active', mode === 'write');
+
+    if (mode === 'preview') {
+        if (textarea && currentActiveContract && currentGrillDraft) {
+            currentGrillDraft[currentActiveContract] = textarea.value;
+        }
+        if (textarea) textarea.style.display = 'none';
+        if (previewPane) {
+            previewPane.style.display = 'block';
+            updateQsContractPreviewContent();
+        }
+    } else {
+        if (previewPane) previewPane.style.display = 'none';
+        if (textarea) {
+            textarea.style.display = 'block';
+            textarea.value = (currentGrillDraft && currentGrillDraft[currentActiveContract]) || '';
+            textarea.focus();
+        }
+    }
+}
+
+function updateQsContractPreviewContent() {
+    const previewPane = document.getElementById('qsContractPreviewPane');
+    if (!previewPane || !currentGrillDraft || !currentActiveContract) return;
+
+    const rawMarkdown = currentGrillDraft[currentActiveContract] || '';
+    const fakePath = `projects/${(currentGrillProjectInfo && currentGrillProjectInfo.name) || 'projeto'}/${currentActiveContract}.md`;
+
+    let renderedHtml = '';
+    if (window.VAULT && typeof window.VAULT.renderMarkdown === 'function') {
+        renderedHtml = window.VAULT.renderMarkdown(rawMarkdown, fakePath);
+    } else if (typeof marked !== 'undefined' && typeof marked.parse === 'function') {
+        renderedHtml = marked.parse(rawMarkdown);
+    } else {
+        renderedHtml = `<pre>${escapeHtml(rawMarkdown)}</pre>`;
+    }
+
+    previewPane.innerHTML = `<div class="doc-preview-inner">${renderedHtml}</div>`;
+}
+
+function openExpandedContractModal() {
+    if (!currentGrillDraft || !currentActiveContract) return;
+
+    // Save any draft edits from quickstart textarea
+    const qsTextarea = document.getElementById('qsContractTextarea');
+    if (qsTextarea) {
+        currentGrillDraft[currentActiveContract] = qsTextarea.value;
+    }
+
+    isQuickstartEditorActive = true;
+    const modal = document.getElementById('fileEditorModal');
+    if (!modal) return;
+
+    modal.classList.add('on-top');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    // Show Quickstart specific elements in fileEditorModal
+    const qsTabsWrap = document.getElementById('editorQuickstartTabsWrap');
+    const qsRefineBox = document.getElementById('editorQuickstartRefineBox');
+    const stdActions = document.getElementById('editorStandardActions');
+    const qsActions = document.getElementById('editorQuickstartActions');
+
+    if (qsTabsWrap) qsTabsWrap.style.display = 'block';
+    if (qsRefineBox) qsRefineBox.style.display = 'flex';
+    if (stdActions) stdActions.style.display = 'none';
+    if (qsActions) qsActions.style.display = 'flex';
+
+    updateEditorContractTabs(currentActiveContract);
+    loadContractIntoEditor(currentActiveContract, currentQsContractMode || 'preview');
+}
+
+function closeExpandedContractModal() {
+    isQuickstartEditorActive = false;
+    const modal = document.getElementById('fileEditorModal');
+    if (modal) {
+        modal.classList.remove('on-top');
+        modal.style.display = 'none';
+    }
+
+    // Save editor textarea to currentGrillDraft
+    const editorTextarea = document.getElementById('editorTextarea');
+    if (editorTextarea && currentActiveContract && currentGrillDraft) {
+        currentGrillDraft[currentActiveContract] = editorTextarea.value;
+    }
+
+    // Restore standard fileEditorModal elements
+    const qsTabsWrap = document.getElementById('editorQuickstartTabsWrap');
+    const qsRefineBox = document.getElementById('editorQuickstartRefineBox');
+    const stdActions = document.getElementById('editorStandardActions');
+    const qsActions = document.getElementById('editorQuickstartActions');
+
+    if (qsTabsWrap) qsTabsWrap.style.display = 'none';
+    if (qsRefineBox) qsRefineBox.style.display = 'none';
+    if (stdActions) stdActions.style.display = 'flex';
+    if (qsActions) qsActions.style.display = 'none';
+
+    // Sync back to Quickstart card
+    const qsTextarea = document.getElementById('qsContractTextarea');
+    if (qsTextarea && currentGrillDraft) {
+        qsTextarea.value = currentGrillDraft[currentActiveContract] || '';
+    }
+    updateQsContractPreviewContent();
+    switchQsContractMode(currentEditorTab || 'preview');
+
+    // Keep body overflow hidden because quickstartModal is still open
+    document.body.style.overflow = 'hidden';
+}
+
+function selectEditorContractTab(contractKey) {
+    const editorTextarea = document.getElementById('editorTextarea');
+    if (editorTextarea && currentActiveContract && currentGrillDraft) {
+        currentGrillDraft[currentActiveContract] = editorTextarea.value;
+    }
+
+    currentActiveContract = contractKey;
+    updateEditorContractTabs(contractKey);
+
+    // Also update Quickstart tabs in background
+    document.querySelectorAll('.qs-contract-tab').forEach(t => {
+        t.classList.toggle('active', t.getAttribute('data-contract') === contractKey);
+    });
+
+    const badge = document.getElementById('qsContractViewerBadge');
+    const names = {
+        projectMd: 'VISUALIZANDO PROJECT.md (Visão & Escopo)',
+        architectureMd: 'VISUALIZANDO ARCHITECTURE.md (Padrões & Camadas)',
+        currentStateMd: 'VISUALIZANDO CURRENT_STATE.md (Roadmap Ativo)',
+        adrMd: 'VISUALIZANDO ADR-0001 (Decisão de Stack Inicial)'
+    };
+    if (badge) badge.textContent = names[contractKey] || 'CONTRATO DE GOVERNANÇA';
+
+    loadContractIntoEditor(contractKey, currentEditorTab || 'preview');
+}
+
+function updateEditorContractTabs(contractKey) {
+    const tabsContainer = document.getElementById('editorContractTabs');
+    if (tabsContainer) {
+        tabsContainer.querySelectorAll('.qs-contract-tab').forEach(t => {
+            t.classList.toggle('active', t.getAttribute('data-contract') === contractKey);
+        });
+    }
+}
+
+function loadContractIntoEditor(contractKey, mode = 'preview') {
+    const editorTextarea = document.getElementById('editorTextarea');
+    const titleEl = document.getElementById('editorModalTitle');
+    const badgeEl = document.getElementById('editorBadgeText');
+    const pathEl = document.getElementById('editorFilePath');
+    const statusText = document.getElementById('editorStatusText');
+
+    const fileMap = {
+        projectMd: 'PROJECT.md',
+        architectureMd: 'ARCHITECTURE.md',
+        currentStateMd: 'CURRENT_STATE.md',
+        adrMd: 'DECISIONS/0001-stack-inicial.md'
+    };
+    const filename = fileMap[contractKey] || 'DOCUMENTO.md';
+    const projName = (currentGrillProjectInfo && currentGrillProjectInfo.name) || 'projeto';
+    const filePath = `projects/${projName}/${filename}`;
+
+    activeEditingPath = filePath;
+    if (pathEl) pathEl.textContent = filePath;
+    if (titleEl) titleEl.textContent = `Contrato de Governança: ${filename}`;
+    if (badgeEl) badgeEl.textContent = mode === 'write' ? '✏️ EDITOR DE CONTRATO' : '👁️ PRÉ-VISUALIZAÇÃO DE CONTRATO';
+    if (statusText) statusText.innerHTML = '<span class="status-dot snapshot"></span> Rascunho assistido por IA (Grill Studio)';
+
+    const content = (currentGrillDraft && currentGrillDraft[contractKey]) || '';
+    if (editorTextarea) editorTextarea.value = content;
+
+    switchEditorTab(mode);
+}
+
+async function submitExpandedGrillRefine() {
+    const inputEl = document.getElementById('editorQsRefineInput');
+    const btn = document.getElementById('btnEditorGrillRefine');
+    const editorTextarea = document.getElementById('editorTextarea');
+    const fb = inputEl ? inputEl.value.trim() : '';
+
+    if (!fb) {
+        alert('Por favor, digite o que você gostaria de melhorar nos contratos.');
+        if (inputEl) inputEl.focus();
+        return;
+    }
+
+    if (editorTextarea && currentActiveContract && currentGrillDraft) {
+        currentGrillDraft[currentActiveContract] = editorTextarea.value;
+    }
+
+    const origText = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '<span class="status-dot snapshot" style="margin-right:6px"></span> Criando projeto com IA...';
+    btn.innerHTML = '<span class="btn-spinner" style="display:inline-block"></span> Refinando...';
 
     try {
-        const res = await fetch('/api/projects/new', {
+        const res = await fetch('/api/projects/quickstart/refine', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, stack, description: desc, initGit })
+            body: JSON.stringify({
+                ...currentGrillProjectInfo,
+                contracts: currentGrillDraft,
+                feedback: fb
+            })
         });
         const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erro ao refinar contratos.');
 
-        if (!res.ok) {
-            alert(data.error || 'Erro ao criar projeto.');
-            btn.disabled = false;
-            btn.innerHTML = originalText;
+        currentGrillDraft = data.contracts;
+        
+        // Refresh editor view
+        loadContractIntoEditor(currentActiveContract, currentEditorTab || 'preview');
+        
+        // Refresh background quickstart card
+        const qsTextarea = document.getElementById('qsContractTextarea');
+        if (qsTextarea) qsTextarea.value = currentGrillDraft[currentActiveContract] || '';
+        updateQsContractPreviewContent();
+
+        if (inputEl) inputEl.value = '';
+
+        if (typeof showToast === 'function') {
+            showToast('✨ Contratos refinados com sucesso!');
+        } else {
+            alert('Contratos refinados com sucesso!');
+        }
+    } catch (err) {
+        alert('Erro ao refinar com IA: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = origText;
+    }
+}
+
+function commitFromExpandedModal() {
+    const editorTextarea = document.getElementById('editorTextarea');
+    if (editorTextarea && currentActiveContract && currentGrillDraft) {
+        currentGrillDraft[currentActiveContract] = editorTextarea.value;
+    }
+    closeExpandedContractModal();
+    commitGrillProject();
+}
+
+let currentGrillValidationIssue = null;
+
+async function startGrillQuestionsFlow(projectInfo) {
+    currentGrillProjectInfo = projectInfo;
+    currentGrillValidationIssue = null;
+    const formNew = document.getElementById('qsFormNew');
+    const qPane = document.getElementById('qsGrillQuestionsPane');
+    const loadingEl = document.getElementById('qsGrillLoadingQuestions');
+    const containerEl = document.getElementById('qsGrillQuestionsContainer');
+    const actionCardsEl = document.getElementById('qsGrillActionCards');
+    const bannerEl = document.getElementById('qsGrillSummaryBanner');
+
+    if (formNew) formNew.style.display = 'none';
+    if (qPane) qPane.style.display = 'flex';
+    if (loadingEl) loadingEl.style.display = 'flex';
+    if (containerEl) containerEl.style.display = 'none';
+    if (actionCardsEl) actionCardsEl.style.display = 'none';
+
+    const headerBackBtn = document.getElementById('qsHeaderBackBtn');
+    if (headerBackBtn) {
+        headerBackBtn.style.display = 'inline-flex';
+        headerBackBtn.textContent = '← Voltar aos dados';
+    }
+    const titleEl = document.getElementById('qsTitle');
+    if (titleEl) {
+        titleEl.textContent = '🎯 Sabatina Técnica com IA (Grill Studio)';
+    }
+
+    if (bannerEl) {
+        bannerEl.innerHTML = `
+            <span class="qs-grill-summary-item"><strong>Projeto:</strong> ${escapeHtml(projectInfo.name)}</span>
+            <span class="qs-grill-summary-item"><strong>Stack:</strong> ${escapeHtml(projectInfo.stack)}</span>
+            ${projectInfo.description ? `<span class="qs-grill-summary-item"><strong>Foco:</strong> ${escapeHtml(projectInfo.description)}</span>` : ''}
+        `;
+    }
+
+    try {
+        const res = await fetch('/api/projects/quickstart/questions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(projectInfo)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erro ao formular perguntas.');
+
+        currentGrillQuestions = data.questions || [];
+        renderGrillQuestions(currentGrillQuestions);
+    } catch (err) {
+        alert('Erro ao formular sabatina com IA: ' + err.message);
+        backFromGrillQuestions();
+    } finally {
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (containerEl) containerEl.style.display = 'block';
+        if (actionCardsEl) actionCardsEl.style.display = 'grid';
+        updateGrillActionCardsState();
+    }
+}
+
+function updateGrillActionCardsState() {
+    const cardMore = document.getElementById('cardGrillMoreQuestions');
+    const badgeMore = document.getElementById('badgeMoreQuestions');
+    const textMore = document.getElementById('textMoreQuestions');
+
+    if (!cardMore) return;
+    if (currentGrillQuestions && currentGrillQuestions.length >= 8) {
+        if (badgeMore) badgeMore.textContent = 'Máx 8';
+        if (textMore) textMore.textContent = '✓ Sabatina completa (8 perguntas)';
+        cardMore.classList.add('disabled');
+    } else {
+        const remaining = 8 - (currentGrillQuestions ? currentGrillQuestions.length : 0);
+        if (badgeMore) badgeMore.textContent = `Até +${Math.min(4, remaining)}`;
+        if (textMore) textMore.textContent = '🎯 Gerar mais perguntas com IA →';
+        cardMore.classList.remove('disabled');
+    }
+}
+
+let currentGrillActiveQid = null;
+
+function renderGrillQuestions(questions, prefilledAnswers = {}) {
+    const listEl = document.getElementById('qsGrillQuestionsList');
+    if (!listEl) return;
+    listEl.innerHTML = '';
+
+    // Determina qual deve ser a primeira pergunta aberta (a primeira vazia, ou a primeira se todas preenchidas)
+    let firstUnansweredQid = null;
+    for (let i = 0; i < questions.length; i++) {
+        const qid = String(questions[i].id !== undefined ? questions[i].id : i);
+        const val = (prefilledAnswers[qid] || '').trim();
+        if (!val && firstUnansweredQid === null) {
+            firstUnansweredQid = qid;
+            break;
+        }
+    }
+    currentGrillActiveQid = firstUnansweredQid !== null ? firstUnansweredQid : String(questions[0]?.id !== undefined ? questions[0].id : 0);
+
+    questions.forEach((q, idx) => {
+        const qid = String(q.id !== undefined ? q.id : idx);
+        const existingVal = (prefilledAnswers[qid] || '').trim();
+        const isActive = (qid === currentGrillActiveQid);
+        const isAnswered = existingVal.length > 0;
+
+        const card = document.createElement('div');
+        card.className = `qs-grill-q-card ${isActive ? 'is-active' : 'is-collapsed'}`;
+        card.id = `qsQCard_${qid}`;
+
+        const optionsHtml = (q.options || []).map((opt) => {
+            const isSelected = existingVal && (existingVal.toLowerCase() === opt.toLowerCase());
+            return `
+                <button type="button" class="qs-q-chip ${isSelected ? 'selected' : ''}" data-qid="${qid}" data-val="${escapeHtml(opt)}" onclick="selectGrillChip('${qid}', '${escapeHtml(opt)}')">
+                    ${escapeHtml(opt)}
+                </button>
+            `;
+        }).join('');
+
+        card.innerHTML = `
+            <div class="qs-acc-header" onclick="toggleGrillAccordion('${qid}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleGrillAccordion('${qid}');}">
+                <div class="qs-acc-header-left">
+                    <span class="qs-acc-status-icon ${isAnswered ? 'is-done' : (isActive ? 'is-current' : 'is-pending')}" id="qsAccIcon_${qid}">
+                        ${isAnswered ? '✓' : (idx + 1)}
+                    </span>
+                    <span class="qs-grill-q-cat">${escapeHtml(q.category || 'Decisão')}</span>
+                    <div class="qs-acc-preview-wrap">
+                        <span class="${isAnswered ? 'qs-acc-ans-text' : 'qs-acc-pending-text'}" id="qsAccPreview_${qid}">
+                            ${isAnswered ? escapeHtml(existingVal) : escapeHtml(q.question)}
+                        </span>
+                    </div>
+                </div>
+                <div class="qs-acc-header-right">
+                    <span class="qs-acc-badge ${isAnswered ? 'done' : 'pending'}" id="qsAccBadge_${qid}">
+                        ${isAnswered ? '✓ Definido' : 'Pendente'}
+                    </span>
+                    <span class="qs-acc-toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="qs-acc-body" id="qsAccBody_${qid}">
+                <h4 class="qs-grill-q-title">${escapeHtml(q.question)}</h4>
+                ${optionsHtml ? `<div class="qs-grill-q-chips" id="qsChips_${qid}">${optionsHtml}</div>` : ''}
+                <div class="qs-acc-input-wrap">
+                    <input type="text" class="qs-q-input" id="qsInput_${qid}" 
+                        value="${escapeHtml(existingVal)}"
+                        placeholder="${escapeHtml(q.placeholder || 'Digite sua resposta customizada...')}"
+                        oninput="onGrillInputTyped('${qid}')"
+                        onkeydown="onGrillInputKeydown(event, '${qid}')">
+                    <button type="button" class="btn-acc-advance" onclick="advanceGrillAccordion('${qid}')" title="Confirmar e avançar">
+                        Avançar ↵
+                    </button>
+                </div>
+            </div>
+        `;
+        listEl.appendChild(card);
+    });
+
+    updateGrillAccordionProgress();
+}
+
+function setGrillAccordionActive(targetQid, focusInput = false) {
+    currentGrillActiveQid = String(targetQid);
+    if (!currentGrillQuestions) return;
+
+    currentGrillQuestions.forEach((q, idx) => {
+        const qid = String(q.id !== undefined ? q.id : idx);
+        const card = document.getElementById(`qsQCard_${qid}`);
+        const icon = document.getElementById(`qsAccIcon_${qid}`);
+        const inputEl = document.getElementById(`qsInput_${qid}`);
+        const val = inputEl ? inputEl.value.trim() : '';
+        const isAnswered = val.length > 0;
+        const isActive = (qid === currentGrillActiveQid);
+
+        if (card) {
+            card.classList.toggle('is-active', isActive);
+            card.classList.toggle('is-collapsed', !isActive);
+        }
+        if (icon) {
+            icon.className = `qs-acc-status-icon ${isAnswered ? 'is-done' : (isActive ? 'is-current' : 'is-pending')}`;
+            icon.textContent = isAnswered ? '✓' : (idx + 1);
+        }
+    });
+
+    if (focusInput) {
+        setTimeout(() => {
+            const inputEl = document.getElementById(`qsInput_${targetQid}`);
+            if (inputEl) {
+                inputEl.focus();
+            }
+        }, 60);
+    }
+
+    updateGrillAccordionProgress();
+}
+
+function toggleGrillAccordion(qid) {
+    qid = String(qid);
+    if (currentGrillActiveQid === qid) {
+        currentGrillActiveQid = null;
+        const card = document.getElementById(`qsQCard_${qid}`);
+        if (card) {
+            card.classList.remove('is-active');
+            card.classList.add('is-collapsed');
+        }
+        updateGrillAccordionProgress();
+    } else {
+        setGrillAccordionActive(qid, true);
+    }
+}
+
+function selectGrillChip(qid, val) {
+    qid = String(qid);
+    const chipsWrap = document.getElementById(`qsChips_${qid}`);
+    const inputEl = document.getElementById(`qsInput_${qid}`);
+    if (chipsWrap) {
+        chipsWrap.querySelectorAll('.qs-q-chip').forEach(c => {
+            c.classList.toggle('selected', c.getAttribute('data-val') === val);
+        });
+    }
+    if (inputEl) {
+        inputEl.value = val;
+    }
+
+    updateGrillCardPreview(qid, val);
+    updateGrillAccordionProgress();
+
+    // Transição suave para a próxima pergunta
+    setTimeout(() => {
+        advanceGrillAccordion(qid);
+    }, 220);
+}
+
+function onGrillInputTyped(qid) {
+    qid = String(qid);
+    const inputEl = document.getElementById(`qsInput_${qid}`);
+    const chipsWrap = document.getElementById(`qsChips_${qid}`);
+    const val = inputEl ? inputEl.value.trim() : '';
+
+    if (chipsWrap) {
+        const valLower = val.toLowerCase();
+        chipsWrap.querySelectorAll('.qs-q-chip').forEach(c => {
+            const chipVal = (c.getAttribute('data-val') || '').toLowerCase();
+            c.classList.toggle('selected', chipVal === valLower);
+        });
+    }
+
+    updateGrillCardPreview(qid, val);
+    updateGrillAccordionProgress();
+}
+
+function onGrillInputKeydown(e, qid) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        advanceGrillAccordion(qid);
+    }
+}
+
+function advanceGrillAccordion(currentQid) {
+    currentQid = String(currentQid);
+    if (!currentGrillQuestions || currentGrillQuestions.length === 0) return;
+
+    const currentIdx = currentGrillQuestions.findIndex((q, i) => String(q.id !== undefined ? q.id : i) === currentQid);
+
+    // Procura próxima pergunta vazia após a atual
+    let nextQid = null;
+    for (let i = currentIdx + 1; i < currentGrillQuestions.length; i++) {
+        const qid = String(currentGrillQuestions[i].id !== undefined ? currentGrillQuestions[i].id : i);
+        const inputEl = document.getElementById(`qsInput_${qid}`);
+        if (!inputEl || !inputEl.value.trim()) {
+            nextQid = qid;
+            break;
+        }
+    }
+
+    // Se não encontrou após a atual, busca desde o começo
+    if (!nextQid) {
+        for (let i = 0; i < currentIdx; i++) {
+            const qid = String(currentGrillQuestions[i].id !== undefined ? currentGrillQuestions[i].id : i);
+            const inputEl = document.getElementById(`qsInput_${qid}`);
+            if (!inputEl || !inputEl.value.trim()) {
+                nextQid = qid;
+                break;
+            }
+        }
+    }
+
+    if (nextQid) {
+        setGrillAccordionActive(nextQid, true);
+    } else {
+        // Todas estão respondidas: colapsa todas para visão geral e foca no botão de gerar contratos
+        currentGrillActiveQid = null;
+        currentGrillQuestions.forEach((q, idx) => {
+            const qid = String(q.id !== undefined ? q.id : idx);
+            const card = document.getElementById(`qsQCard_${qid}`);
+            if (card) {
+                card.classList.remove('is-active');
+                card.classList.add('is-collapsed');
+            }
+        });
+        updateGrillAccordionProgress();
+    }
+}
+
+function updateGrillCardPreview(qid, val) {
+    qid = String(qid);
+    const previewEl = document.getElementById(`qsAccPreview_${qid}`);
+    const badgeEl = document.getElementById(`qsAccBadge_${qid}`);
+    const iconEl = document.getElementById(`qsAccIcon_${qid}`);
+    const isAnswered = val && val.trim().length > 0;
+
+    const q = (currentGrillQuestions || []).find((x, i) => String(x.id !== undefined ? x.id : i) === qid);
+    const qTitle = q ? q.question : 'Decisão Arquitetural';
+
+    if (previewEl) {
+        previewEl.className = isAnswered ? 'qs-acc-ans-text' : 'qs-acc-pending-text';
+        previewEl.textContent = isAnswered ? val.trim() : qTitle;
+    }
+    if (badgeEl) {
+        badgeEl.className = `qs-acc-badge ${isAnswered ? 'done' : 'pending'}`;
+        badgeEl.textContent = isAnswered ? '✓ Definido' : 'Pendente';
+    }
+    if (iconEl) {
+        const isActive = (qid === currentGrillActiveQid);
+        iconEl.className = `qs-acc-status-icon ${isAnswered ? 'is-done' : (isActive ? 'is-current' : 'is-pending')}`;
+        const idx = (currentGrillQuestions || []).findIndex((x, i) => String(x.id !== undefined ? x.id : i) === qid);
+        iconEl.textContent = isAnswered ? '✓' : (idx + 1);
+    }
+}
+
+function updateGrillAccordionProgress() {
+    if (!currentGrillQuestions || currentGrillQuestions.length === 0) return;
+
+    let answeredCount = 0;
+    const total = currentGrillQuestions.length;
+
+    currentGrillQuestions.forEach((q, idx) => {
+        const qid = String(q.id !== undefined ? q.id : idx);
+        const inputEl = document.getElementById(`qsInput_${qid}`);
+        if (inputEl && inputEl.value.trim().length > 0) {
+            answeredCount++;
+        }
+    });
+
+    const percent = Math.round((answeredCount / total) * 100);
+    const progressWrap = document.getElementById('qsGrillProgressWrap');
+    const counterEl = document.getElementById('qsGrillProgressCounter');
+    const barEl = document.getElementById('qsGrillProgressBar');
+    const cardGen = document.getElementById('cardGrillGenerateContracts');
+
+    if (progressWrap) progressWrap.style.display = 'block';
+    if (barEl) barEl.style.width = `${percent}%`;
+
+    if (counterEl) {
+        if (answeredCount === total) {
+            counterEl.className = 'qs-grill-progress-counter all-done';
+            counterEl.innerHTML = `✓ Todas as ${total} decisões tomadas! (100%)`;
+        } else {
+            counterEl.className = 'qs-grill-progress-counter';
+            counterEl.textContent = `${answeredCount} de ${total} decisões tomadas (${percent}%)`;
+        }
+    }
+
+    if (cardGen) {
+        cardGen.classList.toggle('ready-to-generate', answeredCount === total);
+    }
+}
+
+async function requestMoreGrillQuestions() {
+    if (!currentGrillProjectInfo || !currentGrillQuestions) return;
+    const cardMore = document.getElementById('cardGrillMoreQuestions');
+    const spinnerMore = document.getElementById('spinnerMoreQuestions');
+    const textMore = document.getElementById('textMoreQuestions');
+
+    if (currentGrillQuestions.length >= 8) {
+        showToast('⚠️ Limite de 8 perguntas atingido. Prossiga para a geração dos contratos.');
+        return;
+    }
+
+    // Salvar respostas preenchidas até agora para não perder
+    const currentAnswersMap = {};
+    currentGrillQuestions.forEach((q, idx) => {
+        const qid = q.id || idx;
+        const el = document.getElementById(`qsInput_${qid}`);
+        if (el && el.value.trim()) {
+            currentAnswersMap[qid] = el.value.trim();
+        }
+    });
+
+    if (spinnerMore) spinnerMore.style.display = 'inline-block';
+    if (textMore) textMore.textContent = 'Formulando +4 perguntas com IA...';
+    if (cardMore) cardMore.classList.add('disabled');
+
+    try {
+        const res = await fetch('/api/projects/quickstart/questions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                ...currentGrillProjectInfo,
+                existingQuestions: currentGrillQuestions
+            })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erro ao formular perguntas adicionais.');
+
+        const newQuestions = (data.questions || []).filter(nq => 
+            !currentGrillQuestions.some(eq => (eq.id && eq.id === nq.id) || eq.question === nq.question)
+        );
+
+        if (newQuestions.length === 0) {
+            showToast('ℹ️ O Arquiteto de IA considerou que as perguntas atuais já cobrem os pontos críticos.');
+        } else {
+            const firstNewId = newQuestions[0].id || currentGrillQuestions.length;
+            currentGrillQuestions = currentGrillQuestions.concat(newQuestions);
+            renderGrillQuestions(currentGrillQuestions, currentAnswersMap);
+            showToast(`✨ +${newQuestions.length} perguntas adicionadas à sabatina!`);
+
+            setTimeout(() => {
+                const firstNewEl = document.getElementById(`qsQCard_${firstNewId}`);
+                if (firstNewEl) {
+                    firstNewEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstNewEl.classList.add('newly-added');
+                    setTimeout(() => firstNewEl.classList.remove('newly-added'), 1800);
+                }
+            }, 100);
+        }
+    } catch (err) {
+        alert('Erro ao gerar perguntas adicionais: ' + err.message);
+    } finally {
+        if (spinnerMore) spinnerMore.style.display = 'none';
+        updateGrillActionCardsState();
+    }
+}
+
+async function submitGrillAnswers() {
+    if (!currentGrillQuestions || currentGrillQuestions.length === 0) return;
+
+    // 1. Coleta das respostas e validação de preenchimento obrigatório
+    const answers = [];
+    let emptyQuestion = null;
+
+    for (let idx = 0; idx < currentGrillQuestions.length; idx++) {
+        const q = currentGrillQuestions[idx];
+        const qid = q.id || idx;
+        const inputEl = document.getElementById(`qsInput_${qid}`);
+        const val = inputEl ? inputEl.value.trim() : '';
+
+        if (!val) {
+            emptyQuestion = { q, idx, qid };
+            break;
+        }
+
+        answers.push({
+            id: qid,
+            category: q.category,
+            question: q.question,
+            answer: val
+        });
+    }
+
+    // Se houver pergunta vazia, interrompe imediatamente e apresenta modal no padrão do projeto
+    if (emptyQuestion) {
+        setGrillAccordionActive(emptyQuestion.qid, true);
+        const sample = emptyQuestion.q.options && emptyQuestion.q.options[0] 
+            ? emptyQuestion.q.options[0] 
+            : (emptyQuestion.q.placeholder || 'uma resposta descritiva');
+        openGrillValidationModal({
+            questionId: emptyQuestion.qid,
+            questionTitle: emptyQuestion.q.question,
+            category: emptyQuestion.q.category || 'Decisão Técnica',
+            invalidAnswer: '(não respondida)',
+            reason: `A Pergunta ${emptyQuestion.idx + 1} precisa ser respondida antes de avançar. Todas as perguntas são obrigatórias para que a IA gere contratos sólidos e sem ambiguidades.`,
+            suggestion: `Você pode escolher uma das opções sugeridas (ex: "${sample}") ou descrever a estratégia técnica desejada.`
+        });
+        return;
+    }
+
+    // 2. Validação Semântica de cada resposta via Backend / IA
+    const cardGen = document.getElementById('cardGrillGenerateContracts');
+    const spinnerGen = document.getElementById('spinnerGenerateContracts');
+    const textGen = document.getElementById('textGenerateContracts');
+
+    if (spinnerGen) spinnerGen.style.display = 'inline-block';
+    if (textGen) textGen.textContent = 'Auditando coerência com IA...';
+    if (cardGen) cardGen.classList.add('disabled');
+
+    try {
+        const valRes = await fetch('/api/projects/quickstart/validate-answers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                projectInfo: currentGrillProjectInfo,
+                questions: currentGrillQuestions,
+                answers
+            })
+        });
+        const valData = await valRes.json();
+
+        if (valData && valData.valid === false && valData.issue) {
+            // Resposta incorreta ou fora de contexto detectada!
+            if (valData.issue.questionId !== undefined) {
+                setGrillAccordionActive(valData.issue.questionId, true);
+            }
+            openGrillValidationModal(valData.issue);
             return;
         }
+    } catch (valErr) {
+        console.warn('⚠️ Falha ao auditar respostas com IA, prosseguindo com fallback:', valErr.message);
+    } finally {
+        if (spinnerGen) spinnerGen.style.display = 'none';
+        if (textGen) textGen.textContent = '✨ Sintetizar contratos vivos →';
+        if (cardGen) cardGen.classList.remove('disabled');
+    }
+
+    // 3. Todas as respostas válidas -> Gerar Contratos com IA
+    await executeGenerateDraftFlow(answers);
+}
+
+async function executeGenerateDraftFlow(answers) {
+    const qPane = document.getElementById('qsGrillQuestionsPane');
+    const dPane = document.getElementById('qsGrillDraftPane');
+    const loadingEl = document.getElementById('qsGrillLoadingDraft');
+    const wrapEl = document.getElementById('qsGrillDraftContentWrap');
+    const btnCommit = document.getElementById('btnCommitGrill');
+
+    if (qPane) qPane.style.display = 'none';
+    if (dPane) dPane.style.display = 'flex';
+    if (loadingEl) loadingEl.style.display = 'flex';
+    if (wrapEl) wrapEl.style.display = 'none';
+    if (btnCommit) btnCommit.disabled = true;
+
+    const headerBackBtn = document.getElementById('qsHeaderBackBtn');
+    if (headerBackBtn) {
+        headerBackBtn.style.display = 'inline-flex';
+        headerBackBtn.textContent = '← Ajustar respostas';
+    }
+    const titleEl = document.getElementById('qsTitle');
+    if (titleEl) {
+        titleEl.textContent = '📄 Contratos Prontos para Revisão';
+    }
+
+    try {
+        const res = await fetch('/api/projects/quickstart/draft', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                ...currentGrillProjectInfo,
+                answers
+            })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erro ao gerar contratos.');
+
+        currentGrillDraft = data.contracts || {};
+        const badge = document.getElementById('qsGrillDraftModelBadge');
+        if (badge) badge.textContent = `✨ ${data.provider ? data.provider.toUpperCase() : 'IA'} (${data.model || 'ativo'})`;
+
+        switchQsContractMode('preview');
+        selectContractTab('projectMd');
+    } catch (err) {
+        alert('Erro ao gerar contratos: ' + err.message);
+        backToGrillQuestions();
+    } finally {
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (wrapEl) wrapEl.style.display = 'flex';
+        if (btnCommit) btnCommit.disabled = false;
+    }
+}
+
+function openGrillValidationModal(issue) {
+    currentGrillValidationIssue = issue;
+    const modal = document.getElementById('qsGrillValidationModal');
+    if (!modal) return;
+
+    const qText = document.getElementById('qsValQuestionText');
+    const aText = document.getElementById('qsValAnswerText');
+    const rText = document.getElementById('qsValReasonText');
+    const sText = document.getElementById('qsValSuggestionText');
+
+    if (qText) qText.textContent = `[${issue.category || 'Decisão Técnica'}] ${issue.questionTitle || ''}`;
+    if (aText) aText.textContent = `"${issue.invalidAnswer || ''}"`;
+    if (rText) rText.textContent = issue.reason || 'A resposta informada não define uma estratégia técnica válida para o projeto.';
+    if (sText) sText.textContent = issue.suggestion || 'Defina uma tecnologia, biblioteca ou abordagem arquitetural compatível.';
+
+    modal.style.display = 'flex';
+}
+
+function closeGrillValidationModal(focusInput = false) {
+    const modal = document.getElementById('qsGrillValidationModal');
+    if (modal) modal.style.display = 'none';
+
+    if (focusInput && currentGrillValidationIssue && currentGrillValidationIssue.questionId !== undefined) {
+        const qid = currentGrillValidationIssue.questionId;
+        setGrillAccordionActive(qid, true);
+        setTimeout(() => {
+            const cardEl = document.getElementById(`qsQCard_${qid}`);
+            const inputEl = document.getElementById(`qsInput_${qid}`);
+            if (cardEl) {
+                cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                cardEl.classList.add('qs-q-card-alert');
+                setTimeout(() => cardEl.classList.remove('qs-q-card-alert'), 2400);
+            }
+            if (inputEl) {
+                inputEl.focus();
+                inputEl.select();
+            }
+        }, 80);
+    }
+}
+
+function handleGrillValModalBackdrop(e) {
+    if (e.target && e.target.id === 'qsGrillValidationModal') {
+        closeGrillValidationModal(true);
+    }
+}
+
+function applyGrillSuggestion() {
+    if (!currentGrillValidationIssue || currentGrillValidationIssue.questionId === undefined) {
+        closeGrillValidationModal();
+        return;
+    }
+    const qid = currentGrillValidationIssue.questionId;
+    const sug = currentGrillValidationIssue.suggestion || '';
+
+    let cleanVal = sug;
+    const quoteMatch = sug.match(/"([^"]+)"/);
+    if (quoteMatch) {
+        cleanVal = quoteMatch[1];
+    } else if (sug.includes('ex:')) {
+        cleanVal = sug.split('ex:')[1].trim().replace(/\.$/, '');
+    } else if (sug.includes(':')) {
+        cleanVal = sug.split(':')[1].trim().replace(/\.$/, '');
+    }
+
+    setGrillAccordionActive(qid, false);
+    const inputEl = document.getElementById(`qsInput_${qid}`);
+    if (inputEl) {
+        inputEl.value = cleanVal;
+        onGrillInputTyped(qid);
+    }
+
+    closeGrillValidationModal(false);
+    showToast('✓ Sugestão recomendada aplicada à resposta!');
+
+    setTimeout(() => {
+        advanceGrillAccordion(qid);
+    }, 250);
+}
+
+function selectContractTab(contractKey) {
+    const textarea = document.getElementById('qsContractTextarea');
+    if (textarea && currentActiveContract && currentGrillDraft) {
+        currentGrillDraft[currentActiveContract] = textarea.value;
+    }
+
+    currentActiveContract = contractKey;
+    document.querySelectorAll('.qs-contract-tab').forEach(t => {
+        t.classList.toggle('active', t.getAttribute('data-contract') === contractKey);
+    });
+
+    const badge = document.getElementById('qsContractViewerBadge');
+    const names = {
+        projectMd: 'VISUALIZANDO PROJECT.md (Visão & Escopo)',
+        architectureMd: 'VISUALIZANDO ARCHITECTURE.md (Padrões & Camadas)',
+        currentStateMd: 'VISUALIZANDO CURRENT_STATE.md (Roadmap Ativo)',
+        adrMd: 'VISUALIZANDO ADR-0001 (Decisão de Stack Inicial)'
+    };
+    if (badge) badge.textContent = names[contractKey] || 'CONTRATO DE GOVERNANÇA';
+
+    if (textarea) {
+        textarea.value = (currentGrillDraft && currentGrillDraft[contractKey]) || '';
+    }
+    updateQsContractPreviewContent();
+}
+
+async function submitGrillRefine() {
+    const inputEl = document.getElementById('qsRefineInput');
+    const btn = document.getElementById('btnGrillRefine');
+    const textarea = document.getElementById('qsContractTextarea');
+    const fb = inputEl ? inputEl.value.trim() : '';
+
+    if (!fb) {
+        alert('Por favor, digite o que você gostaria de melhorar nos contratos.');
+        if (inputEl) inputEl.focus();
+        return;
+    }
+
+    if (textarea && currentActiveContract && currentGrillDraft) {
+        currentGrillDraft[currentActiveContract] = textarea.value;
+    }
+
+    const origText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="btn-spinner" style="display:inline-block"></span> Refinando...';
+
+    try {
+        const res = await fetch('/api/projects/quickstart/refine', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                ...currentGrillProjectInfo,
+                contracts: currentGrillDraft,
+                feedback: fb
+            })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erro ao refinar contratos.');
+
+        currentGrillDraft = data.contracts;
+        if (textarea) textarea.value = currentGrillDraft[currentActiveContract] || '';
+        updateQsContractPreviewContent();
+        if (inputEl) inputEl.value = '';
+
+        if (typeof showToast === 'function') {
+            showToast('✨ Contratos refinados com sucesso!');
+        } else {
+            alert('Contratos refinados com sucesso!');
+        }
+    } catch (err) {
+        alert('Erro ao refinar com IA: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = origText;
+    }
+}
+
+async function commitGrillProject() {
+    const btn = document.getElementById('btnCommitGrill');
+    const textarea = document.getElementById('qsContractTextarea');
+    if (textarea && currentActiveContract) {
+        currentGrillDraft[currentActiveContract] = textarea.value;
+    }
+
+    const origText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="btn-spinner" style="display:inline-block"></span> Criando no disco...';
+
+    try {
+        const res = await fetch('/api/projects/quickstart/commit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                ...currentGrillProjectInfo,
+                contracts: currentGrillDraft
+            })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Erro ao gravar projeto.');
+
+        const dPane = document.getElementById('qsGrillDraftPane');
+        if (dPane) dPane.style.display = 'none';
 
         renderQuickstartSuccess({
             name: data.name,
             path: data.path,
             mode: 'new',
-            stack: stack
+            stack: currentGrillProjectInfo.stack
         });
     } catch (err) {
-        alert('Erro ao conectar com servidor local: ' + err.message);
+        alert('Erro ao gravar projeto no disco: ' + err.message);
         btn.disabled = false;
-        btn.innerHTML = originalText;
+        btn.innerHTML = origText;
     }
+}
+
+async function submitQuickstartNew(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    await triggerQuickstartChoice(quickstartSubMode || 'assisted');
 }
 
 async function submitQuickstartLink(e) {
@@ -5240,8 +6420,13 @@ async function saveFileContent() {
 }
 
 function closeFileEditor() {
+    if (isQuickstartEditorActive) {
+        closeExpandedContractModal();
+        return;
+    }
     const modal = document.getElementById('fileEditorModal');
     if (modal) {
+        modal.classList.remove('on-top');
         modal.style.display = 'none';
         document.body.style.overflow = '';
     }

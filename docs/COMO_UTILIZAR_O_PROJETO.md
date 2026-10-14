@@ -66,9 +66,30 @@ graph TD
 
 ## 2. Cenário A: Criação de um NOVO Projeto do Zero (Greenfield)
 
-Quando você for criar um novo produto SaaS, aplicativo, automação ou jogo, siga este roteiro exato.
+Quando você for criar um novo produto SaaS, aplicativo, automação ou jogo, você tem duas formas de iniciar: **diretamente pela interface visual (Quickstart Studio)** ou **conversando com o agente no chat da IDE**.
 
-### Fluxo Passo a Passo:
+### Método 1: Quickstart Studio no Portal Web (Recomendado)
+
+No portal web (`http://localhost:3000`), clique no botão **`+ Novo Projeto`** no topo da tela. O modal oferece dois caminhos claros de inicialização no **Passo 2**:
+
+1. **⚡ Modo Express (50ms)**:
+   - Criação instantânea e 100% determinística no disco.
+   - Gera a estrutura canônica com os 4 contratos de governança padrão prontos para edição manual posterior.
+   - Ideal quando você já tem clareza absoluta da arquitetura e quer apenas começar a codificar imediatamente.
+
+2. **🎯 Modo Assistido com IA (Grill Studio & Sabatina Focada)**:
+   - O Arquiteto de IA formula de 3 a 4 perguntas técnicas dinâmicas adaptadas à stack escolhida (ex: ORM, Mensageria, Estratégia de Autenticação).
+   - **Accordion Inteligente / Modo Focado**: Apenas 1 pergunta permanece expandida por vez. Ao clicar em uma opção de resposta rápida (chip), o valor é preenchido e o sistema avança suavemente (220ms) para a próxima pergunta pendente, eliminando rolagens e mantendo os botões de ação sempre visíveis.
+   - **Auditoria de Respostas**: O sistema valida se as respostas são coerentes e não estão vazias antes de sintetizar os contratos.
+   - **Síntese de Contratos Vivos**: Gera em tempo real `PROJECT.md`, `ARCHITECTURE.md`, `CURRENT_STATE.md` (com roadmap ativo) e `DECISIONS/ADR-0001-stack-inicial.md`.
+   - **Refinamento com "Prompt Vivo"**: Permite ajustar os contratos via linguagem natural (ex: *"Mude o banco para PostgreSQL e use JWT"*) antes da gravação definitiva.
+   - **Aprovação Humana Obrigatória**: O projeto só é gravado no disco após clique explícito em `💾 Aprovar e Criar Projeto no Disco`.
+
+---
+
+### Método 2: Solicitar Onboarding ao Agente no Chat da IDE
+
+Se preferir trabalhar via chat do Antigravity, Claude Code ou Cursor:
 
 ```mermaid
 sequenceDiagram
@@ -89,14 +110,14 @@ sequenceDiagram
     Agent->>Dev: Projeto pronto para desenvolvimento do MVP!
 ```
 
-### Passo 1: Solicitar o Onboarding ao Agente no Antigravity
+#### Passo 1: Solicitar o Onboarding ao Agente no Antigravity
 No chat do Antigravity, envie a seguinte mensagem:
 
 > *"Quero criar um novo projeto chamado **BillingFlow**. É uma API .NET 9 de conciliação de pagamentos com SQL Server, mensageria RabbitMQ e validação de regras com AIJev. Execute o onboarding desse projeto no Second Brain."*
 
 O agente acionará a skill `project-onboarding`.
 
-### Passo 2: Estrutura que o Agente cria em `projects/BillingFlow/`
+#### Passo 2: Estrutura que o Agente cria em `projects/BillingFlow/`
 O agente criará a pasta canônica do projeto dentro do Segundo Cérebro:
 
 ```text

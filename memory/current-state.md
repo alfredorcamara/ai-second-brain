@@ -21,6 +21,63 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 
 ## Sessões Recentes
 - **Data**: 2026-10-14
+  - **Opção 3: Modo Focado / Accordion Inteligente na Sabatina Técnica (Grill Studio)**:
+    - **Solução Definitiva para Eliminação de Rolagem e Double-Scroll**:
+      - As perguntas centrais do Passo 2.A (Sabatina Técnica) foram transformadas em um Accordion Inteligente interativo, onde apenas 1 pergunta permanece expandida por vez (ou todas colapsadas em formato de checklist quando respondidas).
+      - Altura do container calibrada para `max-height: 380px` (com overflow suave interno apenas se necessário), garantindo que 1 card aberto (~180px) + 3 barras colapsadas (3x 42px = 126px) caibam com folga em ~320px, mantendo as duas caixas de ação inferiores ("Aprofundar Sabatina" e "Gerar Contratos com IA") 100% visíveis sem qualquer necessidade de rolar a janela do modal.
+    - **Barra de Progresso e Métricas em Tempo Real**:
+      - Componente `#qsGrillProgressWrap` acima da lista de perguntas exibe a porcentagem exata e contagem de decisões tomadas (ex: `3 de 4 decisões tomadas (75%)`).
+      - Ao atingir 100%, exibe selo esmeralda de conclusão e ativa um pulso luminoso suave (`.ready-to-generate`) no card de sintetizar contratos.
+    - **Navegação Fluida & Transições Inteligentes**:
+      - Selecionar uma opção (chip) salva a escolha, atualiza o badge e status da pergunta, e avança automaticamente (após 220ms) para a próxima pergunta pendente.
+      - Digitar resposta personalizada permite avançar pressionando `Enter` no input ou clicando no botão `Avançar ↵`.
+      - Clicar no cabeçalho de qualquer pergunta expande/colapsa instantaneamente sem perder nenhum valor digitado (`<input>` preservado no DOM).
+    - **Integração com Modal de Auditoria e Correções**:
+      - Se o usuário tentar gerar contratos com perguntas em branco ou respostas incoerentes, o sistema expande e foca automaticamente na pergunta apontada pela IA ou pelo modal de auditoria.
+      - Ao clicar em "Aplicar Sugestão", o valor é preenchido, o preview atualizado e o accordion avança suavemente para a próxima pergunta.
+    - **100% de Paridade entre Ambientes**:
+      - Sincronização rigorosa e idêntica entre `docs/brain-ui/` e `docs/brain-ui/demo/` (`index.html`, `style.css`, `app.js`).
+      - Validado pelo linter de integridade do workspace (`npm run doctor` com 100% de sucesso e `npm run scan` atualizado).
+  - **Ação Direta no Modo de Inicialização do Projeto (Remoção dos Botões Inferiores do Passo 2)**:
+    - **Remoção de Botões Redundantes**: Removidos os botões inferiores (`Voltar` e `Iniciar Sabatina com IA →`) no Passo 2 ("Criando Projeto do Zero"), reduzindo atrito e cliques desnecessários. A navegação de retorno já está elegantemente disponível no topo do modal (`← Trocar modo`).
+    - **Cards como Triggers Diretos**: As duas caixas de "Modo de Inicialização do Projeto" (`cardModeAssisted` e `cardModeExpress`) tornaram-se gatilhos acionáveis imediatos:
+      - Clicar em **🎯 Modo Assistido com IA (Grill Studio)** valida o nome do projeto (com shake/highlight e foco caso vazio) e transiciona diretamente para a sabatina técnica de IA.
+      - Clicar em **⚡ Modo Express (50ms)** valida o nome e cria o projeto instantaneamente no disco via endpoint determinístico, exibindo feedback no card e abrindo a tela de sucesso.
+    - **100% Paridade & Acessibilidade**: Implementado em `docs/brain-ui/` e `docs/brain-ui/demo/` com suporte a teclado (Enter/Space) e animação `.input-error-shake`.
+  - **Refinamento de UX do Quickstart Grill Studio (Caixas de Ação, Auditoria de Respostas e Redução de Largura)**:
+    - **Redução da Largura do Modal (-30%)**:
+      - Calibrado `max-width` da classe `.quickstart-modal-card.wide` para `740px` (redução de ~30% em relação aos `1040px` anteriores) e o card padrão para `720px`, criando uma proporção muito mais confortável e focada para leitura e resposta.
+    - **Substituição dos Botões por Duas Caixas de Ação (Estilo Cards do Passo 2)**:
+      - Substituídos os botões convencionais de rodapé (`Voltar` e `Gerar Contratos`) por duas caixas interativas (`.qs-grill-action-cards`):
+        - **Caixa 1 (`cardGrillMoreQuestions`)**: Pergunta se o desenvolvedor deseja que o Arquiteto de IA formule mais perguntas técnicas (até +4 perguntas complementares, limite de 8), preservando integralmente todas as respostas já digitadas/selecionadas.
+        - **Caixa 2 (`cardGrillGenerateContracts`)**: Representa a ação de conclusão da sabatina e síntese dos 4 contratos com IA.
+    - **Auditoria Obrigatória & Modal de Resposta Inválida/Fora de Contexto**:
+      - Bloqueio preventivo caso qualquer pergunta fique em branco, com alerta orientativo.
+      - Validação semântica e determinística via `POST /api/projects/quickstart/validate-answers` (`scripts/quickstart-grill.js`), detectando respostas sem sentido, gírias vazias ou desconexas da decisão arquitetural.
+      - Modal de auditoria em alta fidelidade (`#qsGrillValidationModal`) apresentando a pergunta, resposta informada, diagnóstico do Arquiteto e sugestão prática com 2 exemplos rápidos, além de atalho para aplicar a sugestão em 1 clique ou focar na resposta para edição.
+    - **100% de Paridade e Suporte Offline**:
+      - Sincronização rigorosa entre `docs/brain-ui/` e `docs/brain-ui/demo/` (`index.html`, `app.js`, `style.css`, `demo-mode.js`).
+  - **Quickstart Dual-Mode & Grill Studio (Sabatina Dinâmica com IA & Refinamento "Prompt Vivo")**:
+    - **Liberdade de Escolha do Desenvolvedor (Dual-Mode)**:
+      - O Quickstart Studio (`+ Novo Projeto`) agora oferece dois caminhos claros de inicialização no Passo 2:
+        - **`⚡ Modo Express (50ms)`**: Criação instantânea e 100% determinística com contratos padrão limpos para preenchimento manual.
+        - **`🎯 Modo Assistido com IA (Grill Studio)`**: Sabatina técnica conduzida pela IA para eliminar ambiguidades, gerar contratos ricos e roadmap ativo antes da gravação.
+    - **Sabatina Dinâmica Não-Engessada (Grill Engine)**:
+      - O novo módulo `scripts/quickstart-grill.js` formula de 3 a 4 perguntas cirúrgicas adaptadas à stack e ao domínio do projeto via endpoint `POST /api/projects/quickstart/questions`.
+      - Cada pergunta traz chips de resposta rápida e campo de texto livre para flexibilidade máxima.
+    - **Síntese de Contratos & Visualizador Interativo**:
+      - `POST /api/projects/quickstart/draft` gera os 4 contratos de governança fundamentais (`PROJECT.md`, `ARCHITECTURE.md`, `CURRENT_STATE.md` com roadmap em 3 marcos e `DECISIONS/ADR-0001-stack-inicial.md`).
+      - As abas do modal permitem navegar e editar diretamente o Markdown dos contratos.
+    - **Barra de Refinamento Iterativo ("Prompt Vivo")**:
+      - O desenvolvedor pode digitar instruções em linguagem natural (ex: *"Mudar banco para PostgreSQL e adicionar autenticação JWT"*) e acionar o botão **`✨ Melhorar com IA`** (`POST /api/projects/quickstart/refine`), que ajusta cirurgicamente todos os contratos em tempo real antes de qualquer gravação.
+    - **Aprovação Humana Obrigatória & Gravação Atômica**:
+      - A gravação física só ocorre após clique explícito em `💾 Aprovar e Criar Projeto no Disco` (`POST /api/projects/quickstart/commit`), garantindo conformidade com a regra de *Zero Fabricação*.
+    - **Skill de IDE e Template Global**:
+      - Criada a skill nativa `.agents/skills/grill-with-docs/SKILL.md` para uso conversacional no chat de IDEs (Claude Code, Cursor, Antigravity).
+      - Criado o template de vocabulário de domínio em `templates/glossary.md`.
+    - **Paridade e Validação**:
+      - 100% de paridade entre `docs/brain-ui/` e `docs/brain-ui/demo/` (`index.html`, `app.js`, `style.css`).
+      - Validado em navegador real via subagente com captura de screenshot.
   - **Experiência de Carregamento & Percepção de Performance (Synaptic Boot HUD & Instant Pre-Render)**:
     - **Diagnóstico da Percepção de Lentidão**:
       - Identificado que o carregamento da página aguardava a resposta de rede do endpoint assíncrono `/api/vault` antes de chamar `buildSidebar()`, `buildStats()` e `renderDashboardProjects()`. Durante esse intervalo de 300-800ms, o usuário deparava-se com o menu e a área de projetos completamente em branco e sem feedback, criando a falsa impressão de que a plataforma era lenta.

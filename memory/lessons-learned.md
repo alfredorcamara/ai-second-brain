@@ -192,6 +192,20 @@
 3. **Defensividade com Skeletons Shimmer**: A presença de skeletons no HTML original garante que mesmo se o overlay não estiver disponível ou for desativado, o layout da página não sofra shifts bruscos.
 **Ação**: Sempre realizar instant pre-render a partir do snapshot em memória antes de requisições assíncronas de rede e utilizar loaders com identidade visual rica e telemetria real.
 
+---
+
+## 2026-10-14 — Ergonomia de Modais & Accordion Inteligente na Sabatina Técnica
+
+### Lição 24: Ergonomia em Modais Verticais: Eliminação de Double-Scroll através de Accordion Inteligente / Modo Focado
+**Contexto**: A sabatina técnica com IA (Grill Studio) renderizava todas as 4 a 8 perguntas simultaneamente como cards expandidos em uma lista vertical. Isso empurrava as ações finais de síntese e aprofundamento para fora da área visível da tela, forçando o usuário a rolar continuamente o modal e perder o contexto dos botões de avanço.
+**Aprendizado**:
+1. **Double-Scroll é Anti-Padrão Crítico de UX**: Janelas modais que exigem scroll interno para encontrar os botões de ação geram atrito cognitivo e sensação de interface pesada e engessada.
+2. **Modo Focado (Accordion Inteligente com Auto-Avanço)**: Manter apenas a pergunta em foco expandida e as demais colapsadas em barras resumo informativas (~40px) reduz a altura vertical em mais de 60%. O container cabe integralmente em `~320px`, mantendo as caixas de ação e a barra de progresso sempre visíveis (*above the fold*).
+3. **Preservação de Estado no DOM**: Elementos de formulário (`<input>`) devem permanecer no DOM durante transições de accordion, alternando visibilidade via CSS em vez de reconstrução de nós, garantindo que respostas parciais nunca sejam perdidas.
+4. **Auto-Avanço Cadenciado (220ms)**: O avanço automático para a próxima pergunta após o clique em uma opção dá agilidade extrema (*feeling de formulário moderno estilo Typeform*), e o delay de 220ms fornece o feedback visual tátil necessário de que a opção foi selecionada antes da transição.
+**Ação**: Para formulários sequenciais ou sabatinas técnicas dentro de modais, adote accordions inteligentes de foco único com persistência de inputs no DOM e barras de progresso visíveis.
+
+
 
 
 

@@ -129,6 +129,154 @@
                 }
             })), 1400));
         }
+        if (u.startsWith('/api/projects/quickstart/')) {
+            let reqBody = {};
+            try { reqBody = JSON.parse(opts?.body || '{}'); } catch(e) {}
+            if (u.includes('/questions')) {
+                const existing = Array.isArray(reqBody.existingQuestions) ? reqBody.existingQuestions : [];
+                const isComplementary = existing.length > 0;
+                const startIndex = existing.length + 1;
+                const questions = isComplementary ? [
+                    {
+                        id: `q${startIndex}`,
+                        category: 'Performance & Cache',
+                        question: 'Qual será a estratégia de cache e otimização de latência?',
+                        options: ['Redis Distribuído', 'Cache em Memória Local', 'CDN / Edge Cache', 'Sem cache inicial'],
+                        placeholder: 'Ex: Redis para sessões e consultas frequentes'
+                    },
+                    {
+                        id: `q${startIndex + 1}`,
+                        category: 'Observabilidade & Logs',
+                        question: 'Como serão estruturados os logs e métricas de diagnóstico?',
+                        options: ['Logs estruturados JSON (Pino/Winston)', 'OpenTelemetry + Grafana', 'Sentry (Error Tracking)', 'Console simples'],
+                        placeholder: 'Ex: Pino com logs JSON estruturados'
+                    },
+                    {
+                        id: `q${startIndex + 2}`,
+                        category: 'CI/CD & Containers',
+                        question: 'Qual o ambiente de execução e pipeline de entrega contínua?',
+                        options: ['Docker + GitHub Actions', 'Kubernetes / Helm', 'Serverless / Lambdas', 'Deploy direto na VM'],
+                        placeholder: 'Ex: Dockerfile multi-stage com GitHub Actions'
+                    },
+                    {
+                        id: `q${startIndex + 3}`,
+                        category: 'Resiliência & Falhas',
+                        question: 'Como a aplicação lidará com falhas de dependências externas?',
+                        options: ['Retries com Exponential Backoff', 'Circuit Breaker', 'Dead Letter Queue', 'Fail fast com erro 500'],
+                        placeholder: 'Ex: Retries com backoff exponencial'
+                    }
+                ] : [
+                    {
+                        id: 'q1',
+                        category: 'Persistência & Dados',
+                        question: 'Qual a estratégia principal de banco de dados para a aplicação?',
+                        options: ['PostgreSQL (Relacional)', 'MongoDB (Documentos)', 'SQLite / Arquivo Local', 'Sem banco / Stateless'],
+                        placeholder: 'Ex: PostgreSQL com Prisma ORM'
+                    },
+                    {
+                        id: 'q2',
+                        category: 'Estilo de Comunicação & API',
+                        question: 'Qual o padrão de interface de comunicação adotado?',
+                        options: ['RESTful JSON API', 'GraphQL', 'gRPC / Protocol Buffers', 'Event-Driven (WebSockets/Filas)'],
+                        placeholder: 'Ex: RESTful API documentada com OpenAPI/Swagger'
+                    },
+                    {
+                        id: 'q3',
+                        category: 'Autenticação & Segurança',
+                        question: 'Como será gerenciada a autenticação e autorização de usuários/serviços?',
+                        options: ['JWT (Stateless Bearer Token)', 'Session Cookies (Stateful)', 'OAuth2 / OpenID Connect', 'API Keys simples'],
+                        placeholder: 'Ex: JWT com refresh tokens em cookies seguros'
+                    },
+                    {
+                        id: 'q4',
+                        category: 'Arquitetura de Código',
+                        question: 'Qual padrão estrutural de organização de pastas e camadas será seguido?',
+                        options: ['Clean Architecture / Hexagonal', 'Modular Monolith por Domínios', 'MVC Clássico', 'Microserviços Independentes'],
+                        placeholder: 'Ex: Clean Architecture com Domain, Application e Infra'
+                    }
+                ];
+                return new Promise(resolve => setTimeout(() => resolve(json({
+                    success: true,
+                    questions,
+                    provider: 'groq',
+                    model: 'openai/gpt-oss-120b'
+                })), 500));
+            }
+            if (u.includes('/validate-answers')) {
+                const answers = Array.isArray(reqBody.answers) ? reqBody.answers : [];
+                const questions = Array.isArray(reqBody.questions) ? reqBody.questions : [];
+                for (let i = 0; i < answers.length; i++) {
+                    const ans = answers[i];
+                    const val = (ans.answer || '').trim();
+                    const q = questions.find(x => String(x.id) === String(ans.id)) || questions[i] || {};
+                    if (val.length < 3) {
+                        return Promise.resolve(json({
+                            success: true,
+                            valid: false,
+                            issue: {
+                                questionId: ans.id,
+                                questionTitle: q.question || 'Decisão Técnica',
+                                category: q.category || 'Decisão Técnica',
+                                invalidAnswer: val || '(vazia)',
+                                reason: `A resposta "${val}" é muito curta e não define uma decisão arquitetural para o projeto.`,
+                                suggestion: q.options && q.options[0] ? q.options[0] : 'Defina uma tecnologia válida'
+                            }
+                        }));
+                    }
+                    const gibberish = /^(asdf|qwerty|123|teste|batata|sei\s*la|qualquer)$/i.test(val.toLowerCase());
+                    if (gibberish) {
+                        return Promise.resolve(json({
+                            success: true,
+                            valid: false,
+                            issue: {
+                                questionId: ans.id,
+                                questionTitle: q.question || 'Decisão Técnica',
+                                category: q.category || 'Decisão Técnica',
+                                invalidAnswer: val,
+                                reason: `A resposta "${val}" não parece fazer sentido técnico para esta pergunta.`,
+                                suggestion: q.options && q.options[0] ? q.options[0] : 'Informe uma tecnologia real'
+                            }
+                        }));
+                    }
+                }
+                return Promise.resolve(json({ success: true, valid: true }));
+            }
+            if (u.includes('/draft') || u.includes('/refine')) {
+                const name = reqBody.name || 'novo-projeto';
+                const stack = reqBody.stack || 'Node.js / TypeScript';
+                return new Promise(resolve => setTimeout(() => resolve(json({
+                    success: true,
+                    contracts: {
+                        projectMd: `# ${name}\n\n- **Stack Principal**: ${stack}\n- **Status**: 🟢 Em Planejamento / Ativo\n\n## Visão Geral\nProjeto criado no AI Second Brain com governança assistida por IA.`,
+                        architectureMd: `# Arquitetura — ${name}\n\n## Camadas & Padrões\nArquitetura modular com separação clara de responsabilidades seguindo os padrões do AI Second Brain.`,
+                        currentStateMd: `# Estado Atual — ${name}\n\n## Status: 🟢 Inicializado com Sucesso\n\n### O que já foi definido\n- [x] Contratos iniciais estabelecidos via Sabatina Técnica\n\n### Próximos Passos\n- [ ] Configuração do ambiente local\n- [ ] Implementação do primeiro módulo core`,
+                        adrMd: `# ADR-0001: Definição da Stack Inicial\n\n## Contexto\nInicialização do projeto ${name} com ${stack}.\n\n## Decisão\nAdotada stack recomendada com governança de contratos vivos.\n\n## Consequências\nAlinhamento com as regras determinísticas do AI Second Brain.`
+                    },
+                    provider: 'groq',
+                    model: 'openai/gpt-oss-120b'
+                })), 800));
+            }
+            if (u.includes('/commit')) {
+                toast('🔒 Demo somente leitura — em instalação local o projeto seria gravado em projects/.');
+                return Promise.resolve(json({
+                    success: true,
+                    projectPath: `c:/Projetos/SaaS/Google Antigravity/Projetos/AI_SECOND_BRAIN/projects/${reqBody.name || 'demo'}`,
+                    folderName: reqBody.name || 'demo',
+                    gitInitialized: true
+                }));
+            }
+        }
+        if (u.startsWith('/api/projects/new')) {
+            let reqBody = {};
+            try { reqBody = JSON.parse(opts?.body || '{}'); } catch(e) {}
+            toast('🔒 Demo somente leitura — projeto simulado em memória.');
+            return Promise.resolve(json({
+                success: true,
+                name: reqBody.name || 'demo',
+                path: `c:/Projetos/SaaS/Google Antigravity/Projetos/AI_SECOND_BRAIN/projects/${reqBody.name || 'demo'}`,
+                stack: reqBody.stack || 'Node.js / TypeScript'
+            }));
+        }
         if (u.startsWith('/api/brain/ask') || u.startsWith('/api/brain/search')) {
             let reqBody = {};
             let categoryFilter = '';

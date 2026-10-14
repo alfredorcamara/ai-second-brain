@@ -1347,6 +1347,10 @@
         <div class="quickstart-modal-card" role="dialog" aria-modal="true" aria-labelledby="qsTitle">
             <!-- Modal Header -->
             <div class="qs-header">
+                <button type="button" class="qs-header-back-btn" id="qsHeaderBackBtn" onclick="onHeaderBackClick()"
+                    style="display: none;">
+                    ← Trocar modo
+                </button>
                 <div class="qs-badge">⚡ QUICKSTART STUDIO</div>
                 <h2 id="qsTitle" class="qs-title">Adicionar Projeto ao AI Second Brain</h2>
                 <p class="qs-subtitle">Governança, decisões de arquitetura e memória persistente em menos de 3 minutos.
@@ -1413,16 +1417,17 @@
                 <div class="qs-step-pane" id="qsPaneStep2">
                     <!-- Form for New Project -->
                     <form id="qsFormNew" class="qs-form" onsubmit="submitQuickstartNew(event)" style="display: none;">
-                        <div class="qs-form-header">
-                            <span class="qs-form-tag greenfield">🚀 Criando Projeto do Zero</span>
-                            <button type="button" class="qs-back-link" onclick="goToQuickstartStep(1)">← Trocar
-                                modo</button>
-                        </div>
                         <div class="qs-field">
                             <label for="qsNewName">Nome do Projeto <span class="req">*</span></label>
                             <input type="text" id="qsNewName" placeholder="ex: api-pagamentos, meu-saas, app-mobile"
                                 autocomplete="off">
                             <small class="qs-hint">Use letras, números, hífens ou underscores.</small>
+                        </div>
+                        <div class="qs-field">
+                            <label for="qsNewDesc">Descrição Rápida (Opcional)</label>
+                            <input type="text" id="qsNewDesc"
+                                placeholder="ex: Microserviço de pagamentos e checkout integrado a IA"
+                                autocomplete="off">
                         </div>
                         <div class="qs-field">
                             <label for="qsNewStack">Stack Tecnológica Principal</label>
@@ -1453,28 +1458,219 @@
                                 pontes de IA instantaneamente.</small>
                         </div>
                         <div class="qs-field">
-                            <label for="qsNewDesc">Descrição Rápida (Opcional)</label>
-                            <input type="text" id="qsNewDesc"
-                                placeholder="ex: Microserviço de pagamentos e checkout integrado a IA"
-                                autocomplete="off">
-                        </div>
-                        <div class="qs-form-actions">
-                            <button type="button" class="btn btn-secondary"
-                                onclick="goToQuickstartStep(1)">Voltar</button>
-                            <button type="submit" class="btn btn-primary btn-submit-qs" id="btnSubmitNew">
-                                <span class="btn-spinner" style="display:none"></span>
-                                <span>🚀 Inicializar Projeto com IA</span>
-                            </button>
+                            <label>Modo de Inicialização do Projeto</label>
+                            <div class="qs-mode-cards">
+                                <div class="qs-mode-card qs-action-box active-primary" id="cardModeAssisted"
+                                    onclick="triggerQuickstartChoice('assisted')" role="button" tabindex="0"
+                                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();triggerQuickstartChoice('assisted');}">
+                                    <div class="qs-mode-card-content">
+                                        <div class="qs-mode-card-header">
+                                            <span class="qs-mode-card-icon">🎯</span>
+                                            <strong class="qs-mode-card-title">Modo Assistido com IA (Grill
+                                                Studio)</strong>
+                                            <span class="qs-mode-badge recommended">Recomendado</span>
+                                        </div>
+                                        <p class="qs-mode-card-desc">Sabatina técnica dinâmica para eliminar
+                                            ambiguidades, gerando contratos ricos e roadmap ativo antes da gravação.</p>
+                                        <div class="qs-action-box-footer">
+                                            <span class="qs-box-spinner" id="spinnerModeAssisted"
+                                                style="display:none"></span>
+                                            <span id="textModeAssisted">🎯 Iniciar Sabatina com IA →</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="qs-mode-card qs-action-box" id="cardModeExpress"
+                                    onclick="triggerQuickstartChoice('express')" role="button" tabindex="0"
+                                    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();triggerQuickstartChoice('express');}">
+                                    <div class="qs-mode-card-content">
+                                        <div class="qs-mode-card-header">
+                                            <span class="qs-mode-card-icon">⚡</span>
+                                            <strong class="qs-mode-card-title">Modo Express (50ms)</strong>
+                                            <span class="qs-mode-badge deterministic">Determinístico</span>
+                                        </div>
+                                        <p class="qs-mode-card-desc">Criação imediata com contratos padrão limpos para
+                                            preenchimento manual.</p>
+                                        <div class="qs-action-box-footer" style="color: #38bdf8;">
+                                            <span class="qs-box-spinner" id="spinnerModeExpress"
+                                                style="display:none; border-top-color: #38bdf8;"></span>
+                                            <span id="textModeExpress">⚡ Criar Projeto Imediato (50ms) →</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </form>
 
+                    <!-- Pane 2.A: Sabatina Técnica com IA (Grill Questions) -->
+                    <div id="qsGrillQuestionsPane" class="qs-grill-pane" style="display: none;">
+                        <div class="qs-grill-summary-banner" id="qsGrillSummaryBanner"></div>
+
+                        <div id="qsGrillLoadingQuestions" class="qs-grill-loading" style="display: none;">
+                            <div class="qs-grill-spinner"></div>
+                            <p class="qs-grill-loading-title">Arquiteto de IA formulando sabatina técnica...</p>
+                            <small class="qs-grill-loading-sub">Analisando a stack e o domínio para identificar
+                                perguntas cirúrgicas sem alucinação.</small>
+                        </div>
+
+                        <div id="qsGrillQuestionsContainer" class="qs-grill-questions-container">
+                            <div class="qs-grill-progress-wrap" id="qsGrillProgressWrap">
+                                <div class="qs-grill-progress-info">
+                                    <span class="qs-grill-progress-label">🎯 Decisões Arquiteturais da Sabatina</span>
+                                    <span class="qs-grill-progress-counter" id="qsGrillProgressCounter">0 de 4 respondidas</span>
+                                </div>
+                                <div class="qs-grill-progress-track">
+                                    <div class="qs-grill-progress-bar" id="qsGrillProgressBar" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                            <div id="qsGrillQuestionsList" class="qs-grill-questions-list"></div>
+                        </div>
+
+                        <!-- Duas Caixas de Ação (Substituem os botões Voltar / Gerar Contratos) -->
+                        <div class="qs-grill-action-cards" id="qsGrillActionCards">
+                            <!-- Caixa 1: Perguntar se deseja gerar mais perguntas (até mais 4) -->
+                            <div class="qs-mode-card qs-grill-action-box" id="cardGrillMoreQuestions"
+                                onclick="requestMoreGrillQuestions()" role="button" tabindex="0">
+                                <div class="qs-mode-card-content">
+                                    <div class="qs-mode-card-header">
+                                        <span class="qs-mode-card-icon">➕</span>
+                                        <strong class="qs-mode-card-title">Aprofundar Sabatina (+ Perguntas)</strong>
+                                        <span class="qs-mode-badge" id="badgeMoreQuestions">Até +4</span>
+                                    </div>
+                                    <p class="qs-mode-card-desc">Deseja que o Arquiteto de IA formule mais perguntas
+                                        cirúrgicas para aprofundar resiliência, observabilidade e arquitetura?</p>
+                                    <div class="qs-action-box-footer">
+                                        <span class="qs-box-spinner" id="spinnerMoreQuestions"
+                                            style="display:none"></span>
+                                        <span id="textMoreQuestions">🎯 Gerar mais perguntas com IA →</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Caixa 2: Representa o botão 🚀 Gerar Contratos do Projeto com IA -->
+                            <div class="qs-mode-card qs-grill-action-box active-primary" id="cardGrillGenerateContracts"
+                                onclick="submitGrillAnswers()" role="button" tabindex="0">
+                                <div class="qs-mode-card-content">
+                                    <div class="qs-mode-card-header">
+                                        <span class="qs-mode-card-icon">🚀</span>
+                                        <strong class="qs-mode-card-title">Gerar Contratos com IA</strong>
+                                        <span class="qs-mode-badge recommended">Próxima Etapa</span>
+                                    </div>
+                                    <p class="qs-mode-card-desc">Concluir a sabatina técnica e sintetizar os 4 contratos
+                                        de governança (PROJECT, ARCHITECTURE, STATE e ADR-0001).</p>
+                                    <div class="qs-action-box-footer">
+                                        <span class="qs-box-spinner" id="spinnerGenerateContracts"
+                                            style="display:none"></span>
+                                        <span id="textGenerateContracts">✨ Sintetizar contratos vivos →</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pane 2.B: Rascunho dos Contratos & Refinamento ("Prompt Vivo") -->
+                    <div id="qsGrillDraftPane" class="qs-grill-pane" style="display: none;">
+                        <div class="qs-form-header">
+                            <div class="qs-grill-header-left">
+                                <span class="qs-form-tag draft">📄 Contratos Prontos para Revisão</span>
+                                <span class="qs-model-badge" id="qsGrillDraftModelBadge">✨ IA Pronta</span>
+                            </div>
+                            <button type="button" class="qs-back-link" onclick="backToGrillQuestions()">← Ajustar
+                                respostas</button>
+                        </div>
+
+                        <div id="qsGrillLoadingDraft" class="qs-grill-loading" style="display: none;">
+                            <div class="qs-grill-spinner"></div>
+                            <p class="qs-grill-loading-title">Sintetizando contratos de governança...</p>
+                            <small class="qs-grill-loading-sub">Escrevendo PROJECT.md, ARCHITECTURE.md, CURRENT_STATE.md
+                                e ADR-0001.</small>
+                        </div>
+
+                        <div id="qsGrillDraftContentWrap" class="qs-grill-draft-wrap">
+                            <div class="qs-contract-tabs" id="qsContractTabs">
+                                <button type="button" class="qs-contract-tab active" data-contract="projectMd"
+                                    onclick="selectContractTab('projectMd')">
+                                    <span class="tab-icon">📄</span> PROJECT.md
+                                </button>
+                                <button type="button" class="qs-contract-tab" data-contract="architectureMd"
+                                    onclick="selectContractTab('architectureMd')">
+                                    <span class="tab-icon">🏗️</span> ARCHITECTURE.md
+                                </button>
+                                <button type="button" class="qs-contract-tab" data-contract="currentStateMd"
+                                    onclick="selectContractTab('currentStateMd')">
+                                    <span class="tab-icon">💾</span> CURRENT_STATE.md
+                                </button>
+                                <button type="button" class="qs-contract-tab" data-contract="adrMd"
+                                    onclick="selectContractTab('adrMd')">
+                                    <span class="tab-icon">⚖️</span> ADR-0001 (Decisão)
+                                </button>
+                            </div>
+
+                            <!-- Preview / Editor do Contrato Ativo -->
+                            <div class="qs-contract-viewer-card">
+                                <div class="qs-contract-viewer-header">
+                                    <div class="qs-contract-viewer-header-left">
+                                        <span class="qs-contract-viewer-badge" id="qsContractViewerBadge">VISUALIZANDO
+                                            PROJECT.md (Visão & Escopo)</span>
+                                        <small class="qs-contract-viewer-hint">Revise os termos gerados ou use o Prompt
+                                            Vivo abaixo.</small>
+                                    </div>
+                                    <div class="qs-contract-viewer-header-actions">
+                                        <div class="editor-tab-toggle qs-viewer-toggle">
+                                            <button type="button" class="editor-tab-btn active"
+                                                id="btnQsContractTabPreview" onclick="switchQsContractMode('preview')">
+                                                👁️ Pré-visualizar
+                                            </button>
+                                            <button type="button" class="editor-tab-btn" id="btnQsContractTabWrite"
+                                                onclick="switchQsContractMode('write')">
+                                                ✏️ Escrever
+                                            </button>
+                                        </div>
+                                        <button type="button" class="btn-qs-expand"
+                                            onclick="openExpandedContractModal()"
+                                            title="Expandir visualização em tela cheia">
+                                            ⛶ Expandir
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="qsContractPreviewPane" class="qs-contract-preview-pane doc-markdown-body"
+                                    style="display: block;"></div>
+                                <textarea id="qsContractTextarea" class="qs-contract-textarea" spellcheck="false"
+                                    style="display: none;" oninput="onQsContractTextareaInput()"></textarea>
+                            </div>
+
+                            <div class="qs-refine-box">
+                                <div class="qs-refine-header">
+                                    <span class="qs-refine-icon">✨</span>
+                                    <strong>Prompt Vivo: O que você gostaria de melhorar ou ajustar?</strong>
+                                </div>
+                                <div class="qs-refine-input-row">
+                                    <input type="text" id="qsRefineInput" class="qs-refine-input"
+                                        placeholder="ex: Troque o banco para PostgreSQL e adicione autenticação JWT com refresh token"
+                                        onkeydown="if(event.key==='Enter'){event.preventDefault();submitGrillRefine();}">
+                                    <button type="button" class="btn btn-secondary btn-refine-ai" id="btnGrillRefine"
+                                        onclick="submitGrillRefine()">
+                                        <span class="btn-spinner" style="display:none"></span>
+                                        <span>✨ Melhorar com IA</span>
+                                    </button>
+                                </div>
+                                <small class="qs-refine-hint">💡 A IA aplicará cirurgicamente sua instrução em todos os
+                                    4 contratos simultaneamente sem recarregar a tela.</small>
+                            </div>
+                        </div>
+
+                        <div class="qs-form-actions">
+                            <button type="button" class="btn btn-secondary"
+                                onclick="backToGrillQuestions()">Voltar</button>
+                            <button type="button" class="btn btn-primary btn-commit-grill" id="btnCommitGrill"
+                                onclick="commitGrillProject()">
+                                <span class="btn-spinner" style="display:none"></span>
+                                <span>💾 Aprovar e Criar Projeto no Disco</span>
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Form for Linking Existing Project -->
                     <form id="qsFormLink" class="qs-form" onsubmit="submitQuickstartLink(event)" style="display: none;">
-                        <div class="qs-form-header">
-                            <span class="qs-form-tag brownfield">🔗 Vinculando Repositório Existente</span>
-                            <button type="button" class="qs-back-link" onclick="goToQuickstartStep(1)">← Trocar
-                                modo</button>
-                        </div>
                         <div class="qs-field">
                             <label for="qsLinkPath">Caminho da Pasta no seu Computador <span
                                     class="req">*</span></label>
@@ -1541,6 +1737,54 @@
         </div>
     </div>
 
+    <!-- Quickstart Grill Validation Modal (Feedback de Respostas Inválidas) -->
+    <div id="qsGrillValidationModal" class="quickstart-modal-backdrop" style="display: none; z-index: 10050;"
+        onclick="handleGrillValModalBackdrop(event)">
+        <div class="quickstart-modal-card qs-val-modal-card" role="dialog" aria-modal="true"
+            aria-labelledby="qsValTitle">
+            <div class="qs-header qs-val-header">
+                <div class="qs-badge qs-val-badge">⚠️ AUDITORIA DE RESPOSTA</div>
+                <h2 id="qsValTitle" class="qs-title">Ajuste Necessário na Sabatina Técnica</h2>
+                <p class="qs-subtitle" id="qsValSubtitle">Identificamos uma resposta incompleta ou fora do contexto de
+                    arquitetura.</p>
+                <button class="qs-close-btn" onclick="closeGrillValidationModal(true)"
+                    aria-label="Fechar modal">✕</button>
+            </div>
+            <div class="qs-body qs-val-body">
+                <div class="qs-val-card-box">
+                    <div class="qs-val-row">
+                        <span class="qs-val-label">❓ Pergunta da Sabatina:</span>
+                        <div class="qs-val-qtext" id="qsValQuestionText">Qual a estratégia de banco de dados?</div>
+                    </div>
+                    <div class="qs-val-row" id="qsValAnswerRow">
+                        <span class="qs-val-label">❌ Resposta informada:</span>
+                        <div class="qs-val-atext" id="qsValAnswerText">"batata"</div>
+                    </div>
+                    <div class="qs-val-row">
+                        <span class="qs-val-label">🔍 Diagnóstico:</span>
+                        <div class="qs-val-reason" id="qsValReasonText">A resposta não define uma tecnologia ou
+                            estratégia válida para esta decisão técnica.</div>
+                    </div>
+                    <div class="qs-val-row highlight">
+                        <span class="qs-val-label">💡 Sugestão do Arquiteto de IA:</span>
+                        <div class="qs-val-suggestion" id="qsValSuggestionText">Você pode escolher: PostgreSQL
+                            (Relacional) ou MongoDB (Documentos).</div>
+                    </div>
+                </div>
+
+                <div class="qs-val-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeGrillValidationModal(true)">
+                        ✏️ Corrigir Esta Resposta
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btnApplyGrillSuggestion"
+                        onclick="applyGrillSuggestion()">
+                        ⚡ Aplicar Sugestão Recomendada
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Live Markdown Editor Modal -->
     <div id="fileEditorModal" class="editor-modal-backdrop" style="display: none;"
         onclick="handleEditorBackdropClick(event)">
@@ -1564,6 +1808,28 @@
                         </button>
                     </div>
                     <button class="editor-close-btn" onclick="closeFileEditor()" aria-label="Fechar editor">✕</button>
+                </div>
+            </div>
+
+            <!-- Abas de Contrato no Modo Quickstart -->
+            <div id="editorQuickstartTabsWrap" class="editor-qs-tabs-wrap" style="display: none;">
+                <div class="qs-contract-tabs" id="editorContractTabs">
+                    <button type="button" class="qs-contract-tab active" data-contract="projectMd"
+                        onclick="selectEditorContractTab('projectMd')">
+                        <span class="tab-icon">📄</span> PROJECT.md
+                    </button>
+                    <button type="button" class="qs-contract-tab" data-contract="architectureMd"
+                        onclick="selectEditorContractTab('architectureMd')">
+                        <span class="tab-icon">🏗️</span> ARCHITECTURE.md
+                    </button>
+                    <button type="button" class="qs-contract-tab" data-contract="currentStateMd"
+                        onclick="selectEditorContractTab('currentStateMd')">
+                        <span class="tab-icon">💾</span> CURRENT_STATE.md
+                    </button>
+                    <button type="button" class="qs-contract-tab" data-contract="adrMd"
+                        onclick="selectEditorContractTab('adrMd')">
+                        <span class="tab-icon">⚖️</span> ADR-0001 (Decisão)
+                    </button>
                 </div>
             </div>
 
@@ -1595,17 +1861,45 @@
                 <div id="editorPreviewPane" class="editor-preview-pane doc-markdown-body" style="display: block;"></div>
             </div>
 
+            <!-- Prompt Vivo para Refinamento com IA no Editor Expandido -->
+            <div id="editorQuickstartRefineBox" class="editor-qs-refine-box qs-refine-box" style="display: none;">
+                <div class="qs-refine-header">
+                    <span class="qs-refine-icon">✨</span>
+                    <strong>Prompt Vivo: O que você gostaria de melhorar ou ajustar neste documento?</strong>
+                </div>
+                <div class="qs-refine-input-row">
+                    <input type="text" id="editorQsRefineInput" class="qs-refine-input"
+                        placeholder="ex: Troque o banco para PostgreSQL e adicione autenticação JWT com refresh token"
+                        onkeydown="if(event.key==='Enter'){event.preventDefault();submitExpandedGrillRefine();}">
+                    <button type="button" class="btn btn-secondary btn-refine-ai" id="btnEditorGrillRefine"
+                        onclick="submitExpandedGrillRefine()">
+                        <span class="btn-spinner" style="display:none"></span>
+                        <span>✨ Melhorar com IA</span>
+                    </button>
+                </div>
+                <small class="qs-refine-hint">💡 A IA aplicará cirurgicamente sua instrução em todos os 4 contratos
+                    simultaneamente sem fechar este modal.</small>
+            </div>
+
             <!-- Footer -->
             <div class="editor-footer">
                 <div class="editor-status" id="editorStatusText">
                     <span class="status-dot snapshot"></span> Pronto para editar
                 </div>
-                <div class="editor-footer-actions">
+                <div class="editor-footer-actions" id="editorStandardActions">
                     <button type="button" class="btn btn-secondary" onclick="closeFileEditor()">Cancelar</button>
                     <button type="button" class="btn btn-primary btn-submit-editor" id="btnSaveFile"
                         onclick="saveFileContent()">
                         <span class="btn-spinner" style="display:none"></span>
                         <span>💾 Salvar no Disco</span>
+                    </button>
+                </div>
+                <div class="editor-footer-actions" id="editorQuickstartActions" style="display: none;">
+                    <button type="button" class="btn btn-secondary" onclick="closeExpandedContractModal()">Voltar ao
+                        Wizard</button>
+                    <button type="button" class="btn btn-primary btn-commit-grill" onclick="commitFromExpandedModal()">
+                        <span class="btn-spinner" style="display:none"></span>
+                        <span>💾 Aprovar e Criar Projeto</span>
                     </button>
                 </div>
             </div>

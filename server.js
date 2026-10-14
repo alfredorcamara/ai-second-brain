@@ -359,6 +359,110 @@ Thumbs.db
         return;
     }
 
+    // ============================================================
+    // QUICKSTART GRILL — Sabatina Técnica e Refinamento de Contratos
+    // ============================================================
+
+    // API: Quickstart Grill — Sabatina Dinâmica
+    if (pathname === '/api/projects/quickstart/questions' && req.method === 'POST') {
+        try {
+            const body = await readJsonBody(req);
+            delete require.cache[require.resolve('./scripts/quickstart-grill')];
+            const grill = require('./scripts/quickstart-grill');
+            const result = await grill.generateQuestions(getAiGateway(), body);
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ success: true, ...result }));
+        } catch (err) {
+            console.error('❌ [Quickstart Grill] Erro ao gerar perguntas:', err.message);
+            res.writeHead(err.statusCode || 500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ success: false, error: err.message }));
+        }
+        return;
+    }
+
+    // API: Quickstart Grill — Validação Semântica de Respostas da Sabatina
+    if (pathname === '/api/projects/quickstart/validate-answers' && req.method === 'POST') {
+        try {
+            const body = await readJsonBody(req);
+            delete require.cache[require.resolve('./scripts/quickstart-grill')];
+            const grill = require('./scripts/quickstart-grill');
+            const result = await grill.validateAnswers(getAiGateway(), body.projectInfo, body.questions, body.answers);
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ success: true, ...result }));
+        } catch (err) {
+            console.error('❌ [Quickstart Grill] Erro ao validar respostas:', err.message);
+            res.writeHead(err.statusCode || 500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ success: false, error: err.message }));
+        }
+        return;
+    }
+
+    // API: Quickstart Grill — Rascunho dos Contratos
+    if (pathname === '/api/projects/quickstart/draft' && req.method === 'POST') {
+        try {
+            const body = await readJsonBody(req);
+            delete require.cache[require.resolve('./scripts/quickstart-grill')];
+            const grill = require('./scripts/quickstart-grill');
+            const result = await grill.generateDraft(getAiGateway(), body, body.answers);
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ success: true, ...result }));
+        } catch (err) {
+            console.error('❌ [Quickstart Grill] Erro ao gerar rascunho:', err.message);
+            res.writeHead(err.statusCode || 500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ success: false, error: err.message }));
+        }
+        return;
+    }
+
+    // API: Quickstart Grill — Refinamento ("Prompt Vivo")
+    if (pathname === '/api/projects/quickstart/refine' && req.method === 'POST') {
+        try {
+            const body = await readJsonBody(req);
+            delete require.cache[require.resolve('./scripts/quickstart-grill')];
+            const grill = require('./scripts/quickstart-grill');
+            const result = await grill.refineDraft(getAiGateway(), body, body.contracts, body.feedback);
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ success: true, ...result }));
+        } catch (err) {
+            console.error('❌ [Quickstart Grill] Erro ao refinar contratos:', err.message);
+            res.writeHead(err.statusCode || 500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ success: false, error: err.message }));
+        }
+        return;
+    }
+
+    // API: Quickstart Grill — Gravação Atômica (Commit)
+    if (pathname === '/api/projects/quickstart/commit' && req.method === 'POST') {
+        try {
+            const body = await readJsonBody(req);
+            delete require.cache[require.resolve('./scripts/quickstart-grill')];
+            const grill = require('./scripts/quickstart-grill');
+            const result = grill.commitProject(ROOT_DIR, body, body.contracts, { initGit: body.initGit });
+
+            // Atualiza snapshot do Vault e notifica SSE
+            delete require.cache[require.resolve('./scripts/scan-vault')];
+            const { scanVault } = require('./scripts/scan-vault');
+            const vault = scanVault(ROOT_DIR);
+            const snapshotPath = path.join(UI_DIR, 'vault-data.js');
+            fs.writeFileSync(snapshotPath, `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+
+            broadcastEvent('vault-updated', { project: result.name, type: 'new-project', time: Date.now() });
+
+            res.writeHead(201, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({
+                success: true,
+                name: result.name,
+                path: result.path,
+                message: `Projeto '${result.name}' criado com sucesso!`
+            }));
+        } catch (err) {
+            console.error('❌ [Quickstart Grill] Erro ao gravar projeto:', err.message);
+            res.writeHead(err.statusCode || 500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ success: false, error: err.message }));
+        }
+        return;
+    }
+
     // API: Vincular Repositório Existente (Brownfield)
     if (pathname === '/api/projects/link' && req.method === 'POST') {
         try {
