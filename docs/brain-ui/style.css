@@ -12354,7 +12354,10 @@ body::-webkit-scrollbar-thumb:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #080a11;
+    background: rgba(8, 10, 17, 0.75);
+    /* 👈 Altere de #080a11 para rgba (ex: 0.75 ou 0.60) */
+    backdrop-filter: blur(4px);
+    /* 👈 Opcional: dá o efeito de vidro fosco no fundo */
     overflow: hidden;
     user-select: none;
     transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -12370,11 +12373,11 @@ body::-webkit-scrollbar-thumb:hover {
 .brain-boot-backdrop {
     position: absolute;
     inset: 0;
-    background: 
+    background:
         radial-gradient(circle at 50% 40%, rgba(99, 102, 241, 0.16) 0%, rgba(16, 185, 129, 0.05) 45%, transparent 75%),
         radial-gradient(circle at 80% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
         radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
-    background-image: 
+    background-image:
         radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
         radial-gradient(circle at 50% 40%, rgba(99, 102, 241, 0.16) 0%, rgba(16, 185, 129, 0.05) 45%, transparent 75%);
     background-size: 28px 28px, 100% 100%;
@@ -12393,7 +12396,7 @@ body::-webkit-scrollbar-thumb:hover {
     background: rgba(13, 17, 30, 0.85);
     border: 1px solid rgba(99, 102, 241, 0.35);
     border-radius: 20px;
-    box-shadow: 
+    box-shadow:
         0 24px 60px rgba(0, 0, 0, 0.7),
         0 0 40px rgba(99, 102, 241, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.12);
@@ -12403,8 +12406,13 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 @keyframes bootCardFloat {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(-4px); }
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(-4px);
+    }
 }
 
 .brain-boot-core {
@@ -12467,13 +12475,23 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 @keyframes bootSpin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes bootSpinReverse {
-    from { transform: rotate(360deg); }
-    to { transform: rotate(0deg); }
+    from {
+        transform: rotate(360deg);
+    }
+
+    to {
+        transform: rotate(0deg);
+    }
 }
 
 .brain-boot-badge {
@@ -12548,8 +12566,13 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 @keyframes bootShimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
 }
 
 .brain-boot-progress-meta {
@@ -12606,8 +12629,17 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 @keyframes bootDotPulse {
-    0%, 100% { opacity: 0.6; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.25); }
+
+    0%,
+    100% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.25);
+    }
 }
 
 /* Skeletons para Sidebar e Cards de Projetos */
@@ -12622,7 +12654,7 @@ body::-webkit-scrollbar-thumb:hover {
     height: 12px;
     width: 55%;
     border-radius: 4px;
-    background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 25%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0.04) 75%);
     background-size: 200% 100%;
     animation: skeletonSweep 1.8s infinite;
 }
@@ -12631,7 +12663,7 @@ body::-webkit-scrollbar-thumb:hover {
     height: 24px;
     width: 90%;
     border-radius: 6px;
-    background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.03) 75%);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 25%, rgba(255, 255, 255, 0.07) 50%, rgba(255, 255, 255, 0.03) 75%);
     background-size: 200% 100%;
     animation: skeletonSweep 1.8s infinite;
 }
@@ -12656,7 +12688,7 @@ body::-webkit-scrollbar-thumb:hover {
     height: 18px;
     width: 50%;
     border-radius: 4px;
-    background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.04) 75%);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 25%, rgba(255, 255, 255, 0.09) 50%, rgba(255, 255, 255, 0.04) 75%);
     background-size: 200% 100%;
     animation: skeletonSweep 1.8s infinite;
 }
@@ -12665,7 +12697,7 @@ body::-webkit-scrollbar-thumb:hover {
     height: 16px;
     width: 70px;
     border-radius: 99px;
-    background: linear-gradient(90deg, rgba(99,102,241,0.06) 25%, rgba(99,102,241,0.14) 50%, rgba(99,102,241,0.06) 75%);
+    background: linear-gradient(90deg, rgba(99, 102, 241, 0.06) 25%, rgba(99, 102, 241, 0.14) 50%, rgba(99, 102, 241, 0.06) 75%);
     background-size: 200% 100%;
     animation: skeletonSweep 1.8s infinite;
 }
@@ -12673,7 +12705,7 @@ body::-webkit-scrollbar-thumb:hover {
 .skeleton-line {
     height: 12px;
     border-radius: 4px;
-    background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.03) 75%);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 25%, rgba(255, 255, 255, 0.07) 50%, rgba(255, 255, 255, 0.03) 75%);
     background-size: 200% 100%;
     animation: skeletonSweep 1.8s infinite;
 }
@@ -12682,12 +12714,17 @@ body::-webkit-scrollbar-thumb:hover {
     height: 4px;
     width: 100%;
     border-radius: 99px;
-    background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(99,102,241,0.12) 50%, rgba(255,255,255,0.04) 75%);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 25%, rgba(99, 102, 241, 0.12) 50%, rgba(255, 255, 255, 0.04) 75%);
     background-size: 200% 100%;
     animation: skeletonSweep 1.8s infinite;
 }
 
 @keyframes skeletonSweep {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
 }
