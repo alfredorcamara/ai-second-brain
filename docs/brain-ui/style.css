@@ -4561,6 +4561,18 @@ body {
     border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
+.proj-status-chip.testing {
+    background: rgba(59, 130, 246, 0.12);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.proj-status-chip.paused {
+    background: rgba(245, 158, 11, 0.12);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
 .proj-pulse-dot {
     width: 7px;
     height: 7px;
@@ -4576,6 +4588,16 @@ body {
 .proj-pulse-dot.yellow {
     background: #f59e0b;
     animation: projPulseYellow 2s infinite;
+}
+
+.proj-pulse-dot.amber {
+    background: #f59e0b;
+    animation: projPulseYellow 2s infinite;
+}
+
+.proj-pulse-dot.blue {
+    background: #3b82f6;
+    animation: projPulseBlue 2s infinite;
 }
 
 .proj-pulse-dot.red {
@@ -4608,6 +4630,20 @@ body {
 
     100% {
         box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+    }
+}
+
+@keyframes projPulseBlue {
+    0% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 6px rgba(59, 130, 246, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
     }
 }
 

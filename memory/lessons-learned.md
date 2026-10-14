@@ -169,3 +169,15 @@
 **Aprendizado**: Catálogos estáticos ou semi-estáticos de IDEs sempre parecem arbitrários ou incompletos diante da diversidade de ferramentas do mercado (Neovim, Zed, Sublime, Visual Studio, etc.) e trazem complexidade desnecessária para web apps locais (menus suspensos que podem sofrer clipping de overflow, detecção frágil de CLIs no PATH e necessidade de persistência de preferências). Um único hiperlink nativo com ícone de pasta (`📂`) que aciona o Explorador de Arquivos do sistema operacional (`Invoke-Item` / `explorer.exe`) reduz a poluição visual a zero e dá liberdade irrestrita para o desenvolvedor abrir o projeto com qualquer ferramenta através do menu de contexto nativo do SO.
 **Ação**: Priorize abertura nativa pelo explorador de arquivos e caminhos copiáveis (`Clipboard`) em vez de construir lançadores embutidos com listas de aplicativos.
 
+---
+
+## 2026-10-14 — Fonte Única da Verdade (SSOT) para Configurações & Circuit Breakers
+
+### Lição 22: Fonte Única da Verdade (SSOT) real: elimine cópias redundantes e use fallbacks apenas como safety nets
+**Contexto**: A caixa de listagem de status de projetos na barra de busca divergia das opções do formulário de edição rápida e dos chips de status dos cards. Para resolver, criou-se `config/project-statuses.json`, mas inicialmente geraram-se cópias espelho em `docs/brain-ui/` e `demo/`.
+**Aprendizado**:
+1. **Evitar Espelhos Físicos Redundantes**: Duplicar arquivos de configuração em múltiplas pastas "por conveniência" destrói o princípio de Fonte Única da Verdade (SSOT). Cria ambiguidade (*"qual arquivo devo editar?"*) e riscos de descontinuidade (*"se eu editar na UI, vai valer?"*). A configuração deve residir em um único lugar (`config/`) e ser injetada no pipeline de build/scan ou servida pela API.
+2. **Papel Estrito de Constantes Padrão (`DEFAULT_*`)**: Constantes padrão hardcoded no código JavaScript não devem competir com a fonte de dados. Elas devem atuar estritamente como *circuit breakers / defensive fallbacks* de engenharia para evitar quebras com erro de runtime (`undefined` ou tela preta) caso o arquivo de configuração seja excluído, corrompido ou esteja temporariamente vazio. Em condições normais de operação, 100% dos dados devem fluir da configuração dinâmica.
+**Ação**: Mantenha sempre um único arquivo de configuração editável no projeto, compile-o no snapshot/API e use defaults no código apenas como fallback de resiliência.
+
+

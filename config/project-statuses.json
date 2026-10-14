@@ -1,0 +1,52 @@
+[
+  {
+    "id": "planning",
+    "label": "Planejamento",
+    "fullText": "🟢 Em Planejamento / Ativo",
+    "icon": "🟢",
+    "color": "yellow",
+    "badgeClass": "planning",
+    "description": "Fase inicial de concepção e especificação de requisitos",
+    "aliases": ["planejamento", "planeja", "planning", "em planejamento"]
+  },
+  {
+    "id": "active",
+    "label": "Desenvolvimento",
+    "fullText": "🚀 Em Desenvolvimento Ativo",
+    "icon": "🚀",
+    "color": "green",
+    "badgeClass": "active",
+    "description": "Em desenvolvimento ativo de código e features",
+    "aliases": ["desenvolvimento", "desenvolv", "development", "dev"]
+  },
+  {
+    "id": "testing",
+    "label": "Testes",
+    "fullText": "🟡 Em Testes / Homologação",
+    "icon": "🟡",
+    "color": "blue",
+    "badgeClass": "testing",
+    "description": "Fase de QA, homologação e testes de regressão",
+    "aliases": ["testes", "teste", "homologação", "homologaç", "qa", "staging"]
+  },
+  {
+    "id": "production",
+    "label": "Concluído",
+    "fullText": "✅ Em Produção / Concluído",
+    "icon": "✅",
+    "color": "green",
+    "badgeClass": "active",
+    "description": "Entregue em produção e operacional",
+    "aliases": ["produção", "produç", "concluído", "conclu", "done", "finished"]
+  },
+  {
+    "id": "paused",
+    "label": "Pausado",
+    "fullText": "⏸️ Pausado",
+    "icon": "⏸️",
+    "color": "amber",
+    "badgeClass": "paused",
+    "description": "Projeto temporariamente pausado ou em espera",
+    "aliases": ["pausado", "pausa", "paused", "standby", "hold"]
+  }
+]

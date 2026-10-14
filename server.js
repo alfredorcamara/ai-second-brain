@@ -58,8 +58,8 @@ function setupWatcher() {
         fs.watch(ROOT_DIR, { recursive: true }, (eventType, filename) => {
             if (!filename) return;
             if (filename.includes('node_modules') || filename.includes('.git')) return;
-            // Dispara se for arquivo Markdown ou alteração estrutural em pastas vitais
-            if (filename.endsWith('.md') || filename.includes('projects') || filename.includes('knowledge') || filename.includes('decisions') || filename.includes('memory')) {
+            // Dispara se for arquivo Markdown ou alteração estrutural em pastas vitais ou configs
+            if (filename.endsWith('.md') || filename.includes('projects') || filename.includes('knowledge') || filename.includes('decisions') || filename.includes('memory') || filename.includes('config')) {
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(() => {
                     console.log(`⚡ [Watcher] Alteração detectada no Vault (${eventType}): ${filename}`);
@@ -889,6 +889,56 @@ Projeto externo vinculado ao AI Second Brain.
             res.end(JSON.stringify({ error: err.message }));
         }
         return;
+    }
+
+    // API: Project Statuses Configuration (Fonte Única da Verdade)
+    if (pathname === '/api/config/project-statuses') {
+        const statusesPath = path.join(ROOT_DIR, 'config', 'project-statuses.json');
+        if (req.method === 'GET') {
+            try {
+                if (fs.existsSync(statusesPath)) {
+                    const data = fs.readFileSync(statusesPath, 'utf-8');
+                    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+                    res.end(data);
+                } else {
+                    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+                    res.end(JSON.stringify([]));
+                }
+            } catch (err) {
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: err.message }));
+            }
+            return;
+        }
+
+        if (req.method === 'POST') {
+            try {
+                const body = await readJsonBody(req);
+                if (!Array.isArray(body)) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Payload deve ser uma lista de status.' }));
+                    return;
+                }
+                fs.mkdirSync(path.dirname(statusesPath), { recursive: true });
+                fs.writeFileSync(statusesPath, JSON.stringify(body, null, 2), 'utf-8');
+
+                // Atualiza snapshot do Vault
+                delete require.cache[require.resolve('./scripts/scan-vault')];
+                const { scanVault } = require('./scripts/scan-vault');
+                const vault = scanVault(ROOT_DIR);
+                const snapshotPath = path.join(UI_DIR, 'vault-data.js');
+                fs.writeFileSync(snapshotPath, `window.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`, 'utf-8');
+
+                broadcastEvent('vault-updated', { type: 'statuses-updated', time: Date.now() });
+
+                res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ success: true, message: 'Status atualizados com sucesso.' }));
+            } catch (err) {
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: err.message }));
+            }
+            return;
+        }
     }
 
     // API: Live Server-Sent Events (SSE)

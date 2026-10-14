@@ -612,6 +612,17 @@ function scanVault(rootDir = ROOT_DIR) {
         totalEdges: graphEdges.length
     };
 
+    // Fonte Única da Verdade para Status de Projetos
+    let projectStatuses = [];
+    const statusesConfigPath = path.join(rootDir, 'config', 'project-statuses.json');
+    if (fs.existsSync(statusesConfigPath)) {
+        try {
+            projectStatuses = JSON.parse(fs.readFileSync(statusesConfigPath, 'utf-8'));
+        } catch (e) {
+            console.warn('⚠️ Falha ao ler config/project-statuses.json:', e.message);
+        }
+    }
+
     return {
         timestamp: Date.now(),
         files,
@@ -619,6 +630,7 @@ function scanVault(rootDir = ROOT_DIR) {
         graphNodes,
         graphEdges,
         groupColors,
+        projectStatuses,
         stats
     };
 }

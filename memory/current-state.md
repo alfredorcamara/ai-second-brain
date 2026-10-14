@@ -20,6 +20,23 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 | `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway, Research Engine, Session Capture, Brain Search) |
 
 ## Sessões Recentes
+- **Data**: 2026-10-14
+  - **Unificação da Fonte Única da Verdade para Status de Projetos (`config/project-statuses.json`)**:
+    - **Criação do Catálogo Central (SSOT / DRY)**:
+      - Criado o arquivo `config/project-statuses.json` contendo a especificação unificada de status (`id`, `label`, `fullText`, `icon`, `color`, `badgeClass`, `description`, `aliases`), permitindo que qualquer desenvolvedor altere, adicione ou remova status sem tocar em código JS ou CSS.
+      - Status padronizados: `🟢 Em Planejamento / Ativo` (planning), `🚀 Em Desenvolvimento Ativo` (active), `🟡 Em Testes / Homologação` (testing), `✅ Em Produção / Concluído` (production) e `⏸️ Pausado` (paused).
+    - **Sincronização 100% Dinâmica entre Filtros e Edição Rápida**:
+      - A caixa de listagem de status na pesquisa do Dashboard (`#projStatusFilter`) e a edição rápida do Project Workspace (`#pwEditStatus`) agora compartilham exatamente as mesmas opções, ícones, descrições e ordem através da função `getProjectStatuses()`.
+      - O card do projeto (`.proj-status-chip`) agora renderiza dinamicamente a pílula de status e o dot pulsante a partir do status oficial resolvido (`resolveProjectStatus`), suportando classes de cores dedicadas (`.paused` em âmbar e `.testing` em azul).
+    - **Eliminação de Duplicidades e Circuit Breaker de Resiliência**:
+      - Eliminadas cópias físicas redundantes de `project-statuses.json`, mantendo exclusivamente `config/project-statuses.json` como arquivo fonte.
+      - A constante `DEFAULT_PROJECT_STATUSES` no JavaScript atua estritamente como fallback defensivo de engenharia caso o JSON seja deletado, esteja vazio ou corrompido, garantindo que o visualizador nunca quebre com erro de runtime.
+    - **Infraestrutura e Backend**:
+      - `scripts/scan-vault.js` lê `config/project-statuses.json` e o embute diretamente em `window.VAULT_SNAPSHOT.projectStatuses`.
+      - `server.js` adicionou rotas `GET /api/config/project-statuses` e `POST /api/config/project-statuses` com hot-reload automático (SSE) quando o arquivo de configuração for modificado.
+    - **Paridade Absoluta 100% & Validação**:
+      - Todas as alterações aplicadas com 100% de paridade entre `docs/brain-ui/` e `docs/brain-ui/demo/` (`index.html`, `app.js`, `style.css`).
+      - Validado via testes automatizados e `npm run doctor` com 100% de integridade (0 erros).
 - **Data**: 2026-10-13
   - **Redesign Minimalista do Cabeçalho do Project Workspace (Abertura Nativa & Zero Poluição)**:
     - **Remoção de Dropdowns Arbitrários**: Eliminado o split button e o catálogo fixo de IDEs, adotando uma abordagem limpa e agnóstica de ferramenta.

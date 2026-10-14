@@ -1021,6 +1021,138 @@ let projectFilterState = {
     sort: 'name_asc'
 };
 
+// ── Fonte Única da Verdade para Status de Projetos ──────
+const DEFAULT_PROJECT_STATUSES = [
+    {
+        id: "planning",
+        label: "Planejamento",
+        fullText: "🟢 Em Planejamento / Ativo",
+        icon: "🟢",
+        color: "yellow",
+        badgeClass: "planning",
+        description: "Fase inicial de concepção e especificação de requisitos",
+        aliases: ["planejamento", "planeja", "planning", "em planejamento"]
+    },
+    {
+        id: "active",
+        label: "Desenvolvimento",
+        fullText: "🚀 Em Desenvolvimento Ativo",
+        icon: "🚀",
+        color: "green",
+        badgeClass: "active",
+        description: "Em desenvolvimento ativo de código e features",
+        aliases: ["desenvolvimento", "desenvolv", "development", "dev"]
+    },
+    {
+        id: "testing",
+        label: "Testes",
+        fullText: "🟡 Em Testes / Homologação",
+        icon: "🟡",
+        color: "blue",
+        badgeClass: "testing",
+        description: "Fase de QA, homologação e testes de regressão",
+        aliases: ["testes", "teste", "homologação", "homologaç", "qa", "staging"]
+    },
+    {
+        id: "production",
+        label: "Concluído",
+        fullText: "✅ Em Produção / Concluído",
+        icon: "✅",
+        color: "green",
+        badgeClass: "active",
+        description: "Entregue em produção e operacional",
+        aliases: ["produção", "produç", "concluído", "conclu", "done", "finished"]
+    },
+    {
+        id: "paused",
+        label: "Pausado",
+        fullText: "⏸️ Pausado",
+        icon: "⏸️",
+        color: "amber",
+        badgeClass: "paused",
+        description: "Projeto temporariamente pausado ou em espera",
+        aliases: ["pausado", "pausa", "paused", "standby", "hold"]
+    }
+];
+
+function getProjectStatuses() {
+    if (window.VAULT && window.VAULT.data && Array.isArray(window.VAULT.data.projectStatuses) && window.VAULT.data.projectStatuses.length > 0) {
+        return window.VAULT.data.projectStatuses;
+    }
+    if (window.VAULT_SNAPSHOT && Array.isArray(window.VAULT_SNAPSHOT.projectStatuses) && window.VAULT_SNAPSHOT.projectStatuses.length > 0) {
+        return window.VAULT_SNAPSHOT.projectStatuses;
+    }
+    return DEFAULT_PROJECT_STATUSES;
+}
+
+function resolveProjectStatus(rawStatus, fallbackContent = '') {
+    const statuses = getProjectStatuses();
+    const str = (rawStatus || '').trim();
+    const lower = str.toLowerCase();
+
+    if (lower) {
+        // 1. Tenta match por alias específico
+        for (const st of statuses) {
+            if (st.aliases && st.aliases.some(a => lower.includes(a.toLowerCase()))) {
+                return st;
+            }
+        }
+        // 2. Tenta match por fullText, label ou id
+        for (const st of statuses) {
+            if (lower.includes(st.label.toLowerCase()) || lower.includes(st.id.toLowerCase()) || lower.includes(st.fullText.toLowerCase())) {
+                return st;
+            }
+        }
+    }
+
+    // 3. Fallback procurando termos no corpo se não houver linha explícita de status
+    if (fallbackContent) {
+        const contentLower = fallbackContent.toLowerCase();
+        for (const st of statuses) {
+            if (st.aliases && st.aliases.some(a => contentLower.includes(a.toLowerCase()))) {
+                return st;
+            }
+        }
+    }
+
+    // 4. Se houver um status customizado novo, limpa emojis e formata dinamicamente
+    if (str) {
+        const clean = str
+            .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}]/gu, '')
+            .replace(/^[^\w\u00C0-\u00FF]+/g, '')
+            .trim();
+        if (clean) {
+            return {
+                id: clean.toLowerCase().replace(/\s+/g, '-'),
+                label: clean.split('/')[0].trim(),
+                fullText: str,
+                icon: '🟢',
+                color: 'green',
+                badgeClass: 'active',
+                description: str
+            };
+        }
+    }
+
+    // 5. Default
+    return statuses.find(s => s.id === 'active') || statuses[0] || DEFAULT_PROJECT_STATUSES[1];
+}
+
+function populateProjectStatusFilterSelect() {
+    const select = document.getElementById('projStatusFilter');
+    if (!select) return;
+    const statuses = getProjectStatuses();
+    const currentVal = projectFilterState.status || 'all';
+
+    let html = `<option value="all">Todos os Status</option>`;
+    statuses.forEach(s => {
+        const isSelected = currentVal === s.id ? 'selected' : '';
+        const displayText = s.fullText.includes(s.icon) ? s.fullText : `${s.icon} ${s.fullText}`;
+        html += `<option value="${escapeHtml(s.id)}" ${isSelected}>${escapeHtml(displayText)}</option>`;
+    });
+    select.innerHTML = html;
+}
+
 function renderDashboardProjects() {
     const slot = document.getElementById('dynamicProjectsSlot');
     if (!slot) return;
@@ -1081,29 +1213,35 @@ function renderDashboardProjects() {
 
     if (toolbar) toolbar.style.display = 'flex';
 
+    // Popula o select de Status dinamicamente a partir da Fonte Única da Verdade (JSON)
+    populateProjectStatusFilterSelect();
+
     // Mapeia e enriquece todos os projetos
     allDashboardProjects = projectsList.map(proj => {
         const folderName = proj.path.split('/')[1];
         const title = proj.title || folderName;
-        
-        let statusBadge = 'Ativo';
-        let statusClass = 'active';
-        let statusColor = 'green';
 
-        const contentLower = (proj.content || '').toLowerCase();
-        if (contentLower.includes('em planejamento') || contentLower.includes('planejamento')) {
-            statusBadge = 'Planejamento';
-            statusClass = 'planning';
-            statusColor = 'yellow';
-        } else if (contentLower.includes('em conceituação') || contentLower.includes('conceituação') || contentLower.includes('ideia')) {
-            statusBadge = 'Conceituação';
-            statusClass = 'concept';
-            statusColor = 'red';
-        } else if (contentLower.includes('produção') || contentLower.includes('em produção')) {
-            statusBadge = 'Produção';
-            statusClass = 'active';
-            statusColor = 'green';
-        }
+        // Estatísticas e arquivos do projeto
+        const projPrefix = `projects/${folderName}/`;
+        const projFiles = files.filter(f => f.path.startsWith(projPrefix));
+        const totalDocs = projFiles.length;
+
+        // Extrai status diretamente dos contratos PROJECT.md ou CURRENT_STATE.md
+        const statusMatch = (proj.content || '').match(/-\s+\*\*Status\*\*:\s*([^\r\n]+)/i);
+        const currentStateFile = projFiles.find(f => f.path.toLowerCase().endsWith('/current_state.md'));
+        const stateStatusMatch = (currentStateFile?.content || '').match(/##\s+Status:\s*([^\r\n]+)/i);
+
+        const rawStatus = (statusMatch && statusMatch[1])
+            ? statusMatch[1].trim()
+            : ((stateStatusMatch && stateStatusMatch[1]) ? stateStatusMatch[1].trim() : '');
+
+        // Resolução determinística baseada na configuração JSON de status
+        const resolved = resolveProjectStatus(rawStatus, proj.content);
+        const statusBadge = resolved.label;
+        const statusClass = resolved.badgeClass;
+        const statusColor = resolved.color;
+        const statusId = resolved.id;
+        const statusFullText = resolved.fullText;
 
         let desc = 'Projeto arquitetado e governado pelos contratos do AI Second Brain.';
         const overviewMatch = (proj.content || '').match(/##\s+Visão Geral\s*\n+([^\n#]+)/i);
@@ -1133,11 +1271,6 @@ function renderDashboardProjects() {
         } else if (stackLower.includes('java') || stackLower.includes('kotlin')) {
             stackIcon = '☕';
         }
-
-        // Estatísticas do projeto
-        const projPrefix = `projects/${folderName}/`;
-        const projFiles = files.filter(f => f.path.startsWith(projPrefix));
-        const totalDocs = projFiles.length;
 
         // Labs de Pesquisa
         const researchFiles = projFiles.filter(f => f.path.toLowerCase().includes('/research/'));
@@ -1172,6 +1305,8 @@ function renderDashboardProjects() {
             statusBadge,
             statusClass,
             statusColor,
+            statusId,
+            statusFullText,
             desc,
             stack,
             stackIcon,
@@ -1349,7 +1484,7 @@ function applyDashboardProjectFilters() {
 
         // Filtro por Status
         if (statusFilter !== 'all') {
-            if (p.statusClass !== statusFilter) return false;
+            if (p.statusId !== statusFilter && p.statusClass !== statusFilter) return false;
         }
 
         // Filtro por Stack
@@ -3274,8 +3409,18 @@ async function saveOverviewQuickEdit() {
         projectMd = projectMd.replace(/(##\s+Informações Gerais[^\n\r]*)/i, `$1\n- **Status**: ${status}`);
     }
 
+    // Sincroniza Status no CURRENT_STATE.md
+    let currentStateMd = currentProjectData.currentStateMd || '';
+    if (currentStateMd && status) {
+        if (/##\s+Status:\s*[^\n\r]*/i.test(currentStateMd)) {
+            currentStateMd = currentStateMd.replace(/##\s+Status:\s*[^\n\r]*/i, `## Status: ${status}`);
+        } else {
+            currentStateMd = currentStateMd.replace(/(#[^\n\r]+)/, `$1\n\n## Status: ${status}\n`);
+        }
+    }
+
     try {
-        const res = await fetch('/api/file/save', {
+        const resProject = await fetch('/api/file/save', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -3283,11 +3428,32 @@ async function saveOverviewQuickEdit() {
                 content: projectMd
             })
         });
-        if (!res.ok) throw new Error('Falha ao salvar no disco.');
+        if (!resProject.ok) throw new Error('Falha ao salvar PROJECT.md no disco.');
+
+        if (currentStateMd && status) {
+            const resState = await fetch('/api/file/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    path: `projects/${currentProjectData.name}/CURRENT_STATE.md`,
+                    content: currentStateMd
+                })
+            });
+            if (!resState.ok) throw new Error('Falha ao sincronizar CURRENT_STATE.md no disco.');
+            currentProjectData.currentStateMd = currentStateMd;
+        }
 
         currentProjectData.projectMd = projectMd;
         if (stack) currentProjectData.stack = stack;
         if (status) currentProjectData.status = status;
+
+        if (window.VAULT && window.VAULT.data && window.VAULT.data.files) {
+            const pFile = window.VAULT.data.files.find(f => f.path === `projects/${currentProjectData.name}/PROJECT.md`);
+            if (pFile) pFile.content = projectMd;
+            const sFile = window.VAULT.data.files.find(f => f.path === `projects/${currentProjectData.name}/CURRENT_STATE.md`);
+            if (sFile && currentStateMd) sFile.content = currentStateMd;
+        }
+        renderDashboardProjects();
 
         const badgeStack = document.getElementById('pwStackBadge');
         if (badgeStack && stack) badgeStack.textContent = stack;
@@ -3296,7 +3462,7 @@ async function saveOverviewQuickEdit() {
 
         isOverviewEditing = false;
         renderProjectOverviewTab();
-        showSecondBrainToast('✨ Visão Geral do Projeto atualizada com sucesso no disco!');
+        showSecondBrainToast('✨ Visão Geral e Status atualizados com sucesso no disco!');
     } catch (err) {
         alert('Erro ao salvar: ' + err.message);
     }
@@ -3541,14 +3707,9 @@ function renderProjectOverviewTab() {
 
     // Extrai dados do CURRENT_STATE.md
     const { status: currentStatusText, definedItems, nextSteps } = parseCurrentStateSections(d.currentStateMd);
-
-    const statusOptions = [
-        { label: '🟢 Planejamento', val: '🟢 Em Planejamento / Ativo' },
-        { label: '🚀 Desenvolvimento', val: '🚀 Em Desenvolvimento Ativo' },
-        { label: '🟡 Testes', val: '🟡 Em Testes / Homologação' },
-        { label: '✅ Concluído', val: '✅ Em Produção / Concluído' },
-        { label: '⏸️ Pausado', val: '⏸️ Pausado' }
-    ];
+    const activeProjectStatus = d.status || currentStatusText || '🟢 Em Planejamento / Ativo';
+    const statusOptions = getProjectStatuses();
+    const resolvedActiveStatus = resolveProjectStatus(activeProjectStatus, d.projectMd);
 
     el.innerHTML = `
         <div class="pw-metrics-row">
@@ -3613,16 +3774,18 @@ function renderProjectOverviewTab() {
                             <div class="pw-form-group">
                                 <label class="pw-form-label">Status Operacional</label>
                                 <select id="pwEditStatus" class="pw-form-select">
-                                    ${statusOptions.map(opt => `
-                                        <option value="${opt.val}" ${currentStatusText.includes(opt.label.split(' ')[1]) ? 'selected' : ''}>${opt.val}</option>
-                                    `).join('')}
+                                    ${statusOptions.map(opt => {
+                                        const isSelected = (opt.id === resolvedActiveStatus.id) ? 'selected' : '';
+                                        const displayText = opt.fullText.includes(opt.icon) ? opt.fullText : `${opt.icon} ${opt.fullText}`;
+                                        return `<option value="${escapeHtml(opt.fullText)}" ${isSelected}>${escapeHtml(displayText)}</option>`;
+                                    }).join('')}
                                 </select>
                             </div>
                         </div>
 
                         <div class="pw-form-actions">
                             <button class="btn btn-primary" onclick="saveOverviewQuickEdit()">
-                                💾 Salvar no PROJECT.md
+                                💾 Salvar Visão Geral & Status
                             </button>
                             <button class="btn btn-secondary" onclick="toggleOverviewQuickEdit(false)">
                                 Cancelar
@@ -3648,7 +3811,7 @@ function renderProjectOverviewTab() {
                         </div>
                         <div class="pw-spec-item">
                             <span class="pw-spec-label">Status Operacional</span>
-                            <span class="pw-spec-value" style="color:#38bdf8;">${currentStatusText}</span>
+                            <span class="pw-spec-value" style="color:#38bdf8;">${activeProjectStatus}</span>
                         </div>
                         <div class="pw-spec-item">
                             <span class="pw-spec-label">Repositório Físico</span>
@@ -3780,29 +3943,13 @@ function renderProjectOverviewTab() {
                 `}
             </div>
 
-            <!-- Card 2: Estado Atual & Roadmap Ativo -->
+            <!-- Card 2: Roadmap Ativo -->
             <div class="pw-card">
                 <div class="pw-card-header">
-                    <span class="pw-card-title">💾 Estado Atual & Roadmap Ativo</span>
+                    <span class="pw-card-title">🎯 Roadmap Ativo</span>
                     <button class="btn-edit-glow" onclick="editCurrentStateMd()">
                         📝 Editor Markdown Completo
                     </button>
-                </div>
-
-                <!-- Status Atual com seletor interativo -->
-                <div style="background: rgba(56, 189, 248, 0.06); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px;">
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <div class="status-indicator green" style="width:10px; height:10px;"></div>
-                        <div style="font-size:10px; text-transform:uppercase; color:var(--text-tertiary); font-weight:700;">Status do Ciclo: <span style="color:#e0f2fe; font-size:12px;">${currentStatusText}</span></div>
-                    </div>
-                    <!-- Seletor Rápido de Status -->
-                    <div class="pw-status-pills">
-                        ${statusOptions.map(opt => `
-                            <button type="button" class="pw-status-pill ${currentStatusText.includes(opt.label.split(' ')[1]) ? 'active' : ''}" onclick="updateCurrentStateStatus('${opt.val}')">
-                                ${opt.label}
-                            </button>
-                        `).join('')}
-                    </div>
                 </div>
 
                 <!-- O que já foi definido (Checklist Interativo) -->
