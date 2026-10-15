@@ -1,4 +1,4 @@
-# AI Second Brain — Alfredo AI OS
+# AI Second Brain
 
 > **O Sistema Operacional de Memória Viva e Governança para Agentes de IA.**  
 > 100% Markdown · Agnóstico a qualquer ferramenta ou IDE (Cursor, Claude Code, Antigravity, Windsurf, Copilot, Cline, Roo Code) · Zero Lock-in.
