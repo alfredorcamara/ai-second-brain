@@ -20,6 +20,17 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 | `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway, Research Engine, Session Capture, Brain Search) |
 
 ## Sessões Recentes
+- **Data**: 2026-10-15
+  - **Correção do Travamento no Modal de Carregamento da Demo na Landing Page (Synaptic Boot HUD & Paridade 100%)**:
+    - **Diagnóstico & Causa Raiz**:
+      - Ao clicar em "Carregar Demo ao Vivo" na Landing Page (`docs/brain-ui/landing/index.html`), o modal cinematográfico de carregamento (`#brainBootOverlay`) permanecia congelado indefinidamente em `0%` (*"Inicializando conexões..."*).
+      - O console do DevTools revelava o erro crítico: `Uncaught SyntaxError: Unexpected end of input app.js:10105`.
+      - A causa raiz foi a presença de um fragmento duplicado e incompleto da função `startGrillQuestionsFlow` (linhas 3540-3554) colado inadvertidamente antes de `let currentGrillValidationIssue = null;` no arquivo `docs/brain-ui/demo/app.js`. Como o bloco `{` nunca era fechado, o motor V8 abortava a compilação do script inteiro em tempo de parse, impedindo a execução dos listeners de `DOMContentLoaded`, a inicialização do `VaultManager` e a chamada final de `dismissBootScreen()`.
+    - **Solução Definitiva & Paridade Absoluta (100%)**:
+      - Removido o bloco órfão e sincronizado integralmente `docs/brain-ui/demo/app.js` com a versão master consolidada `docs/brain-ui/app.js`, restabelecendo 100% de paridade byte-a-byte entre os ambientes local e público de demonstração.
+      - Validação de integridade sintática via `node --check` sobre todos os 25 scripts JavaScript de `docs/brain-ui/` com 100% de conformidade (`OK`).
+    - **Comprovação Visual no Navegador**:
+      - Testado no Chromium real via subagente com captura de tela (`demo_loaded_1792065012761.png`): o overlay de boot anima a barra de progresso até 100%, realiza o fade-out cinematográfico e revela o Cockpit completo (`demo-app`), incluindo o Grafo Neural 3D, métricas, toolbar de governança e cards vivos, com zero erros no console.
 - **Data**: 2026-10-14
   - **Opção 3: Modo Focado / Accordion Inteligente na Sabatina Técnica (Grill Studio)**:
     - **Solução Definitiva para Eliminação de Rolagem e Double-Scroll**:

@@ -294,7 +294,66 @@ function checkDecisions() {
     }
 }
 
-// 6. Execução Principal
+let checkedJsCount = 0;
+
+// 6. Validação de Sintaxe JavaScript (Frontend, Backend e Scripts)
+function checkJavaScriptSyntax() {
+    const vm = require('vm');
+    const dirsToCheck = [
+        path.join(ROOT_DIR, 'docs', 'brain-ui'),
+        path.join(ROOT_DIR, 'scripts')
+    ];
+    const singleFiles = [
+        path.join(ROOT_DIR, 'server.js')
+    ];
+
+    function scanJs(dir) {
+        if (!fs.existsSync(dir)) return;
+        const entries = fs.readdirSync(dir, { withFileTypes: true });
+        for (const entry of entries) {
+            const fullPath = path.join(dir, entry.name);
+            if (entry.isDirectory()) {
+                if (['node_modules', '.git', 'vendor'].includes(entry.name.toLowerCase())) continue;
+                scanJs(fullPath);
+            } else if (entry.name.endsWith('.js') && !entry.name.endsWith('.min.js')) {
+                checkedJsCount++;
+                try {
+                    const code = fs.readFileSync(fullPath, 'utf8');
+                    new vm.Script(code, { filename: fullPath });
+                } catch (err) {
+                    const rel = normalizePath(path.relative(ROOT_DIR, fullPath));
+                    errors.push({
+                        type: 'JS_SYNTAX_ERROR',
+                        file: rel,
+                        target: fullPath,
+                        message: err.message
+                    });
+                }
+            }
+        }
+    }
+
+    dirsToCheck.forEach(scanJs);
+    singleFiles.forEach(f => {
+        if (fs.existsSync(f)) {
+            checkedJsCount++;
+            try {
+                const code = fs.readFileSync(f, 'utf8');
+                new vm.Script(code, { filename: f });
+            } catch (err) {
+                const rel = normalizePath(path.relative(ROOT_DIR, f));
+                errors.push({
+                    type: 'JS_SYNTAX_ERROR',
+                    file: rel,
+                    target: f,
+                    message: err.message
+                });
+            }
+        }
+    });
+}
+
+// 7. Execução Principal
 function runDoctor() {
     console.log('\n🩺 ════════════════════════════════════════════════════════════');
     console.log('   AI SECOND BRAIN — DOCTOR & LINTER DE INTEGRIDADE');
@@ -310,9 +369,11 @@ function runDoctor() {
     checkProjects();
     checkKnowledgeIndex();
     checkDecisions();
+    checkJavaScriptSyntax();
 
     console.log(`📁 ${checkedProjectsCount} projetos ativos validados.`);
-    console.log(`🔗 ${checkedLinksCount} links e referências verificados em ${checkedFilesCount} arquivos.\n`);
+    console.log(`🔗 ${checkedLinksCount} links e referências verificados em ${checkedFilesCount} arquivos.`);
+    console.log(`⚡ ${checkedJsCount} scripts JavaScript validados com sintaxe íntegra.\n`);
 
     if (warnings.length > 0) {
         console.log(`⚠️  ${warnings.length} AVISO(S):`);

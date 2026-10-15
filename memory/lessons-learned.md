@@ -205,6 +205,19 @@
 4. **Auto-Avanço Cadenciado (220ms)**: O avanço automático para a próxima pergunta após o clique em uma opção dá agilidade extrema (*feeling de formulário moderno estilo Typeform*), e o delay de 220ms fornece o feedback visual tátil necessário de que a opção foi selecionada antes da transição.
 **Ação**: Para formulários sequenciais ou sabatinas técnicas dentro de modais, adote accordions inteligentes de foco único com persistência de inputs no DOM e barras de progresso visíveis.
 
+---
+
+## 2026-10-15 — Validação de Sintaxe em Pipelines de Sincronização & Resiliência de Boot
+
+### Lição 25: Resiliência do Synaptic Boot HUD e Integridade Sintática Estrita em Arquivos Espelhados
+**Contexto**: Ao carregar a demonstração embutida na Landing Page (`docs/brain-ui/landing/index.html`), o modal de inicialização (`#brainBootOverlay`) ficava travado em 0% sem sair da tela. A investigação revelou um `SyntaxError: Unexpected end of input` em `docs/brain-ui/demo/app.js` causado por um trecho duplicado incompleto deixado na sincronização manual com `docs/brain-ui/app.js`.
+**Aprendizado**:
+1. **O Risco dos Erros de Parse no Boot**: Telas de carregamento visual dependem do runtime JavaScript para registrar eventos e chamar a função de encerramento (`dismissBootScreen()`). Se o arquivo JavaScript principal contiver um erro de sintaxe, o navegador aborta a execução antes do parsing de qualquer função ou listener de `DOMContentLoaded`. O layout estático do loader fica congelado para sempre sem que o usuário entenda o motivo.
+2. **Paridade Byte-a-Byte Estrita**: O arquivo `app.js` do ambiente de demonstração (`demo/`) e do cockpit local (`brain-ui/`) compartilham a mesma lógica central (diferindo apenas na interceptação do `demo-mode.js`). Sincronizações parciais ou manuais criam divergências sutis e quebras acidentais de sintaxe.
+3. **Validação Automatizada de Sintaxe no Linter**: O linter de integridade do projeto (`scripts/doctor.js`) deve validar não apenas referências Markdown e contratos de governança, mas também a integridade sintática de 100% dos scripts JavaScript do cliente via motor nativo de parsing (`vm.Script` / `node --check`).
+**Ação**: Sempre sincronizar arquivos idênticos de forma atômica e integral, e incluir verificação sintática de scripts no `doctor.js` para blindar o workspace contra erros de parse.
+
+
 
 
 

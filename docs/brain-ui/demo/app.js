@@ -2085,6 +2085,7 @@ function setupGraphCategoryPanel(opts) {
             e.stopPropagation();
             dropdown.style.display = 'none';
             wrap.classList.remove('open');
+            if (typeof g.clearCategoryHighlight === 'function') g.clearCategoryHighlight();
         };
     }
 
@@ -2094,6 +2095,7 @@ function setupGraphCategoryPanel(opts) {
             if (!wrap.contains(e.target)) {
                 dropdown.style.display = 'none';
                 wrap.classList.remove('open');
+                if (typeof g.clearCategoryHighlight === 'function') g.clearCategoryHighlight();
             }
         };
         document.addEventListener('click', wrap._docClickHandler);
@@ -2103,6 +2105,7 @@ function setupGraphCategoryPanel(opts) {
     if (resetBtn) {
         resetBtn.onclick = (e) => {
             e.stopPropagation();
+            if (typeof g.clearCategoryHighlight === 'function') g.clearCategoryHighlight();
             try {
                 if (window.resetToDefaultColors) {
                     window.resetToDefaultColors();
@@ -2168,20 +2171,30 @@ function setupGraphCategoryPanel(opts) {
 
         list.innerHTML = html;
 
+        // Limpa destaque caso o cursor saia de toda a lista
+        list.onmouseleave = () => {
+            if (typeof g.clearCategoryHighlight === 'function') g.clearCategoryHighlight();
+        };
+
         // Binds de hover e clique para filtrar
         list.querySelectorAll('.cat-item').forEach(itemEl => {
             const key = itemEl.getAttribute('data-key');
 
             itemEl.onmouseenter = () => {
-                if (key !== 'all') g.highlightCategory(key);
+                if (key !== 'all') {
+                    if (typeof g.highlightCategory === 'function') g.highlightCategory(key);
+                } else {
+                    if (typeof g.clearCategoryHighlight === 'function') g.clearCategoryHighlight();
+                }
             };
             itemEl.onmouseleave = () => {
-                g.clearCategoryHighlight();
+                if (typeof g.clearCategoryHighlight === 'function') g.clearCategoryHighlight();
             };
 
             itemEl.onclick = (e) => {
                 if (e.target.closest('.cat-item-color-box')) return;
 
+                if (typeof g.clearCategoryHighlight === 'function') g.clearCategoryHighlight();
                 const nextKey = (g.currentCategory === key || key === 'all') ? null : key;
                 const filterRes = g.setCategoryFilter(nextKey);
 
@@ -2745,7 +2758,12 @@ function setupEventListeners() {
             btnAutoOrbit.classList.toggle('active', isActive);
         }
     });
-    if (btnShake) btnShake.addEventListener('click', () => graph && graph.reheat(1.0));
+    if (btnShake) btnShake.addEventListener('click', () => {
+        if (graph) {
+            if (typeof graph.pulseSurge === 'function') graph.pulseSurge();
+            else graph.reheat(1.0);
+        }
+    });
     if (btnResetView) btnResetView.addEventListener('click', () => graph && graph.resetView());
 
     // Fullscreen do Grafo Global
@@ -3537,21 +3555,6 @@ function commitFromExpandedModal() {
     commitGrillProject();
 }
 
-async function startGrillQuestionsFlow(projectInfo) {
-    currentGrillProjectInfo = projectInfo;
-    const formNew = document.getElementById('qsFormNew');
-    const qPane = document.getElementById('qsGrillQuestionsPane');
-    const loadingEl = document.getElementById('qsGrillLoadingQuestions');
-    const containerEl = document.getElementById('qsGrillQuestionsContainer');
-    const bannerEl = document.getElementById('qsGrillSummaryBanner');
-    const btnSubmitAnswers = document.getElementById('btnSubmitGrillAnswers');
-
-    if (formNew) formNew.style.display = 'none';
-    if (qPane) qPane.style.display = 'flex';
-    if (loadingEl) loadingEl.style.display = 'flex';
-    if (containerEl) containerEl.style.display = 'none';
-    if (btnSubmitAnswers) btnSubmitAnswers.disabled = true;
-    const headerBackBtn = document.getElementById('qsHeaderBackBtn');
 let currentGrillValidationIssue = null;
 
 async function startGrillQuestionsFlow(projectInfo) {
@@ -5461,7 +5464,12 @@ function renderProjectGraphTab() {
                 btnAutoOrbit.classList.toggle('active', running);
             };
         }
-        if (btnShake) btnShake.onclick = () => projectGraph && projectGraph.reheat(1.0);
+        if (btnShake) btnShake.onclick = () => {
+            if (projectGraph) {
+                if (typeof projectGraph.pulseSurge === 'function') projectGraph.pulseSurge();
+                else projectGraph.reheat(1.0);
+            }
+        };
         if (btnReset) btnReset.onclick = () => projectGraph && projectGraph.resetView();
         if (toggleIcons) {
             toggleIcons.onchange = (e) => {
@@ -5958,7 +5966,6 @@ window.toggleIdeDropdown = toggleIdeDropdown;
 window.closeIdeDropdown = closeIdeDropdown;
 window.selectAndLaunchIde = selectAndLaunchIde;
 window.updateIdeMainButtonUI = updateIdeMainButtonUI;
-window.openProjectInIde = openProjectInIde;
 
 async function copySessionStartPrompt() {
     const d = currentProjectData;
@@ -6894,6 +6901,13 @@ async function triggerAiRefinePrompt() {
 
         if (!res.ok) {
             const errData = await res.json().catch(() => ({}));
+            if (res.status === 429 || errData.quotaExceeded) {
+                showQuotaExceededModal(errData.error);
+                if (statusEl) {
+                    statusEl.innerHTML = `<span class="status-dot" style="background:#f59e0b"></span> Cota de IA Esgotada!`;
+                }
+                return;
+            }
             throw new Error(errData.error || 'Falha ao consultar a API de IA.');
         }
 
@@ -6971,6 +6985,10 @@ async function triggerPreviewDecompose() {
 
         if (!res.ok) {
             const errData = await res.json().catch(() => ({}));
+            if (res.status === 429 || errData.quotaExceeded) {
+                showQuotaExceededModal(errData.error);
+                return;
+            }
             throw new Error(errData.error || 'Erro na decomposição.');
         }
 
@@ -8152,6 +8170,7 @@ async function loadAiGatewayStatus() {
         window.AI_GATEWAY_CONFIG = config;
         updateAiGatewayPillUI(config);
 
+        // Se a IA não estiver configurada e for a primeira vez no Cockpit, exibe onboarding suave
         if (!config.configured && !localStorage.getItem('ai_onboarding_shown') && isLocalEnvironment()) {
             localStorage.setItem('ai_onboarding_shown', '1');
             setTimeout(() => {
@@ -8160,6 +8179,7 @@ async function loadAiGatewayStatus() {
         }
     } catch (err) {
         console.warn('⚠️ [AI Gateway] Modo offline ou demo web:', err.message);
+        // Fallback gracioso para modo demonstração
         const demoConfig = {
             configured: false,
             provider: 'groq',
@@ -8241,9 +8261,6 @@ function proceedFromWelcomeToSettings() {
 }
 
 /**
- * Modal 2: Principal BYOK (Configuração de IA)
- */
-/**
  * Popula e sincroniza as opções do dropdown de modelos de IA
  */
 function populateAiModelSelect(modelList, selectedModelId) {
@@ -8288,6 +8305,9 @@ function populateAiModelSelect(modelList, selectedModelId) {
     }
 }
 
+/**
+ * Modal 2: Principal BYOK (Configuração de IA)
+ */
 async function openAiSettingsModal() {
     const modal = document.getElementById('aiSettingsModal');
     if (!modal) return;
@@ -8295,6 +8315,7 @@ async function openAiSettingsModal() {
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 
+    // Limpa feedbacks anteriores
     const feedback = document.getElementById('aiTestFeedback');
     if (feedback) {
         feedback.style.display = 'none';
@@ -8302,6 +8323,7 @@ async function openAiSettingsModal() {
         feedback.innerHTML = '';
     }
 
+    // Carrega dados frescos da configuração
     try {
         const res = await fetch('/api/ai/config');
         if (res.ok) {
@@ -8316,8 +8338,10 @@ async function openAiSettingsModal() {
         providerSelect.value = cfg.provider;
     }
 
+    // Configura inputs baseado no provedor
     onProviderSelectChange();
 
+    // Se já tiver chave configurada, insere máscara visual e exibe badge de conexão ativa
     const keyInput = document.getElementById('aiApiKeyInput');
     if (keyInput) {
         keyInput.value = cfg.apiKeyMasked || '';
@@ -8344,6 +8368,7 @@ async function openAiSettingsModal() {
         modelStepTitle.textContent = '3. Modelo de IA';
     }
 
+    // Base URL
     const baseUrlInput = document.getElementById('aiBaseUrlInput');
     if (baseUrlInput) {
         baseUrlInput.value = cfg.baseUrl || '';
@@ -8511,9 +8536,11 @@ function onProviderSelectChange() {
     const providerId = providerSelect.value;
     const preset = AI_PROVIDER_PRESETS[providerId] || AI_PROVIDER_PRESETS.groq;
 
+    // Atualiza ícone do seletor
     const iconEl = document.getElementById('aiProviderIcon');
     if (iconEl) iconEl.textContent = preset.icon;
 
+    // Atualiza campo e placeholder da API Key
     const keyInput = document.getElementById('aiApiKeyInput');
     const keyGroup = document.getElementById('aiApiKeyGroup');
     const keySubtitle = document.getElementById('aiKeySubtitle');
@@ -8957,6 +8984,7 @@ async function handleSaveAiSettings(e) {
         return;
     }
 
+    // Se estiver com máscara, não sobrepõe no .env
     if (keyInput && keyInput.dataset.isMasked === 'true' && apiKey.includes('••••')) {
         apiKey = '';
     }
@@ -8994,10 +9022,12 @@ async function handleSaveAiSettings(e) {
 
         closeAiSettingsModal();
 
+        // Feedback UAU com Toast e Pulso Sináptico no Grafo 3D Three.js
         const provName = AI_PROVIDER_PRESETS[provider]?.name || provider;
         showToast(`⚡ Cérebro Digital Conectado: ${provName} ativado com sucesso!`, 'success', 5000);
         triggerSynapticPulse();
 
+        // Se estiver no Research Lab, atualiza os cards
         if (currentView === 'project-workspace' && currentProjectTab === 'research') {
             renderProjectResearchTab();
         }
@@ -9051,7 +9081,7 @@ function proceedFromQuotaToSettings() {
     openAiSettingsModal();
 }
 
-// Fechamento via tecla ESC
+// Fechamento de todos os modais via tecla ESC
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         const welcome = document.getElementById('aiWelcomeModal');
@@ -9660,6 +9690,15 @@ async function submitAskBrainQuery() {
         const metaScope = document.getElementById('askMetaScope');
         const sourcesCount = document.getElementById('askSourcesCount');
 
+        let metaFilterLabel = 'Global';
+        if (scope && categoryFilter !== 'all') {
+            metaFilterLabel = `${scope} • ${categoryFilter.toUpperCase()}`;
+        } else if (scope) {
+            metaFilterLabel = `Projeto: ${scope}`;
+        } else if (categoryFilter !== 'all') {
+            metaFilterLabel = `Categoria: ${categoryFilter.toUpperCase()}`;
+        }
+
         const totalCount = data.sources?.length || 0;
         const synthCount = data.synthesizedCount || Math.min(totalCount, 5);
 
@@ -9671,9 +9710,7 @@ async function submitAskBrainQuery() {
                 metaSnippets.textContent = `📄 ${totalCount} fontes consultadas`;
             }
         }
-        const scopeLabel = scope ? `Projeto: ${scope}` : 'Global';
-        const catLabel = (askBrainActiveCategory && askBrainActiveCategory !== 'all') ? ` • Filtro: ${askBrainActiveCategory.toUpperCase()}` : '';
-        if (metaScope) metaScope.textContent = `🎯 ${scopeLabel}${catLabel}`;
+        if (metaScope) metaScope.textContent = `🎯 ${metaFilterLabel}`;
         if (sourcesCount) {
             if (totalCount > synthCount) {
                 sourcesCount.textContent = `(${synthCount} citadas na síntese • ${totalCount - synthCount} adicionais)`;
@@ -10081,12 +10118,12 @@ window.openAskBrainHelpModal = openAskBrainHelpModal;
 window.closeAskBrainHelpModal = closeAskBrainHelpModal;
 window.handleAskBrainHelpBackdrop = handleAskBrainHelpBackdrop;
 window.askBrainFillQuery = askBrainFillQuery;
+window.toggleMoreAskSources = toggleMoreAskSources;
 window.copyAskBrainAnswer = copyAskBrainAnswer;
 window.submitAskBrainQuery = submitAskBrainQuery;
 window.openAskSourceDoc = openAskSourceDoc;
 window.focusAskSourceGraph = focusAskSourceGraph;
 window.toggleAskSourceSnippet = toggleAskSourceSnippet;
-window.toggleMoreAskSources = toggleMoreAskSources;
 window.copyAskSourceCitation = copyAskSourceCitation;
 window.setAskBrainCategory = setAskBrainCategory;
 window.clearAskBrainRecents = clearAskBrainRecents;
