@@ -29,8 +29,10 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
     - **Solução Definitiva & Paridade Absoluta (100%)**:
       - Removido o bloco órfão e sincronizado integralmente `docs/brain-ui/demo/app.js` com a versão master consolidada `docs/brain-ui/app.js`, restabelecendo 100% de paridade byte-a-byte entre os ambientes local e público de demonstração.
       - Validação de integridade sintática via `node --check` sobre todos os 25 scripts JavaScript de `docs/brain-ui/` com 100% de conformidade (`OK`).
-    - **Comprovação Visual no Navegador**:
-      - Testado no Chromium real via subagente com captura de tela (`demo_loaded_1792065012761.png`): o overlay de boot anima a barra de progresso até 100%, realiza o fade-out cinematográfico e revela o Cockpit completo (`demo-app`), incluindo o Grafo Neural 3D, métricas, toolbar de governança e cards vivos, com zero erros no console.
+    - **Ajuste de UX e Ergonomia no Frame da Demonstração (Posicionamento do Botão "Descarregar ✕")**:
+      - Realocado o botão flutuante `.unload` para o interior da barra superior da janela simulada (`.browser-bar`), posicionado imediatamente à esquerda do link `Abrir em tela cheia ↗`.
+      - Elimina qualquer sobreposição visual com o cabeçalho e controles internos do Cockpit (`#btnAiGatewayModal` e status da demo), garantindo harmonia visual e facilidade de descarregamento da demo com 1 clique.
+      - Estilizado em dark glass com pílula translúcida suave e micro-interação hover em tom carmesim (`#fca5a5`), perfeitamente integrado à barra de navegação da janela do navegador simulado.
 - **Data**: 2026-10-14
   - **Opção 3: Modo Focado / Accordion Inteligente na Sabatina Técnica (Grill Studio)**:
     - **Solução Definitiva para Eliminação de Rolagem e Double-Scroll**:

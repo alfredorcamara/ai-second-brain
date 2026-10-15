@@ -13,20 +13,33 @@
     }));
 
     // ── Demo ao vivo: o iframe só carrega no clique (poupa WebGL e rede) ──
-    const body = $('#demo-body'), loadBtn = $('#load-demo');
+    const body = $('#demo-body'), loadBtn = $('#load-demo'), bar = $('.browser-bar');
     if (loadBtn) loadBtn.addEventListener('click', () => {
         const f = document.createElement('iframe'), u = document.createElement('button');
         f.src = DEMO_URL; f.title = 'AI Second Brain — demo ao vivo'; f.loading = 'lazy'; f.allow = 'fullscreen';
         u.className = 'unload'; u.type = 'button'; u.textContent = (window.I18N && I18N.lang === 'en') ? 'Unload ✕' : 'Descarregar ✕';
         u.onclick = () => { f.remove(); u.remove(); loadBtn.hidden = false; g && g.start(); };
-        loadBtn.hidden = true; body.append(f, u);
+        loadBtn.hidden = true; 
+        body.append(f);
+        const fullLink = bar ? bar.querySelector('a') : null;
+        if (fullLink) {
+            fullLink.parentNode.insertBefore(u, fullLink);
+        } else if (bar) {
+            bar.append(u);
+        } else {
+            body.append(u);
+        }
         // Mantém o grafo do fundo ativo e animado continuamente
         g && g.start();
     });
 
     // ── Idioma também no grafo (títulos e documentos de exemplo) ──
     const rebuild = lang => { if (!brain) return; brain.setData(window.LANDING_DATA.build(lang)); const r = $('#reader'); r && r.classList.remove('on'); };
-    window.addEventListener('langchange', e => rebuild(e.detail));
+    window.addEventListener('langchange', e => {
+        rebuild(e.detail);
+        const u = $('.unload');
+        if (u) u.textContent = (e.detail === 'en') ? 'Unload ✕' : 'Descarregar ✕';
+    });
     if (window.I18N && I18N.lang === 'en') rebuild('en');
 
     // ── Acessibilidade ──
