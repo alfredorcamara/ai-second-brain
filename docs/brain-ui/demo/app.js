@@ -3195,6 +3195,8 @@ let quickstartSubMode = 'assisted'; // 'assisted' | 'express'
 let currentGrillProjectInfo = null;
 let currentGrillQuestions = [];
 let currentGrillDraft = { projectMd: '', architectureMd: '', currentStateMd: '', adrMd: '' };
+let previousGrillDraft = null; // Snapshot para Desfazer (Undo)
+let activeClarificationContext = null; // Contexto de Clarificação ativa (Human-in-the-Loop)
 let currentActiveContract = 'projectMd';
 let currentQsContractMode = 'preview'; // 'preview' | 'write'
 let currentQsContractZoom = 80; // Escala padrão: 80%
@@ -3337,19 +3339,40 @@ function resetQuickstartGrillPanes() {
 }
 
 function backFromGrillQuestions() {
+    // 1. Cancela qualquer requisição in-flight de formulação de perguntas com IA
+    if (window._currentGrillQuestionsAbortController) {
+        try { window._currentGrillQuestionsAbortController.abort(); } catch (_) {}
+        window._currentGrillQuestionsAbortController = null;
+    }
+
     const modal = document.getElementById('quickstartModal');
     const modalCard = modal ? modal.querySelector('.quickstart-modal-card') : document.querySelector('.quickstart-modal-card');
-    if (modalCard) modalCard.classList.remove('grill-mode', 'is-loading-questions');
+    if (modalCard) {
+        modalCard.classList.remove('grill-mode', 'is-loading-questions', 'draft-mode');
+        if (quickstartStep === 2) {
+            modalCard.classList.add('wide');
+        } else {
+            modalCard.classList.remove('wide');
+        }
+    }
 
     const qsBody = document.querySelector('.qs-body');
     if (qsBody) qsBody.classList.remove('grill-active');
 
     const formNew = document.getElementById('qsFormNew');
     const qPane = document.getElementById('qsGrillQuestionsPane');
+    const loadingEl = document.getElementById('qsGrillLoadingQuestions');
+    const containerEl = document.getElementById('qsGrillQuestionsContainer');
+    const actionCardsEl = document.getElementById('qsGrillActionCards');
     const spAssisted = document.getElementById('spinnerModeAssisted');
     const spExpress = document.getElementById('spinnerModeExpress');
     const cardExpress = document.getElementById('cardModeExpress');
     const textExpress = document.getElementById('textModeExpress');
+
+    // Desativa elementos de carregamento e spinners
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (containerEl) containerEl.style.display = 'none';
+    if (actionCardsEl) actionCardsEl.style.display = 'none';
     if (spAssisted) spAssisted.style.display = 'none';
     if (spExpress) spExpress.style.display = 'none';
     if (cardExpress) cardExpress.classList.remove('disabled');
@@ -3725,6 +3748,264 @@ function loadContractIntoEditor(contractKey, mode = 'preview') {
     switchEditorTab(mode);
 }
 
+// ============================================================
+// JEV FIRST & SURGICAL REFINEMENT HELPERS (PROMPT VIVO)
+// ============================================================
+
+function docToContractKey(docName) {
+    if (!docName) return null;
+    const lower = String(docName).toLowerCase();
+    if (lower.includes('architecture')) return 'architectureMd';
+    if (lower.includes('project')) return 'projectMd';
+    if (lower.includes('current_state') || lower.includes('current-state')) return 'currentStateMd';
+    if (lower.includes('adr') || lower.includes('decisions')) return 'adrMd';
+    return null;
+}
+
+function handleClarificationModalBackdrop(e) {
+    if (e && e.target && e.target.id === 'qsClarificationModal') {
+        closeClarificationModal();
+    }
+}
+
+function closeClarificationModal() {
+    const modal = document.getElementById('qsClarificationModal');
+    if (modal) modal.style.display = 'none';
+    activeClarificationContext = null;
+}
+
+function selectClarifyOption(val) {
+    const input = document.getElementById('qsClarifyAnswerInput');
+    if (input) {
+        input.value = val;
+        onClarifyInputChange();
+        input.focus();
+    }
+}
+
+function onClarifyInputChange() {
+    const input = document.getElementById('qsClarifyAnswerInput');
+    const err = document.getElementById('qsClarifyInputError');
+    if (input && input.value.trim().length > 0) {
+        input.classList.remove('error');
+        if (err) err.style.display = 'none';
+    }
+}
+
+function openClarificationModal(data, sourceModal) {
+    activeClarificationContext = {
+        feedback: data.feedback || (sourceModal === 'expanded' ? (document.getElementById('editorQsRefineInput') || {}).value : (document.getElementById('qsRefineInput') || {}).value) || '',
+        sourceModal: sourceModal,
+        question: data.question || 'A IA precisa de mais detalhes para prosseguir.',
+        reason: data.reason || ''
+    };
+
+    const origFbEl = document.getElementById('qsClarifyOriginalFeedback');
+    const qTextEl = document.getElementById('qsClarifyQuestionText');
+    const reasonTextEl = document.getElementById('qsClarifyReasonText');
+    const reasonRowEl = document.getElementById('qsClarifyReasonRow');
+    const optionsRowEl = document.getElementById('qsClarifyOptionsRow');
+    const optionsContainer = document.getElementById('qsClarifyOptionsContainer');
+    const answerInput = document.getElementById('qsClarifyAnswerInput');
+    const inputError = document.getElementById('qsClarifyInputError');
+
+    const reasonText = data.reason || data.rationale || '';
+    if (origFbEl) origFbEl.textContent = `"${activeClarificationContext.feedback}"`;
+    if (qTextEl) qTextEl.textContent = data.question || 'A IA precisa de mais informações para refinar.';
+    if (reasonTextEl) reasonTextEl.textContent = reasonText;
+    if (reasonRowEl) reasonRowEl.style.display = reasonText ? 'flex' : 'none';
+
+    if (optionsContainer) {
+        optionsContainer.innerHTML = '';
+        const opts = data.suggestedOptions || data.options || [];
+        if (Array.isArray(opts) && opts.length > 0) {
+            opts.forEach(opt => {
+                const chip = document.createElement('span');
+                chip.className = 'qs-clarify-chip';
+                chip.textContent = opt;
+                chip.onclick = () => selectClarifyOption(opt);
+                optionsContainer.appendChild(chip);
+            });
+            if (optionsRowEl) optionsRowEl.style.display = 'flex';
+        } else {
+            if (optionsRowEl) optionsRowEl.style.display = 'none';
+        }
+    }
+
+    if (answerInput) {
+        answerInput.value = '';
+        answerInput.classList.remove('error');
+    }
+    if (inputError) inputError.style.display = 'none';
+
+    const modal = document.getElementById('qsClarificationModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        setTimeout(() => {
+            if (answerInput) answerInput.focus();
+        }, 100);
+    }
+}
+
+async function submitClarificationAndRefine() {
+    if (!activeClarificationContext) return;
+    const input = document.getElementById('qsClarifyAnswerInput');
+    const err = document.getElementById('qsClarifyInputError');
+    const btn = document.getElementById('btnSubmitClarification');
+    const answer = input ? input.value.trim() : '';
+
+    if (!answer) {
+        if (input) {
+            input.classList.add('error');
+            input.focus();
+        }
+        if (err) err.style.display = 'block';
+        return;
+    }
+
+    const { feedback, sourceModal } = activeClarificationContext;
+    const origText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="btn-spinner" style="display:inline-block"></span> Processando...';
+
+    try {
+        const res = await fetch('/api/projects/quickstart/refine', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                ...currentGrillProjectInfo,
+                contracts: currentGrillDraft,
+                feedback: feedback,
+                clarification: answer
+            })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            const err = new Error(data.error || 'Erro ao refinar contratos.');
+            err.statusCode = res.status;
+            err.quotaExceeded = data.quotaExceeded;
+            err.isRateLimit = data.isRateLimit;
+            err.authError = data.authError;
+            err.retryAfter = data.retryAfter;
+            err.providerName = data.providerName;
+            throw err;
+        }
+
+        if (data.status === 'needs_clarification') {
+            openClarificationModal({ ...data, feedback }, sourceModal);
+            return;
+        }
+
+        closeClarificationModal();
+        handleRefineSuccess(data, sourceModal);
+    } catch (err) {
+        showAiErrorModal(err, { context: 'quickstart-clarification' });
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = origText;
+    }
+}
+
+function handleRefineSuccess(data, sourceModal) {
+    // 1. Snapshot do rascunho anterior para Desfazer (Undo)
+    previousGrillDraft = JSON.parse(JSON.stringify(currentGrillDraft));
+
+    // 2. Atualizar rascunho ativo
+    currentGrillDraft = data.contracts;
+
+    // 3. Exibir botões de Desfazer
+    const btnUndo = document.getElementById('btnUndoGrillRefine');
+    const btnEditorUndo = document.getElementById('btnEditorUndoGrillRefine');
+    if (btnUndo) btnUndo.style.display = 'inline-flex';
+    if (btnEditorUndo) btnEditorUndo.style.display = 'inline-flex';
+
+    // 4. Identificar documento prioritário para auto-switch de aba
+    const targetDocs = data.targetDocs || data.modifiedDocs || [];
+    let switchKey = null;
+    if (targetDocs.length > 0) {
+        switchKey = docToContractKey(targetDocs[0]);
+    }
+
+    // 5. Aplicar auto-switch de aba com animação de destaque (flash)
+    if (sourceModal === 'expanded') {
+        if (switchKey && typeof selectEditorContractTab === 'function') {
+            selectEditorContractTab(switchKey);
+        } else {
+            loadContractIntoEditor(currentActiveContract, currentEditorTab || 'preview');
+        }
+        const activeTabEl = document.querySelector('#editorContractTabs .qs-contract-tab.active');
+        if (activeTabEl) {
+            activeTabEl.classList.remove('tab-flash-active');
+            void activeTabEl.offsetWidth; // trigger reflow
+            activeTabEl.classList.add('tab-flash-active');
+            setTimeout(() => activeTabEl.classList.remove('tab-flash-active'), 1200);
+        }
+        // Sincronizar textarea e preview em segundo plano
+        const qsTextarea = document.getElementById('qsContractTextarea');
+        if (qsTextarea) qsTextarea.value = currentGrillDraft[currentActiveContract] || '';
+        updateQsContractPreviewContent();
+    } else {
+        if (switchKey && typeof selectContractTab === 'function') {
+            selectContractTab(switchKey);
+        } else {
+            const textarea = document.getElementById('qsContractTextarea');
+            if (textarea) textarea.value = currentGrillDraft[currentActiveContract] || '';
+            updateQsContractPreviewContent();
+        }
+        const activeTabEl = document.querySelector('.qs-contract-preview-box .qs-contract-tab.active');
+        if (activeTabEl) {
+            activeTabEl.classList.remove('tab-flash-active');
+            void activeTabEl.offsetWidth; // trigger reflow
+            activeTabEl.classList.add('tab-flash-active');
+            setTimeout(() => activeTabEl.classList.remove('tab-flash-active'), 1200);
+        }
+    }
+
+    // 6. Limpar campos de input
+    const inputEl = document.getElementById('qsRefineInput');
+    const editorInputEl = document.getElementById('editorQsRefineInput');
+    if (inputEl) inputEl.value = '';
+    if (editorInputEl) editorInputEl.value = '';
+
+    // 7. Notificar sucesso cirúrgico
+    let successMsg = '✨ Contratos refinados com sucesso!';
+    if (targetDocs && targetDocs.length > 0) {
+        successMsg = `✨ IA refinou cirurgicamente: ${targetDocs.join(', ')}`;
+    }
+    if (typeof showToast === 'function') {
+        showToast(successMsg);
+    } else {
+        alert(successMsg);
+    }
+}
+
+function undoGrillRefine() {
+    if (!previousGrillDraft) return;
+
+    // Alternar entre rascunho anterior e atual
+    const temp = currentGrillDraft;
+    currentGrillDraft = previousGrillDraft;
+    previousGrillDraft = temp;
+
+    // Atualizar UI
+    if (isQuickstartEditorActive) {
+        loadContractIntoEditor(currentActiveContract, currentEditorTab || 'preview');
+        const qsTextarea = document.getElementById('qsContractTextarea');
+        if (qsTextarea) qsTextarea.value = currentGrillDraft[currentActiveContract] || '';
+        updateQsContractPreviewContent();
+    } else {
+        const textarea = document.getElementById('qsContractTextarea');
+        if (textarea) textarea.value = currentGrillDraft[currentActiveContract] || '';
+        updateQsContractPreviewContent();
+    }
+
+    if (typeof showToast === 'function') {
+        showToast('↺ Ajuste da IA desfeito com sucesso!');
+    } else {
+        alert('↺ Ajuste da IA desfeito com sucesso!');
+    }
+}
+
 async function submitExpandedGrillRefine() {
     const inputEl = document.getElementById('editorQsRefineInput');
     const btn = document.getElementById('btnEditorGrillRefine');
@@ -3755,28 +4036,26 @@ async function submitExpandedGrillRefine() {
                 feedback: fb
             })
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Erro ao refinar contratos.');
-
-        currentGrillDraft = data.contracts;
-
-        // Refresh editor view
-        loadContractIntoEditor(currentActiveContract, currentEditorTab || 'preview');
-
-        // Refresh background quickstart card
-        const qsTextarea = document.getElementById('qsContractTextarea');
-        if (qsTextarea) qsTextarea.value = currentGrillDraft[currentActiveContract] || '';
-        updateQsContractPreviewContent();
-
-        if (inputEl) inputEl.value = '';
-
-        if (typeof showToast === 'function') {
-            showToast('✨ Contratos refinados com sucesso!');
-        } else {
-            alert('Contratos refinados com sucesso!');
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            const err = new Error(data.error || 'Erro ao refinar contratos.');
+            err.statusCode = res.status;
+            err.quotaExceeded = data.quotaExceeded;
+            err.isRateLimit = data.isRateLimit;
+            err.authError = data.authError;
+            err.retryAfter = data.retryAfter;
+            err.providerName = data.providerName;
+            throw err;
         }
+
+        if (data.status === 'needs_clarification') {
+            openClarificationModal({ ...data, feedback: fb }, 'expanded');
+            return;
+        }
+
+        handleRefineSuccess(data, 'expanded');
     } catch (err) {
-        alert('Erro ao refinar com IA: ' + err.message);
+        showAiErrorModal(err, { context: 'quickstart-refine-expanded' });
     } finally {
         btn.disabled = false;
         btn.innerHTML = origText;
@@ -3910,27 +4189,45 @@ async function startGrillQuestionsFlow(projectInfo, forceRegenerate = false) {
     const listEl = document.getElementById('qsGrillQuestionsList');
     if (listEl) listEl.innerHTML = '';
 
+    if (window._currentGrillQuestionsAbortController) {
+        try { window._currentGrillQuestionsAbortController.abort(); } catch (_) {}
+    }
+    window._currentGrillQuestionsAbortController = new AbortController();
+
     try {
         const res = await fetch('/api/projects/quickstart/questions', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(projectInfo)
+            body: JSON.stringify(projectInfo),
+            signal: window._currentGrillQuestionsAbortController.signal
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Erro ao formular perguntas.');
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            const err = new Error(data.error || 'Erro ao formular perguntas.');
+            err.statusCode = res.status;
+            err.quotaExceeded = data.quotaExceeded;
+            err.isRateLimit = data.isRateLimit;
+            err.authError = data.authError;
+            err.retryAfter = data.retryAfter;
+            err.providerName = data.providerName;
+            throw err;
+        }
 
         currentGrillQuestions = data.questions || [];
         renderGrillQuestions(currentGrillQuestions);
     } catch (err) {
-        alert('Erro ao formular sabatina com IA: ' + err.message);
+        if (err.name === 'AbortError') return;
+        showAiErrorModal(err, { context: 'quickstart-questions' });
         backFromGrillQuestions();
     } finally {
         if (loadingEl) loadingEl.style.display = 'none';
         if (modalCard) modalCard.classList.remove('is-loading-questions');
-        if (containerEl) containerEl.style.display = 'flex';
-        if (actionCardsEl) actionCardsEl.style.display = 'grid';
-        if (resetBtn) resetBtn.style.display = 'inline-flex';
-        updateGrillActionCardsState();
+        if (qPane && qPane.style.display !== 'none') {
+            if (containerEl) containerEl.style.display = 'flex';
+            if (actionCardsEl) actionCardsEl.style.display = 'grid';
+            if (resetBtn) resetBtn.style.display = 'inline-flex';
+            updateGrillActionCardsState();
+        }
     }
 }
 
@@ -4356,8 +4653,17 @@ async function requestMoreGrillQuestions() {
                 existingQuestions: currentGrillQuestions
             })
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Erro ao formular perguntas adicionais.');
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            const err = new Error(data.error || 'Erro ao formular perguntas adicionais.');
+            err.statusCode = res.status;
+            err.quotaExceeded = data.quotaExceeded;
+            err.isRateLimit = data.isRateLimit;
+            err.authError = data.authError;
+            err.retryAfter = data.retryAfter;
+            err.providerName = data.providerName;
+            throw err;
+        }
 
         const rawIncoming = Array.isArray(data.questions) ? data.questions : [];
         const normalizedIncoming = rawIncoming.map((nq, idx) => {
@@ -4450,7 +4756,7 @@ async function requestMoreGrillQuestions() {
             }, 100);
         }
     } catch (err) {
-        alert('Erro ao gerar perguntas adicionais: ' + err.message);
+        showAiErrorModal(err, { context: 'quickstart-more-questions' });
     } finally {
         if (spinnerMore) spinnerMore.style.display = 'none';
         updateGrillActionCardsState();
@@ -4577,8 +4883,17 @@ async function executeGenerateDraftFlow(answers) {
                 answers
             })
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Erro ao gerar contratos.');
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            const err = new Error(data.error || 'Erro ao gerar contratos.');
+            err.statusCode = res.status;
+            err.quotaExceeded = data.quotaExceeded;
+            err.isRateLimit = data.isRateLimit;
+            err.authError = data.authError;
+            err.retryAfter = data.retryAfter;
+            err.providerName = data.providerName;
+            throw err;
+        }
 
         const rawContracts = data.contracts || {};
         currentGrillDraft = {
@@ -4605,12 +4920,15 @@ async function executeGenerateDraftFlow(answers) {
         switchQsContractMode('preview');
         applyQsContractZoom(currentQsContractZoom || 80);
     } catch (err) {
-        alert('Erro ao gerar contratos: ' + err.message);
+        showAiErrorModal(err, { context: 'quickstart-draft' });
         backToGrillQuestions();
     } finally {
         if (loadingEl) loadingEl.style.display = 'none';
-        if (wrapEl) wrapEl.style.display = 'flex';
-        if (btnCommit) btnCommit.disabled = false;
+        const dPane = document.getElementById('qsGrillDraftPane');
+        if (dPane && dPane.style.display !== 'none') {
+            if (wrapEl) wrapEl.style.display = 'flex';
+            if (btnCommit) btnCommit.disabled = false;
+        }
     }
 }
 
@@ -4750,21 +5068,26 @@ async function submitGrillRefine() {
                 feedback: fb
             })
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Erro ao refinar contratos.');
-
-        currentGrillDraft = data.contracts;
-        if (textarea) textarea.value = currentGrillDraft[currentActiveContract] || '';
-        updateQsContractPreviewContent();
-        if (inputEl) inputEl.value = '';
-
-        if (typeof showToast === 'function') {
-            showToast('✨ Contratos refinados com sucesso!');
-        } else {
-            alert('Contratos refinados com sucesso!');
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            const err = new Error(data.error || 'Erro ao refinar contratos.');
+            err.statusCode = res.status;
+            err.quotaExceeded = data.quotaExceeded;
+            err.isRateLimit = data.isRateLimit;
+            err.authError = data.authError;
+            err.retryAfter = data.retryAfter;
+            err.providerName = data.providerName;
+            throw err;
         }
+
+        if (data.status === 'needs_clarification') {
+            openClarificationModal({ ...data, feedback: fb }, 'compact');
+            return;
+        }
+
+        handleRefineSuccess(data, 'compact');
     } catch (err) {
-        alert('Erro ao refinar com IA: ' + err.message);
+        showAiErrorModal(err, { context: 'quickstart-refine' });
     } finally {
         btn.disabled = false;
         btn.innerHTML = origText;
@@ -8813,6 +9136,11 @@ async function openAiSettingsModal() {
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 
+    // Renderiza banner contextual de alerta se a cota/taxa foi esgotada
+    if (typeof renderAiSettingsQuotaBanner === 'function') {
+        renderAiSettingsQuotaBanner();
+    }
+
     // Limpa feedbacks anteriores
     const feedback = document.getElementById('aiTestFeedback');
     if (feedback) {
@@ -8889,6 +9217,13 @@ async function openAiSettingsModal() {
             const input = document.getElementById('aiCustomModelInput');
             if (input && modelSelect.value) {
                 input.value = modelSelect.value;
+            }
+            if (lastAiInferenceError) {
+                const hintEl = document.getElementById('aiQuotaBannerHint');
+                const banner = document.getElementById('aiSettingsQuotaBanner');
+                if (hintEl && banner && banner.style.display !== 'none') {
+                    hintEl.innerHTML = `✨ <strong>Novo modelo selecionado (${escapeHtml(modelSelect.value)})!</strong> Clique em <em>Salvar e Ativar ⚡</em> abaixo para restabelecer a inferência imediata.`;
+                }
             }
         });
     }
@@ -9118,6 +9453,14 @@ function onProviderSelectChange() {
         });
     } else {
         updateAiTerminalStatus('idle', { provider: providerId });
+    }
+
+    if (lastAiInferenceError && lastAiInferenceError.provider !== (preset.name || providerId)) {
+        const hintEl = document.getElementById('aiQuotaBannerHint');
+        const banner = document.getElementById('aiSettingsQuotaBanner');
+        if (hintEl && banner && banner.style.display !== 'none') {
+            hintEl.innerHTML = `✨ <strong>Novo provedor selecionado (${escapeHtml(preset.name || providerId)})!</strong> Digite ou confira a chave e clique em <em>Salvar e Ativar ⚡</em> para restabelecer a inferência.`;
+        }
     }
 }
 
@@ -9518,6 +9861,9 @@ async function handleSaveAiSettings(e) {
         window.AI_GATEWAY_CONFIG = data.config;
         updateAiGatewayPillUI(data.config);
 
+        lastAiInferenceError = null;
+        dismissAiSettingsQuotaBanner();
+
         closeAiSettingsModal();
 
         // Feedback UAU com Toast e Pulso Sináptico no Grafo 3D Three.js
@@ -9540,27 +9886,212 @@ async function handleSaveAiSettings(e) {
 }
 
 /**
- * Modal 3: Alerta de Cota de IA Esgotada (429 Rate Limit)
+ * Modal Universal de Erro / Falta de Crédito de IA & Banner Contextual no Modal BYOK
  */
-function showQuotaExceededModal(customMsg) {
-    const modal = document.getElementById('aiQuotaModal');
-    if (!modal) return;
+let currentAiErrorContext = null;
+let lastAiInferenceError = null;
 
-    if (customMsg) {
-        const descEl = modal.querySelector('.ai-quota-desc');
-        if (descEl) descEl.textContent = customMsg;
-    }
+function renderAiSettingsQuotaBanner() {
+    const banner = document.getElementById('aiSettingsQuotaBanner');
+    if (!banner) return;
 
     const btn = document.getElementById('btnAiGatewayModal');
-    if (btn) {
+    const hasQuotaExceeded = btn && btn.classList.contains('quota-exceeded');
+    const lastErr = lastAiInferenceError;
+
+    if (hasQuotaExceeded || (lastErr && (lastErr.isRateLimit || lastErr.quotaExceeded))) {
+        const titleEl = document.getElementById('aiQuotaBannerTitle');
+        const textEl = document.getElementById('aiQuotaBannerText');
+        const hintEl = document.getElementById('aiQuotaBannerHint');
+
+        const prov = (lastErr && lastErr.provider) || window.AI_GATEWAY_CONFIG?.providerName || window.AI_GATEWAY_CONFIG?.provider || 'Groq Cloud';
+        const model = (lastErr && lastErr.model) || window.AI_GATEWAY_CONFIG?.model || '';
+        const shortModel = model ? model.split('/').pop() : '';
+
+        if (titleEl) {
+            titleEl.textContent = `⚠️ Cota de Inferência Esgotada no Modelo ${shortModel ? '"' + shortModel + '"' : 'Ativo'} (Rate Limit 429)`;
+        }
+        if (textEl) {
+            textEl.innerHTML = `Sua chave de API está conectada e autenticada com sucesso, mas o modelo <strong>${escapeHtml(shortModel || model || 'atual')}</strong> atingiu o limite de taxa de requisições ou tokens por minuto da ${escapeHtml(prov)}.`;
+        }
+        if (hintEl) {
+            hintEl.innerHTML = `💡 <strong>Como Resolver Agora:</strong> Selecione outro modelo com cota livre no <strong>Passo 3</strong> abaixo (ex: <code>llama-3.3-70b-versatile</code> ou <code>llama-3.1-8b-instant</code>) ou alterne para outro provedor no <strong>Passo 1</strong> e clique em <em>Salvar e Ativar ⚡</em>.`;
+        }
+        banner.style.display = 'flex';
+    } else {
+        banner.style.display = 'none';
+    }
+}
+
+function dismissAiSettingsQuotaBanner() {
+    const banner = document.getElementById('aiSettingsQuotaBanner');
+    if (banner) banner.style.display = 'none';
+}
+
+function showAiErrorModal(err, options = {}) {
+    const modal = document.getElementById('aiErrorModal');
+    if (!modal) {
+        alert((err && err.message) || String(err));
+        return;
+    }
+
+    currentAiErrorContext = options;
+
+    const errMsg = (err && (err.message || err.error)) || String(err || 'Erro desconhecido');
+    const statusCode = err && (err.statusCode || err.status);
+    const isRateLimit = (err && (err.isRateLimit || err.quotaExceeded)) ||
+        statusCode === 429 ||
+        /rate limit|quota|cota|crédito|credit|insufficient_quota|tpm|rpm/i.test(errMsg);
+    const isAuth = (err && err.authError) || statusCode === 401 || statusCode === 403 || /api key|unauthorized|chave/i.test(errMsg);
+    const isModelNotFound = (err && err.isModelNotFound) || statusCode === 404 || /modelo.*(não está disponível|descontinuado|not found)/i.test(errMsg);
+    const isTimeout = statusCode === 408 || /timeout/i.test(errMsg);
+
+    const badgeEl = document.getElementById('aiErrorBadge');
+    const titleEl = document.getElementById('aiErrorTitle');
+    const subEl = document.getElementById('aiErrorSubtitle');
+    const providerEl = document.getElementById('aiErrorProviderText');
+    const reasonEl = document.getElementById('aiErrorReasonText');
+    const retryRow = document.getElementById('aiErrorRetryRow');
+    const retryText = document.getElementById('aiErrorRetryText');
+    const solutionText = document.getElementById('aiErrorSolutionText');
+
+    // Identifica provedor ativo
+    const activeProvider = (err && err.providerName) || (window.AI_GATEWAY_CONFIG && window.AI_GATEWAY_CONFIG.provider) || 'Groq Cloud';
+    const activeModel = (window.AI_GATEWAY_CONFIG && window.AI_GATEWAY_CONFIG.model) || '';
+    if (providerEl) {
+        providerEl.textContent = `${activeProvider.toUpperCase()}${activeModel ? ' (' + activeModel + ')' : ''}`;
+    }
+
+    // Guarda histórico de erro em memória para o modal de configurações
+    lastAiInferenceError = {
+        error: err,
+        isRateLimit,
+        isAuth,
+        isModelNotFound,
+        isTimeout,
+        provider: activeProvider,
+        model: activeModel,
+        message: errMsg,
+        retryAfter: err && err.retryAfter,
+        timestamp: Date.now()
+    };
+
+    if (isRateLimit) {
+        if (badgeEl) {
+            badgeEl.className = 'qs-badge ai-error-badge warning';
+            badgeEl.textContent = '⚠️ COTA ESGOTADA / RATE LIMIT (429)';
+        }
+        if (titleEl) titleEl.textContent = 'Créditos ou Cota de IA Esgotados';
+        if (subEl) subEl.textContent = 'O provedor de IA atingiu o limite de taxa ou créditos disponíveis para inferência.';
+        if (solutionText) {
+            solutionText.innerHTML = 'Você pode <strong>alternar para outro provedor de IA</strong> (OpenAI, Claude, Ollama local gratuito ou OpenRouter) com 1 clique nas Configurações de IA, ou aguardar a janela de redefinição.';
+        }
+    } else if (isAuth) {
+        if (badgeEl) {
+            badgeEl.className = 'qs-badge ai-error-badge warning';
+            badgeEl.textContent = '🔑 CHAVE DE API INVÁLIDA (401)';
+        }
+        if (titleEl) titleEl.textContent = 'Falha de Autenticação com a IA';
+        if (subEl) subEl.textContent = 'A chave de API configurada foi recusada pelo provedor ou não possui permissões.';
+        if (solutionText) {
+            solutionText.innerHTML = 'Abra as <strong>Configurações de IA</strong> para verificar ou atualizar a chave da sua conta.';
+        }
+    } else if (isModelNotFound) {
+        if (badgeEl) {
+            badgeEl.className = 'qs-badge ai-error-badge';
+            badgeEl.textContent = '🚫 MODELO INDISPONÍVEL (404)';
+        }
+        if (titleEl) titleEl.textContent = 'Modelo de IA Descontinuado ou Inválido';
+        if (subEl) subEl.textContent = 'O modelo selecionado não existe mais no catálogo do provedor.';
+        if (solutionText) {
+            solutionText.innerHTML = 'Abra as <strong>Configurações de IA</strong>, teste a conexão e selecione um modelo ativo da lista dinâmica.';
+        }
+    } else if (isTimeout) {
+        if (badgeEl) {
+            badgeEl.className = 'qs-badge ai-error-badge warning';
+            badgeEl.textContent = '⏱️ TIMEOUT DE RESPOSTA (408)';
+        }
+        if (titleEl) titleEl.textContent = 'Tempo Limite da IA Excedido';
+        if (subEl) subEl.textContent = 'O provedor demorou além do limite tolerado para responder à requisição.';
+        if (solutionText) {
+            solutionText.innerHTML = 'Verifique sua conexão ou <strong>alterne para um modelo mais veloz</strong> (ex: Groq, GPT-4o-mini, Haiku).';
+        }
+    } else {
+        if (badgeEl) {
+            badgeEl.className = 'qs-badge ai-error-badge';
+            badgeEl.textContent = '❌ FALHA NO PROVEDOR DE IA';
+        }
+        if (titleEl) titleEl.textContent = 'Falha na Operação com IA';
+        if (subEl) subEl.textContent = 'Ocorreu um erro ao comunicar com a infraestrutura de inteligência artificial.';
+        if (solutionText) {
+            solutionText.innerHTML = 'Você pode tentar novamente ou <strong>abrir as Configurações de IA</strong> para testar a conexão do provedor.';
+        }
+    }
+
+    if (reasonEl) {
+        reasonEl.textContent = errMsg;
+    }
+
+    // Janela de reset / retry-after
+    const retryAfter = err && err.retryAfter;
+    if (retryAfter && retryAfter > 0) {
+        if (retryRow) retryRow.style.display = 'flex';
+        if (retryText) {
+            const minutes = Math.ceil(retryAfter / 60);
+            const timeDesc = retryAfter > 60 ? `${retryAfter}s (~${minutes} minutos)` : `${retryAfter}s`;
+            retryText.textContent = `A cota será restaurada pelo provedor em aproximadamente ${timeDesc}.`;
+        }
+    } else {
+        if (retryRow) retryRow.style.display = 'none';
+    }
+
+    // Destaca também o botão no topo se for cota e atualiza tooltip explicativo
+    const btn = document.getElementById('btnAiGatewayModal');
+    if (btn && isRateLimit) {
         btn.classList.add('quota-exceeded');
+        const shortModel = (activeModel || '').split('/').pop();
+        btn.title = `⚠️ Cota/Rate Limit (429) esgotado em ${activeProvider} (${shortModel || 'modelo ativo'}). Clique para abrir as configurações e trocar de modelo ou provedor.`;
     }
 
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
 
+function closeAiErrorModal() {
+    const modal = document.getElementById('aiErrorModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+function handleAiErrorModalBackdrop(e) {
+    if (e.target && e.target.id === 'aiErrorModal') {
+        closeAiErrorModal();
+    }
+}
+
+function handleAiErrorOpenConfig() {
+    closeAiErrorModal();
+    if (typeof openAiSettingsModal === 'function') {
+        openAiSettingsModal();
+    }
+}
+
+/**
+ * Modal 3: Alerta de Cota de IA Esgotada (429 Rate Limit) - Delega para showAiErrorModal
+ */
+function showQuotaExceededModal(customMsg) {
+    const errObj = (typeof customMsg === 'object' && customMsg !== null)
+        ? customMsg
+        : new Error(customMsg || 'Cota de IA esgotada.');
+    errObj.quotaExceeded = true;
+    errObj.isRateLimit = true;
+    showAiErrorModal(errObj);
+}
+
 function closeAiQuotaModal() {
+    closeAiErrorModal();
     const modal = document.getElementById('aiQuotaModal');
     if (modal) {
         modal.style.display = 'none';
@@ -9582,10 +10113,15 @@ function proceedFromQuotaToSettings() {
 // Fechamento de todos os modais via tecla ESC
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
+        const aiErr = document.getElementById('aiErrorModal');
         const welcome = document.getElementById('aiWelcomeModal');
         const settings = document.getElementById('aiSettingsModal');
         const quota = document.getElementById('aiQuotaModal');
 
+        if (aiErr && aiErr.style.display === 'flex') {
+            closeAiErrorModal();
+            return;
+        }
         if (quota && quota.style.display === 'flex') {
             closeAiQuotaModal();
             return;
@@ -9621,6 +10157,12 @@ window.showQuotaExceededModal = showQuotaExceededModal;
 window.closeAiQuotaModal = closeAiQuotaModal;
 window.handleAiQuotaBackdropClick = handleAiQuotaBackdropClick;
 window.proceedFromQuotaToSettings = proceedFromQuotaToSettings;
+window.showAiErrorModal = showAiErrorModal;
+window.closeAiErrorModal = closeAiErrorModal;
+window.handleAiErrorModalBackdrop = handleAiErrorModalBackdrop;
+window.handleAiErrorOpenConfig = handleAiErrorOpenConfig;
+window.renderAiSettingsQuotaBanner = renderAiSettingsQuotaBanner;
+window.dismissAiSettingsQuotaBanner = dismissAiSettingsQuotaBanner;
 
 // ═══════════════════════════════════════════════════════════
 // SESSION CAPTURE — Registrar Sessão com IA

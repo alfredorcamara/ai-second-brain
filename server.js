@@ -384,8 +384,18 @@ Thumbs.db
             res.end(JSON.stringify({ success: true, ...result }));
         } catch (err) {
             console.error('❌ [Quickstart Grill] Erro ao gerar perguntas:', err.message);
-            res.writeHead(err.statusCode || 500, { 'Content-Type': 'application/json; charset=utf-8' });
-            res.end(JSON.stringify({ success: false, error: err.message }));
+            const status = err.statusCode === 429 || err.quotaExceeded ? 429 : (err.statusCode || 500);
+            res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ 
+                success: false, 
+                error: err.message,
+                statusCode: status,
+                quotaExceeded: status === 429 || !!err.quotaExceeded,
+                isRateLimit: status === 429 || !!err.isRateLimit,
+                authError: !!err.authError,
+                providerName: err.providerName || null,
+                retryAfter: err.retryAfter || null
+            }));
         }
         return;
     }
@@ -401,8 +411,18 @@ Thumbs.db
             res.end(JSON.stringify({ success: true, ...result }));
         } catch (err) {
             console.error('❌ [Quickstart Grill] Erro ao validar respostas:', err.message);
-            res.writeHead(err.statusCode || 500, { 'Content-Type': 'application/json; charset=utf-8' });
-            res.end(JSON.stringify({ success: false, error: err.message }));
+            const status = err.statusCode === 429 || err.quotaExceeded ? 429 : (err.statusCode || 500);
+            res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ 
+                success: false, 
+                error: err.message,
+                statusCode: status,
+                quotaExceeded: status === 429 || !!err.quotaExceeded,
+                isRateLimit: status === 429 || !!err.isRateLimit,
+                authError: !!err.authError,
+                providerName: err.providerName || null,
+                retryAfter: err.retryAfter || null
+            }));
         }
         return;
     }
@@ -418,8 +438,18 @@ Thumbs.db
             res.end(JSON.stringify({ success: true, ...result }));
         } catch (err) {
             console.error('❌ [Quickstart Grill] Erro ao gerar rascunho:', err.message);
-            res.writeHead(err.statusCode || 500, { 'Content-Type': 'application/json; charset=utf-8' });
-            res.end(JSON.stringify({ success: false, error: err.message }));
+            const status = err.statusCode === 429 || err.quotaExceeded ? 429 : (err.statusCode || 500);
+            res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ 
+                success: false, 
+                error: err.message,
+                statusCode: status,
+                quotaExceeded: status === 429 || !!err.quotaExceeded,
+                isRateLimit: status === 429 || !!err.isRateLimit,
+                authError: !!err.authError,
+                providerName: err.providerName || null,
+                retryAfter: err.retryAfter || null
+            }));
         }
         return;
     }
@@ -430,13 +460,23 @@ Thumbs.db
             const body = await readJsonBody(req);
             delete require.cache[require.resolve('./scripts/quickstart-grill')];
             const grill = require('./scripts/quickstart-grill');
-            const result = await grill.refineDraft(getAiGateway(), body, body.contracts, body.feedback);
+            const result = await grill.refineDraft(getAiGateway(), body, body.contracts, body.feedback, body.clarification);
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({ success: true, ...result }));
         } catch (err) {
             console.error('❌ [Quickstart Grill] Erro ao refinar contratos:', err.message);
-            res.writeHead(err.statusCode || 500, { 'Content-Type': 'application/json; charset=utf-8' });
-            res.end(JSON.stringify({ success: false, error: err.message }));
+            const status = err.statusCode === 429 || err.quotaExceeded ? 429 : (err.statusCode || 500);
+            res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ 
+                success: false, 
+                error: err.message,
+                statusCode: status,
+                quotaExceeded: status === 429 || !!err.quotaExceeded,
+                isRateLimit: status === 429 || !!err.isRateLimit,
+                authError: !!err.authError,
+                providerName: err.providerName || null,
+                retryAfter: err.retryAfter || null
+            }));
         }
         return;
     }

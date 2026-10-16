@@ -627,36 +627,61 @@ async function chatCompletion(messages, options = {}) {
  * Tratamento de retry, rate-limits e fallbacks com backoff
  */
 async function handleChatError(err, messages, options, provider, retryCount, maxRetries) {
-    const isRateLimit = err.statusCode === 429 || /rate limit|quota/i.test(err.message);
+    const isRateLimit = err.statusCode === 429 || /rate limit|quota|credit|insufficient_quota|tpm|rpm/i.test(err.message);
     const isModelNotFound = !isRateLimit && (
         err.statusCode === 404 ||
         /model.*(does not exist|not found|decommission|no access)|does not exist or you do not have access/i.test(err.message)
     );
+    const isAuthError = err.statusCode === 401 || err.statusCode === 403 || /invalid api key|unauthorized|forbidden|authentication/i.test(err.message);
+
     // Notificação se o modelo estiver indisponível/descontinuado no provedor
     if (isModelNotFound) {
         const customErr = new Error(`O modelo "${options.model || 'selecionado'}" não está disponível ou foi descontinuado pelo provedor ${provider.name}. Abra as configurações de IA no topo, teste a conexão e selecione um modelo ativo da lista.`);
         customErr.statusCode = 404;
+        customErr.providerName = provider.name;
+        customErr.isModelNotFound = true;
         throw customErr;
     }
 
-    if (isRateLimit && retryCount < maxRetries) {
+    if (isAuthError) {
+        const customErr = new Error(`Falha de autenticação com o provedor ${provider.name} (HTTP ${err.statusCode || 401}). Verifique se a sua chave de API está correta nas Configurações de IA.`);
+        customErr.statusCode = err.statusCode || 401;
+        customErr.providerName = provider.name;
+        customErr.authError = true;
+        throw customErr;
+    }
+
+    if (isRateLimit) {
         let waitSeconds = Math.pow(2, retryCount + 1) * 2; // 4s, 8s, 16s...
         const retryHeader = err.headers?.['retry-after'];
         if (retryHeader) {
             const parsedWait = parseFloat(retryHeader);
-            if (!isNaN(parsedWait)) waitSeconds = Math.ceil(parsedWait) + 2;
+            if (!isNaN(parsedWait)) waitSeconds = Math.ceil(parsedWait);
         }
 
-        console.warn(`⏳ [AI Gateway] Rate limit atingido em ${provider.name}. Aguardando ${waitSeconds}s (tentativa ${retryCount + 1}/${maxRetries})...`);
+        // Se o provedor exigir mais de 10 segundos de espera (ex: Groq pedindo 1243s / ~20 min por cota diária/por hora esgotada),
+        // NUNCA bloqueamos o processo do servidor! Lançamos o erro imediatamente para apresentar o modal ao usuário.
+        if (waitSeconds > 10 || retryCount >= maxRetries) {
+            const waitInfo = waitSeconds ? ` Tempo de redefinição da cota informado pelo provedor: ${waitSeconds}s.` : '';
+            const quotaErr = new Error(
+                `Limite de requisições ou créditos esgotados no provedor ${provider.name}.${waitInfo} Alterne para outro provedor (OpenAI, Claude, Ollama Local gratuito ou OpenRouter) nas Configurações de IA.`
+            );
+            quotaErr.statusCode = 429;
+            quotaErr.isRateLimit = true;
+            quotaErr.quotaExceeded = true;
+            quotaErr.retryAfter = waitSeconds;
+            quotaErr.providerName = provider.name;
+            throw quotaErr;
+        }
+
+        console.warn(`⏳ [AI Gateway] Rate limit temporário em ${provider.name}. Aguardando ${waitSeconds}s (tentativa ${retryCount + 1}/${maxRetries})...`);
         await new Promise(r => setTimeout(r, waitSeconds * 1000));
 
         const nextOptions = { ...options, _retryCount: retryCount + 1 };
         return chatCompletion(messages, nextOptions);
     }
 
-    if (isRateLimit) {
-        err.quotaExceeded = true;
-    }
+    err.providerName = provider.name;
     throw err;
 }
 

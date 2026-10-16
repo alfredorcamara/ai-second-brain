@@ -81,8 +81,12 @@ No portal web (`http://localhost:3000`), clique no botão **`+ Novo Projeto`** n
    - O Arquiteto de IA formula de 3 a 4 perguntas técnicas dinâmicas adaptadas à stack escolhida (ex: ORM, Mensageria, Estratégia de Autenticação).
    - **Accordion Inteligente / Modo Focado**: Apenas 1 pergunta permanece expandida por vez. Ao clicar em uma opção de resposta rápida (chip), o valor é preenchido e o sistema avança suavemente (220ms) para a próxima pergunta pendente, eliminando rolagens e mantendo os botões de ação sempre visíveis.
    - **Auditoria de Respostas**: O sistema valida se as respostas são coerentes e não estão vazias antes de sintetizar os contratos.
-   - **Síntese de Contratos Vivos**: Gera em tempo real `PROJECT.md`, `ARCHITECTURE.md`, `CURRENT_STATE.md` (com roadmap ativo) e `DECISIONS/ADR-0001-stack-inicial.md`.
-   - **Refinamento com "Prompt Vivo"**: Permite ajustar os contratos via linguagem natural (ex: *"Mude o banco para PostgreSQL e use JWT"*) antes da gravação definitiva.
+   - **Refinamento Cirúrgico com "Prompt Vivo" & Motor JEV**:
+     - **Governança JEV First (Nível 4 Composto)**: O motor nativo local `RulesDecisionProvider` (`scripts/decision-provider.js`) avalia o feedback em 0ms antes de qualquer chamada generativa.
+     - **Isolamento e Não-Poluição**: Instruções de tabelas, schemas SQL ou endpoints afetam **exclusivamente** `ARCHITECTURE.md`, sem duplicar dados em `PROJECT.md` ou `CURRENT_STATE.md`.
+     - **Detecção de Dúvida Técnica (*Human-in-the-Loop*)**: Ao detectar ambiguidades em domínios críticos (como pagamentos, mensageria, autenticação ou deploy vagos), o sistema não alucina: abre o modal de clarificação técnica com perguntas e chips de sugestões em 1 clique (preenchimento mandatório).
+     - **Auto-Switch Visual**: Alterna automaticamente para a aba do contrato alterado com animação de destaque (`tab-flash-active`).
+     - **Botão `↺ Desfazer` (Undo)**: Permite reverter instantaneamente qualquer alteração da IA para o rascunho anterior sem recarregar a tela.
    - **Aprovação Humana Obrigatória**: O projeto só é gravado no disco após clique explícito em `💾 Aprovar e Criar Projeto no Disco`.
 
 ---
@@ -362,8 +366,11 @@ flowchart TD
 | Validação de formulários, cálculos tributários, regras de autenticação | **Código C# / TypeScript Puro** | Custo zero, sem falhas de interpretação, determinismo 100%. |
 | Classificação de severidade de erros de SQL Jobs | **AIJev / Jev First** | Muito mais rápido que LLM, sem custo de tokens, 100% auditável. |
 | Detecção de anomalias em volume de transações | **AIJev / Algoritmo Estatístico** | Latência em milissegundos e comportamento previsível. |
+| Roteamento de contratos e detecção de ambiguidade no Prompt Vivo | **RulesDecisionProvider (`scripts/decision-provider.js`)** | Padrão JEV nativo (0ms / 100% offline), classifica intenções e intercepta ambiguidades sem gastar tokens. |
 | Diagnóstico detalhado em linguagem natural de por que um job falhou | **LLM (Claude 3.5 Sonnet / Gemini 1.5 Pro)** | Capacidade de raciocínio aberto e contextualização de stack traces. |
 | Chatbot de suporte ao usuário final | **LLM com RAG via AI Gateway** | Respostas conversacionais alimentadas pela base de conhecimento. |
+
+> 💡 **Motor de Decisão Nativo**: O AI Second Brain inclui a implementação canônica `RulesDecisionProvider` em [`scripts/decision-provider.js`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/scripts/decision-provider.js), que implementa `IDecisionProvider` com suporte a `ruleId`, `confidence` e `rationale` explicáveis.
 
 ---
 

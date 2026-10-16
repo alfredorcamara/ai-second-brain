@@ -21,6 +21,49 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 
 ## Sessões Recentes
 - **Data**: 2026-10-16
+  - **Resiliência a Falhas de IA, Tratamento de Quota / 429 e Modal Universal de Erro de IA (`#aiErrorModal`)**:
+    - **Diagnóstico & Causa Raiz**:
+      - *Congelamento do Backend*: No `scripts/ai-gateway.js`, quando a API da Groq retornava status 429 com cabeçalho `retry-after: 1243` (~20 minutos), o backend executava `await new Promise(r => setTimeout(r, waitSeconds * 1000))`, deixando o Node.js dormindo por até 20 minutos, a requisição HTTP pendente e a interface web congelada com o spinner infinito.
+      - *Layout Quebrado ao Clicar em "← Voltar aos dados"*: Ao clicar em voltar enquanto a IA processava, o CSS continha `:has(...)` em `#qsGrillLoadingQuestions:not([style*="display: none"])`. Como `#qsGrillLoadingQuestions` ainda tinha `display: flex` inline mesmo com o container pai oculto, o card do modal permanecia preso em `height: auto !important; max-height: 480px;`, quebrando o layout do formulário do Passo 2.
+      - *Falta de Comunicação ao Usuário*: Não havia um modal informativo no padrão visual do projeto para orientar o desenvolvedor sobre falta de créditos, limites de requisição ou chaves inválidas.
+    - **Solução Definitiva**:
+      - **Guarda de Timeout / Rate-Limit no AI Gateway (`scripts/ai-gateway.js`)**: O tempo de espera de retentativa foi limitado a no máximo 10s. Acima disso (ou ao esgotar retentativas), lança imediatamente um erro rico contendo `statusCode: 429`, `isRateLimit: true`, `quotaExceeded: true`, `retryAfter: waitSeconds` e `providerName`.
+      - **Correção de Layout e Cancelamento com `AbortController` (`app.js` & `style.css`)**:
+        - `backFromGrillQuestions()` agora cancela a requisição ativa via `AbortController`, remove as classes `grill-mode` e `is-loading-questions`, restaura `wide` para o formulário e força `loadingEl.style.display = 'none'`.
+        - O seletor CSS foi escopado para `#qsGrillQuestionsPane:not([style*="display: none"]) #qsGrillLoadingQuestions`.
+      - **Modal Universal de Erro de IA (`#aiErrorModal`)**:
+        - Design glassmorphic escuro alinhado à identidade visual do projeto.
+        - Badges semânticos dinâmicos (Cota Esgotada / 429, Chave Inválida / 401, Modelo Indisponível / 404, Timeout / 408, Falha Geral).
+        - Chip identificando o provedor ativo e modelo utilizado.
+        - Exibição da causa raiz técnica e, para 429, cálculo amigável do tempo de reset (`retryAfter`).
+        - Orientação acionável com botão de 1 clique `⚙️ Abrir Configurações de IA (BYOK)` permitindo alternar de provedor instantaneamente (OpenAI, Claude, Ollama local gratuito ou OpenRouter).
+        - Fechamento seguro via tecla ESC e clique no backdrop.
+      - **Banner Contextual de Cota Esgotada no Modal de Configurações (`#aiSettingsQuotaBanner`)**:
+        - Eliminada a discrepância cognitiva entre o botão pulsar vermelho na barra superior e o terminal interno exibir "Conexão bem-sucedida" (devido ao fato de que listar modelos não consome créditos de chat).
+        - Implementado banner de alerta em vermelho/âmbar (`#aiSettingsQuotaBanner`) no topo do formulário BYOK explicitando que o modelo ativo atingiu o limite de taxa de requisições/tokens e sugerindo a troca de modelo no Passo 3 ou de provedor no Passo 1.
+        - Tooltip (`title`) dinâmico e autoexplicativo no botão da topbar (`#btnAiGatewayModal`) identificando o provedor e modelo esgotados.
+        - Reatividade positiva imediata ao selecionar outro modelo ou provedor (atualizando o banner para "Novo modelo selecionado! Clique em Salvar e Ativar").
+        - Limpeza automática do estado `quota-exceeded` ao salvar nova configuração com sucesso.
+      - **Landing Page & Paridade 100%**:
+        - Atualização da landing page destacando a governança com motor JEV e prompt vivo cirúrgico.
+        - Paridade estrita mantida entre `docs/brain-ui/` e `docs/brain-ui/demo/` (`index.html`, `style.css`, `app.js`).
+
+  - **Motor JEV Nativo Local (`RulesDecisionProvider` / AI Decision Gate) & Refinamento Cirúrgico no Prompt Vivo**:
+    - **Contexto & Diagnóstico**:
+      - A interface do Quickstart Studio (Passo 2.B e Editor Expandido) apresentava o aviso *"A IA aplicará cirurgicamente sua instrução em todos os 4 contratos simultaneamente sem recarregar a tela"*, duplicando inadvertidamente alterações técnicas (ex: dicionário de dados de cliente) em todos os 4 contratos (`PROJECT.md`, `ARCHITECTURE.md`, `CURRENT_STATE.md`, `ADR-0001`).
+      - Havia necessidade de governança determinística antes da chamada ao LLM (Nível 4 Composto), roteamento cirúrgico de documentos, detecção de ambiguidade com diálogo de clarificação humana (*Human-in-the-Loop*) e reversão ágil (*Undo*).
+    - **Solução Implementada (5 Melhorias do JEV Nativo Local - Opção C)**:
+      1. **Módulo Canônico `scripts/decision-provider.js` (`IDecisionProvider` & `RulesDecisionProvider`)**: Desacoplado da UI, executável de forma síncrona (`decideSync`) ou assíncrona (`decide`), com latência de 0ms, custo zero de tokens e 100% offline.
+      2. **Rastreabilidade e Explicabilidade Numérica**: Retorna `ruleId` (ex: `JEV-RULE-ARCH-DATA`, `JEV-RULE-MULTI-COMPOUND`), `intentClass`, `confidence` (ex: 96%) e `rationale` detalhado para auditoria.
+      3. **Composição Dinâmica Multi-Target**: Reconhece solicitações compostas (ex: escopo em `PROJECT.md` + roadmap em `CURRENT_STATE.md`) autorizando cirurgicamente múltiplos documentos combinados sem poluir os demais.
+      4. **Gatilhos de Ambiguidade Técnica**: Intercepta solicitações vagas de Autenticação (`AMBIGUOUS_AUTH`), Infraestrutura/Deploy (`AMBIGUOUS_INFRA`), Pagamentos (`AMBIGUOUS_PAYMENTS`) e Mensageria (`AMBIGUOUS_MESSAGING`), abrindo o modal de clarificação com chips clicáveis de 1 clique e resposta mandatória antes do LLM.
+      5. **Interface Visual & Paridade Estrita**:
+         - Atualização do aviso no Passo 2.B e Editor Expandido.
+         - Modal `#qsClarificationModal` com chips interativos de sugestão rápida.
+         - Auto-switch automático da aba para o contrato modificado com animação `.tab-flash-active`.
+         - Botão `↺ Desfazer` (Undo) baseado no snapshot `previousGrillDraft`.
+         - 100% sincronizado entre `docs/brain-ui/` e `docs/brain-ui/demo/`.
+
   - **Controle de Escala / Zoom Dinâmico nos Contratos de Governança (Quickstart & Modal Expandido)**:
     - **Contexto & Diagnóstico de UX**:
       - Os contratos de governança gerados pela IA no Grill Studio (`PROJECT.md`, `ARCHITECTURE.md`, `CURRENT_STATE.md`, `ADR-0001`) são documentos ricos e extensos, contendo seções de arquitetura, tabelas de decisão e diagramas.

@@ -66,3 +66,29 @@
   5. **Feedback Visual Ativo de Inferência com Mensagens Rotativas**: O modal de Session Capture exibe etapas sincronizadas e animação contínua durante o tempo de resposta da IA, eliminando a sensação de travamento e aumentando a previsibilidade operacional.
 - **Motivo**: Reduz drasticamente o atrito entre o Cockpit Visual do Second Brain e o fluxo real de codificação na IDE, garantindo que o desenvolvedor comece e feche sessões com velocidade máxima.
 - **Detalhes**: Ver `server.js`, `docs/brain-ui/app.js`, `docs/brain-ui/demo/app.js` e `docs/relatorio_usabilidade_dev_journey.md`.
+
+## ADR-G009: Motor de Decisão JEV Nativo (RulesDecisionProvider) e Refinamento Cirúrgico com Clarificação Humana
+- **Status**: Aceita
+- **Data**: 2026-10-16
+- **Descrição**: O refinamento iterativo de contratos de governança no Quickstart Studio ("Prompt Vivo") passa a ser governado pelo motor de decisão local `RulesDecisionProvider` (baseado no padrão JEV / Nível 4 Composto), eliminando a poluição cruzada entre documentos e implementando o fluxo *Human-in-the-Loop* para ambiguidades técnicas:
+  1. **Motor Local Canônico (`scripts/decision-provider.js`)**: Implementa a interface universal `IDecisionProvider` do padrão JEV com execução determinística (`decideSync`), latência de 0ms, custo zero de tokens e funcionamento 100% offline.
+  2. **Isolamento Cirúrgico de Contratos**: Instruções sobre tabelas, esquemas SQL, entidades ou endpoints afetam **exclusivamente** `ARCHITECTURE.md`. Instruções sobre escopo afetam `PROJECT.md`, roadmap afeta `CURRENT_STATE.md` e decisões técnicas afetam `ADR-0001`. Guardrails programáticos asseguram que contratos não autorizados permaneçam idênticos.
+  3. **Detecção de Ambiguidade Técnica & Clarificação Humana**: Solicitações vagas sobre pagamentos (`AMBIGUOUS_PAYMENTS`), mensageria (`AMBIGUOUS_MESSAGING`), autenticação (`AMBIGUOUS_AUTH`) ou deploy (`AMBIGUOUS_INFRA`) não acionam o LLM; abrem instantaneamente o modal `#qsClarificationModal` exibindo a dúvida técnica formulada pelo Arquiteto de IA e opções de resposta rápida em chips de 1 clique com preenchimento obrigatório.
+  4. **Explicabilidade Numérica e Auditoria**: Toda decisão retorna `ruleId`, `confidence` numérica (0.0 a 1.0) e `rationale` em linguagem natural.
+  5. **Auto-Switch de Aba com Destaque Visual & Botão Desfazer (Undo)**: A interface web transiciona automaticamente para a aba do documento alterado com animação `.tab-flash-active` e oferece botão `↺ Desfazer` persistido em `previousGrillDraft`.
+- **Motivo**: Garante precisão cirúrgica na governança dos contratos, respeita o princípio de *Zero Fabricação*, evita desperdício de tokens e previne que solicitações parciais corrompam a arquitetura do software.
+- **Detalhes**: Ver `scripts/decision-provider.js`, `scripts/quickstart-grill.js`, `server.js`, `docs/brain-ui/app.js`, `knowledge/ai/AIJEV.md` e `docs/plano_trabalho_prompt_vivo_cirurgico.md`.
+
+## ADR-G010: Resiliência em Rate Limits de Provedores de IA, AbortController e Modal Informativo de Cota (BYOK)
+- **Status**: Aceita
+- **Data**: 2026-10-16
+- **Descrição**: Blindagem universal do AI Gateway e Cockpit contra congelamento e inconsistências em cenários de Rate Limit (HTTP 429) ou esgotamento de créditos de inferência:
+  1. **Teto de Espera em Retries (`scripts/ai-gateway.js`)**: Backends nunca dormem indefinidamente quando provedores de IA enviam `retry-after` extenso (como 20 minutos na Groq Cloud). O tempo de espera com retentativa foi limitado a no máximo 10s. Acima desse limite, o gateway lança imediatamente erro 429 estruturado com metadados (`quotaExceeded`, `isRateLimit`, `retryAfter`, `providerName`).
+  2. **Cancelamento Ativo com `AbortController` (`docs/brain-ui/app.js`)**: Ações do usuário para sair ou voltar durante carregamentos de IA abortam ativamente as requisições `fetch` em andamento, impedindo que requisições zumbis tentem atualizar o DOM após o descarte da tela.
+  3. **Correção Geométrica de Layout**: Classes colapsantes (`.is-loading-questions`, `.grill-mode`) são escopadas com precisão no CSS e limpas deterministamente no retorno de navegação, prevenindo compressão residual do modal.
+  4. **Modal Universal de Erro de IA (`#aiErrorModal`)**: Apresenta diagnóstico claro com badges semânticos (429, 401, 404, 408), tempo estimado de redefinição da cota e botão direto para abrir as Configurações de IA (BYOK) sem perda de contexto.
+  5. **Banner Contextual no Modal BYOK (`#aiSettingsQuotaBanner`)**: Resolve a discrepância cognitiva entre o teste de autenticação de chave (que usa `GET /models` e retorna 200 OK) e a exaustão de cota de inferência de chat (`POST /chat/completions`), alertando explicitamente o desenvolvedor sobre a exaustão de cota no modelo ativo e fornecendo orientação para troca de modelo ou provedor.
+- **Motivo**: Previne travamentos da interface, garante previsibilidade operacional em limites de cota e fornece orientação direta de autocura para o usuário.
+- **Detalhes**: Ver `scripts/ai-gateway.js`, `server.js`, `docs/brain-ui/app.js`, `docs/brain-ui/demo/app.js`, `docs/brain-ui/index.html` e `docs/brain-ui/style.css`.
+
+

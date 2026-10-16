@@ -229,6 +229,26 @@
 3. **Ergonomia e Sincronização de Estado**: Manter a mesma porcentagem de escala sincronizada bidirecionalmente entre o card compacto e o modal expandido em tela cheia elimina descontinuidades perceptivas, oferecendo ao desenvolvedor uma experiência fluida de inspeção panorâmica.
 **Ação**: Ao criar controles de zoom ou escala em elementos de visualização/edição, compense sempre a largura, altura e colunas centrais inversamente à razão de escala (`1 / ratio`) para evitar saltos ou distorções de layout.
 
+---
+
+## 2026-10-16 — Governança JEV Nativa Local & Resiliência a Rate Limits de IA
+
+### Lição 27: Roteamento Determinístico de Contratos e Decisão via Regras Locais (JEV Nativo / RulesDecisionProvider)
+**Contexto**: O refinamento iterativo de contratos de governança no Quickstart Studio ("Prompt Vivo") aplicava qualquer instrução do usuário simultaneamente em todos os 4 contratos (`PROJECT.md`, `ARCHITECTURE.md`, `CURRENT_STATE.md`, `ADR-0001`), duplicando tabelas e escopos técnicos e gerando desperdício desnecessário de tokens.
+**Aprendizado**:
+1. **Prioridade Determinística Estrita**: Nunca utilize LLM para decidir quais arquivos alterar quando padrões léxicos e intenções determinísticas resolvem com 100% de precisão. O motor de regras local `RulesDecisionProvider` executa de forma síncrona com latência de 0ms, custo zero de tokens e funcionamento 100% offline.
+2. **Isolamento Cirúrgico e Composição Multi-Target**: Instruções sobre esquemas de banco e tabelas pertencem exclusivamente a `ARCHITECTURE.md`; escopo pertence a `PROJECT.md`; roadmap pertence a `CURRENT_STATE.md`; e decisões técnicas pertencem a `ADR-0001`. Solicitações compostas devem autorizar apenas os contratos estritamente citados, blindando os demais com guardrails programáticos.
+3. **Detecção de Ambiguidade Técnica (Human-in-the-Loop)**: Instruções vagas sobre temas críticos (como pagamentos, autenticação ou mensageria) não devem ser encaminhadas ao LLM com suposições cegas. O motor JEV deve interceptar essas solicitações, formular a dúvida técnica e exigir clarificação humana com opções de preenchimento rápido em 1 clique antes de qualquer chamada generativa.
+**Ação**: Sempre aplicar o motor `RulesDecisionProvider` antes de qualquer mutação de múltiplos arquivos assistida por IA, mantendo rastreabilidade numérica (`ruleId`, `confidence`, `rationale`) e diálogo de clarificação humana quando a ambiguidade for detectada.
+
+### Lição 28: Resiliência em Rate Limits de Provedores de IA, AbortController e Eliminação de Discrepâncias de UX
+**Contexto**: Ao esgotar créditos/tokens na Groq Cloud durante a Sabatina Técnica, a tela do Cockpit congelava indefinidamente com o spinner girando, o layout colapsava ao clicar em "← Voltar aos dados", e o botão da topbar pulsava vermelho enquanto o console do modal de configurações exibia "Conexão bem-sucedida" em verde.
+**Aprendizado**:
+1. **A Armadilha do `sleep` Longo em Rate Limits**: Backends de gateway nunca devem dormir passivamente quando o cabeçalho `retry-after` do provedor indicar tempos longos (como 20 minutos). A retentativa com espera deve ser limitada a no máximo 10s; acima disso, o backend deve abortar imediatamente e retornar um erro HTTP 429 estruturado com metadados para que o frontend reaja em milissegundos.
+2. **Cancelamento Ativo com `AbortController`**: Ao navegar para fora de uma tela com operação de IA em andamento, o frontend deve abortar imediatamente a requisição `fetch` ativa via `AbortController`, limpando classes de loading (`is-loading-questions`, `grill-mode`) e forçando a restauração das dimensões do layout.
+3. **Discrepância Cognitiva entre Model Discovery e Chat Inference**: A rota `GET /models` apenas autentica a chave de API e não consome cota de inferência de chat (`POST /chat/completions`). O modal de configurações de IA (BYOK) não pode depender apenas do teste de listagem de modelos para atestar a saúde do sistema: deve exibir um **Banner de Alerta Contextual** quando houver falha recente de cota (429), orientando o desenvolvedor a alternar o modelo ativo ou o provedor.
+**Ação**: Sempre proteger gateways de IA com limites estritos de espera em `retry-after`, utilizar `AbortController` para cancelar requisições em trânsito no frontend e exibir alertas explícitos no configurador BYOK quando a inferência do modelo ativo estiver com cota esgotada.
+
 
 
 

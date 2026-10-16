@@ -16,6 +16,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const { RulesDecisionProvider, defaultDecisionProvider } = require('./decision-provider');
 
 function sanitizeProjectName(rawName) {
     if (!rawName || typeof rawName !== 'string') return '';
@@ -438,7 +439,29 @@ FORMATO DE RESPOSTA (JSON):
 /**
  * Refina os contratos existentes com base no feedback do desenvolvedor ("Prompt Vivo").
  */
-async function refineDraft(aiGateway, projectInfo, currentContracts, feedback) {
+/**
+ * Motor de Decisão e Classificação JEV (RulesDecisionProvider - Nível 2 / Nível 4 Composto).
+ * Avalia o estado contra opções tipadas e probabilidades determinísticas (0ms, offline, zero tokens).
+ * Delega para o RulesDecisionProvider modular em scripts/decision-provider.js.
+ */
+function classifyWithJev(feedback, projectInfo, currentContracts, clarification = null) {
+    return defaultDecisionProvider.decideSync({
+        context: 'quickstart-refine',
+        question: feedback,
+        state: {
+            projectInfo,
+            contracts: currentContracts,
+            clarification
+        },
+        options: ['PROJECT.md', 'ARCHITECTURE.md', 'CURRENT_STATE.md', 'ADR-0001']
+    });
+}
+
+/**
+ * Refina os contratos existentes com base no feedback do desenvolvedor ("Prompt Vivo").
+ * Aplica governança JEV First (Nível 4 Composto: Classificação JEV -> Geração LLM Delimitada -> Validação).
+ */
+async function refineDraft(aiGateway, projectInfo, currentContracts, feedback, clarification = null) {
     const rawName = (projectInfo.name || '').trim();
     const safeName = sanitizeProjectName(rawName);
     const stack = (projectInfo.stack || 'Não definida').trim();
@@ -450,11 +473,62 @@ async function refineDraft(aiGateway, projectInfo, currentContracts, feedback) {
         throw err;
     }
 
+    // 1. ETAPA JEV: Classificação de Intenção e Detecção de Ambiguidade (0ms, Local, RulesDecisionProvider)
+    const jevResult = classifyWithJev(fbText, projectInfo, currentContracts, clarification);
+
+    // Se o JEV decidir que é necessária clarificação humana, NÃO chama LLM pesado de contratos!
+    if (jevResult.decision === 'CLARIFY' && jevResult.clarification) {
+        return {
+            status: 'needs_clarification',
+            ruleId: jevResult.ruleId,
+            intentClass: jevResult.intentClass,
+            confidence: jevResult.confidence,
+            rationale: jevResult.rationale,
+            targetDocs: jevResult.targetDocs || ['ARCHITECTURE.md'],
+            question: jevResult.clarification.question,
+            reason: jevResult.clarification.reason,
+            suggestedOptions: jevResult.clarification.suggestedOptions || [],
+            feedback: fbText
+        };
+    }
+
+    // 2. Extrair contexto de clarificação previamente respondida (se houver)
+    let clarificationPrompt = '';
+    if (clarification) {
+        if (typeof clarification === 'object') {
+            const q = String(clarification.question || '').trim();
+            const a = String(clarification.answer || '').trim();
+            if (a) {
+                clarificationPrompt = `\n\nCLARIFICAÇÃO DEFINIDA PELO DESENVOLVEDOR:\nPergunta anterior da IA: "${q}"\nResposta do desenvolvedor: "${a}"\n(A dúvida já foi esclarecida; aplique as decisões cirurgicamente nos contratos indicados sem solicitar nova clarificação).`;
+            }
+        } else if (typeof clarification === 'string' && clarification.trim()) {
+            clarificationPrompt = `\n\nCLARIFICAÇÃO DEFINIDA PELO DESENVOLVEDOR:\n"${clarification.trim()}"`;
+        }
+    }
+
+    const targetDocs = jevResult.targetDocs || ['ARCHITECTURE.md'];
+    const isSingleDoc = targetDocs.length === 1;
+    const targetDocName = isSingleDoc ? targetDocs[0] : null;
+
+    // 3. ETAPA LLM GENERATIVO: Prompt cirúrgico estritamente balizado pela decisão do JEV
     const systemPrompt = `Você é o Arquiteto de Software Sênior do AI Second Brain.
-O desenvolvedor está revisando os contratos gerados para o projeto '${safeName}' (${stack}) e forneceu a seguinte instrução de ajuste/refinamento ("Prompt Vivo"):
+O desenvolvedor está revisando os contratos gerados para o projeto '${safeName}' (${stack}) e enviou uma instrução pelo "Prompt Vivo".
 
 INSTRUÇÃO DO DESENVOLVEDOR:
-"${fbText}"
+"${fbText}"${clarificationPrompt}
+
+DECISÃO DO MOTOR JEV:
+- Regra Disparada: ${jevResult.ruleId || 'JEV-RULE-DIRECT'}
+- Classe de Intenção: ${jevResult.intentClass} (Confiança: ${((jevResult.confidence || 0.9) * 100).toFixed(0)}%)
+- Racional Auditável: ${jevResult.rationale || 'Roteamento cirúrgico determinado por regras'}
+- Documentos-Alvo Autorizados: ${targetDocs.join(', ')}
+
+DIRETRIZES CIRÚRGICAS OBRIGATÓRIAS (ISOLAMENTO E NÃO-POLUIÇÃO):
+1. O JEV delimitou esta alteração estritamente aos documentos: [${targetDocs.join(', ')}].
+2. Se um documento NÃO estiver na lista acima, ele DEVE PERMANECER 100% INALTERADO. NUNCA duplique ou copie informações de um documento para outro!
+3. Se o alvo for 'ARCHITECTURE.md' (ex: dicionário de dados, tabelas, schemas SQL, endpoints), adicione-o EXCLUSIVAMENTE em ARCHITECTURE.md. Jamais polua PROJECT.md ou CURRENT_STATE.md com tabelas ou schemas!
+4. Se o alvo for 'PROJECT.md', altere apenas escopo do MVP, objetivos ou personas.
+5. Se for CROSS_CUTTING_STACK (mudança de banco ou autenticação ampla), adapte cada documento especificamente para o seu papel (escopo em PROJECT.md, esquema em ARCHITECTURE.md, tarefas em CURRENT_STATE.md e decisão em ADR-0001).
 
 CONTRATOS ATUAIS:
 --- PROJECT.md ---
@@ -469,22 +543,24 @@ ${currentContracts.currentStateMd || ''}
 --- ADR-0001 ---
 ${currentContracts.adrMd || ''}
 
-SUA MISSÃO:
-Atualizar cirurgicamente os 4 contratos aplicando exatamente as correções e melhorias solicitadas.
-Mantenha consistência entre todos os arquivos (por exemplo, se o banco mudar na arquitetura, atualize também o roadmap e o ADR).
 Idioma: Português do Brasil.
-Responda ESTRITAMENTE em formato JSON:
+Responda ESTRITAMENTE em formato JSON com as chaves correspondentes:
 {
-  "projectMd": "markdown atualizado...",
-  "architectureMd": "markdown atualizado...",
-  "currentStateMd": "markdown atualizado...",
-  "adrMd": "markdown atualizado..."
+  "projectMd": "markdown atualizado ou original...",
+  "architectureMd": "markdown atualizado ou original...",
+  "currentStateMd": "markdown atualizado ou original...",
+  "adrMd": "markdown atualizado ou original...",
+  "summary": "Resumo em 1 frase curta do ajuste aplicado cirurgicamente."
 }`;
+
+    const userMessage = isSingleDoc
+        ? `Aplique cirurgicamente a instrução no documento ${targetDocName}. Mantenha os demais contratos intactos.`
+        : `Aplique a instrução cirurgicamente adaptando os documentos autorizados [${targetDocs.join(', ')}].`;
 
     const result = await aiGateway.chatCompletion([
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Aplique a instrução: "${fbText}" em todos os contratos agora.` }
-    ], { temperature: 0.25, maxTokens: 4000 });
+        { role: 'user', content: userMessage }
+    ], { temperature: 0.2, maxTokens: 4000 });
 
     let parsed;
     try {
@@ -493,13 +569,43 @@ Responda ESTRITAMENTE em formato JSON:
         throw new Error(`A IA retornou resposta inválida no refinamento: ${e.message}`);
     }
 
+    // 4. ETAPA DE VALIDAÇÃO PROGRAMÁTICA (GUARDRAILS DETERMINÍSTICOS):
+    // Garante com 100% de certeza que documentos não autorizados pelo JEV não foram corrompidos
+    const updatedContracts = {
+        projectMd: targetDocs.includes('PROJECT.md') || targetDocs.includes('ALL')
+            ? String(parsed.projectMd || parsed['PROJECT.md'] || parsed['project.md'] || currentContracts.projectMd || '').trim()
+            : currentContracts.projectMd,
+
+        architectureMd: targetDocs.includes('ARCHITECTURE.md') || targetDocs.includes('ALL')
+            ? String(parsed.architectureMd || parsed['ARCHITECTURE.md'] || parsed['architecture.md'] || currentContracts.architectureMd || '').trim()
+            : currentContracts.architectureMd,
+
+        currentStateMd: targetDocs.includes('CURRENT_STATE.md') || targetDocs.includes('ALL')
+            ? String(parsed.currentStateMd || parsed['CURRENT_STATE.md'] || parsed['current_state.md'] || currentContracts.currentStateMd || '').trim()
+            : currentContracts.currentStateMd,
+
+        adrMd: targetDocs.includes('ADR-0001') || targetDocs.includes('ALL')
+            ? String(parsed.adrMd || parsed['ADR-0001'] || parsed['ADR-0001.md'] || currentContracts.adrMd || '').trim()
+            : currentContracts.adrMd
+    };
+
+    // Detectar os contratos que realmente tiveram alteração no conteúdo
+    const modifiedList = [];
+    if (updatedContracts.projectMd !== currentContracts.projectMd) modifiedList.push('PROJECT.md');
+    if (updatedContracts.architectureMd !== currentContracts.architectureMd) modifiedList.push('ARCHITECTURE.md');
+    if (updatedContracts.currentStateMd !== currentContracts.currentStateMd) modifiedList.push('CURRENT_STATE.md');
+    if (updatedContracts.adrMd !== currentContracts.adrMd) modifiedList.push('ADR-0001');
+
     return {
-        contracts: {
-            projectMd: String(parsed.projectMd || parsed['PROJECT.md'] || parsed['project.md'] || currentContracts.projectMd || '').trim(),
-            architectureMd: String(parsed.architectureMd || parsed['ARCHITECTURE.md'] || parsed['architecture.md'] || currentContracts.architectureMd || '').trim(),
-            currentStateMd: String(parsed.currentStateMd || parsed['CURRENT_STATE.md'] || parsed['current_state.md'] || currentContracts.currentStateMd || '').trim(),
-            adrMd: String(parsed.adrMd || parsed['ADR-0001'] || parsed['ADR-0001.md'] || currentContracts.adrMd || '').trim()
-        },
+        status: 'success',
+        contracts: updatedContracts,
+        targetDocs: targetDocs,
+        modifiedDocs: modifiedList.length > 0 ? modifiedList : targetDocs,
+        ruleId: jevResult.ruleId,
+        intentClass: jevResult.intentClass,
+        confidence: jevResult.confidence,
+        rationale: jevResult.rationale,
+        summary: String(parsed.summary || `Ajuste aplicado cirurgicamente em ${targetDocs.join(', ')}.`).trim(),
         model: result.model,
         provider: result.provider
     };
@@ -826,6 +932,9 @@ module.exports = {
     generateQuestions,
     generateDraft,
     refineDraft,
+    classifyWithJev,
     commitProject,
-    validateAnswers
+    validateAnswers,
+    RulesDecisionProvider,
+    defaultDecisionProvider
 };

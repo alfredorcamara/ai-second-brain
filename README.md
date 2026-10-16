@@ -67,8 +67,11 @@ Nome do Projeto ──► [Sabatina com IA] ──► [Accordion Focado] ──�
      - `ARCHITECTURE.md`: Diagrama de componentes, fluxos de dados e integrações;
      - `CURRENT_STATE.md`: Estado atual e roadmap calibrado em 3 marcos objetivos;
      - `DECISIONS/ADR-0001-stack-inicial.md`: O primeiro registro de decisão arquitetural formalizado.
-5. **Barra de Refinamento Iterativo ("Prompt Vivo")**:
-   - O desenvolvedor pode ler os contratos gerados nas abas do modal e solicitar ajustes em linguagem natural (ex: *"Mudar banco de SQLite para PostgreSQL e adicionar cache Redis"*) pelo botão **`✨ Melhorar com IA`**.
+5. **Barra de Refinamento Iterativo ("Prompt Vivo Cirúrgico com Motor JEV")**:
+   - Governado pelo motor local **`RulesDecisionProvider`** (0ms de latência e zero tokens gastos antes da decisão).
+   - **Isolamento Cirúrgico**: Alterações de tabelas/dados afetam **estritamente** `ARCHITECTURE.md`, sem poluir `PROJECT.md` ou `CURRENT_STATE.md`.
+   - **Clarificação Humana (*Human-in-the-Loop*)**: Ao detectar instruções vagas (pagamentos, mensageria, autenticação ou deploy vagos), o sistema abre modal de dúvida técnica com opções de resposta rápida em chips de 1 clique.
+   - **Auto-Switch & Undo**: Alterna suavemente para a aba do documento modificado com animação de destaque e permite reverter instantaneamente pelo botão `↺ Desfazer`.
 6. **Aprovação Humana Obrigatória**:
    - **Zero Fabricação**: Nada é gravado fisicamente em disco até que o desenvolvedor clique expressamente em `💾 Aprovar e Criar Projeto no Disco`.
 

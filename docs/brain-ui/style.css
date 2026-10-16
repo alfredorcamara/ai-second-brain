@@ -3263,7 +3263,7 @@ body {
 /* Quando a Sabatina está formulando as perguntas (estado de carregando / preparing questions):
    O modal card encolhe cirurgicamente, ficando proporcional ao conteúdo sem a área vazia vertical */
 .quickstart-modal-card.is-loading-questions,
-.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillLoadingQuestions:not([style*="display: none"])) {
+.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"]) #qsGrillLoadingQuestions:not([style*="display: none"])) {
     height: auto !important;
     min-height: 0 !important;
     max-height: 480px !important;
@@ -3271,7 +3271,7 @@ body {
 }
 
 .quickstart-modal-card.is-loading-questions .qs-body,
-.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillLoadingQuestions:not([style*="display: none"])) .qs-body {
+.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"]) #qsGrillLoadingQuestions:not([style*="display: none"])) .qs-body {
     flex: initial !important;
     height: auto !important;
     min-height: 0 !important;
@@ -3281,14 +3281,14 @@ body {
 }
 
 .quickstart-modal-card.is-loading-questions #qsPaneStep2.active,
-.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillLoadingQuestions:not([style*="display: none"])) #qsPaneStep2.active {
+.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"]) #qsGrillLoadingQuestions:not([style*="display: none"])) #qsPaneStep2.active {
     flex: initial !important;
     height: auto !important;
     min-height: 0 !important;
 }
 
 .quickstart-modal-card.is-loading-questions #qsGrillQuestionsPane,
-.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillLoadingQuestions:not([style*="display: none"])) #qsGrillQuestionsPane {
+.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"]) #qsGrillLoadingQuestions:not([style*="display: none"])) #qsGrillQuestionsPane {
     flex: initial !important;
     height: auto !important;
     min-height: 0 !important;
@@ -3296,8 +3296,79 @@ body {
 }
 
 .quickstart-modal-card.is-loading-questions .qs-grill-loading,
-.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillLoadingQuestions:not([style*="display: none"])) .qs-grill-loading {
+.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"]) #qsGrillLoadingQuestions:not([style*="display: none"])) .qs-grill-loading {
     padding: 28px 20px 20px !important;
+}
+
+/* ============================================================
+   AI ERROR / QUOTA EXCEEDED UNIVERSAL MODAL
+   ============================================================ */
+.ai-error-modal-card {
+    border-color: rgba(239, 68, 68, 0.45) !important;
+    box-shadow: 0 30px 80px -15px rgba(0, 0, 0, 0.85), 0 0 50px rgba(239, 68, 68, 0.25) !important;
+}
+
+.ai-error-badge {
+    background: rgba(239, 68, 68, 0.15) !important;
+    color: #fca5a5 !important;
+    border-color: rgba(239, 68, 68, 0.4) !important;
+    box-shadow: 0 0 14px rgba(239, 68, 68, 0.25);
+}
+
+.ai-error-badge.warning {
+    background: rgba(245, 158, 11, 0.15) !important;
+    color: #fcd34d !important;
+    border-color: rgba(245, 158, 11, 0.4) !important;
+    box-shadow: 0 0 14px rgba(245, 158, 11, 0.25);
+}
+
+.ai-error-provider-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 8px;
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    color: #c7d2fe;
+    font-size: 13px;
+    font-family: var(--font-mono, monospace);
+    font-weight: 600;
+}
+
+.ai-error-card-box {
+    border-color: rgba(239, 68, 68, 0.25);
+    background: rgba(239, 68, 68, 0.03);
+}
+
+.ai-error-reason {
+    color: #fca5a5 !important;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.ai-error-solution-text {
+    font-size: 13px;
+    color: #e2e8f0;
+    line-height: 1.6;
+}
+
+.ai-error-solution-text strong {
+    color: #38bdf8;
+}
+
+.ai-error-btn-config {
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%) !important;
+    box-shadow: 0 4px 18px rgba(99, 102, 241, 0.45) !important;
+    border: none !important;
+    font-weight: 600 !important;
+    padding: 9px 20px !important;
+    transition: all 0.2s ease !important;
+}
+
+.ai-error-btn-config:hover {
+    transform: translateY(-1px) scale(1.02) !important;
+    box-shadow: 0 6px 24px rgba(168, 85, 247, 0.6) !important;
 }
 
 /* Modo Minuta de Contratos (#qsGrillDraftPane ativo) — "Contratos Prontos para Revisão":
@@ -4876,6 +4947,26 @@ body {
     box-shadow: 0 0 14px rgba(139, 92, 246, 0.4) !important;
 }
 
+.btn-undo-refine {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-color: rgba(239, 68, 68, 0.45) !important;
+    color: #fca5a5 !important;
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all var(--transition-fast);
+}
+
+.btn-undo-refine:hover {
+    background: rgba(239, 68, 68, 0.3) !important;
+    border-color: #ef4444 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.4) !important;
+}
+
 .qs-refine-hint {
     font-size: 11px;
     color: var(--text-muted);
@@ -5240,6 +5331,79 @@ body {
     .qs-val-actions .btn {
         width: 100%;
     }
+}
+
+/* Quickstart Clarification Modal (JEV First) */
+.qs-clarify-card {
+    max-width: 580px !important;
+    width: 90vw;
+    border-color: rgba(168, 85, 247, 0.5) !important;
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 35px rgba(168, 85, 247, 0.25) !important;
+}
+
+.qs-clarify-badge {
+    background: rgba(168, 85, 247, 0.2) !important;
+    color: #c084fc !important;
+    border-color: rgba(168, 85, 247, 0.5) !important;
+}
+
+.qs-clarify-chip {
+    background: rgba(168, 85, 247, 0.15);
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    color: #e9d5ff;
+    padding: 5px 11px;
+    border-radius: 14px;
+    font-size: 11.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.qs-clarify-chip:hover {
+    background: rgba(168, 85, 247, 0.35);
+    border-color: #a855f7;
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+    transform: translateY(-1px);
+}
+
+.qs-clarify-textarea {
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: #ffffff;
+    font-size: 13px;
+    font-family: inherit;
+    resize: vertical;
+    outline: none;
+    transition: all var(--transition-fast);
+}
+
+.qs-clarify-textarea:focus {
+    border-color: #c084fc;
+    box-shadow: 0 0 12px rgba(168, 85, 247, 0.35);
+}
+
+.qs-clarify-textarea.error {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.35) !important;
+}
+
+/* Tab highlight flash animation on auto-switch */
+@keyframes tabFlashHighlight {
+    0% { transform: scale(1); filter: brightness(1); }
+    50% { transform: scale(1.05); filter: brightness(1.5); box-shadow: 0 0 18px rgba(168, 85, 247, 0.7); }
+    100% { transform: scale(1); filter: brightness(1); }
+}
+
+.tab-flash-active {
+    animation: tabFlashHighlight 0.6s ease-out 1;
 }
 
 @media (max-width: 640px) {
@@ -10991,6 +11155,97 @@ body::-webkit-scrollbar-thumb:hover {
 .ai-form-scrollable::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.15);
     border-radius: 4px;
+}
+
+/* Banner de Alerta de Cota Esgotada / Rate Limit no Modal de Configurações */
+.ai-settings-quota-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-radius: 12px;
+    box-shadow: 0 0 18px rgba(239, 68, 68, 0.12);
+    margin-bottom: 4px;
+    animation: quotaBannerFadeIn 0.25s ease-out;
+    position: relative;
+}
+
+@keyframes quotaBannerFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ai-quota-banner-icon {
+    font-size: 20px;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.ai-quota-banner-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ai-quota-banner-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fca5a5;
+    letter-spacing: -0.01em;
+}
+
+.ai-quota-banner-text {
+    font-size: 12px;
+    line-height: 1.45;
+    color: #fecaca;
+}
+
+.ai-quota-banner-hint {
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: #cbd5e1;
+    margin-top: 4px;
+    padding: 6px 10px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+}
+
+.ai-quota-banner-hint code {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-family: var(--font-mono, monospace);
+    font-size: 11px;
+}
+
+.ai-quota-banner-close {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    line-height: 1;
+    transition: all var(--transition-fast);
+}
+
+.ai-quota-banner-close:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .ai-settings-section {

@@ -360,6 +360,7 @@
         <h3>Feito para não quebrar</h3>
         <ul>
           <li><b>AI Gateway Multi-Provedor:</b> conecte Groq, OpenAI, Anthropic, Gemini, DeepSeek, OpenRouter ou Ollama local com auto-descoberta dinâmica de modelos.</li>
+          <li><b>Prompt Vivo Cirúrgico com JEV:</b> motor de decisão local sem poluição cruzada de contratos, detecção de ambiguidade com chips em 1 clique e botão Desfazer.</li>
           <li><b>Recuperação inteligente de rate limit:</b> lê o tempo de espera informado pelo provedor e retenta automaticamente com margem de segurança.</li>
           <li><b>Cadência preventiva controlada</b> entre arquivos, para não esgotar o limite de tokens por minuto da sua chave.</li>
           <li><b>Retomada automática:</b> reconhece arquivos já gerados e não gasta tokens refazendo.</li>
@@ -415,9 +416,8 @@
         </div>
         <div class="card rv">
           <div class="card-icon-wrap" style="--c:#a3e635"><i>⚡</i></div>
-          <h3>AI Decision Gate</h3>
-          <p>Um portão de roteamento classifica se a tarefa deve usar código determinístico ou LLM, economizando
-            milhares de tokens.</p>
+          <h3>AI Decision Gate &amp; Motor JEV</h3>
+          <p>O motor de decisão local `RulesDecisionProvider` (0ms / custo zero) classifica tarefas e ambiguidades antes de chamar LLMs, economizando milhares de tokens.</p>
         </div>
         <div class="card rv">
           <div class="card-icon-wrap" style="--c:#6366f1"><i>🚀</i></div>

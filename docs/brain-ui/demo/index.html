@@ -1426,7 +1426,7 @@
                         <div class="qs-field">
                             <label for="qsNewDesc">Descrição Rápida (Opcional)</label>
                             <input type="text" id="qsNewDesc"
-                                placeholder="ex: Microserviço de pagamentos e checkout integrado a IA. Uma breve descrição ajuda o Grill Studio a entender o domínio de negócio e gerar contratos cirúrgicos sem suposições."
+                                placeholder="Ajuda o Grill Studio a entender o domínio de negócio e gerar contratos cirúrgicos sem suposições."
                                 autocomplete="off" oninput="onQuickstartDescInput(this.value)">
                         </div>
                         <div class="qs-field">
@@ -1620,11 +1620,14 @@
                                         </div>
                                         <div class="qs-zoom-pill" title="Ajustar escala / zoom do documento">
                                             <button type="button" class="qs-zoom-btn qs-zoom-plus" id="btnQsZoomPlus"
-                                                onclick="adjustQsContractZoom(10)" title="Aumentar zoom (+10%)">+</button>
-                                            <span class="qs-zoom-val" id="qsContractZoomVal" onclick="resetQsContractZoom()"
+                                                onclick="adjustQsContractZoom(10)"
+                                                title="Aumentar zoom (+10%)">+</button>
+                                            <span class="qs-zoom-val" id="qsContractZoomVal"
+                                                onclick="resetQsContractZoom()"
                                                 title="Clique para redefinir para 80%">80%</span>
                                             <button type="button" class="qs-zoom-btn qs-zoom-minus" id="btnQsZoomMinus"
-                                                onclick="adjustQsContractZoom(-10)" title="Diminuir zoom (-10%)">−</button>
+                                                onclick="adjustQsContractZoom(-10)"
+                                                title="Diminuir zoom (-10%)">−</button>
                                         </div>
                                         <button type="button" class="btn-qs-expand"
                                             onclick="openExpandedContractModal()"
@@ -1653,9 +1656,13 @@
                                         <span class="btn-spinner" style="display:none"></span>
                                         <span>✨ Melhorar com IA</span>
                                     </button>
+                                    <button type="button" class="btn btn-secondary btn-undo-refine"
+                                        id="btnUndoGrillRefine" style="display:none;" onclick="undoGrillRefine()"
+                                        title="Desfazer último ajuste da IA">
+                                        <span>↺ Desfazer</span>
+                                    </button>
                                 </div>
-                                <small class="qs-refine-hint">💡 A IA aplicará cirurgicamente sua instrução em todos os
-                                    4 contratos simultaneamente sem recarregar a tela.</small>
+                                <!-- <small class="qs-refine-hint">💡 A IA aplicará cirurgicamente sem recarregar a tela.</small> -->
                             </div>
                         </div>
 
@@ -1786,6 +1793,119 @@
         </div>
     </div>
 
+    <!-- Quickstart Grill Clarification Modal (Dúvida da IA no Prompt Vivo - JEV First) -->
+    <div id="qsClarificationModal" class="quickstart-modal-backdrop" style="display: none; z-index: 10060;"
+        onclick="handleClarificationModalBackdrop(event)">
+        <div class="quickstart-modal-card qs-val-modal-card qs-clarify-card" role="dialog" aria-modal="true"
+            aria-labelledby="qsClarifyTitle">
+            <div class="qs-header qs-val-header">
+                <div class="qs-badge qs-clarify-badge">🤔 CLARIFICAÇÃO NECESSÁRIA</div>
+                <h2 id="qsClarifyTitle" class="qs-title">A IA precisa de mais detalhes</h2>
+                <p class="qs-subtitle" id="qsClarifySubtitle">Sua solicitação no Prompt Vivo gerou uma dúvida técnica
+                    que precisa ser esclarecida.</p>
+                <button class="qs-close-btn" onclick="closeClarificationModal()" aria-label="Fechar modal">✕</button>
+            </div>
+            <div class="qs-body qs-val-body">
+                <div class="qs-val-card-box">
+                    <div class="qs-val-row">
+                        <span class="qs-val-label">✨ Sua solicitação:</span>
+                        <div class="qs-val-atext" id="qsClarifyOriginalFeedback">"..."</div>
+                    </div>
+                    <div class="qs-val-row">
+                        <span class="qs-val-label">❓ Dúvida do Arquiteto de IA:</span>
+                        <div class="qs-val-qtext" id="qsClarifyQuestionText">...</div>
+                    </div>
+                    <div class="qs-val-row" id="qsClarifyReasonRow">
+                        <span class="qs-val-label">💡 Motivo:</span>
+                        <div class="qs-val-reason" id="qsClarifyReasonText">...</div>
+                    </div>
+                    <div class="qs-val-row" id="qsClarifyOptionsRow" style="display:none;">
+                        <span class="qs-val-label">⚡ Sugestões rápidas (clique para preencher):</span>
+                        <div class="qs-chip-group" id="qsClarifyOptionsContainer"
+                            style="display:flex; flex-wrap:wrap; gap:6px; margin-top:4px;"></div>
+                    </div>
+                </div>
+
+                <div class="qs-clarify-input-box" style="margin-top: 14px;">
+                    <label for="qsClarifyAnswerInput" class="qs-label"
+                        style="display:block; margin-bottom: 6px; font-weight:600; font-size:13px; color:#e0e7ff;">
+                        Sua resposta (obrigatória):
+                    </label>
+                    <textarea id="qsClarifyAnswerInput" class="qs-textarea qs-clarify-textarea" rows="3"
+                        placeholder="Digite sua resposta detalhada para orientar a IA..."
+                        oninput="onClarifyInputChange()"></textarea>
+                    <div id="qsClarifyInputError" class="qs-field-error"
+                        style="display:none; color:#f87171; font-size:12px; margin-top:4px;">
+                        ⚠️ O preenchimento é obrigatório para continuar o refinamento.
+                    </div>
+                </div>
+
+                <div class="qs-val-actions" style="margin-top: 18px; display:flex; justify-content:flex-end; gap:10px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeClarificationModal()">
+                        Cancelar
+                    </button>
+                    <button type="button" class="btn btn-primary btn-commit-grill" id="btnSubmitClarification"
+                        onclick="submitClarificationAndRefine()">
+                        <span class="btn-spinner" style="display:none"></span>
+                        <span>⚡ Responder e Continuar</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Universal de Falha / Limite de Crédito de IA -->
+    <div id="aiErrorModal" class="quickstart-modal-backdrop" style="display: none; z-index: 10070;"
+        onclick="handleAiErrorModalBackdrop(event)">
+        <div class="quickstart-modal-card qs-val-modal-card ai-error-modal-card" role="dialog" aria-modal="true"
+            aria-labelledby="aiErrorTitle">
+            <div class="qs-header qs-val-header ai-error-header">
+                <div class="qs-badge ai-error-badge" id="aiErrorBadge">⚠️ LIMITE DE CRÉDITOS / RATE LIMIT (429)</div>
+                <h2 id="aiErrorTitle" class="qs-title">Créditos de IA Esgotados</h2>
+                <p class="qs-subtitle" id="aiErrorSubtitle">O provedor de IA atingiu o limite de taxa ou cota
+                    disponível.</p>
+                <button class="qs-close-btn" onclick="closeAiErrorModal()" aria-label="Fechar modal">✕</button>
+            </div>
+            <div class="qs-body qs-val-body">
+                <div class="qs-val-card-box ai-error-card-box">
+                    <div class="qs-val-row" id="aiErrorProviderRow">
+                        <span class="qs-val-label">🤖 Provedor de IA:</span>
+                        <div class="ai-error-provider-chip" id="aiErrorProviderText">Groq Cloud</div>
+                    </div>
+                    <div class="qs-val-row">
+                        <span class="qs-val-label">📋 Diagnóstico da Falha:</span>
+                        <div class="qs-val-reason ai-error-reason" id="aiErrorReasonText">
+                            O provedor informou que o limite de requisições ou créditos gratuitos foi atingido.
+                        </div>
+                    </div>
+                    <div class="qs-val-row highlight" id="aiErrorRetryRow" style="display: none;">
+                        <span class="qs-val-label">⏳ Janela de Redefinição Informada:</span>
+                        <div class="qs-val-suggestion" id="aiErrorRetryText">A cota será restaurada em cerca de 1243
+                            segundos.</div>
+                    </div>
+                    <div class="qs-val-row ai-error-solution-row">
+                        <span class="qs-val-label">💡 Como Resolver Agora:</span>
+                        <div class="ai-error-solution-text" id="aiErrorSolutionText">
+                            Você pode <strong>alternar para outro provedor de IA</strong> (OpenAI, Claude, Ollama Local
+                            gratuito ou OpenRouter) com 1 clique nas Configurações de IA, ou aguardar a janela de reset.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="qs-val-actions ai-error-actions"
+                    style="margin-top: 18px; display:flex; justify-content:flex-end; gap:10px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeAiErrorModal()">
+                        ✕ Fechar
+                    </button>
+                    <button type="button" class="btn btn-primary ai-error-btn-config" id="btnAiErrorOpenConfig"
+                        onclick="handleAiErrorOpenConfig()">
+                        ⚙️ Abrir Configurações de IA (BYOK)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Live Markdown Editor Modal -->
     <div id="fileEditorModal" class="editor-modal-backdrop" style="display: none;"
         onclick="handleEditorBackdropClick(event)">
@@ -1874,7 +1994,7 @@
             <div id="editorQuickstartRefineBox" class="editor-qs-refine-box qs-refine-box" style="display: none;">
                 <div class="qs-refine-header">
                     <span class="qs-refine-icon">✨</span>
-                    <strong>Prompt Vivo: O que você gostaria de melhorar ou ajustar neste documento?</strong>
+                    <strong>Prompt Vivo: O que você gostaria de melhorar ou ajustar?</strong>
                 </div>
                 <div class="qs-refine-input-row">
                     <input type="text" id="editorQsRefineInput" class="qs-refine-input"
@@ -1885,9 +2005,12 @@
                         <span class="btn-spinner" style="display:none"></span>
                         <span>✨ Melhorar com IA</span>
                     </button>
+                    <button type="button" class="btn btn-secondary btn-undo-refine" id="btnEditorUndoGrillRefine"
+                        style="display:none;" onclick="undoGrillRefine()" title="Desfazer último ajuste da IA">
+                        <span>↺ Desfazer</span>
+                    </button>
                 </div>
-                <small class="qs-refine-hint">💡 A IA aplicará cirurgicamente sua instrução em todos os 4 contratos
-                    simultaneamente sem fechar este modal.</small>
+                <!-- <small class="qs-refine-hint">💡 A IA aplicará cirurgicamente sem recarregar a tela.</small> -->
             </div>
 
             <!-- Footer -->
@@ -2859,6 +2982,21 @@
                 </div>
 
                 <form id="aiGatewayForm" class="ai-form-scrollable" onsubmit="handleSaveAiSettings(event)">
+                    <!-- Banner Dinâmico de Cota Esgotada / Alerta de Erro de Inferência -->
+                    <div id="aiSettingsQuotaBanner" class="ai-settings-quota-banner" style="display: none;">
+                        <div class="ai-quota-banner-icon">⚠️</div>
+                        <div class="ai-quota-banner-body">
+                            <div class="ai-quota-banner-title" id="aiQuotaBannerTitle">Cota de Inferência Esgotada no Modelo Ativo (429)</div>
+                            <div class="ai-quota-banner-text" id="aiQuotaBannerText">
+                                Sua chave de API está conectada e autenticada com sucesso, mas o modelo atual atingiu o limite de taxa de requisições ou tokens da Groq Cloud.
+                            </div>
+                            <div class="ai-quota-banner-hint" id="aiQuotaBannerHint">
+                                💡 <strong>Como Resolver:</strong> Selecione outro modelo com cota livre no <strong>Passo 3</strong> abaixo ou alterne o provedor no <strong>Passo 1</strong>.
+                            </div>
+                        </div>
+                        <button type="button" class="ai-quota-banner-close" onclick="dismissAiSettingsQuotaBanner()" title="Dispensar aviso" aria-label="Dispensar">✕</button>
+                    </div>
+
                     <!-- 1. Escolha o Provedor -->
                     <div class="ai-settings-section">
                         <label class="ai-step-title" for="aiProviderSelect">1. Escolha o Provedor</label>
