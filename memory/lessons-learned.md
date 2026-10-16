@@ -217,6 +217,19 @@
 3. **Validação Automatizada de Sintaxe no Linter**: O linter de integridade do projeto (`scripts/doctor.js`) deve validar não apenas referências Markdown e contratos de governança, mas também a integridade sintática de 100% dos scripts JavaScript do cliente via motor nativo de parsing (`vm.Script` / `node --check`).
 **Ação**: Sempre sincronizar arquivos idênticos de forma atômica e integral, e incluir verificação sintática de scripts no `doctor.js` para blindar o workspace contra erros de parse.
 
+---
+
+## 2026-10-16 — Escala / Zoom Dinâmico em Visualizadores de Contratos & Estabilidade Geométrica
+
+### Lição 26: Escala Proporcional (Zoom) e Estabilidade Geométrica em Viewers de Documentos Extensos
+**Contexto**: Minutas de contratos de governança (`PROJECT.md`, `ARCHITECTURE.md`, `CURRENT_STATE.md`, `ADR-0001`) contêm muitas seções, tabelas e diagramas. No visualizador do Quickstart e no editor expandido, o tamanho padrão de fonte forçava rolagem excessiva. O usuário solicitou visualização em escala menor (zoom padrão de 80%) com botões de ajuste estilo *capsule pill* (`+`, `80%`, `−`).
+**Aprendizado**:
+1. **Compensação Geométrica Inversa de Dimensões**: Ao aplicar `zoom: ratio` (ex: `0.8`), as dimensões do elemento no layout box encolhem proporcionalmente. Se a altura ou largura estiver configurada como fixa ou `100%`, o container resultante sofre encolhimento visual na tela (deixando faixas vazias na base do modal ou encurtando o card). A solução matemática é aplicar dimensões inversamente proporcionais: `width: calc(100% / ratio)`, `height: calc(100% / ratio)` e `max-height: Math.round(targetHeight / ratio) + 'px'`. Com isso, a caixa física na tela permanece 100% estável e preenche o modal perfeitamente em qualquer zoom de 50% a 150%.
+2. **Coluna de Leitura Adaptativa (`.doc-preview-inner`)**: Textos em Markdown centralizados com `max-width: 820px` colapsariam para apenas `656px` sob escala de 80%. Ao aplicar `max-width: calc(820px / ratio)`, a largura de linha física na tela é preservada rigorosamente em 820px, permitindo que mais palavras caibam por linha sem quebrar o ritmo de leitura.
+3. **Ergonomia e Sincronização de Estado**: Manter a mesma porcentagem de escala sincronizada bidirecionalmente entre o card compacto e o modal expandido em tela cheia elimina descontinuidades perceptivas, oferecendo ao desenvolvedor uma experiência fluida de inspeção panorâmica.
+**Ação**: Ao criar controles de zoom ou escala em elementos de visualização/edição, compense sempre a largura, altura e colunas centrais inversamente à razão de escala (`1 / ratio`) para evitar saltos ou distorções de layout.
+
+
 
 
 

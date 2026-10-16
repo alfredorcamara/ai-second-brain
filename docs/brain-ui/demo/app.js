@@ -3197,6 +3197,7 @@ let currentGrillQuestions = [];
 let currentGrillDraft = { projectMd: '', architectureMd: '', currentStateMd: '', adrMd: '' };
 let currentActiveContract = 'projectMd';
 let currentQsContractMode = 'preview'; // 'preview' | 'write'
+let currentQsContractZoom = 80; // Escala padrão: 80%
 let isQuickstartEditorActive = false;
 
 function escapeHtml(str) {
@@ -3445,6 +3446,150 @@ function updateQsContractPreviewContent() {
     previewPane.innerHTML = `<div class="doc-preview-inner">${renderedHtml}</div>`;
 }
 
+function applyQsContractZoom(zoomPercent) {
+    const clamped = Math.min(150, Math.max(50, Math.round(zoomPercent)));
+    currentQsContractZoom = clamped;
+
+    const valEl = document.getElementById('qsContractZoomVal');
+    if (valEl) valEl.textContent = clamped + '%';
+
+    const btnPlus = document.getElementById('btnQsZoomPlus');
+    const btnMinus = document.getElementById('btnQsZoomMinus');
+    if (btnPlus) btnPlus.disabled = clamped >= 150;
+    if (btnMinus) btnMinus.disabled = clamped <= 50;
+
+    const ratio = clamped / 100;
+    const card = document.querySelector('.qs-contract-viewer-card');
+    if (card) {
+        card.style.setProperty('--qs-contract-zoom', ratio);
+    }
+
+    const previewPane = document.getElementById('qsContractPreviewPane');
+    const textarea = document.getElementById('qsContractTextarea');
+
+    if (previewPane) {
+        previewPane.style.zoom = ratio;
+        previewPane.style.maxHeight = Math.round(340 / ratio) + 'px';
+        previewPane.style.minHeight = Math.round(180 / ratio) + 'px';
+    }
+    if (textarea) {
+        textarea.style.zoom = ratio;
+        textarea.style.maxHeight = Math.round(340 / ratio) + 'px';
+        textarea.style.minHeight = Math.round(180 / ratio) + 'px';
+    }
+
+    try {
+        localStorage.setItem('qs_contract_zoom', String(clamped));
+    } catch (_) {}
+}
+
+function adjustQsContractZoom(delta) {
+    applyQsContractZoom((currentQsContractZoom || 80) + delta);
+}
+
+function resetQsContractZoom() {
+    applyQsContractZoom(80);
+}
+
+function initQsContractZoomControls() {
+    try {
+        const saved = localStorage.getItem('qs_contract_zoom');
+        if (saved) {
+            const parsed = parseInt(saved, 10);
+            if (!isNaN(parsed) && parsed >= 50 && parsed <= 150) {
+                currentQsContractZoom = parsed;
+            }
+        }
+    } catch (_) {}
+
+    applyQsContractZoom(currentQsContractZoom || 80);
+
+    const handleWheelZoom = (e) => {
+        if (e.ctrlKey) {
+            e.preventDefault();
+            adjustQsContractZoom(e.deltaY < 0 ? 10 : -10);
+        }
+    };
+
+    const preview = document.getElementById('qsContractPreviewPane');
+    const textarea = document.getElementById('qsContractTextarea');
+    if (preview) preview.addEventListener('wheel', handleWheelZoom, { passive: false });
+    if (textarea) textarea.addEventListener('wheel', handleWheelZoom, { passive: false });
+}
+
+let currentEditorZoom = 80;
+
+function applyEditorZoom(zoomPercent) {
+    const clamped = Math.min(150, Math.max(50, Math.round(zoomPercent)));
+    currentEditorZoom = clamped;
+
+    const valEl = document.getElementById('editorZoomVal');
+    if (valEl) valEl.textContent = clamped + '%';
+
+    const btnPlus = document.getElementById('btnEditorZoomPlus');
+    const btnMinus = document.getElementById('btnEditorZoomMinus');
+    if (btnPlus) btnPlus.disabled = clamped >= 150;
+    if (btnMinus) btnMinus.disabled = clamped <= 50;
+
+    const ratio = clamped / 100;
+    const modal = document.getElementById('fileEditorModal');
+    if (modal) {
+        modal.style.setProperty('--editor-zoom', ratio);
+    }
+
+    const previewPane = document.getElementById('editorPreviewPane');
+    const textarea = document.getElementById('editorTextarea');
+
+    if (previewPane) {
+        previewPane.style.zoom = ratio;
+        previewPane.style.width = (100 / ratio) + '%';
+        previewPane.style.height = (100 / ratio) + '%';
+    }
+    if (textarea) {
+        textarea.style.zoom = ratio;
+        textarea.style.width = (100 / ratio) + '%';
+        textarea.style.height = (100 / ratio) + '%';
+    }
+
+    try {
+        localStorage.setItem('editor_zoom', String(clamped));
+    } catch (_) {}
+}
+
+function adjustEditorZoom(delta) {
+    applyEditorZoom((currentEditorZoom || 80) + delta);
+}
+
+function resetEditorZoom() {
+    applyEditorZoom(80);
+}
+
+function initEditorZoomControls() {
+    try {
+        const saved = localStorage.getItem('editor_zoom');
+        if (saved) {
+            const parsed = parseInt(saved, 10);
+            if (!isNaN(parsed) && parsed >= 50 && parsed <= 150) {
+                currentEditorZoom = parsed;
+            }
+        }
+    } catch (_) {}
+
+    applyEditorZoom(currentEditorZoom || 80);
+
+    const handleWheelZoom = (e) => {
+        if (e.ctrlKey) {
+            e.preventDefault();
+            adjustEditorZoom(e.deltaY < 0 ? 10 : -10);
+        }
+    };
+
+    const preview = document.getElementById('editorPreviewPane');
+    const textarea = document.getElementById('editorTextarea');
+    if (preview) preview.addEventListener('wheel', handleWheelZoom, { passive: false });
+    if (textarea) textarea.addEventListener('wheel', handleWheelZoom, { passive: false });
+}
+
 function openExpandedContractModal() {
     if (!currentGrillDraft || !currentActiveContract) return;
 
@@ -3475,6 +3620,7 @@ function openExpandedContractModal() {
 
     updateEditorContractTabs(currentActiveContract);
     loadContractIntoEditor(currentActiveContract, currentQsContractMode || 'preview');
+    applyEditorZoom(currentQsContractZoom || currentEditorZoom || 80);
 }
 
 function closeExpandedContractModal() {
@@ -3509,6 +3655,7 @@ function closeExpandedContractModal() {
     }
     updateQsContractPreviewContent();
     switchQsContractMode(currentEditorTab || 'preview');
+    applyQsContractZoom(currentEditorZoom || currentQsContractZoom || 80);
 
     // Keep body overflow hidden because quickstartModal is still open
     document.body.style.overflow = 'hidden';
@@ -4456,6 +4603,7 @@ async function executeGenerateDraftFlow(answers) {
         }
         selectContractTab('projectMd');
         switchQsContractMode('preview');
+        applyQsContractZoom(currentQsContractZoom || 80);
     } catch (err) {
         alert('Erro ao gerar contratos: ' + err.message);
         backToGrillQuestions();
@@ -6563,6 +6711,7 @@ async function openFileEditor(filePath, initialContent = null, onSaved = null, d
 
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
+    applyEditorZoom(currentEditorZoom || 80);
 
     const filename = filePath.split('/').pop();
     if (titleEl) titleEl.textContent = defaultTab === 'write' ? `Editando: ${filename}` : `Visualizando: ${filename}`;
@@ -10476,12 +10625,24 @@ window.toggleAskSourceSnippet = toggleAskSourceSnippet;
 window.copyAskSourceCitation = copyAskSourceCitation;
 window.setAskBrainCategory = setAskBrainCategory;
 window.clearAskBrainRecents = clearAskBrainRecents;
+window.adjustQsContractZoom = adjustQsContractZoom;
+window.resetQsContractZoom = resetQsContractZoom;
+window.applyQsContractZoom = applyQsContractZoom;
+window.adjustEditorZoom = adjustEditorZoom;
+window.resetEditorZoom = resetEditorZoom;
+window.applyEditorZoom = applyEditorZoom;
 
 // Carrega status da IA automaticamente após carregar a interface
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadAiGatewayStatus);
+    document.addEventListener('DOMContentLoaded', () => {
+        loadAiGatewayStatus();
+        initQsContractZoomControls();
+        initEditorZoomControls();
+    });
 } else {
     loadAiGatewayStatus();
+    initQsContractZoomControls();
+    initEditorZoomControls();
 }
 
 

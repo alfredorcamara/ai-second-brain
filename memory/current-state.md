@@ -20,6 +20,31 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 | `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway, Research Engine, Session Capture, Brain Search) |
 
 ## Sessões Recentes
+- **Data**: 2026-10-16
+  - **Controle de Escala / Zoom Dinâmico nos Contratos de Governança (Quickstart & Modal Expandido)**:
+    - **Contexto & Diagnóstico de UX**:
+      - Os contratos de governança gerados pela IA no Grill Studio (`PROJECT.md`, `ARCHITECTURE.md`, `CURRENT_STATE.md`, `ADR-0001`) são documentos ricos e extensos, contendo seções de arquitetura, tabelas de decisão e diagramas.
+      - Na visualização original em 100% de escala, o texto grande demandava rolagem constante tanto no card do Quickstart quanto no modal expandido.
+      - O usuário solicitou um efeito de escala reduzida (inspirado no efeito visual da demonstração da landing page), com valor padrão de 80%, controlado por um botão em formato de pílula (*capsule pill*) exibindo `+`, a porcentagem centralizada e `−`.
+    - **Solução Definitiva & Arquitetura de Interface**:
+      - **Componente Visual Capsule Pill (`.qs-zoom-pill`)**:
+        - Construído com estética *dark glass* (`#0d1117`, bordas com opacidade sutil, cantos 999px e divisores discretos entre botões).
+        - Botão `+` à esquerda (aumenta o zoom em +10%), indicador de porcentagem centralizado com valor padrão de `80%` (e atalho de clique para redefinir para 80%), e botão `−` à direita (reduz o zoom em -10%). Limites calibrados entre 50% e 150%.
+        - Suporte a zoom via roda do mouse com Ctrl pressionado (`Ctrl + Wheel`) para ergonomia máxima de navegação.
+      - **Visualizador do Card Quickstart (`.qs-contract-viewer-card`)**:
+        - Botão de zoom posicionado imediatamente antes de `⛶ Expandir`.
+        - Afeta simultaneamente a pré-visualização (`#qsContractPreviewPane`) e o editor manual (`#qsContractTextarea`).
+        - Estabilidade física do card: altura máxima calculada dinamicamente via `Math.round(340 / ratio) + 'px'`, mantendo o card em exatos 340px visuais na tela independentemente do zoom aplicado, evitando saltos verticais ou deslocamento dos botões inferiores.
+      - **Modal Expandido em Tela Cheia (`#fileEditorModal`)**:
+        - Botão de zoom inserido em `.editor-header-actions` ao lado dos seletores de modo.
+        - Afeta `#editorPreviewPane` e `#editorTextarea`.
+        - Compensação geométrica de 100%: largura e altura definidas como `calc(100% / ratio)` para preencher a área útil do modal sem gaps.
+        - Coluna central de leitura (`.doc-preview-inner`) com largura proporcional (`calc(820px / ratio)`), preservando a largura de linha recomendada de 820px.
+        - Sincronização bidirecional entre o card Quickstart e o modal expandido ao abrir (`openExpandedContractModal`) e fechar (`closeExpandedContractModal`).
+      - **100% Paridade & Integridade**:
+        - Sincronizado integralmente entre `docs/brain-ui/` e `docs/brain-ui/demo/` (`index.html`, `style.css`, `app.js`).
+        - Validação automatizada via `npm run doctor` com 100% de aprovação (0 erros).
+
 - **Data**: 2026-10-15
   - **Correção Cirúrgica do Loading da Sabatina (Grill Studio) & Cache Inteligente de Economia de Tokens**:
     - **Diagnóstico & Causa Raiz**:

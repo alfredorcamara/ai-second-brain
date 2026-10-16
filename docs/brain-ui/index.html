@@ -1573,14 +1573,6 @@
 
                     <!-- Pane 2.B: Rascunho dos Contratos & Refinamento ("Prompt Vivo") -->
                     <div id="qsGrillDraftPane" class="qs-grill-pane" style="display: none;">
-                        <div class="qs-form-header">
-                            <div class="qs-grill-header-left">
-                                <span class="qs-form-tag draft">📄 Contratos Prontos para Revisão</span>
-                                <span class="qs-model-badge" id="qsGrillDraftModelBadge">✨ IA Pronta</span>
-                            </div>
-                            <button type="button" class="qs-back-link" onclick="backToGrillQuestions()">← Ajustar
-                                respostas</button>
-                        </div>
 
                         <div id="qsGrillLoadingDraft" class="qs-grill-loading" style="display: none;">
                             <div class="qs-grill-spinner"></div>
@@ -1629,6 +1621,14 @@
                                                 onclick="switchQsContractMode('write')">
                                                 ✏️ Escrever
                                             </button>
+                                        </div>
+                                        <div class="qs-zoom-pill" title="Ajustar escala / zoom do documento">
+                                            <button type="button" class="qs-zoom-btn qs-zoom-plus" id="btnQsZoomPlus"
+                                                onclick="adjustQsContractZoom(10)" title="Aumentar zoom (+10%)">+</button>
+                                            <span class="qs-zoom-val" id="qsContractZoomVal" onclick="resetQsContractZoom()"
+                                                title="Clique para redefinir para 80%">80%</span>
+                                            <button type="button" class="qs-zoom-btn qs-zoom-minus" id="btnQsZoomMinus"
+                                                onclick="adjustQsContractZoom(-10)" title="Diminuir zoom (-10%)">−</button>
                                         </div>
                                         <button type="button" class="btn-qs-expand"
                                             onclick="openExpandedContractModal()"
@@ -1812,6 +1812,14 @@
                             onclick="switchEditorTab('write')">
                             ✏️ Escrever
                         </button>
+                    </div>
+                    <div class="qs-zoom-pill editor-zoom-pill" title="Ajustar escala / zoom do documento">
+                        <button type="button" class="qs-zoom-btn qs-zoom-plus" id="btnEditorZoomPlus"
+                            onclick="adjustEditorZoom(10)" title="Aumentar zoom (+10%)">+</button>
+                        <span class="qs-zoom-val" id="editorZoomVal" onclick="resetEditorZoom()"
+                            title="Clique para redefinir para 80%">80%</span>
+                        <button type="button" class="qs-zoom-btn qs-zoom-minus" id="btnEditorZoomMinus"
+                            onclick="adjustEditorZoom(-10)" title="Diminuir zoom (-10%)">−</button>
                     </div>
                     <button class="editor-close-btn" onclick="closeFileEditor()" aria-label="Fechar editor">✕</button>
                 </div>
