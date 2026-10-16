@@ -21,6 +21,17 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 
 ## Sessões Recentes
 - **Data**: 2026-10-16
+  - **Cards Interativos de Superpoderes & Modal de Detalhamento Técnico na Landing Page**:
+    - **Demanda**: Permitir ao usuário clicar em qualquer card da seção `#vantagens` ("Superpoderes do Sistema") para abrir um modal rico, profundo e 100% embasado na realidade técnica do que o projeto faz.
+    - **Implementação**:
+      1. *Enriquecimento dos Cards da Bento Grid*: Adicionado indicador visual de ação (`.card-more-btn`: "Ver arquitetura detalhada ↗"), atributos semânticos (`role="button"`, `tabindex="0"`, `aria-haspopup="dialog"`) e micro-interações de elevação/hover.
+      2. *Modal Técnico Factual (`#feature-modal`)*: Criado modal responsivo no padrão glassmorphism dark contendo:
+         - *Cabeçalho*: Ícone estilizado com iluminação própria, badge de domínio e tagline.
+         - *Seções Estruturadas*: "O que é na prática", "Como funciona por baixo dos panos" (passo a passo numerado), "Arquivos & Estrutura Real" (com caminhos reais do workspace), "Impacto & Ganhos Mensuráveis" e "Exemplo no dia a dia" (blocos de código/rotas reais).
+         - *Navegação Intuitiva*: Botões "← Anterior" e "Próximo →" com contador dinâmico (ex: `1 / 9`), permitindo navegar pelos 9 superpoderes sem fechar o modal.
+         - *Acessibilidade & Teclado*: Suporte a `ESC` para fechar, setas direcionais `←` e `→` para alternar entre os cards, e restauração de foco ao fechar.
+      3. *Internacionalização (i18n)*: Conteúdo 100% bilíngue (Português e Inglês), com re-renderização em tempo real caso o usuário alterne o idioma da página.
+      4. *Arquivos Envolvidos*: `docs/brain-ui/landing/index.html`, `docs/brain-ui/landing/css/extra.css`, `docs/brain-ui/landing/js/features-modal.js` e `docs/brain-ui/landing/js/i18n.dict.js`.
   - **Integração Audiovisual na Landing Page (Vídeo Pitch 16:9 & Reels 9:16)**:
     - **Combinação Harmônica das 3 Abordagens**:
       1. *Gatilho no Hero*: Botão `Assistir Pitch (1 min)` ao lado do CTA principal com gradiente cyan/violet e efeito glassmorphic para visualização sem sair do topo.

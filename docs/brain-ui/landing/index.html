@@ -409,56 +409,65 @@
         total.</p>
 
       <div class="grid">
-        <div class="card rv">
+        <div class="card rv" data-feature="memoria-persistente" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Memória Persistente Real">
           <div class="card-icon-wrap" style="--c:#38bdf8"><img src="assets/cerebro_neon_animado.svg"
               alt="Memória Persistente" class="card-brain-neon-img" width="36" height="36"></div>
           <h3>Memória Persistente Real</h3>
           <p>Contexto vital que sobrevive a fechamento de abas, reinicialização de IDEs, trocas de LLMs e mudanças na
             equipe.</p>
+          <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
         </div>
-        <div class="card rv">
+        <div class="card rv" data-feature="session-capture" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Session Capture com IA">
           <div class="card-icon-wrap" style="--c:#10b981"><i>🧠</i></div>
           <h3>Session Capture com IA</h3>
           <p>Feche o ciclo em 30 segundos. A IA inspeciona commits e arquivos modificados, sintetiza entregas e pendências com revisão humana antes de gravar.</p>
+          <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
         </div>
-        <div class="card rv">
+        <div class="card rv" data-feature="decision-gate" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de AI Decision Gate & Motor JEV">
           <div class="card-icon-wrap" style="--c:#a3e635"><i>⚡</i></div>
           <h3>AI Decision Gate &amp; Motor JEV</h3>
           <p>O motor de decisão local `RulesDecisionProvider` (0ms / custo zero) classifica tarefas e ambiguidades antes de chamar LLMs, economizando milhares de tokens.</p>
+          <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
         </div>
-        <div class="card rv">
+        <div class="card rv" data-feature="prompt-bootstrap" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Prompt Bootstrap & IDEs">
           <div class="card-icon-wrap" style="--c:#6366f1"><i>🚀</i></div>
           <h3>Prompt Bootstrap & IDEs</h3>
           <p>Copie em 1 clique o prompt pré-aquecido com regras e contratos para qualquer agente, e abra o projeto diretamente no VS Code ou Cursor.</p>
+          <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
         </div>
-        <div class="card rv">
+        <div class="card rv" data-feature="governanca-owasp" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Governança & OWASP">
           <div class="card-icon-wrap" style="--c:#f87171"><i>🛡️</i></div>
           <h3>Governança & OWASP</h3>
           <p>Proteção contra vazamento de segredos, injeção de prompt e violação de privacidade tratados como regra
             inegociável.</p>
+          <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
         </div>
-        <div class="card rv">
+        <div class="card rv" data-feature="agnostico-stack" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de 100% Agnóstico de Stack">
           <div class="card-icon-wrap" style="--c:#ffc76b"><i>🧩</i></div>
           <h3>100% Agnóstico de Stack</h3>
           <p>Node, Python, Go, C#, Rust, Flutter, React ou SQL. O cérebro opera sobre o raciocínio e a governança, não a
             sintaxe.</p>
+          <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
         </div>
-        <div class="card rv">
+        <div class="card rv" data-feature="zero-lock-in" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Zero Lock-In (Puro Markdown)">
           <div class="card-icon-wrap" style="--c:#facc15"><i>📝</i></div>
           <h3>Zero Lock-In (Puro Markdown)</h3>
           <p>Sem bancos de dados proprietários. Seus arquivos estão versionados no Git, auditáveis por humanos e
             legíveis por qualquer IA.</p>
+          <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
         </div>
-        <div class="card rv">
+        <div class="card rv" data-feature="grafo-3d" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Grafo Espacial 3D Vivo">
           <div class="card-icon-wrap" style="--c:#c084fc"><i>🌐</i></div>
           <h3>Grafo Espacial 3D Vivo</h3>
           <p>Visualize seu conhecimento como neurônios conectados. Descubra links cruzados e abra qualquer arquivo num
             clique.</p>
+          <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
         </div>
-        <div class="card rv">
+        <div class="card rv" data-feature="pergunte-cerebro" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Pergunte ao Cérebro (Ctrl+K)">
           <div class="card-icon-wrap" style="--c:#ec4899"><i>✨</i></div>
           <h3>Pergunte ao Cérebro (Ctrl+K)</h3>
           <p>Busca semântica determinística (TF-IDF/BM25) com multiplicadores de governança e síntese por IA (BYOK). Tire dúvidas técnicas em segundos com citações verificadas e Zero Fabricação.</p>
+          <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
         </div>
       </div>
 
@@ -749,6 +758,43 @@
     <article id="rbody"></article>
   </aside>
 
+  <!-- ── MODAL DE DETALHES TÉCNICOS (SUPERPODERES DO SISTEMA) ── -->
+  <div id="feature-modal" class="feature-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="feature-modal-title">
+    <div class="feature-modal-backdrop" id="feature-modal-backdrop"></div>
+    <div class="feature-modal-dialog">
+      <div class="feature-modal-header" id="feature-modal-header">
+        <div class="feature-modal-header-main">
+          <div class="feature-modal-icon-stage">
+            <div id="feature-modal-icon" class="feature-modal-hero-icon" style="--c: var(--gold);"></div>
+            <div class="feature-modal-icon-glow"></div>
+          </div>
+          <div class="feature-modal-header-text">
+            <div class="feature-modal-eyebrow">
+              <span class="feature-badge-dot"></span>
+              <span id="feature-modal-badge" class="feature-badge">Arquitetura</span>
+            </div>
+            <h3 id="feature-modal-title" class="feature-modal-title">Título da Funcionalidade</h3>
+            <p id="feature-modal-tagline" class="feature-modal-tagline">Subtítulo explicativo</p>
+          </div>
+        </div>
+        <button class="feature-modal-close" id="feature-modal-close" aria-label="Fechar detalhes">✕</button>
+      </div>
+
+      <div class="feature-modal-body" id="feature-modal-body">
+        <!-- Conteúdo inserido dinamicamente via features-modal.js -->
+      </div>
+
+      <div class="feature-modal-footer">
+        <div class="feature-modal-nav">
+          <button id="feature-modal-prev" class="btn-feature-nav" title="Anterior">← <span class="nav-btn-label">Anterior</span></button>
+          <span id="feature-modal-counter" class="feature-counter">1 / 9</span>
+          <button id="feature-modal-next" class="btn-feature-nav" title="Próximo"><span class="nav-btn-label">Próximo</span> →</button>
+        </div>
+        <button id="feature-modal-action-btn" class="btn-feature-close">Entendi</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ── MODAL DE VÍDEO (LIGHTBOX) ── -->
   <div id="video-modal" class="video-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Vídeo de Apresentação">
     <div class="video-modal-backdrop" id="video-modal-backdrop"></div>
@@ -780,6 +826,7 @@
   <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
   <script src="js/extra.js"></script>
+  <script src="js/features-modal.js"></script>
   <!-- Cloudflare Web Analytics -->
   <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f08fbcf60143457fbeaa9d2acf09b239"}'></script>
   <!-- End Cloudflare Web Analytics -->
