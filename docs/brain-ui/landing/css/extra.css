@@ -268,3 +268,331 @@ main .pains,main .pain,main .diag-tabs,main .diagram-frame,main .diag-caps,main 
   color: #fff;
   text-decoration: underline;
 }
+
+/* ═════════════════════════════════════════════════════════════════
+   AI SECOND BRAIN — VIDEO INTEGRATION (HERO, SHOWCASE & LIGHTBOX)
+   ═════════════════════════════════════════════════════════════════ */
+
+/* ── Hero Video Button ── */
+.btn.video-hero-btn {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.18), rgba(192, 132, 252, 0.22));
+  color: #e0f2fe;
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  box-shadow: 0 4px 20px rgba(56, 189, 248, 0.2), inset 0 0 12px rgba(56, 189, 248, 0.12);
+  backdrop-filter: blur(12px);
+}
+
+.btn.video-hero-btn:hover {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.32), rgba(192, 132, 252, 0.38));
+  border-color: rgba(56, 189, 248, 0.85);
+  color: #ffffff;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 32px rgba(56, 189, 248, 0.35), 0 0 0 3px rgba(56, 189, 248, 0.15);
+}
+
+.btn.video-hero-btn svg {
+  color: var(--cyan);
+  transition: transform 0.2s ease;
+}
+
+.btn.video-hero-btn:hover svg {
+  transform: scale(1.15);
+  color: #fff;
+}
+
+/* ── Interactive Pointer Events for Main ── */
+main .video-showcase-box,
+main .video-player-container,
+main .video-player,
+main .video-expand-btn {
+  pointer-events: auto;
+}
+
+/* ── Video Showcase Box (Section "Em Ação") ── */
+.video-showcase-box {
+  width: 100%;
+  max-width: 920px;
+  margin: 32px auto 0;
+  border-radius: 18px;
+  background: rgba(8, 14, 28, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75), 0 0 30px rgba(56, 189, 248, 0.14);
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.video-showcase-box:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.85), 0 0 45px rgba(56, 189, 248, 0.22);
+}
+
+.video-showcase-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: rgba(4, 9, 22, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.video-showcase-dots {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.v-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.v-dot.red { background: #f87171; box-shadow: 0 0 6px rgba(248, 113, 113, 0.5); }
+.v-dot.yellow { background: #fbbf24; box-shadow: 0 0 6px rgba(251, 191, 36, 0.5); }
+.v-dot.green { background: #2cff9a; box-shadow: 0 0 6px rgba(44, 255, 154, 0.5); }
+
+.video-showcase-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--fg-dim);
+  letter-spacing: -0.01em;
+}
+
+.video-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2cff9a;
+  box-shadow: 0 0 10px #2cff9a;
+  animation: pulse-dot 2.4s infinite;
+}
+
+.video-format-pill {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: var(--cyan);
+}
+
+@media (min-width: 769px) {
+  .fmt-desktop { display: inline; }
+  .fmt-mobile { display: none; }
+}
+
+@media (max-width: 768px) {
+  .fmt-desktop { display: none; }
+  .fmt-mobile { display: inline; }
+}
+
+.video-player-container {
+  position: relative;
+  width: 100%;
+  background: #020409;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+@media (min-width: 769px) {
+  .video-player-container {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+@media (max-width: 768px) {
+  .video-showcase-box {
+    max-width: 380px;
+  }
+  .video-player-container {
+    aspect-ratio: 9 / 16;
+    max-height: 70vh;
+  }
+}
+
+.video-player {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  outline: none;
+}
+
+.video-showcase-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: rgba(4, 9, 22, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 13px;
+  color: var(--mut);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.video-footer-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.video-mode-tag {
+  color: var(--gold);
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.video-expand-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line-strong);
+  color: var(--fg);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.video-expand-btn:hover {
+  background: rgba(56, 189, 248, 0.16);
+  border-color: rgba(56, 189, 248, 0.5);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* ── Video Modal / Lightbox ── */
+.video-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.video-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.video-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 4, 10, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.video-modal-dialog {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 960px;
+  background: rgba(8, 14, 28, 0.96);
+  border: 1px solid rgba(255, 199, 107, 0.35);
+  border-radius: 20px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.9), 0 0 50px rgba(56, 189, 248, 0.22);
+  overflow: hidden;
+  transform: scale(0.96) translateY(12px);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.video-modal.active .video-modal-dialog {
+  transform: scale(1) translateY(0);
+}
+
+.video-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: rgba(4, 9, 22, 0.98);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.video-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.video-modal-close {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--line-strong);
+  color: var(--fg);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.video-modal-close:hover {
+  background: rgba(248, 113, 113, 0.25);
+  border-color: rgba(248, 113, 113, 0.6);
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+.video-modal-body {
+  padding: 0;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-modal-frame {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.video-modal-frame.is-mobile-reels {
+  max-width: 360px;
+  aspect-ratio: 9 / 16;
+  max-height: 80vh;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .video-modal-dialog {
+    max-width: 400px;
+  }
+  .video-modal-frame {
+    aspect-ratio: 9 / 16;
+    max-height: 75vh;
+  }
+}

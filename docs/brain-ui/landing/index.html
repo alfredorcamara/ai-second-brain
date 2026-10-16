@@ -56,6 +56,7 @@
       <a href="#problema">Problema</a>
       <a href="#como">4 Camadas</a>
       <a href="#arquitetura">Arquitetura</a>
+      <a href="#video-showcase">Vídeo</a>
       <a href="#demo">Demo</a>
       <a href="#faq">FAQ</a>
       <button class="lang-btn" id="lang-btn" type="button" aria-label="Mudar idioma / Switch language">EN</button>
@@ -88,7 +89,13 @@
             </svg>
             <span>Baixar no GitHub</span>
           </a>
-          <a class="btn ghost" href="#problema">
+          <button class="btn video-hero-btn" id="hero-video-btn" type="button" aria-label="Assistir ao vídeo de demonstração">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            <span>Assistir Pitch (1 min)</span>
+          </button>
+          <a class="btn ghost" href="#video-showcase">
             <span>Ver como funciona ↓</span>
           </a>
           <button class="btn glass-btn" id="hero-explore-btn">
@@ -466,6 +473,49 @@
       </div>
     </section>
 
+    <!-- ── SEÇÃO: VÍDEO SHOWCASE (EM AÇÃO) ── -->
+    <section class="sec" id="video-showcase">
+      <div class="sec-badge rv">Vídeo Oficial</div>
+      <h2 class="rv">Veja o Segundo Cérebro <em>em ação.</em></h2>
+      <p class="sub rv">Assista em 1 minuto como transformar a amnésia de qualquer agente em uma memória neural persistente, viva e auditável.</p>
+
+      <div class="video-showcase-box rv">
+        <div class="video-showcase-header">
+          <div class="video-showcase-dots"><span class="v-dot red"></span><span class="v-dot yellow"></span><span class="v-dot green"></span></div>
+          <div class="video-showcase-title">
+            <span class="video-live-dot"></span>
+            <span>ai-second-brain-overview.mp4</span>
+          </div>
+          <div class="video-format-pill" id="video-format-pill">
+            <span class="fmt-desktop">16:9 Widescreen</span>
+            <span class="fmt-mobile">9:16 Reels</span>
+          </div>
+        </div>
+
+        <div class="video-player-container">
+          <video id="inline-video-player" class="video-player" controls preload="none" playsinline poster="assets/og-image.png">
+            <source src="assets/video/Promo-16x9.mp4" type="video/mp4" media="(min-width: 769px)">
+            <source src="assets/video/Reels-9x16.mp4" type="video/mp4" media="(max-width: 768px)">
+            <source src="assets/video/Promo-16x9.mp4" type="video/mp4">
+            Seu navegador não suporta reprodução de vídeo.
+          </video>
+        </div>
+
+        <div class="video-showcase-footer">
+          <div class="video-footer-info">
+            <span class="video-mode-tag">✦ Demonstração Prática</span>
+            <span>Sem amnésia de contexto · Zero perda de decisões · Multi-IA</span>
+          </div>
+          <button class="video-expand-btn" id="inline-video-expand" type="button" aria-label="Abrir vídeo em destaque">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+            </svg>
+            <span>Expandir</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
     <section class="sec " id="demo">
       <div class="sec-badge rv">Demo ao vivo</div>
       <h2 class="rv">Não acredite: <em>teste agora.</em></h2>
@@ -698,6 +748,30 @@
     </header>
     <article id="rbody"></article>
   </aside>
+
+  <!-- ── MODAL DE VÍDEO (LIGHTBOX) ── -->
+  <div id="video-modal" class="video-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Vídeo de Apresentação">
+    <div class="video-modal-backdrop" id="video-modal-backdrop"></div>
+    <div class="video-modal-dialog">
+      <div class="video-modal-header">
+        <div class="video-modal-title">
+          <span class="video-live-dot"></span>
+          <span>Pitch Oficial — AI Second Brain</span>
+        </div>
+        <button class="video-modal-close" id="video-modal-close" aria-label="Fechar vídeo">✕</button>
+      </div>
+      <div class="video-modal-body">
+        <div class="video-modal-frame" id="video-modal-frame">
+          <video id="modal-video-player" class="video-player" controls preload="none" playsinline poster="assets/og-image.png">
+            <source src="assets/video/Promo-16x9.mp4" type="video/mp4" media="(min-width: 769px)">
+            <source src="assets/video/Reels-9x16.mp4" type="video/mp4" media="(max-width: 768px)">
+            <source src="assets/video/Promo-16x9.mp4" type="video/mp4">
+            Seu navegador não suporta reprodução de vídeo.
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="js/vendor/three.min.js"></script>
   <script src="js/vendor/neuron-graph.js"></script>

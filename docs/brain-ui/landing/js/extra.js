@@ -46,4 +46,84 @@
     $$('.toggle button').forEach(b => { b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', b.classList.contains('on')); b.addEventListener('click', () => $$('.toggle button').forEach(x => x.setAttribute('aria-selected', x === b))); });
     if (g && matchMedia('(prefers-reduced-motion: reduce)').matches) g.autoRotate = false;
     document.addEventListener('visibilitychange', () => { if (!g) return; document.hidden ? g.stop() : g.start(); });
+
+    // ── Integração de Vídeo (Modal, Showcase e Adaptação Responsiva) ──
+    const heroBtn = $('#hero-video-btn'),
+          modal = $('#video-modal'),
+          modalClose = $('#video-modal-close'),
+          modalBackdrop = $('#video-modal-backdrop'),
+          modalVideo = $('#modal-video-player'),
+          modalFrame = $('#video-modal-frame'),
+          inlineVideo = $('#inline-video-player'),
+          inlineExpand = $('#inline-video-expand');
+
+    const getAdaptiveSrc = () => window.innerWidth <= 768 ? 'assets/video/Reels-9x16.mp4' : 'assets/video/Promo-16x9.mp4';
+
+    const syncVideoSource = (videoEl) => {
+        if (!videoEl) return;
+        const target = getAdaptiveSrc();
+        const cur = videoEl.currentSrc || videoEl.src || '';
+        if (!cur.endsWith(target)) {
+            const time = videoEl.currentTime || 0;
+            videoEl.src = target;
+            videoEl.load();
+            if (time > 0) videoEl.currentTime = time;
+        }
+    };
+
+    const openModal = (syncTime = false) => {
+        if (!modal) return;
+        const isMobile = window.innerWidth <= 768;
+        if (modalFrame) modalFrame.classList.toggle('is-mobile-reels', isMobile);
+        syncVideoSource(modalVideo);
+
+        if (syncTime && inlineVideo && !inlineVideo.paused) {
+            modalVideo.currentTime = inlineVideo.currentTime;
+            inlineVideo.pause();
+        }
+
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+
+        if (modalVideo) {
+            modalVideo.play().catch(() => {});
+        }
+    };
+
+    const closeModal = () => {
+        if (!modal) return;
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        if (modalVideo) {
+            modalVideo.pause();
+        }
+    };
+
+    if (heroBtn) heroBtn.addEventListener('click', () => openModal(false));
+    if (inlineExpand) inlineExpand.addEventListener('click', () => openModal(true));
+    if (modalClose) modalClose.addEventListener('click', closeModal);
+    if (modalBackdrop) modalBackdrop.addEventListener('click', closeModal);
+
+    window.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    if (inlineVideo) {
+        inlineVideo.addEventListener('play', () => {
+            syncVideoSource(inlineVideo);
+            if (modalVideo && !modalVideo.paused) modalVideo.pause();
+        });
+    }
+
+    window.addEventListener('resize', () => {
+        if (modal && modal.classList.contains('active')) {
+            const isMobile = window.innerWidth <= 768;
+            if (modalFrame) modalFrame.classList.toggle('is-mobile-reels', isMobile);
+            syncVideoSource(modalVideo);
+        }
+    });
 })();

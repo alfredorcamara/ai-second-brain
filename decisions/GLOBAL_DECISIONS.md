@@ -91,4 +91,17 @@
 - **Motivo**: Previne travamentos da interface, garante previsibilidade operacional em limites de cota e fornece orientação direta de autocura para o usuário.
 - **Detalhes**: Ver `scripts/ai-gateway.js`, `server.js`, `docs/brain-ui/app.js`, `docs/brain-ui/demo/app.js`, `docs/brain-ui/index.html` e `docs/brain-ui/style.css`.
 
+## ADR-G011: Integração Audiovisual da Landing Page com Abordagem Híbrida e Responsiva (Hero, Lightbox, Showcase & 16:9/9:16)
+- **Status**: Aceita
+- **Data**: 2026-10-16
+- **Descrição**: Integração de recursos audiovisuais (vídeos promocionais/pitch) na landing page pública do AI Second Brain através de uma abordagem híbrida não concorrente:
+  1. **Gatilho de Alto Impacto no Hero (Abordagem A)**: Adição do botão `[ ▷ Assistir Pitch (1 min) ]` junto aos CTAs do topo, abrindo a apresentação audiovisual em um Modal Lightbox cinemático sob demanda, sem competir visualmente com o Grafo Neural 3D interativo do fundo.
+  2. **Seção Dedicada "Em Ação" (Abordagem B)**: Bloco `#video-showcase` em formato de cockpit dark luxury posicionado estrategicamente antes da Demo interativa, servindo como demonstração guiada para os visitantes que exploram a página verticalmente.
+  3. **Adaptação Responsiva Dinâmica (Abordagem C)**: Alternância de mídia nativa entre desktop (`Promo-16x9.mp4`, 16:9 widescreen) e smartphone (`Reels-9x16.mp4`, 9:16 vertical nativo).
+  4. **Performance e Lazy Loading Rigoroso**: Adoção de `preload="none"` em ambos os reprodutores, garantindo que os ~29 MB de vídeo não impactem o First Contentful Paint (FCP) ou a pontuação de performance no Lighthouse.
+  5. **Controle Auditivo e Acessibilidade**: O modal pausa a reprodução automaticamente ao ser fechado (via botão ✕, clique no backdrop ou tecla ESC), prevenindo ruídos ou reproduções fantasmas em segundo plano.
+- **Motivo**: Aumenta a conversão de novos usuários e a clareza do produto sem redundância cognitiva com as seções analíticas e sem degradar o tempo de carregamento da página.
+- **Detalhes**: Ver `docs/brain-ui/landing/index.html`, `docs/brain-ui/landing/css/extra.css`, `docs/brain-ui/landing/js/extra.js` e `docs/brain-ui/landing/js/i18n.dict.js`.
+
+
 

@@ -21,6 +21,14 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 
 ## Sessões Recentes
 - **Data**: 2026-10-16
+  - **Integração Audiovisual na Landing Page (Vídeo Pitch 16:9 & Reels 9:16)**:
+    - **Combinação Harmônica das 3 Abordagens**:
+      1. *Gatilho no Hero*: Botão `Assistir Pitch (1 min)` ao lado do CTA principal com gradiente cyan/violet e efeito glassmorphic para visualização sem sair do topo.
+      2. *Modal Lightbox Cinemático*: Abertura fluida com backdrop blur 16px, título emoldurado, parada automática de áudio/vídeo ao fechar (via botão ✕, clique fora ou tecla ESC).
+      3. *Seção Dedicada "Em Ação" (`#video-showcase`)*: Card dark luxury em formato cockpit/terminal posicionado estrategicamente antes da Demo interativa, com indicador pulsante ao vivo e botão "Expandir".
+      4. *Adaptação Responsiva Dinâmica*: Alternância inteligente entre `Promo-16x9.mp4` (Desktop widescreen) e `Reels-9x16.mp4` (Mobile vertical nativo para smartphones).
+      5. *Zero Impacto em Performance*: `preload="none"` em ambos os reprodutores, prevenindo o download imediato de ~29 MB no carregamento inicial da landing page.
+      6. *Navegação & i18n*: Adicionado atalho `#video-showcase` ("Vídeo" / "Video") na barra de navegação e suporte bilíngue completo no dicionário `i18n.dict.js`.
   - **Resiliência a Falhas de IA, Tratamento de Quota / 429 e Modal Universal de Erro de IA (`#aiErrorModal`)**:
     - **Diagnóstico & Causa Raiz**:
       - *Congelamento do Backend*: No `scripts/ai-gateway.js`, quando a API da Groq retornava status 429 com cabeçalho `retry-after: 1243` (~20 minutos), o backend executava `await new Promise(r => setTimeout(r, waitSeconds * 1000))`, deixando o Node.js dormindo por até 20 minutos, a requisição HTTP pendente e a interface web congelada com o spinner infinito.

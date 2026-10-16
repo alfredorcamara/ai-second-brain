@@ -1,5 +1,14 @@
 // Dicionário PT → EN (gerado). Chave = texto PT normalizado; valor = HTML em inglês.
 window.I18N_EN = {
+ "Vídeo": "Video",
+ "Assistir Pitch (1 min)": "Watch Pitch (1 min)",
+ "Vídeo Oficial": "Official Video",
+ "Veja o Segundo Cérebro em ação.": "See Second Brain <em>in action.</em>",
+ "Assista em 1 minuto como transformar a amnésia de qualquer agente em uma memória neural persistente, viva e auditável.": "Watch in 1 minute how to turn any agent's context amnesia into persistent, live, and auditable neural memory.",
+ "Demonstração Prática": "Hands-on Demo",
+ "Expandir": "Expand",
+ "Pitch Oficial — AI Second Brain": "Official Pitch — AI Second Brain",
+ "Sem amnésia de contexto · Zero perda de decisões · Multi-IA": "Zero context amnesia · Zero lost decisions · Multi-AI",
  "Problema": "Problem",
  "Arquitetura": "Architecture",
  "Demo": "Demo",
