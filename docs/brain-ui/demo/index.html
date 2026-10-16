@@ -1426,8 +1426,8 @@
                         <div class="qs-field">
                             <label for="qsNewDesc">Descrição Rápida (Opcional)</label>
                             <input type="text" id="qsNewDesc"
-                                placeholder="ex: Microserviço de pagamentos e checkout integrado a IA"
-                                autocomplete="off">
+                                placeholder="ex: Microserviço de pagamentos e checkout integrado a IA. Uma breve descrição ajuda o Grill Studio a entender o domínio de negócio e gerar contratos cirúrgicos sem suposições."
+                                autocomplete="off" oninput="onQuickstartDescInput(this.value)">
                         </div>
                         <div class="qs-field">
                             <label for="qsNewStack">Stack Tecnológica Principal</label>
@@ -1512,11 +1512,12 @@
                                 perguntas cirúrgicas sem alucinação.</small>
                         </div>
 
-                        <div id="qsGrillQuestionsContainer" class="qs-grill-questions-container">
+                        <div id="qsGrillQuestionsContainer" class="qs-grill-questions-container" style="display: none;">
                             <div class="qs-grill-progress-wrap" id="qsGrillProgressWrap">
                                 <div class="qs-grill-progress-info">
                                     <span class="qs-grill-progress-label">🎯 Decisões Arquiteturais da Sabatina</span>
-                                    <span class="qs-grill-progress-counter" id="qsGrillProgressCounter">0 de 4 respondidas</span>
+                                    <span class="qs-grill-progress-counter" id="qsGrillProgressCounter">0 de 4
+                                        respondidas</span>
                                 </div>
                                 <div class="qs-grill-progress-track">
                                     <div class="qs-grill-progress-bar" id="qsGrillProgressBar" style="width: 0%;"></div>
@@ -2203,12 +2204,10 @@
         onclick="handleBrainConfirmBackdropClick(event)">
         <div class="brain-dialog-card" role="dialog" aria-modal="true" aria-labelledby="brainConfirmTitle">
             <div class="brain-dialog-header">
-                <div class="brain-dialog-icon-wrap" id="brainConfirmIconWrap">
-                    <span id="brainConfirmIcon" class="brain-dialog-icon">🗑️</span>
-                </div>
+                <span id="brainConfirmIcon" class="brain-dialog-icon">🗑️</span>
                 <div class="brain-dialog-title-group">
-                    <span class="brain-dialog-badge" id="brainConfirmBadge">CONFIRMAÇÃO NECESSÁRIA</span>
                     <h3 id="brainConfirmTitle" class="brain-dialog-title">Excluir Item</h3>
+                    <span class="brain-dialog-badge" id="brainConfirmBadge">CONFIRMAÇÃO NECESSÁRIA</span>
                 </div>
                 <button type="button" class="editor-close-btn" onclick="resolveBrainConfirm(false)"
                     aria-label="Fechar">✕</button>
@@ -3454,7 +3453,8 @@
     <script src="neuron-graph.js"></script>
     <script src="app.js"></script>
     <!-- Cloudflare Web Analytics -->
-    <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f08fbcf60143457fbeaa9d2acf09b239"}'></script>
+    <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js'
+        data-cf-beacon='{"token": "f08fbcf60143457fbeaa9d2acf09b239"}'></script>
     <!-- End Cloudflare Web Analytics -->
 </body>
 

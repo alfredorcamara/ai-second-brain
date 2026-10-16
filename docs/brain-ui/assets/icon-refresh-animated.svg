@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" role="img" aria-label="Atualizando sabatina com IA" style="overflow: visible;">
+  <defs>
+    <linearGradient id="refreshGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="60%" stop-color="#818cf8" />
+      <stop offset="100%" stop-color="#c084fc" />
+    </linearGradient>
+    <linearGradient id="refreshGrad2" x1="100%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#c084fc" />
+      <stop offset="60%" stop-color="#818cf8" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+    <filter id="neonGlow" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="1.2" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <style>
+      .spin-arrows {
+        transform-origin: 24px 24px;
+        animation: rotateRefresh 1.4s linear infinite;
+      }
+      .core-pulse {
+        animation: pulseCore 1.4s ease-in-out infinite alternate;
+        transform-origin: 24px 24px;
+      }
+      @keyframes rotateRefresh {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes pulseCore {
+        0% {
+          transform: scale(0.85);
+          opacity: 0.55;
+        }
+        100% {
+          transform: scale(1.2);
+          opacity: 1;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .spin-arrows, .core-pulse {
+          animation: none;
+        }
+      }
+    </style>
+  </defs>
+
+  <!-- Glowing Rotating Dual Arrows (Distinct separated arcs with bold visible arrowheads) -->
+  <g class="spin-arrows" filter="url(#neonGlow)">
+    <!-- Arc 1 (Top / Right) -->
+    <path d="M 9.28 15.5 A 17 17 0 0 1 38.72 15.5"
+          stroke="url(#refreshGrad1)" stroke-width="3.8" stroke-linecap="round" fill="none" />
+    <!-- Bold Arrowhead 1 -->
+    <polygon points="41.97,21.13 33.64,16.7 42.73,11.45"
+             fill="url(#refreshGrad1)" stroke="#c084fc" stroke-width="0.6" stroke-linejoin="round" />
+
+    <!-- Arc 2 (Bottom / Left - 180° Rotational Symmetry) -->
+    <path d="M 38.72 32.5 A 17 17 0 0 1 9.28 32.5"
+          stroke="url(#refreshGrad2)" stroke-width="3.8" stroke-linecap="round" fill="none" />
+    <!-- Bold Arrowhead 2 -->
+    <polygon points="6.03,26.87 14.36,31.3 5.27,36.55"
+             fill="url(#refreshGrad2)" stroke="#38bdf8" stroke-width="0.6" stroke-linejoin="round" />
+  </g>
+
+  <!-- Central Neural Pulse Core -->
+  <circle cx="24" cy="24" r="3.4" fill="url(#refreshGrad1)" class="core-pulse" />
+  <circle cx="24" cy="24" r="1.4" fill="#ffffff" opacity="0.95" />
+</svg>

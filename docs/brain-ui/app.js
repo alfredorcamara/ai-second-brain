@@ -21,7 +21,7 @@ function showToast(message, type = 'info', duration = 4000) {
 
     const toast = document.createElement('div');
     toast.className = `toast-item toast-${type}`;
-    
+
     let icon = 'ℹ️';
     if (type === 'success') icon = '✅';
     if (type === 'error') icon = '❌';
@@ -39,9 +39,9 @@ function showToast(message, type = 'info', duration = 4000) {
 
 // ── Environment Detection & Online Demo Protection ─────
 function isLocalEnvironment() {
-    return window.location.hostname === 'localhost' || 
-           window.location.hostname === '127.0.0.1' || 
-           window.location.hostname === '::1';
+    return window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        window.location.hostname === '::1';
 }
 window.isLocalEnvironment = isLocalEnvironment;
 
@@ -164,8 +164,8 @@ function onAiEngineChange(engineKey, silent = false) {
 
     if (!silent) {
         // Verifica se há um projeto ativo e se o arquivo de ponte já existe no disco
-        const projName = (typeof currentProjectData !== 'undefined' && currentProjectData && currentProjectData.name) || 
-                         (typeof currentProject !== 'undefined' && currentProject) || null;
+        const projName = (typeof currentProjectData !== 'undefined' && currentProjectData && currentProjectData.name) ||
+            (typeof currentProject !== 'undefined' && currentProject) || null;
 
         if (projName && engine.bridgeFile && engine.bridgeFile !== 'UNIVERSAL') {
             const files = (window.VAULT && window.VAULT.data && window.VAULT.data.files) || [];
@@ -350,7 +350,7 @@ document.addEventListener('keydown', (e) => {
     } else if ((e.key === '/' || e.code === 'Slash' || e.code === 'NumpadDivide') && (currentView === 'dashboard' || document.getElementById('dashboardOverlay')?.classList.contains('active'))) {
         const activeTag = (document.activeElement && document.activeElement.tagName) || '';
         const isInput = activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT';
-        
+
         // Verifica se há algum modal aberto no momento
         const isModalOpen = Array.from(document.querySelectorAll('.modal, .brain-dialog-overlay, .ai-welcome-modal')).some(m => {
             return m.style.display === 'flex' || m.style.display === 'block';
@@ -516,6 +516,7 @@ function showBrainConfirm(options = {}) {
         }
 
         const card = modal.querySelector('.brain-dialog-card');
+        const iconWrap = document.getElementById('brainConfirmIconWrap');
         const iconEl = document.getElementById('brainConfirmIcon');
         const badgeEl = document.getElementById('brainConfirmBadge');
         const titleEl = document.getElementById('brainConfirmTitle');
@@ -532,12 +533,40 @@ function showBrainConfirm(options = {}) {
             card.className = `brain-dialog-card ${isDanger ? 'dialog-danger' : 'dialog-primary'}`;
         }
 
+        if (iconWrap) {
+            if (options.noIconBox || options.iconSvg) {
+                iconWrap.classList.add('no-box');
+            } else {
+                iconWrap.classList.remove('no-box');
+            }
+        }
+
         if (iconEl) {
-            iconEl.textContent = options.icon || (withInput ? '💬' : (isDanger ? '🗑️' : '❓'));
+            if (options.iconSvg) {
+                iconEl.innerHTML = `<img src="${options.iconSvg}" class="brain-dialog-svg-icon" alt="${options.iconAlt || 'Atualizando'}">`;
+            } else {
+                iconEl.textContent = options.icon || (withInput ? '💬' : (isDanger ? '🗑️' : '❓'));
+            }
         }
 
         if (badgeEl) {
-            badgeEl.textContent = options.badge || (withInput ? 'ENTRADA REQUERIDA' : (isDanger ? '⚠️ EXCLUSÃO PERMANENTE' : 'CONFIRMAÇÃO'));
+            let badgeText = '';
+            if (options.badge === false || options.badge === null || options.badge === '') {
+                badgeText = '';
+            } else if (typeof options.badge === 'string') {
+                // Remove qualquer emoji repetido no início do badge
+                badgeText = options.badge.replace(/^[\p{Emoji}\p{Extended_Pictographic}\s•·&middot;]+/u, '').trim();
+            } else {
+                badgeText = withInput ? 'ENTRADA REQUERIDA' : '';
+            }
+
+            if (badgeText) {
+                badgeEl.innerHTML = badgeText;
+                badgeEl.style.display = 'inline-block';
+            } else {
+                badgeEl.innerHTML = '';
+                badgeEl.style.display = 'none';
+            }
         }
 
         if (titleEl) {
@@ -609,7 +638,13 @@ function resolveBrainConfirm(result) {
             modal._keyHandler = null;
         }
         modal.style.display = 'none';
-        document.body.style.overflow = '';
+        const iconWrap = document.getElementById('brainConfirmIconWrap');
+        if (iconWrap) {
+            iconWrap.classList.remove('no-box');
+        }
+        const qsModal = document.getElementById('quickstartModal');
+        const isQuickstartOpen = qsModal && qsModal.style.display !== 'none';
+        document.body.style.overflow = isQuickstartOpen ? 'hidden' : '';
     }
     if (_brainConfirmResolver) {
         const r = _brainConfirmResolver;
@@ -639,7 +674,7 @@ function showBrainAlert(options = {}) {
 }
 
 // Substitui alert nativo do navegador por Toast elegante e não-intrusivo
-window.alert = function(msg) {
+window.alert = function (msg) {
     if (typeof showToast === 'function') {
         const text = String(msg || '');
         const isError = /erro|falha|error|failed|incorreto|obrigat|atenção|não encontrad/i.test(text);
@@ -720,7 +755,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 localStorage.setItem('selectedAiEngine', engineConfig.activeEngine);
             }
         }
-    } catch (e) {}
+    } catch (e) { }
     onAiEngineChange(getSelectedAiEngine(), true);
 
     if (window.location.hash === '#graph' || window.location.search.includes('view=graph')) {
@@ -818,8 +853,8 @@ function buildSidebar() {
     let html = '';
 
     // ── MUNDO 1: MEUS PROJETOS (Destaque Primário) ────
-    const projectsCount = (projectSection && projectSection.badge !== undefined) 
-        ? projectSection.badge 
+    const projectsCount = (projectSection && projectSection.badge !== undefined)
+        ? projectSection.badge
         : (projectSection ? projectSection.items.filter(i => i.isGroup).length : 0);
 
     html += `
@@ -939,7 +974,7 @@ async function createNewDecisionRecord(projectName) {
                 const det = await resDet.json();
                 existingDecisions = (det.decisions || []).map(d => d.name);
             }
-        } catch (e) {}
+        } catch (e) { }
     }
     const maxAdrNum = existingDecisions.reduce((max, n) => {
         const m = /^(?:ADR-)?(\d+)/i.exec(n);
@@ -1207,7 +1242,7 @@ function renderDashboardProjects() {
     if (!slot) return;
 
     const files = (window.VAULT && window.VAULT.data && window.VAULT.data.files) || [];
-    
+
     // Identifica projetos reais em projects/<pasta>/...
     const projectFiles = files.filter(f => {
         if (!f.path.startsWith('projects/')) return false;
@@ -1760,7 +1795,7 @@ function navigateTo(path) {
         }
         try {
             activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        } catch (_) {}
+        } catch (_) { }
     }
 
 
@@ -1905,7 +1940,7 @@ function scrollToDocCap(capId, event) {
     // Smooth scroll inside sdocBodyScroll, solutionDocsView or document
     const bodyScroll = document.getElementById('sdocBodyScroll');
     const sdocs = document.getElementById('solutionDocsView');
-    
+
     if (bodyScroll && bodyScroll.scrollHeight > bodyScroll.clientHeight) {
         const topPos = target.offsetTop - bodyScroll.offsetTop - 16;
         bodyScroll.scrollTo({ top: Math.max(0, topPos), behavior: 'smooth' });
@@ -2120,7 +2155,7 @@ function setupGraphCategoryPanel(opts) {
                 });
                 renderList();
                 showToast('🎨 Cores restauradas para o padrão original!', 'success', 2500);
-            } catch (err) {}
+            } catch (err) { }
         };
     }
 
@@ -2241,7 +2276,7 @@ function setupGraphCategoryPanel(opts) {
                     const saved = JSON.parse(localStorage.getItem('ai_second_brain_graph_colors') || '{}');
                     saved[groupKey] = newHex;
                     localStorage.setItem('ai_second_brain_graph_colors', JSON.stringify(saved));
-                } catch (err) {}
+                } catch (err) { }
             };
 
             colorInput.oninput = handleColorChange;
@@ -2372,7 +2407,7 @@ function setupFullscreenButton(btnId, containerEl, getGraphInstance) {
         const isFs = document.fullscreenElement === containerEl || containerEl.classList.contains('is-fullscreen');
         if (isFs) {
             if (document.fullscreenElement) {
-                document.exitFullscreen().catch(() => {});
+                document.exitFullscreen().catch(() => { });
             }
             containerEl.classList.remove('is-fullscreen');
             btn.classList.remove('fullscreen-active');
@@ -2731,7 +2766,7 @@ function setupEventListeners() {
     const folderInput = document.getElementById('folderPickerInput');
     if (btnConnect && folderInput) {
         btnConnect.addEventListener('click', () => folderInput.click());
-        folderInput.addEventListener('change', async function() {
+        folderInput.addEventListener('change', async function () {
             if (window.VAULT) {
                 await window.VAULT.connectFolderFromInput(this);
                 refreshApp();
@@ -2918,6 +2953,29 @@ let quickstartMode = 'new';
 let quickstartStep = 1;
 let pathValidationTimer = null;
 
+function onQuickstartDescInput(val) {
+    const nudge = document.getElementById('qsDescNudge');
+    if (!nudge) return;
+    const text = (val || '').trim();
+    if (text.length >= 8) {
+        nudge.classList.add('filled');
+        nudge.innerHTML = `
+            <span class="qs-nudge-icon">✨</span>
+            <span class="qs-nudge-text">
+                <strong>Contexto registrado!</strong> A Sabatina da IA usará este objetivo para calibrar perguntas e contratos sob medida.
+            </span>
+        `;
+    } else {
+        nudge.classList.remove('filled');
+        nudge.innerHTML = `
+            <span class="qs-nudge-icon">💡</span>
+            <span class="qs-nudge-text">
+                <strong>Dica:</strong> Uma breve descrição (ex: <em>"App de receitas de bolos"</em> ou <em>"Microsserviço de pagamentos"</em>) ajuda o Grill Studio a entender o domínio de negócio e gerar contratos cirúrgicos sem suposições.
+            </span>
+        `;
+    }
+}
+
 function openQuickstartWizard(defaultMode = null) {
     const modal = document.getElementById('quickstartModal');
     if (!modal) return;
@@ -2932,7 +2990,10 @@ function openQuickstartWizard(defaultMode = null) {
     const linkPathInput = document.getElementById('qsLinkPath');
 
     if (nameInput) nameInput.value = '';
-    if (descInput) descInput.value = '';
+    if (descInput) {
+        descInput.value = '';
+        onQuickstartDescInput('');
+    }
     if (linkNameInput) linkNameInput.value = '';
     if (linkPathInput) linkPathInput.value = '';
 
@@ -2942,6 +3003,15 @@ function openQuickstartWizard(defaultMode = null) {
         feedback.className = 'qs-path-feedback';
         feedback.innerHTML = '';
     }
+
+    // Reset Sabatina / Grill state
+    currentGrillQuestions = [];
+    currentGrillProjectInfo = null;
+    currentGrillValidationIssue = null;
+    const grillListEl = document.getElementById('qsGrillQuestionsList');
+    if (grillListEl) grillListEl.innerHTML = '';
+    const grillContainerEl = document.getElementById('qsGrillQuestionsContainer');
+    if (grillContainerEl) grillContainerEl.style.display = 'none';
 
     if (defaultMode) {
         selectQuickstartMode(defaultMode);
@@ -2984,13 +3054,14 @@ function onHeaderBackClick() {
 
 function goToQuickstartStep(step) {
     quickstartStep = step;
-    if (step <= 2) {
-        resetQuickstartGrillPanes();
-    }
+    resetQuickstartGrillPanes();
 
     const modalCard = document.querySelector('.quickstart-modal-card');
     if (modalCard) {
         modalCard.classList.toggle('wide', step === 2);
+        if (step !== 2) {
+            modalCard.classList.remove('grill-mode');
+        }
     }
 
     // Stepper indicators
@@ -3016,8 +3087,8 @@ function goToQuickstartStep(step) {
         if (step === 1) {
             titleEl.textContent = 'Adicionar Projeto ao AI Second Brain';
         } else if (step === 2) {
-            titleEl.textContent = quickstartMode === 'new' 
-                ? 'Criando Projeto do Zero' 
+            titleEl.textContent = quickstartMode === 'new'
+                ? 'Criando Projeto do Zero'
                 : 'Vincular Repositório Existente';
         } else if (step === 3) {
             titleEl.textContent = 'Projeto Conectado com Sucesso!';
@@ -3226,6 +3297,13 @@ async function triggerQuickstartChoice(mode) {
 }
 
 function resetQuickstartGrillPanes() {
+    const modal = document.getElementById('quickstartModal');
+    const modalCard = modal ? modal.querySelector('.quickstart-modal-card') : document.querySelector('.quickstart-modal-card');
+    if (modalCard) modalCard.classList.remove('grill-mode', 'draft-mode', 'wide', 'is-loading-questions');
+
+    const qsBody = document.querySelector('.qs-body');
+    if (qsBody) qsBody.classList.remove('grill-active');
+
     const formNew = document.getElementById('qsFormNew');
     const qPane = document.getElementById('qsGrillQuestionsPane');
     const dPane = document.getElementById('qsGrillDraftPane');
@@ -3250,14 +3328,21 @@ function resetQuickstartGrillPanes() {
         }
         const titleEl = document.getElementById('qsTitle');
         if (titleEl) {
-            titleEl.textContent = quickstartMode === 'new' 
-                ? 'Criando Projeto do Zero' 
+            titleEl.textContent = quickstartMode === 'new'
+                ? 'Criando Projeto do Zero'
                 : 'Vincular Repositório Existente';
         }
     }
 }
 
 function backFromGrillQuestions() {
+    const modal = document.getElementById('quickstartModal');
+    const modalCard = modal ? modal.querySelector('.quickstart-modal-card') : document.querySelector('.quickstart-modal-card');
+    if (modalCard) modalCard.classList.remove('grill-mode', 'is-loading-questions');
+
+    const qsBody = document.querySelector('.qs-body');
+    if (qsBody) qsBody.classList.remove('grill-active');
+
     const formNew = document.getElementById('qsFormNew');
     const qPane = document.getElementById('qsGrillQuestionsPane');
     const spAssisted = document.getElementById('spinnerModeAssisted');
@@ -3278,13 +3363,17 @@ function backFromGrillQuestions() {
     }
     const titleEl = document.getElementById('qsTitle');
     if (titleEl) {
-        titleEl.textContent = quickstartMode === 'new' 
-            ? 'Criando Projeto do Zero' 
+        titleEl.textContent = quickstartMode === 'new'
+            ? 'Criando Projeto do Zero'
             : 'Vincular Repositório Existente';
     }
 }
 
 function backToGrillQuestions() {
+    const modal = document.getElementById('quickstartModal');
+    const modalCard = modal ? modal.querySelector('.quickstart-modal-card') : document.querySelector('.quickstart-modal-card');
+    if (modalCard) modalCard.classList.remove('draft-mode');
+
     const qPane = document.getElementById('qsGrillQuestionsPane');
     const dPane = document.getElementById('qsGrillDraftPane');
     if (qPane) qPane.style.display = 'flex';
@@ -3308,6 +3397,7 @@ function onQsContractTextareaInput() {
 }
 
 function switchQsContractMode(mode) {
+    const prevMode = currentQsContractMode;
     currentQsContractMode = mode;
     const btnPreview = document.getElementById('btnQsContractTabPreview');
     const btnWrite = document.getElementById('btnQsContractTabWrite');
@@ -3318,7 +3408,7 @@ function switchQsContractMode(mode) {
     if (btnWrite) btnWrite.classList.toggle('active', mode === 'write');
 
     if (mode === 'preview') {
-        if (textarea && currentActiveContract && currentGrillDraft) {
+        if (prevMode === 'write' && textarea && currentActiveContract && currentGrillDraft) {
             currentGrillDraft[currentActiveContract] = textarea.value;
         }
         if (textarea) textarea.style.display = 'none';
@@ -3522,10 +3612,10 @@ async function submitExpandedGrillRefine() {
         if (!res.ok) throw new Error(data.error || 'Erro ao refinar contratos.');
 
         currentGrillDraft = data.contracts;
-        
+
         // Refresh editor view
         loadContractIntoEditor(currentActiveContract, currentEditorTab || 'preview');
-        
+
         // Refresh background quickstart card
         const qsTextarea = document.getElementById('qsContractTextarea');
         if (qsTextarea) qsTextarea.value = currentGrillDraft[currentActiveContract] || '';
@@ -3557,9 +3647,65 @@ function commitFromExpandedModal() {
 
 let currentGrillValidationIssue = null;
 
-async function startGrillQuestionsFlow(projectInfo) {
+async function confirmResetGrillQuestions() {
+    if (!currentGrillProjectInfo) return;
+    const hasAnswers = (currentGrillQuestions || []).some((q, idx) => {
+        const qid = String(q.id || `q${idx + 1}`);
+        const el = document.getElementById(`qsInput_${qid}`);
+        return el && el.value.trim().length > 0;
+    });
+
+    const ok = await showBrainConfirm({
+        title: hasAnswers ? 'Descartar respostas e refazer sabatina?' : 'Formular novas perguntas com IA?',
+        icon: hasAnswers ? '⚠️' : null,
+        iconSvg: hasAnswers ? null : 'assets/icon-refresh-animated.svg',
+        noIconBox: !hasAnswers,
+        badge: false, // Sem badge repetitivo: título limpo e alinhado perfeitamente ao ícone
+        message: hasAnswers
+            ? 'Você já preencheu respostas para as perguntas atuais deste projeto.<br><br>Deseja realmente <strong>descartar as respostas</strong> e solicitar que o Arquiteto de IA formule <strong>4 novas perguntas</strong>?'
+            : 'Deseja solicitar que o Arquiteto de IA analise a stack e formule <strong>4 novas perguntas cirúrgicas</strong> para este projeto?',
+        confirmText: hasAnswers ? 'Descartar e Refazer' : 'Sim, Formular Novas',
+        cancelText: 'Manter Atuais',
+        danger: hasAnswers
+    });
+
+    if (ok) {
+        startGrillQuestionsFlow(currentGrillProjectInfo, true);
+    }
+}
+
+async function startGrillQuestionsFlow(projectInfo, forceRegenerate = false) {
+    const spAssisted = document.getElementById('spinnerModeAssisted');
+    if (spAssisted) spAssisted.style.display = 'none';
+
+    // 1. Salva respostas existentes preenchidas pelo usuário para não perder ao navegar
+    const currentAnswersMap = {};
+    (currentGrillQuestions || []).forEach((q, idx) => {
+        const qid = String(q.id || `q${idx + 1}`);
+        const el = document.getElementById(`qsInput_${qid}`);
+        if (el && el.value.trim()) {
+            currentAnswersMap[qid] = el.value.trim();
+        }
+    });
+
+    // 2. Verifica se é exatamente o mesmo projeto
+    const isSameProject = currentGrillProjectInfo &&
+        currentGrillProjectInfo.name === projectInfo.name &&
+        currentGrillProjectInfo.stack === projectInfo.stack &&
+        (currentGrillProjectInfo.description || '') === (projectInfo.description || '');
+
+    const hasExistingQuestions = Array.isArray(currentGrillQuestions) && currentGrillQuestions.length > 0;
+
     currentGrillProjectInfo = projectInfo;
     currentGrillValidationIssue = null;
+
+    const modal = document.getElementById('quickstartModal');
+    const modalCard = modal ? modal.querySelector('.quickstart-modal-card') : document.querySelector('.quickstart-modal-card');
+    if (modalCard) modalCard.classList.add('wide', 'grill-mode');
+
+    const qsBody = document.querySelector('.qs-body');
+    if (qsBody) qsBody.classList.add('grill-active');
+
     const formNew = document.getElementById('qsFormNew');
     const qPane = document.getElementById('qsGrillQuestionsPane');
     const loadingEl = document.getElementById('qsGrillLoadingQuestions');
@@ -3569,9 +3715,6 @@ async function startGrillQuestionsFlow(projectInfo) {
 
     if (formNew) formNew.style.display = 'none';
     if (qPane) qPane.style.display = 'flex';
-    if (loadingEl) loadingEl.style.display = 'flex';
-    if (containerEl) containerEl.style.display = 'none';
-    if (actionCardsEl) actionCardsEl.style.display = 'none';
 
     const headerBackBtn = document.getElementById('qsHeaderBackBtn');
     if (headerBackBtn) {
@@ -3585,11 +3728,40 @@ async function startGrillQuestionsFlow(projectInfo) {
 
     if (bannerEl) {
         bannerEl.innerHTML = `
-            <span class="qs-grill-summary-item"><strong>Projeto:</strong> ${escapeHtml(projectInfo.name)}</span>
-            <span class="qs-grill-summary-item"><strong>Stack:</strong> ${escapeHtml(projectInfo.stack)}</span>
-            ${projectInfo.description ? `<span class="qs-grill-summary-item"><strong>Foco:</strong> ${escapeHtml(projectInfo.description)}</span>` : ''}
+            <div class="qs-grill-summary-tags">
+                <span class="qs-grill-summary-item"><strong>Projeto:</strong> ${escapeHtml(projectInfo.name)}</span>
+                <span class="qs-grill-summary-item"><strong>Stack:</strong> ${escapeHtml(projectInfo.stack)}</span>
+                ${projectInfo.description ? `<span class="qs-grill-summary-item"><strong>Foco:</strong> ${escapeHtml(projectInfo.description)}</span>` : ''}
+            </div>
+            <button type="button" class="qs-grill-reset-btn" id="qsGrillResetBtn" onclick="confirmResetGrillQuestions()" title="Descartar respostas e formular novas perguntas com IA" style="display: none;">
+                🔄 Refazer perguntas com IA
+            </button>
         `;
     }
+
+    const resetBtn = document.getElementById('qsGrillResetBtn');
+
+    // 3. Cache Inteligente de Token: se NÃO foi forçado a regenerar E é o mesmo projeto E já temos perguntas
+    if (!forceRegenerate && isSameProject && hasExistingQuestions) {
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (containerEl) containerEl.style.display = 'flex';
+        if (actionCardsEl) actionCardsEl.style.display = 'grid';
+        if (resetBtn) resetBtn.style.display = 'inline-flex';
+        renderGrillQuestions(currentGrillQuestions, currentAnswersMap);
+        updateGrillActionCardsState();
+        return;
+    }
+
+    // 4. Fluxo de chamada com IA (primeira vez, projeto alterado ou refazer explícito)
+    if (loadingEl) loadingEl.style.display = 'flex';
+    if (containerEl) containerEl.style.display = 'none';
+    if (actionCardsEl) actionCardsEl.style.display = 'none';
+    if (resetBtn) resetBtn.style.display = 'none';
+    if (modalCard) modalCard.classList.add('is-loading-questions');
+
+    // Limpa a lista de cards no DOM para que nada fique visível sob o spinner de carregamento
+    const listEl = document.getElementById('qsGrillQuestionsList');
+    if (listEl) listEl.innerHTML = '';
 
     try {
         const res = await fetch('/api/projects/quickstart/questions', {
@@ -3607,8 +3779,10 @@ async function startGrillQuestionsFlow(projectInfo) {
         backFromGrillQuestions();
     } finally {
         if (loadingEl) loadingEl.style.display = 'none';
-        if (containerEl) containerEl.style.display = 'block';
+        if (modalCard) modalCard.classList.remove('is-loading-questions');
+        if (containerEl) containerEl.style.display = 'flex';
         if (actionCardsEl) actionCardsEl.style.display = 'grid';
+        if (resetBtn) resetBtn.style.display = 'inline-flex';
         updateGrillActionCardsState();
     }
 }
@@ -3631,6 +3805,53 @@ function updateGrillActionCardsState() {
     }
 }
 
+function formatGrillCategory(cat) {
+    if (!cat || typeof cat !== 'string') return 'Decisão';
+    const raw = cat.trim();
+    if (!raw) return 'Decisão';
+
+    // Normaliza para análise semântica: sem acentos, maiúsculo
+    const clean = raw
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toUpperCase();
+
+    const hasWord = (w) => new RegExp(`(^|[^A-Z0-9])${w}([^A-Z0-9]|$)`).test(clean);
+
+    // 1. Detecção Semântica por Domínio de Arquitetura (cobre variações dinâmicas de IA)
+    // Arquitetura e Protocolos (deve vir antes de UI para não casar 'UI' em 'ARQUITETURA')
+    if (clean.includes('ARQUITET') || clean.includes('ESTILO') || clean.includes('MICROSSERV') || hasWord('API') || hasWord('REST') || hasWord('GRAPHQL') || hasWord('GRPC')) return 'Arquitetura';
+    if (clean.includes('ERRO') || clean.includes('RESILIEN') || clean.includes('FALLBACK') || clean.includes('CIRCUIT')) return 'Resiliência';
+    if (clean.includes('LOG') || clean.includes('METRIC') || clean.includes('OBSERV') || clean.includes('TELEMETR') || clean.includes('MONITOR')) return 'Logs & Métricas';
+    if (clean.includes('CACHE') || clean.includes('PERF') || clean.includes('LATEN') || clean.includes('ESCALAB')) return 'Cache & Perf';
+    if (clean.includes('BANCO') || clean.includes('DADO') || clean.includes('PERSIST') || clean.includes('SQL') || clean.includes('STORAGE') || clean.includes('ORM')) return 'Persistência';
+    if (clean.includes('AUTENTIC') || clean.includes('AUTORIZ') || clean.includes('LOGIN') || clean.includes('TOKEN') || hasWord('AUTH') || hasWord('JWT') || clean.includes('PERMISS')) return 'Autenticação';
+    if (clean.includes('SEGURAN') || clean.includes('SECURITY') || clean.includes('CRIPTO') || clean.includes('VAULT')) return 'Segurança';
+    if (clean.includes('FILA') || clean.includes('MENSAG') || clean.includes('QUEUE') || clean.includes('EVENT') || clean.includes('STREAM') || clean.includes('KAFKA') || clean.includes('RABBIT')) return 'Mensageria';
+    if (clean.includes('TEST') || clean.includes('QUALID') || hasWord('QA') || clean.includes('MOCK') || clean.includes('COVERAGE')) return 'Testes & QA';
+    if (clean.includes('DEPLOY') || clean.includes('CI/CD') || clean.includes('CI-CD') || clean.includes('DOCKER') || clean.includes('CONTAINER') || clean.includes('KUBERNET') || clean.includes('INFRA') || clean.includes('DEVOPS')) return 'Deploy & CI/CD';
+    if (clean.includes('FRONTEND') || clean.includes('FRONT-END') || clean.includes('FRONT') || clean.includes('LAYOUT') || clean.includes('INTERFACE') || clean.includes('MOBILE') || hasWord('UI') || hasWord('UX') || hasWord('TELA')) return 'Frontend / UI';
+    if (clean.includes('INTEGRA') || clean.includes('WEBHOOK') || clean.includes('TERCEIR') || clean.includes('PAGAMENT') || clean.includes('GATEWAY')) return 'Integrações';
+    if (clean.includes('DOMIN') || clean.includes('PROPOS') || clean.includes('ESCOPO') || clean.includes('NEGOCIO') || clean.includes('MVP') || clean.includes('OBJETIV')) return 'Domínio & Foco';
+
+    // 2. Se já for uma palavra curta (<= 14 chars), formata em Title Case suave
+    if (raw.length <= 14) {
+        return raw.charAt(0).toUpperCase() + raw.slice(1);
+    }
+
+    // 3. Fallback inteligente para termos desconhecidos: divide por separadores
+    const words = raw.split(/[\s&/+\-]+/).filter(w => w.length > 2 && !['para', 'com', 'dos', 'das', 'uma', 'seu', 'sua', 'the', 'and', 'for'].includes(w.toLowerCase()));
+    if (words.length > 0) {
+        const first = words[0];
+        if (first.length <= 14) {
+            return first.charAt(0).toUpperCase() + first.slice(1).toLowerCase();
+        }
+        return first.slice(0, 12) + '...';
+    }
+
+    return raw.slice(0, 12) + '...';
+}
+
 let currentGrillActiveQid = null;
 
 function renderGrillQuestions(questions, prefilledAnswers = {}) {
@@ -3638,30 +3859,39 @@ function renderGrillQuestions(questions, prefilledAnswers = {}) {
     if (!listEl) return;
     listEl.innerHTML = '';
 
+    // Garante que cada pergunta possua ID único e estritamente sequencial (q1, q2, ...)
+    (questions || []).forEach((q, idx) => {
+        q.id = `q${idx + 1}`;
+    });
+
     // Determina qual deve ser a primeira pergunta aberta (a primeira vazia, ou a primeira se todas preenchidas)
     let firstUnansweredQid = null;
     for (let i = 0; i < questions.length; i++) {
-        const qid = String(questions[i].id !== undefined ? questions[i].id : i);
-        const val = (prefilledAnswers[qid] || '').trim();
+        const qid = String(questions[i].id || `q${i + 1}`);
+        const val = (prefilledAnswers[qid] || prefilledAnswers[`q${i + 1}`] || prefilledAnswers[i] || '').trim();
         if (!val && firstUnansweredQid === null) {
             firstUnansweredQid = qid;
             break;
         }
     }
-    currentGrillActiveQid = firstUnansweredQid !== null ? firstUnansweredQid : String(questions[0]?.id !== undefined ? questions[0].id : 0);
+    currentGrillActiveQid = firstUnansweredQid !== null ? firstUnansweredQid : String(questions[0]?.id || 'q1');
 
     questions.forEach((q, idx) => {
-        const qid = String(q.id !== undefined ? q.id : idx);
-        const existingVal = (prefilledAnswers[qid] || '').trim();
+        const qid = String(q.id || `q${idx + 1}`);
+        const existingVal = (prefilledAnswers[qid] || prefilledAnswers[`q${idx + 1}`] || prefilledAnswers[idx] || '').trim();
         const isActive = (qid === currentGrillActiveQid);
         const isAnswered = existingVal.length > 0;
+        const questionText = String(q.question || q.pergunta || q.title || q.texto || '').trim();
+        const rawCategoryText = String(q.category || q.categoria || 'Decisão').trim();
+        const categoryText = formatGrillCategory(rawCategoryText);
 
         const card = document.createElement('div');
         card.className = `qs-grill-q-card ${isActive ? 'is-active' : 'is-collapsed'}`;
         card.id = `qsQCard_${qid}`;
 
-        const optionsHtml = (q.options || []).map((opt) => {
-            const isSelected = existingVal && (existingVal.toLowerCase() === opt.toLowerCase());
+        const rawOptions = q.options || q.opcoes || [];
+        const optionsHtml = (Array.isArray(rawOptions) ? rawOptions : []).map((opt) => {
+            const isSelected = existingVal && (existingVal.toLowerCase() === String(opt).toLowerCase());
             return `
                 <button type="button" class="qs-q-chip ${isSelected ? 'selected' : ''}" data-qid="${qid}" data-val="${escapeHtml(opt)}" onclick="selectGrillChip('${qid}', '${escapeHtml(opt)}')">
                     ${escapeHtml(opt)}
@@ -3675,27 +3905,27 @@ function renderGrillQuestions(questions, prefilledAnswers = {}) {
                     <span class="qs-acc-status-icon ${isAnswered ? 'is-done' : (isActive ? 'is-current' : 'is-pending')}" id="qsAccIcon_${qid}">
                         ${isAnswered ? '✓' : (idx + 1)}
                     </span>
-                    <span class="qs-grill-q-cat">${escapeHtml(q.category || 'Decisão')}</span>
+                    <span class="qs-grill-q-cat" title="${escapeHtml(rawCategoryText)}">${escapeHtml(categoryText)}</span>
                     <div class="qs-acc-preview-wrap">
                         <span class="${isAnswered ? 'qs-acc-ans-text' : 'qs-acc-pending-text'}" id="qsAccPreview_${qid}">
-                            ${isAnswered ? escapeHtml(existingVal) : escapeHtml(q.question)}
+                            ${isAnswered ? escapeHtml(existingVal) : escapeHtml(questionText || 'Decisão Arquitetural')}
                         </span>
                     </div>
                 </div>
                 <div class="qs-acc-header-right">
-                    <span class="qs-acc-badge ${isAnswered ? 'done' : 'pending'}" id="qsAccBadge_${qid}">
-                        ${isAnswered ? '✓ Definido' : 'Pendente'}
+                    <span class="qs-acc-badge done" id="qsAccBadge_${qid}" style="${isAnswered ? '' : 'display: none;'}">
+                        ✓ Definido
                     </span>
                     <span class="qs-acc-toggle-icon">▼</span>
                 </div>
             </div>
             <div class="qs-acc-body" id="qsAccBody_${qid}">
-                <h4 class="qs-grill-q-title">${escapeHtml(q.question)}</h4>
+                <h4 class="qs-grill-q-title">${escapeHtml(questionText || 'Decisão Arquitetural')}</h4>
                 ${optionsHtml ? `<div class="qs-grill-q-chips" id="qsChips_${qid}">${optionsHtml}</div>` : ''}
                 <div class="qs-acc-input-wrap">
                     <input type="text" class="qs-q-input" id="qsInput_${qid}" 
                         value="${escapeHtml(existingVal)}"
-                        placeholder="${escapeHtml(q.placeholder || 'Digite sua resposta customizada...')}"
+                        placeholder="${escapeHtml(q.placeholder || q.exemplo || 'Digite sua resposta customizada...')}"
                         oninput="onGrillInputTyped('${qid}')"
                         onkeydown="onGrillInputKeydown(event, '${qid}')">
                     <button type="button" class="btn-acc-advance" onclick="advanceGrillAccordion('${qid}')" title="Confirmar e avançar">
@@ -3715,7 +3945,7 @@ function setGrillAccordionActive(targetQid, focusInput = false) {
     if (!currentGrillQuestions) return;
 
     currentGrillQuestions.forEach((q, idx) => {
-        const qid = String(q.id !== undefined ? q.id : idx);
+        const qid = String(q.id || `q${idx + 1}`);
         const card = document.getElementById(`qsQCard_${qid}`);
         const icon = document.getElementById(`qsAccIcon_${qid}`);
         const inputEl = document.getElementById(`qsInput_${qid}`);
@@ -3733,13 +3963,32 @@ function setGrillAccordionActive(targetQid, focusInput = false) {
         }
     });
 
+    // Rola suavemente APENAS dentro da lista de perguntas (qsGrillQuestionsList),
+    // mantendo o cabeçalho, categoria e botão de toggle sempre 100% visíveis no enquadramento
+    const listEl = document.getElementById('qsGrillQuestionsList');
+    const activeCard = document.getElementById(`qsQCard_${targetQid}`);
+    if (listEl && activeCard) {
+        setTimeout(() => {
+            const cardTop = activeCard.offsetTop - listEl.offsetTop;
+            const cardBottom = cardTop + activeCard.offsetHeight;
+            const scrollPos = listEl.scrollTop;
+            const listHeight = listEl.clientHeight;
+
+            if (cardTop < scrollPos) {
+                listEl.scrollTo({ top: Math.max(0, cardTop - 6), behavior: 'smooth' });
+            } else if (cardBottom > scrollPos + listHeight) {
+                listEl.scrollTo({ top: cardBottom - listHeight + 8, behavior: 'smooth' });
+            }
+        }, 40);
+    }
+
     if (focusInput) {
         setTimeout(() => {
             const inputEl = document.getElementById(`qsInput_${targetQid}`);
             if (inputEl) {
-                inputEl.focus();
+                inputEl.focus({ preventScroll: true });
             }
-        }, 60);
+        }, 80);
     }
 
     updateGrillAccordionProgress();
@@ -3753,6 +4002,14 @@ function toggleGrillAccordion(qid) {
         if (card) {
             card.classList.remove('is-active');
             card.classList.add('is-collapsed');
+        }
+        const icon = document.getElementById(`qsAccIcon_${qid}`);
+        if (icon) {
+            const inputEl = document.getElementById(`qsInput_${qid}`);
+            const isAnswered = inputEl && inputEl.value.trim().length > 0;
+            const idx = (currentGrillQuestions || []).findIndex((x, i) => String(x.id || `q${i + 1}`) === qid);
+            icon.className = `qs-acc-status-icon ${isAnswered ? 'is-done' : 'is-pending'}`;
+            icon.textContent = isAnswered ? '✓' : (idx + 1);
         }
         updateGrillAccordionProgress();
     } else {
@@ -3811,12 +4068,12 @@ function advanceGrillAccordion(currentQid) {
     currentQid = String(currentQid);
     if (!currentGrillQuestions || currentGrillQuestions.length === 0) return;
 
-    const currentIdx = currentGrillQuestions.findIndex((q, i) => String(q.id !== undefined ? q.id : i) === currentQid);
+    const currentIdx = currentGrillQuestions.findIndex((q, i) => String(q.id || `q${i + 1}`) === currentQid);
 
     // Procura próxima pergunta vazia após a atual
     let nextQid = null;
     for (let i = currentIdx + 1; i < currentGrillQuestions.length; i++) {
-        const qid = String(currentGrillQuestions[i].id !== undefined ? currentGrillQuestions[i].id : i);
+        const qid = String(currentGrillQuestions[i].id || `q${i + 1}`);
         const inputEl = document.getElementById(`qsInput_${qid}`);
         if (!inputEl || !inputEl.value.trim()) {
             nextQid = qid;
@@ -3827,7 +4084,7 @@ function advanceGrillAccordion(currentQid) {
     // Se não encontrou após a atual, busca desde o começo
     if (!nextQid) {
         for (let i = 0; i < currentIdx; i++) {
-            const qid = String(currentGrillQuestions[i].id !== undefined ? currentGrillQuestions[i].id : i);
+            const qid = String(currentGrillQuestions[i].id || `q${i + 1}`);
             const inputEl = document.getElementById(`qsInput_${qid}`);
             if (!inputEl || !inputEl.value.trim()) {
                 nextQid = qid;
@@ -3842,7 +4099,7 @@ function advanceGrillAccordion(currentQid) {
         // Todas estão respondidas: colapsa todas para visão geral e foca no botão de gerar contratos
         currentGrillActiveQid = null;
         currentGrillQuestions.forEach((q, idx) => {
-            const qid = String(q.id !== undefined ? q.id : idx);
+            const qid = String(q.id || `q${idx + 1}`);
             const card = document.getElementById(`qsQCard_${qid}`);
             if (card) {
                 card.classList.remove('is-active');
@@ -3860,21 +4117,22 @@ function updateGrillCardPreview(qid, val) {
     const iconEl = document.getElementById(`qsAccIcon_${qid}`);
     const isAnswered = val && val.trim().length > 0;
 
-    const q = (currentGrillQuestions || []).find((x, i) => String(x.id !== undefined ? x.id : i) === qid);
-    const qTitle = q ? q.question : 'Decisão Arquitetural';
+    const q = (currentGrillQuestions || []).find((x, i) => String(x.id || `q${i + 1}`) === qid);
+    const qTitle = q ? (q.question || q.pergunta || 'Decisão Arquitetural') : 'Decisão Arquitetural';
 
     if (previewEl) {
         previewEl.className = isAnswered ? 'qs-acc-ans-text' : 'qs-acc-pending-text';
         previewEl.textContent = isAnswered ? val.trim() : qTitle;
     }
     if (badgeEl) {
-        badgeEl.className = `qs-acc-badge ${isAnswered ? 'done' : 'pending'}`;
-        badgeEl.textContent = isAnswered ? '✓ Definido' : 'Pendente';
+        badgeEl.className = 'qs-acc-badge done';
+        badgeEl.textContent = '✓ Definido';
+        badgeEl.style.display = isAnswered ? 'inline-flex' : 'none';
     }
     if (iconEl) {
         const isActive = (qid === currentGrillActiveQid);
         iconEl.className = `qs-acc-status-icon ${isAnswered ? 'is-done' : (isActive ? 'is-current' : 'is-pending')}`;
-        const idx = (currentGrillQuestions || []).findIndex((x, i) => String(x.id !== undefined ? x.id : i) === qid);
+        const idx = (currentGrillQuestions || []).findIndex((x, i) => String(x.id || `q${i + 1}`) === qid);
         iconEl.textContent = isAnswered ? '✓' : (idx + 1);
     }
 }
@@ -3931,7 +4189,7 @@ async function requestMoreGrillQuestions() {
     // Salvar respostas preenchidas até agora para não perder
     const currentAnswersMap = {};
     currentGrillQuestions.forEach((q, idx) => {
-        const qid = q.id || idx;
+        const qid = String(q.id || `q${idx + 1}`);
         const el = document.getElementById(`qsInput_${qid}`);
         if (el && el.value.trim()) {
             currentAnswersMap[qid] = el.value.trim();
@@ -3954,22 +4212,91 @@ async function requestMoreGrillQuestions() {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Erro ao formular perguntas adicionais.');
 
-        const newQuestions = (data.questions || []).filter(nq => 
-            !currentGrillQuestions.some(eq => (eq.id && eq.id === nq.id) || eq.question === nq.question)
+        const rawIncoming = Array.isArray(data.questions) ? data.questions : [];
+        const normalizedIncoming = rawIncoming.map((nq, idx) => {
+            const questionText = String(nq.question || nq.pergunta || nq.title || nq.texto || '').trim();
+            const categoryText = String(nq.category || nq.categoria || 'Decisão Técnica').trim();
+            const rawOpts = nq.options || nq.opcoes || [];
+            const opts = Array.isArray(rawOpts) && rawOpts.length > 0
+                ? rawOpts.map(o => String(o).trim())
+                : ['Padrão da Stack', 'Customizado', 'Não aplicável no MVP'];
+            const ph = String(nq.placeholder || nq.exemplo || 'Descreva sua abordagem técnica...').trim();
+            const nextIdx = currentGrillQuestions.length + idx + 1;
+            return {
+                id: `q${nextIdx}`,
+                category: categoryText,
+                question: questionText,
+                options: opts,
+                placeholder: ph
+            };
+        }).filter(nq => nq.question && nq.question.length > 3);
+
+        // Filtra para não adicionar perguntas com texto idêntico ao já existente
+        let newQuestions = normalizedIncoming.filter(nq =>
+            !currentGrillQuestions.some(eq => {
+                const eqText = String(eq.question || eq.pergunta || eq.title || '').toLowerCase().trim();
+                const nqText = nq.question.toLowerCase().trim();
+                return eqText === nqText;
+            })
         );
 
+        // Fallback defensivo no cliente se a IA não gerou perguntas novas válidas
         if (newQuestions.length === 0) {
-            showToast('ℹ️ O Arquiteto de IA considerou que as perguntas atuais já cobrem os pontos críticos.');
-        } else {
-            const firstNewId = newQuestions[0].id || currentGrillQuestions.length;
-            currentGrillQuestions = currentGrillQuestions.concat(newQuestions);
+            const baseIdx = currentGrillQuestions.length + 1;
+            const clientFallback = [
+                {
+                    id: `q${baseIdx}`,
+                    category: 'Performance & Cache',
+                    question: 'Qual será a estratégia de cache e otimização de latência?',
+                    options: ['Redis Distribuído', 'Cache em Memória Local', 'CDN / Edge Cache', 'Sem cache inicial'],
+                    placeholder: 'Ex: Redis para sessões e consultas frequentes'
+                },
+                {
+                    id: `q${baseIdx + 1}`,
+                    category: 'Observabilidade & Logs',
+                    question: 'Como serão estruturados os logs e métricas de diagnóstico?',
+                    options: ['Logs estruturados JSON (Pino/Winston)', 'OpenTelemetry + Grafana', 'Sentry (Error Tracking)', 'Console simples'],
+                    placeholder: 'Ex: Pino com logs JSON estruturados'
+                },
+                {
+                    id: `q${baseIdx + 2}`,
+                    category: 'CI/CD & Containers',
+                    question: 'Qual o ambiente de execução e pipeline de entrega contínua?',
+                    options: ['Docker + GitHub Actions', 'Kubernetes / Helm', 'Serverless / Lambdas', 'Deploy direto na VM'],
+                    placeholder: 'Ex: Dockerfile multi-stage com GitHub Actions'
+                },
+                {
+                    id: `q${baseIdx + 3}`,
+                    category: 'Resiliência & Falhas',
+                    question: 'Como a aplicação lidará com falhas de dependências externas?',
+                    options: ['Retries com Exponential Backoff', 'Circuit Breaker', 'Dead Letter Queue', 'Fail fast com erro 500'],
+                    placeholder: 'Ex: Retries com backoff exponencial'
+                }
+            ];
+            const maxNeeded = Math.max(0, 8 - currentGrillQuestions.length);
+            newQuestions = clientFallback.slice(0, Math.min(4, maxNeeded));
+        }
+
+        // Garante que não ultrapasse o limite de 8 perguntas e renumera estritamente os IDs
+        const remainingSlots = Math.max(0, 8 - currentGrillQuestions.length);
+        const toAdd = newQuestions.slice(0, remainingSlots).map((nq, idx) => {
+            const newIndex = currentGrillQuestions.length + idx + 1;
+            return {
+                ...nq,
+                id: `q${newIndex}`
+            };
+        });
+
+        if (toAdd.length > 0) {
+            const firstNewId = toAdd[0].id;
+            currentGrillQuestions = currentGrillQuestions.concat(toAdd);
             renderGrillQuestions(currentGrillQuestions, currentAnswersMap);
-            showToast(`✨ +${newQuestions.length} perguntas adicionadas à sabatina!`);
+            showToast(`✨ +${toAdd.length} perguntas adicionadas à sabatina!`);
 
             setTimeout(() => {
                 const firstNewEl = document.getElementById(`qsQCard_${firstNewId}`);
                 if (firstNewEl) {
-                    firstNewEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstNewEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                     firstNewEl.classList.add('newly-added');
                     setTimeout(() => firstNewEl.classList.remove('newly-added'), 1800);
                 }
@@ -4012,8 +4339,8 @@ async function submitGrillAnswers() {
     // Se houver pergunta vazia, interrompe imediatamente e apresenta modal no padrão do projeto
     if (emptyQuestion) {
         setGrillAccordionActive(emptyQuestion.qid, true);
-        const sample = emptyQuestion.q.options && emptyQuestion.q.options[0] 
-            ? emptyQuestion.q.options[0] 
+        const sample = emptyQuestion.q.options && emptyQuestion.q.options[0]
+            ? emptyQuestion.q.options[0]
             : (emptyQuestion.q.placeholder || 'uma resposta descritiva');
         openGrillValidationModal({
             questionId: emptyQuestion.qid,
@@ -4068,6 +4395,10 @@ async function submitGrillAnswers() {
 }
 
 async function executeGenerateDraftFlow(answers) {
+    const modal = document.getElementById('quickstartModal');
+    const modalCard = modal ? modal.querySelector('.quickstart-modal-card') : document.querySelector('.quickstart-modal-card');
+    if (modalCard) modalCard.classList.add('draft-mode');
+
     const qPane = document.getElementById('qsGrillQuestionsPane');
     const dPane = document.getElementById('qsGrillDraftPane');
     const loadingEl = document.getElementById('qsGrillLoadingDraft');
@@ -4102,12 +4433,29 @@ async function executeGenerateDraftFlow(answers) {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Erro ao gerar contratos.');
 
-        currentGrillDraft = data.contracts || {};
+        const rawContracts = data.contracts || {};
+        currentGrillDraft = {
+            projectMd: rawContracts.projectMd || rawContracts['PROJECT.md'] || rawContracts['project.md'] || rawContracts.project || '',
+            architectureMd: rawContracts.architectureMd || rawContracts['ARCHITECTURE.md'] || rawContracts['architecture.md'] || rawContracts.architecture || '',
+            currentStateMd: rawContracts.currentStateMd || rawContracts['CURRENT_STATE.md'] || rawContracts['current_state.md'] || rawContracts.currentState || '',
+            adrMd: rawContracts.adrMd || rawContracts['ADR-0001'] || rawContracts['ADR-0001.md'] || rawContracts.adr || ''
+        };
+
         const badge = document.getElementById('qsGrillDraftModelBadge');
         if (badge) badge.textContent = `✨ ${data.provider ? data.provider.toUpperCase() : 'IA'} (${data.model || 'ativo'})`;
 
-        switchQsContractMode('preview');
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (wrapEl) wrapEl.style.display = 'flex';
+        if (btnCommit) btnCommit.disabled = false;
+
+        currentActiveContract = 'projectMd';
+        currentQsContractMode = 'preview';
+        const qsTextarea = document.getElementById('qsContractTextarea');
+        if (qsTextarea) {
+            qsTextarea.value = currentGrillDraft.projectMd || '';
+        }
         selectContractTab('projectMd');
+        switchQsContractMode('preview');
     } catch (err) {
         alert('Erro ao gerar contratos: ' + err.message);
         backToGrillQuestions();
@@ -4200,7 +4548,7 @@ function applyGrillSuggestion() {
 
 function selectContractTab(contractKey) {
     const textarea = document.getElementById('qsContractTextarea');
-    if (textarea && currentActiveContract && currentGrillDraft) {
+    if (currentQsContractMode === 'write' && textarea && currentActiveContract && currentGrillDraft) {
         currentGrillDraft[currentActiveContract] = textarea.value;
     }
 
@@ -4370,6 +4718,7 @@ async function submitQuickstartLink(e) {
 }
 
 function renderQuickstartSuccess(info) {
+    resetQuickstartGrillPanes();
     goToQuickstartStep(3);
 
     const titleEl = document.getElementById('qsSuccessTitle');
@@ -4503,7 +4852,7 @@ async function openProjectWorkspace(projectName, defaultTab = 'overview') {
                     badge.style.display = data.researches.length > 0 ? 'inline-block' : 'none';
                 }
             })
-            .catch(() => {});
+            .catch(() => { });
 
         switchProjectTab(defaultTab);
 
@@ -4700,7 +5049,7 @@ async function saveOverviewQuickEdit() {
 // Helpers para Estado Atual & Roadmap
 function parseCurrentStateSections(md) {
     const raw = md || '';
-    
+
     // Status
     let status = '🟢 Ativo / Em Desenvolvimento';
     const statusMatch = raw.match(/##\s+Status:\s*([^\n\r]+)/i);
@@ -5004,10 +5353,10 @@ function renderProjectOverviewTab() {
                                 <label class="pw-form-label">Status Operacional</label>
                                 <select id="pwEditStatus" class="pw-form-select">
                                     ${statusOptions.map(opt => {
-                                        const isSelected = (opt.id === resolvedActiveStatus.id) ? 'selected' : '';
-                                        const displayText = opt.fullText.includes(opt.icon) ? opt.fullText : `${opt.icon} ${opt.fullText}`;
-                                        return `<option value="${escapeHtml(opt.fullText)}" ${isSelected}>${escapeHtml(displayText)}</option>`;
-                                    }).join('')}
+        const isSelected = (opt.id === resolvedActiveStatus.id) ? 'selected' : '';
+        const displayText = opt.fullText.includes(opt.icon) ? opt.fullText : `${opt.icon} ${opt.fullText}`;
+        return `<option value="${escapeHtml(opt.fullText)}" ${isSelected}>${escapeHtml(displayText)}</option>`;
+    }).join('')}
                                 </select>
                             </div>
                         </div>
@@ -5812,9 +6161,9 @@ function renderProjectSettingsTab() {
                 <span class="pw-card-title">⚠️ Zona de Gerenciamento & Desvinculação</span>
             </div>
             <p style="color: #fca5a5; font-size: 13px; margin-bottom: 16px;">
-                ${d.isJunction 
-                    ? 'Este projeto está conectado via Junção NTFS. Desvincular irá apenas desconectar o projeto do AI Second Brain. <strong>Nenhum arquivo ou linha de código da sua pasta original será apagado.</strong>' 
-                    : 'Este projeto foi criado na pasta local do Segundo Cérebro. Desvincular irá movê-lo com segurança para a lixeira (.trash/).'}
+                ${d.isJunction
+            ? 'Este projeto está conectado via Junção NTFS. Desvincular irá apenas desconectar o projeto do AI Second Brain. <strong>Nenhum arquivo ou linha de código da sua pasta original será apagado.</strong>'
+            : 'Este projeto foi criado na pasta local do Segundo Cérebro. Desvincular irá movê-lo com segurança para a lixeira (.trash/).'}
             </p>
             <div class="pw-action-box" style="border-color: rgba(239, 68, 68, 0.3);">
                 <div class="pw-action-info">
@@ -6288,8 +6637,8 @@ function switchEditorTab(tab) {
             preview.style.display = 'block';
             preview.scrollTop = 0;
             const val = textarea ? textarea.value : '';
-            const html = window.VAULT && window.VAULT.renderMarkdown 
-                ? window.VAULT.renderMarkdown(val, activeEditingPath) 
+            const html = window.VAULT && window.VAULT.renderMarkdown
+                ? window.VAULT.renderMarkdown(val, activeEditingPath)
                 : `<pre>${val.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
             preview.innerHTML = `<div class="doc-preview-inner">${html}</div>`;
         }
@@ -6780,7 +7129,7 @@ async function startResearchExecution(slug) {
     if (!currentProject || !slug) return;
     const research = (currentResearchesList || []).find(r => r.slug === slug);
     const topic = research ? (research.topic || research.meta?.topic || slug) : slug;
-    
+
     // Melhoria 3: Ativa estado gerando no card de fundo
     const card = document.getElementById(`card-research-${slug}`);
     if (card) {
@@ -6791,7 +7140,7 @@ async function startResearchExecution(slug) {
             badge.innerHTML = `<span class="rl-pulse-dot"></span> ⚡ Sintetizando...`;
         }
     }
-    
+
     await startLiveResearchFromModal(slug, topic);
 }
 
@@ -7276,9 +7625,9 @@ async function openDecomposeModal(slug) {
 function formatTitleFromFilename(fn) {
     if (!fn) return '';
     return fn.replace(/^\d+-/, '')
-             .replace(/\.md$/, '')
-             .replace(/-/g, ' ')
-             .replace(/\b\w/g, l => l.toUpperCase());
+        .replace(/\.md$/, '')
+        .replace(/-/g, ' ')
+        .replace(/\b\w/g, l => l.toUpperCase());
 }
 
 /**
@@ -7358,11 +7707,11 @@ function renderDecomposeModalContent(research) {
 
             <div class="rl-subtopic-list">
                 ${allItems.map(item => {
-                    const fullRelPath = `projects/${currentProject}/RESEARCH/${slug}/${item.path}`;
-                    const layerTooltip = item.layer === 'actionable'
-                        ? '🛠️ Actionable — Especificação prática e código adaptado à stack'
-                        : '📘 Knowledge — Conhecimento teórico e conceitual';
-                    return `
+            const fullRelPath = `projects/${currentProject}/RESEARCH/${slug}/${item.path}`;
+            const layerTooltip = item.layer === 'actionable'
+                ? '🛠️ Actionable — Especificação prática e código adaptado à stack'
+                : '📘 Knowledge — Conhecimento teórico e conceitual';
+            return `
                         <div class="rl-subtopic-item live-doc-card">
                             <div class="rl-subtopic-top">
                                 <div style="display:flex; align-items:flex-start; gap:10px; min-width:0; flex:1;">
@@ -7384,7 +7733,7 @@ function renderDecomposeModalContent(research) {
                             <div class="rl-subtopic-desc" style="margin-top:6px;">${escapeHtml(item.description || 'Documento catalogado pela pesquisa autônoma.')}</div>
                         </div>
                     `;
-                }).join('')}
+        }).join('')}
             </div>
         `;
         return;
@@ -7417,10 +7766,10 @@ function renderDecomposeModalContent(research) {
             </div>
             <div class="rl-subtopic-list">
                 ${subtopics.map(st => {
-                    const layerTooltip = st.layer === 'actionable'
-                        ? '🛠️ Actionable — Especificação prática e código adaptado à stack'
-                        : '📘 Knowledge — Conhecimento teórico e conceitual';
-                    return `
+            const layerTooltip = st.layer === 'actionable'
+                ? '🛠️ Actionable — Especificação prática e código adaptado à stack'
+                : '📘 Knowledge — Conhecimento teórico e conceitual';
+            return `
                         <div class="rl-subtopic-item">
                             <div class="rl-subtopic-top">
                                 <div style="display:flex; align-items:flex-start; gap:10px; min-width:0; flex:1;">
@@ -7435,7 +7784,7 @@ function renderDecomposeModalContent(research) {
                             <div class="rl-subtopic-desc" style="margin-top:6px;">${escapeHtml(st.description || st.goal || '')}</div>
                         </div>
                     `;
-                }).join('')}
+        }).join('')}
             </div>
         `;
         return;
@@ -7766,7 +8115,7 @@ async function finalizeLiveResearch(slug, topic, data) {
                 currentResearchesList = rData.researches || [];
                 renderProjectResearchTab();
             }
-        } catch(e) {}
+        } catch (e) { }
     }
 }
 
@@ -7783,7 +8132,7 @@ async function refreshAndRenderDecomposeModal(slug) {
                 renderDecomposeModalContent(updated);
             }
         }
-    } catch(e) {}
+    } catch (e) { }
 }
 
 let currentProposedSubtopics = null;
@@ -7844,10 +8193,10 @@ async function forceReDecompose(slug, topic, definition) {
             </div>
             <div class="rl-subtopic-list">
                 ${subtopics.map(st => {
-                    const layerTooltip = st.layer === 'actionable'
-                        ? '🛠️ Actionable — Especificação prática e código adaptado à stack'
-                        : '📘 Knowledge — Conhecimento teórico e conceitual';
-                    return `
+            const layerTooltip = st.layer === 'actionable'
+                ? '🛠️ Actionable — Especificação prática e código adaptado à stack'
+                : '📘 Knowledge — Conhecimento teórico e conceitual';
+            return `
                         <div class="rl-subtopic-item">
                             <div class="rl-subtopic-top">
                                 <div style="display:flex; align-items:flex-start; gap:10px; min-width:0; flex:1;">
@@ -7862,7 +8211,7 @@ async function forceReDecompose(slug, topic, definition) {
                             <div class="rl-subtopic-desc" style="margin-top:6px;">${escapeHtml(st.description || st.goal || '')}</div>
                         </div>
                     `;
-                }).join('')}
+        }).join('')}
             </div>
         `;
     } catch (err) {
@@ -7887,7 +8236,7 @@ async function applyProposedSubtopics(slug, topic) {
             body: JSON.stringify({ subtopics: currentProposedSubtopics })
         });
         if (!res.ok) throw new Error('Falha ao salvar novos subtópicos.');
-        
+
         showSecondBrainToast('✅ Nova estrutura de subtópicos salva no contrato da pesquisa!');
 
         // Atualiza a lista em memória
@@ -8281,8 +8630,8 @@ function populateAiModelSelect(modelList, selectedModelId) {
             id = m.id || m.name || m.value || '';
             const name = m.name || m.label || m.displayName || m.display_name || id;
             const ctx = m.contextWindow ? ` — ${Math.round(m.contextWindow / 1024)}k contexto` : '';
-            label = (name && name !== id && !name.includes(id)) 
-                ? `${name} (${id})${ctx}` 
+            label = (name && name !== id && !name.includes(id))
+                ? `${name} (${id})${ctx}`
                 : `${id}${ctx}`;
         }
         if (!id) return;
@@ -8329,7 +8678,7 @@ async function openAiSettingsModal() {
         if (res.ok) {
             window.AI_GATEWAY_CONFIG = await res.json();
         }
-    } catch (e) {}
+    } catch (e) { }
 
     const cfg = window.AI_GATEWAY_CONFIG || { provider: 'groq' };
 
@@ -8398,8 +8747,8 @@ async function openAiSettingsModal() {
     // Sincroniza Parâmetros de Execução com a configuração real do .env
     const cacheInput = document.getElementById('aiCacheHoursInput');
     if (cacheInput) {
-        const hours = (cfg.cacheHours !== undefined && cfg.cacheHours !== null && !isNaN(cfg.cacheHours)) 
-            ? cfg.cacheHours 
+        const hours = (cfg.cacheHours !== undefined && cfg.cacheHours !== null && !isNaN(cfg.cacheHours))
+            ? cfg.cacheHours
             : 24;
         cacheInput.value = `${hours}h`;
         cacheInput.closest('.ai-param-detail-input-wrap')?.classList.remove('input-error');
@@ -8407,8 +8756,8 @@ async function openAiSettingsModal() {
 
     const retriesInput = document.getElementById('aiMaxRetriesInput');
     if (retriesInput) {
-        const retries = (cfg.maxRetries !== undefined && cfg.maxRetries !== null && !isNaN(cfg.maxRetries)) 
-            ? cfg.maxRetries 
+        const retries = (cfg.maxRetries !== undefined && cfg.maxRetries !== null && !isNaN(cfg.maxRetries))
+            ? cfg.maxRetries
             : 2;
         retriesInput.value = retries;
         retriesInput.closest('.ai-param-detail-input-wrap')?.classList.remove('input-error');
@@ -9472,14 +9821,14 @@ function saveAskBrainRecent(query) {
     if (recents.length > 5) recents = recents.slice(0, 5);
     try {
         sessionStorage.setItem(ASK_BRAIN_RECENTS_KEY, JSON.stringify(recents));
-    } catch (e) {}
+    } catch (e) { }
     renderAskBrainRecents();
 }
 
 function clearAskBrainRecents() {
     try {
         sessionStorage.removeItem(ASK_BRAIN_RECENTS_KEY);
-    } catch (e) {}
+    } catch (e) { }
     renderAskBrainRecents();
 }
 
@@ -9521,7 +9870,7 @@ function openAskBrainModal(initialQuery = '') {
     const scopeSelect = document.getElementById('askBrainScopeSelect');
     if (scopeSelect && scopeSelect.options.length <= 1) {
         const files = (window.VAULT && window.VAULT.data && window.VAULT.data.files) ||
-                      (window.VAULT_SNAPSHOT && window.VAULT_SNAPSHOT.files) || [];
+            (window.VAULT_SNAPSHOT && window.VAULT_SNAPSHOT.files) || [];
         const projectFolders = new Set();
         files.forEach(f => {
             const p = (f.path || '').replace(/\\/g, '/');

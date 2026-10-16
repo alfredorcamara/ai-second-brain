@@ -22,6 +22,124 @@ function sanitizeProjectName(rawName) {
     return rawName.trim().replace(/[^a-zA-Z0-9_\-]/g, '-');
 }
 
+function formatGrillCategory(cat) {
+    if (!cat || typeof cat !== 'string') return 'Decisão';
+    const raw = cat.trim();
+    if (!raw) return 'Decisão';
+
+    // Normaliza para análise semântica: sem acentos, maiúsculo
+    const clean = raw
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toUpperCase();
+
+    const hasWord = (w) => new RegExp(`(^|[^A-Z0-9])${w}([^A-Z0-9]|$)`).test(clean);
+
+    // 1. Detecção Semântica por Domínio de Arquitetura (cobre variações dinâmicas de IA)
+    // Arquitetura e Protocolos (deve vir antes de UI para não casar 'UI' em 'ARQUITETURA')
+    if (clean.includes('ARQUITET') || clean.includes('ESTILO') || clean.includes('MICROSSERV') || hasWord('API') || hasWord('REST') || hasWord('GRAPHQL') || hasWord('GRPC')) return 'Arquitetura';
+    if (clean.includes('ERRO') || clean.includes('RESILIEN') || clean.includes('FALLBACK') || clean.includes('CIRCUIT')) return 'Resiliência';
+    if (clean.includes('LOG') || clean.includes('METRIC') || clean.includes('OBSERV') || clean.includes('TELEMETR') || clean.includes('MONITOR')) return 'Logs & Métricas';
+    if (clean.includes('CACHE') || clean.includes('PERF') || clean.includes('LATEN') || clean.includes('ESCALAB')) return 'Cache & Perf';
+    if (clean.includes('BANCO') || clean.includes('DADO') || clean.includes('PERSIST') || clean.includes('SQL') || clean.includes('STORAGE') || clean.includes('ORM')) return 'Persistência';
+    if (clean.includes('AUTENTIC') || clean.includes('AUTORIZ') || clean.includes('LOGIN') || clean.includes('TOKEN') || hasWord('AUTH') || hasWord('JWT') || clean.includes('PERMISS')) return 'Autenticação';
+    if (clean.includes('SEGURAN') || clean.includes('SECURITY') || clean.includes('CRIPTO') || clean.includes('VAULT')) return 'Segurança';
+    if (clean.includes('FILA') || clean.includes('MENSAG') || clean.includes('QUEUE') || clean.includes('EVENT') || clean.includes('STREAM') || clean.includes('KAFKA') || clean.includes('RABBIT')) return 'Mensageria';
+    if (clean.includes('TEST') || clean.includes('QUALID') || hasWord('QA') || clean.includes('MOCK') || clean.includes('COVERAGE')) return 'Testes & QA';
+    if (clean.includes('DEPLOY') || clean.includes('CI/CD') || clean.includes('CI-CD') || clean.includes('DOCKER') || clean.includes('CONTAINER') || clean.includes('KUBERNET') || clean.includes('INFRA') || clean.includes('DEVOPS')) return 'Deploy & CI/CD';
+    if (clean.includes('FRONTEND') || clean.includes('FRONT-END') || clean.includes('FRONT') || clean.includes('LAYOUT') || clean.includes('INTERFACE') || clean.includes('MOBILE') || hasWord('UI') || hasWord('UX') || hasWord('TELA')) return 'Frontend / UI';
+    if (clean.includes('INTEGRA') || clean.includes('WEBHOOK') || clean.includes('TERCEIR') || clean.includes('PAGAMENT') || clean.includes('GATEWAY')) return 'Integrações';
+    if (clean.includes('DOMIN') || clean.includes('PROPOS') || clean.includes('ESCOPO') || clean.includes('NEGOCIO') || clean.includes('MVP') || clean.includes('OBJETIV')) return 'Domínio & Foco';
+
+    // 2. Se já for uma palavra curta (<= 14 chars), formata em Title Case suave
+    if (raw.length <= 14) {
+        return raw.charAt(0).toUpperCase() + raw.slice(1);
+    }
+
+    // 3. Fallback inteligente para termos desconhecidos: divide por separadores
+    const words = raw.split(/[\s&/+\-]+/).filter(w => w.length > 2 && !['para', 'com', 'dos', 'das', 'uma', 'seu', 'sua', 'the', 'and', 'for'].includes(w.toLowerCase()));
+    if (words.length > 0) {
+        const first = words[0];
+        if (first.length <= 14) {
+            return first.charAt(0).toUpperCase() + first.slice(1).toLowerCase();
+        }
+        return first.slice(0, 12) + '...';
+    }
+
+    return raw.slice(0, 12) + '...';
+}
+
+function normalizeQuestionItem(item, fallbackIndex) {
+    if (!item) return null;
+
+    if (typeof item === 'string') {
+        const text = item.trim();
+        if (!text) return null;
+        return {
+            id: `q${fallbackIndex}`,
+            category: 'Decisão',
+            question: text,
+            options: ['Padrão da Stack', 'Customizado', 'Não aplicável no MVP'],
+            placeholder: 'Descreva sua decisão...'
+        };
+    }
+
+    if (typeof item !== 'object') return null;
+
+    // Detect question text from all possible property names
+    const question = String(
+        item.question ||
+        item.pergunta ||
+        item.title ||
+        item.titulo ||
+        item.text ||
+        item.texto ||
+        item.prompt ||
+        item.enunciado ||
+        ''
+    ).trim();
+
+    if (!question || question.length < 3) return null;
+
+    const rawCategory = String(
+        item.category ||
+        item.categoria ||
+        item.area ||
+        item.topic ||
+        item.topico ||
+        'Decisão'
+    ).trim();
+
+    const category = formatGrillCategory(rawCategory);
+
+    let rawOpts = item.options || item.opcoes || item.alternativas || item.choices || [];
+    if (typeof rawOpts === 'string') {
+        rawOpts = rawOpts.split(',').map(s => s.trim()).filter(Boolean);
+    }
+    const options = Array.isArray(rawOpts) && rawOpts.length > 0
+        ? rawOpts.map(o => String(o).trim()).filter(Boolean)
+        : ['Padrão da Stack', 'Customizado', 'Não aplicável no MVP'];
+
+    const placeholder = String(
+        item.placeholder ||
+        item.exemplo ||
+        item.hint ||
+        item.dica ||
+        'Ex: Descreva a abordagem técnica desejada'
+    ).trim();
+
+    // Garante que o ID siga estritamente o índice sequencial global para evitar colisões
+    const id = `q${fallbackIndex}`;
+
+    return {
+        id,
+        category,
+        question,
+        options,
+        placeholder: placeholder || 'Ex: Descreva a abordagem técnica desejada'
+    };
+}
+
 /**
  * Formula de 3 a 4 perguntas dinâmicas e cirúrgicas para a sabatina técnica.
  * Suporta também rodadas adicionais complementares se existingQuestions for fornecido.
@@ -48,10 +166,10 @@ async function generateQuestions(aiGateway, projectInfo) {
     if (isComplementary) {
         systemPrompt = `Você é um Arquiteto de Software Sênior e Especialista em Governança do AI Second Brain.
 O projeto "${safeName}" (Stack: "${stack}") já possui as seguintes perguntas de sabatina técnica:
-${existing.map((eq, i) => `${i + 1}. [${eq.category || 'Requisitos'}] ${eq.question}`).join('\n')}
+${existing.map((eq, i) => `${i + 1}. [${eq.category || 'Requisitos'}] ${eq.question || eq.pergunta || ''}`).join('\n')}
 
 SUA MISSÃO:
-Formule EXATAMENTE mais 3 a 4 perguntas COMPLEMENTARES que AINDA NÃO FORAM ABORDADAS.
+Formule EXATAMENTE mais 4 perguntas COMPLEMENTARES que AINDA NÃO FORAM ABORDADAS.
 Foque em aprofundar temas essenciais ainda em aberto, tais como:
 - Performance & Cache (Redis, CDN, in-memory)
 - Observabilidade & Logs estruturados (Winston, Pino, OpenTelemetry)
@@ -59,14 +177,29 @@ Foque em aprofundar temas essenciais ainda em aberto, tais como:
 - CI/CD, Containerização e Deploy (Docker, GitHub Actions)
 - Validação de Dados & Regras de Negócio (Zod, DTOs, Rich Domain)
 
-DIRETRIZES:
+DIRETRIZES OBRIGATÓRIAS:
 1. Adapte as perguntas especificamente para a stack (${stack}).
-2. Para cada pergunta, forneça de 3 a 4 opções curtas recomendadas (chips clicáveis) e um placeholder descritivo para resposta livre.
-3. Numere os IDs como: "q${startIndex}", "q${startIndex + 1}", etc.
-4. Idioma: Português do Brasil.
-5. Responda ESTRITAMENTE em formato JSON válido, sem texto explicativo e sem cercas de markdown.`;
+2. Cada pergunta DEVE conter um texto claro e direto no campo "question". NUNCA deixe a pergunta vazia ou sem texto.
+3. Para cada pergunta, forneça de 3 a 4 opções curtas recomendadas (chips clicáveis) e um placeholder descritivo para resposta livre.
+4. Numere os IDs sequencialmente como: "q${startIndex}", "q${startIndex + 1}", "q${startIndex + 2}", etc.
+5. Idioma: Português do Brasil.
+6. Mantenha ESTRITAMENTE os nomes das propriedades em inglês: "questions", "id", "category", "question", "options", "placeholder".
+7. Responda ESTRITAMENTE em formato JSON válido, sem texto explicativo e sem cercas de markdown.
 
-        userPrompt = `Gere 3 a 4 perguntas complementares e avançadas para aprofundar a sabatina do projeto "${safeName}".`;
+FORMATO DE RESPOSTA (JSON):
+{
+  "questions": [
+    {
+      "id": "q${startIndex}",
+      "category": "Performance & Cache",
+      "question": "Qual será a estratégia de cache e otimização de latência?",
+      "options": ["Redis Distribuído", "Cache em Memória Local", "CDN / Edge Cache", "Sem cache inicial"],
+      "placeholder": "Ex: Redis para sessões e consultas frequentes"
+    }
+  ]
+}`;
+
+        userPrompt = `Gere exatamente 4 perguntas adicionais com os IDs iniciando em "q${startIndex}" para aprofundar a sabatina do projeto "${safeName}".`;
     } else {
         systemPrompt = `Você é um Arquiteto de Software Sênior e Especialista em Governança do AI Second Brain.
 O desenvolvedor está criando um novo projeto:
@@ -78,9 +211,23 @@ SUA MISSÃO:
 Conduzir a Sabatina Técnica (Grill) inicial para este projeto.
 Formule exatamente 3 a 4 perguntas cirúrgicas, práticas e decisivas para eliminar pontos cegos e ambiguidades antes de gerar os contratos de governança.
 
-DIRETRIZES:
-1. Adapte as perguntas especificamente para a stack (${stack}) e para o objetivo (${description}).
-2. Exemplo: se for API/SaaS, pergunte sobre persistência, estilo de API e autenticação. Se for frontend/mobile, pergunte sobre gerenciamento de estado, consumo de API e offline-first. Se for CLI/automacao, pergunte sobre persistência e saída.
+DIRETRIZES OBRIGATÓRIAS:
+1. ALINHAMENTO DE DOMÍNIO DE NEGÓCIO & AMBIGUIDADE (CRÍTICO):
+   - Avalie o nome "${safeName}" e a descrição "${description}".
+   - Se a descrição for inexistente/vaga OU se o nome parecer abstrato, metafórico, temático ou codinome (ex: alimentos como "bolo-de-banana", doces, animais, palavras cotidianas ou termos genéricos), a PRIMEIRA PERGUNTA ("q1") DEVE SER OBRIGATORIAMENTE de ALINHAMENTO DE DOMÍNIO & PROPÓSITO DO SOFTWARE.
+   - Categoria de q1: "Domínio & Propósito".
+   - A pergunta q1 deve esclarecer diretamente o que o software faz no mundo real, sem assumir premissas infundadas nem bloquear o usuário.
+     Exemplo para "bolo-de-banana": "Qual é o domínio ou objetivo principal do software '${safeName}'?"
+     Opções inteligentes sugeridas cobrindo tanto o sentido temático quanto técnico:
+     - "App / Site de Culinária ou Catálogo de Receitas"
+     - "E-commerce / PDV / Gestão de Confeitaria"
+     - "Codinome para microsserviço / API interna"
+     - "Ferramenta / Dashboard de uso interno"
+2. PERGUNTAS TÉCNICAS COMPLEMENTARES:
+   - Formule as perguntas subsequentes ("q2", "q3", etc.) adaptadas à stack (${stack}), cobrindo:
+     - Persistência e dados (ex: PostgreSQL, SQLite, NoSQL, Stateless);
+     - Arquitetura e comunicação (ex: REST, GraphQL, Clean Arch, EDA);
+     - Autenticação e escopo do MVP.
 3. Para cada pergunta, forneça de 3 a 4 opções curtas recomendadas (chips clicáveis) e um placeholder descritivo para resposta livre.
 4. Numere os IDs como: "q1", "q2", "q3", etc.
 5. Idioma: Português do Brasil.
@@ -91,91 +238,122 @@ FORMATO DE RESPOSTA (JSON):
   "questions": [
     {
       "id": "q1",
-      "category": "Dados & Persistência",
-      "question": "Qual a estratégia principal de banco de dados e persistência?",
-      "options": ["PostgreSQL (Relacional)", "MongoDB (Documentos)", "Redis / Em Memória", "Sem banco / Stateless"],
-      "placeholder": "Ex: PostgreSQL com Prisma ORM"
+      "category": "Domínio & Propósito",
+      "question": "Qual é a finalidade principal e domínio de negócio deste software?",
+      "options": ["Opção contextualizada A", "Opção B", "Opção C", "Outro / Específico"],
+      "placeholder": "Ex: Descreva o objetivo em 1 frase"
     }
   ]
 }`;
         userPrompt = `Gere as perguntas de sabatina técnica para o projeto "${safeName}" (Stack: ${stack}). Descrição: "${description || 'Nova aplicação'}".`;
     }
 
-    const result = await aiGateway.chatCompletion([
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt }
-    ], { temperature: 0.3, maxTokens: 1500 });
-
+    let result = { model: 'deterministic-fallback', provider: 'local' };
     let parsed;
     try {
+        result = await aiGateway.chatCompletion([
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt }
+        ], { temperature: 0.3, maxTokens: 1500 });
         parsed = aiGateway.parseJsonLoose(result.content);
     } catch (e) {
-        // Fallback estruturado determinístico se o LLM responder fora do padrão
-        if (isComplementary) {
-            parsed = {
-                questions: [
-                    {
-                        id: `q${startIndex}`,
-                        category: 'Performance & Cache',
-                        question: 'Qual será a estratégia de cache e otimização de latência?',
-                        options: ['Redis Distribuído', 'Cache em Memória Local', 'CDN / Edge Cache', 'Sem cache inicial'],
-                        placeholder: 'Ex: Redis para sessões e consultas frequentes'
-                    },
-                    {
-                        id: `q${startIndex + 1}`,
-                        category: 'Observabilidade & Logs',
-                        question: 'Como serão estruturados os logs e métricas de diagnóstico?',
-                        options: ['Logs estruturados JSON (Pino/Winston)', 'OpenTelemetry + Grafana', 'Sentry (Error Tracking)', 'Console simples'],
-                        placeholder: 'Ex: Pino com logs JSON estruturados'
-                    },
-                    {
-                        id: `q${startIndex + 2}`,
-                        category: 'CI/CD & Containers',
-                        question: 'Qual o ambiente de execução e pipeline de entrega contínua?',
-                        options: ['Docker + GitHub Actions', 'Kubernetes / Helm', 'Serverless / Lambdas', 'Deploy direto na VM'],
-                        placeholder: 'Ex: Dockerfile multi-stage com GitHub Actions'
-                    },
-                    {
-                        id: `q${startIndex + 3}`,
-                        category: 'Resiliência & Falhas',
-                        question: 'Como a aplicação lidará com falhas de dependências externas?',
-                        options: ['Retries com Exponential Backoff', 'Circuit Breaker', 'Dead Letter Queue', 'Fail fast com erro 500'],
-                        placeholder: 'Ex: Retries com backoff exponencial'
-                    }
-                ]
-            };
-        } else {
-            parsed = {
-                questions: [
-                    {
-                        id: 'q1',
-                        category: 'Dados & Persistência',
-                        question: 'Qual a estratégia principal de banco de dados e persistência?',
-                        options: ['PostgreSQL', 'MySQL', 'MongoDB', 'SQLite / Local'],
-                        placeholder: 'Ex: PostgreSQL com migrations'
-                    },
-                    {
-                        id: 'q2',
-                        category: 'Arquitetura & API',
-                        question: 'Qual estilo de comunicação e arquitetura será adotado?',
-                        options: ['REST / OpenAPI', 'Modular Monolith', 'Clean Architecture', 'Event-Driven'],
-                        placeholder: 'Ex: Clean Architecture com REST'
-                    },
-                    {
-                        id: 'q3',
-                        category: 'Segurança & Escopo',
-                        question: 'Qual o modelo de autenticação e escopo inicial do MVP?',
-                        options: ['JWT Token', 'API Key', 'OAuth2', 'Apenas escopo interno'],
-                        placeholder: 'Ex: Autenticação via JWT'
-                    }
-                ]
-            };
-        }
+        parsed = null;
     }
 
-    const questions = Array.isArray(parsed.questions) && parsed.questions.length > 0
-        ? parsed.questions
-        : [];
+    // Extrai lista crua independente da estrutura retornada pelo LLM
+    let rawList = [];
+    if (Array.isArray(parsed)) {
+        rawList = parsed;
+    } else if (parsed && typeof parsed === 'object') {
+        rawList = parsed.questions || parsed.perguntas || parsed.questions_list || parsed.items || parsed.data || [];
+    }
+
+    let questions = rawList
+        .map((item, idx) => normalizeQuestionItem(item, startIndex + idx))
+        .filter(q => q && q.question && q.question.trim().length > 3);
+
+    // Se a IA não retornou perguntas válidas ou falhou na conexão, aciona o fallback determinístico rico
+    if (questions.length === 0) {
+        if (isComplementary) {
+            questions = [
+                {
+                    id: `q${startIndex}`,
+                    category: 'Cache & Perf',
+                    question: 'Qual será a estratégia de cache e otimização de latência?',
+                    options: ['Redis Distribuído', 'Cache em Memória Local', 'CDN / Edge Cache', 'Sem cache inicial'],
+                    placeholder: 'Ex: Redis para sessões e consultas frequentes'
+                },
+                {
+                    id: `q${startIndex + 1}`,
+                    category: 'Logs & Métricas',
+                    question: 'Como serão estruturados os logs e métricas de diagnóstico?',
+                    options: ['Logs estruturados JSON (Pino/Winston)', 'OpenTelemetry + Grafana', 'Sentry (Error Tracking)', 'Console simples'],
+                    placeholder: 'Ex: Pino com logs JSON estruturados'
+                },
+                {
+                    id: `q${startIndex + 2}`,
+                    category: 'Deploy & CI/CD',
+                    question: 'Qual o ambiente de execução e pipeline de entrega contínua?',
+                    options: ['Docker + GitHub Actions', 'Kubernetes / Helm', 'Serverless / Lambdas', 'Deploy direto na VM'],
+                    placeholder: 'Ex: Dockerfile multi-stage com GitHub Actions'
+                },
+                {
+                    id: `q${startIndex + 3}`,
+                    category: 'Resiliência',
+                    question: 'Como a aplicação lidará com falhas de dependências externas?',
+                    options: ['Retries com Exponential Backoff', 'Circuit Breaker', 'Dead Letter Queue', 'Fail fast com erro 500'],
+                    placeholder: 'Ex: Retries com backoff exponencial'
+                }
+            ];
+        } else {
+            const hasShortDesc = !description || description.trim().length < 6;
+            questions = hasShortDesc ? [
+                {
+                    id: 'q1',
+                    category: 'Domínio & Foco',
+                    question: `Qual é o domínio de negócio ou propósito principal de "${safeName}"?`,
+                    options: ['Web App / Portal Institucional', 'App Mobile / PWA', 'API / Microsserviço de Backend', 'Ferramenta CLI / Automação'],
+                    placeholder: 'Ex: Catálogo digital, e-commerce ou codinome de API'
+                },
+                {
+                    id: 'q2',
+                    category: 'Persistência',
+                    question: 'Qual a estratégia principal de banco de dados e persistência?',
+                    options: ['PostgreSQL', 'MySQL', 'MongoDB', 'SQLite / Local'],
+                    placeholder: 'Ex: PostgreSQL com migrations'
+                },
+                {
+                    id: 'q3',
+                    category: 'Arquitetura',
+                    question: 'Qual estilo de comunicação e arquitetura será adotado?',
+                    options: ['REST / OpenAPI', 'Modular Monolith', 'Clean Architecture', 'Event-Driven'],
+                    placeholder: 'Ex: Clean Architecture com REST'
+                }
+            ] : [
+                {
+                    id: 'q1',
+                    category: 'Persistência',
+                    question: 'Qual a estratégia principal de banco de dados e persistência?',
+                    options: ['PostgreSQL', 'MySQL', 'MongoDB', 'SQLite / Local'],
+                    placeholder: 'Ex: PostgreSQL com migrations'
+                },
+                {
+                    id: 'q2',
+                    category: 'Arquitetura',
+                    question: 'Qual estilo de comunicação e arquitetura será adotado?',
+                    options: ['REST / OpenAPI', 'Modular Monolith', 'Clean Architecture', 'Event-Driven'],
+                    placeholder: 'Ex: Clean Architecture com REST'
+                },
+                {
+                    id: 'q3',
+                    category: 'Segurança & MVP',
+                    question: 'Qual o modelo de autenticação e escopo inicial do MVP?',
+                    options: ['JWT Token', 'API Key', 'OAuth2', 'Apenas escopo interno'],
+                    placeholder: 'Ex: Autenticação via JWT'
+                }
+            ];
+        }
+    }
 
     return {
         questions,
@@ -213,7 +391,7 @@ ${formattedQA || 'Nenhuma resposta adicional informada.'}
 
 REGRAS ABSOLUTAS:
 1. Prioridade Determinística: favoreça soluções simples, sólidas e sem sobre-engenharia.
-2. Zero Fabricação / Alucinação: ancore o conteúdo estritamente na stack informada, na descrição e nas respostas da sabatina. Não invente integrações ou dependências desnecessárias.
+2. Zero Fabricação / Alucinação: ancore o conteúdo estritamente na stack informada, na descrição e nas respostas da sabatina (especialmente no domínio de negócio esclarecido pelo desenvolvedor). Não invente integrações ou dependências desnecessárias.
 3. Idioma: Português do Brasil. Tom técnico, profissional e direto.
 4. Responda ESTRITAMENTE com um objeto JSON contendo o Markdown completo de cada contrato.
 
@@ -247,10 +425,10 @@ FORMATO DE RESPOSTA (JSON):
 
     return {
         contracts: {
-            projectMd: String(parsed.projectMd || '').trim(),
-            architectureMd: String(parsed.architectureMd || '').trim(),
-            currentStateMd: String(parsed.currentStateMd || '').trim(),
-            adrMd: String(parsed.adrMd || '').trim()
+            projectMd: String(parsed.projectMd || parsed['PROJECT.md'] || parsed['project.md'] || parsed['project_md'] || parsed.project || '').trim(),
+            architectureMd: String(parsed.architectureMd || parsed['ARCHITECTURE.md'] || parsed['architecture.md'] || parsed['architecture_md'] || parsed.architecture || '').trim(),
+            currentStateMd: String(parsed.currentStateMd || parsed['CURRENT_STATE.md'] || parsed['current_state.md'] || parsed['current_state'] || parsed.currentState || '').trim(),
+            adrMd: String(parsed.adrMd || parsed['ADR-0001'] || parsed['ADR-0001.md'] || parsed['adr.md'] || parsed['adr_md'] || parsed.adr || '').trim()
         },
         model: result.model,
         provider: result.provider
@@ -317,10 +495,10 @@ Responda ESTRITAMENTE em formato JSON:
 
     return {
         contracts: {
-            projectMd: String(parsed.projectMd || currentContracts.projectMd || '').trim(),
-            architectureMd: String(parsed.architectureMd || currentContracts.architectureMd || '').trim(),
-            currentStateMd: String(parsed.currentStateMd || currentContracts.currentStateMd || '').trim(),
-            adrMd: String(parsed.adrMd || currentContracts.adrMd || '').trim()
+            projectMd: String(parsed.projectMd || parsed['PROJECT.md'] || parsed['project.md'] || currentContracts.projectMd || '').trim(),
+            architectureMd: String(parsed.architectureMd || parsed['ARCHITECTURE.md'] || parsed['architecture.md'] || currentContracts.architectureMd || '').trim(),
+            currentStateMd: String(parsed.currentStateMd || parsed['CURRENT_STATE.md'] || parsed['current_state.md'] || currentContracts.currentStateMd || '').trim(),
+            adrMd: String(parsed.adrMd || parsed['ADR-0001'] || parsed['ADR-0001.md'] || currentContracts.adrMd || '').trim()
         },
         model: result.model,
         provider: result.provider
@@ -502,7 +680,7 @@ Thumbs.db
             try {
                 execSync('git init', { cwd: targetFolder, timeout: 5000, stdio: 'ignore' });
                 gitInitialized = true;
-            } catch (__) {}
+            } catch (__) { }
         }
     }
 
@@ -644,6 +822,7 @@ Responda ESTRITAMENTE em formato JSON:
 
 module.exports = {
     sanitizeProjectName,
+    formatGrillCategory,
     generateQuestions,
     generateDraft,
     refineDraft,
