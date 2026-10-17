@@ -86,3 +86,7 @@ var result = await _decisionProvider.DecideAsync(request, ct);
 
 > 💡 **Implementação Local Garantida**: Enquanto a API remota do aijev.org opera com solicitação de acesso privada, o AI Second Brain opera 100% desacoplado através do `RulesDecisionProvider` nativo em `scripts/decision-provider.js`, garantindo autonomia total.
 
+## 📖 Guia de Implementação e FAQ para Desenvolvedores
+Para um guia completo sobre como a IA da sua IDE (Claude Code, Cursor, Antigravity) observa essas regras e o passo a passo com código para implementar no seu projeto, consulte:
+- [Guia Técnico & FAQ de Engenharia: AI Decision Gate & Motor JEV](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/GUIA_TECNICO_AI_DECISION_GATE_JEV.md)
+
