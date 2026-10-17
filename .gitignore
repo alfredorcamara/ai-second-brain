@@ -49,5 +49,6 @@ yarn-error.log*
 # Temporary & Cache files
 *.tmp
 *.temp
+*.bak
 .cache/
 .trash/

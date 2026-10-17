@@ -10,6 +10,9 @@
     {
       id: 'memoria-persistente',
       color: '#38bdf8',
+      hasHeaderVideo: true,
+      headerVideoSrc: 'assets/video/synapse-modal.mp4',
+      headerVideoPoster: 'assets/video/synapse-poster.jpg',
       iconHtml: '<svg viewBox="20 20 80 80" width="46" height="46" class="hero-brain-svg"><defs><filter id="hbglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g filter="url(#hbglow)" stroke="#38bdf8" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M63.2 26.4 C59.1 23.3 53.8 24.4 51.1 27.9 C45.9 26.5 40.9 29.8 40.2 34.3 C35.2 35.7 32.9 40.1 34.4 44.1 C29.5 47.1 28.2 52.6 30.8 56.8 C28.5 62.1 31.1 68.1 36.4 69.8 C39.4 74.5 45.2 75.4 50.1 73.5 C52.2 78.4 57.8 80.5 63.5 79.4 C66.8 82.4 70.6 85.4 70.5 91.1 L76.8 91.1 L76.5 85.8 C76.4 83.2 75.5 81.2 73.5 78.9 C81.2 79.3 86.6 74.2 87.1 68.4 C92.4 65.5 93.4 59.2 90.1 54.6 C91.7 49.4 89.1 44.4 85.2 42.4 C85.4 36.9 81.2 32.9 76.2 33.3 C74.4 28.7 69.6 26.5 64.9 28.2 C64.4 27.5 63.8 26.9 63.2 26.4 Z"/><path d="M51.1 27.9 C52.7 30.2 52.6 32.4 51.2 35.2 C49.7 38.1 50.4 41.3 53.3 43.2"/><path d="M40.2 34.3 C43.2 35.8 44.4 38.1 43.2 41.2 C42.1 44.2 44.3 46.2 47.3 46.4"/><path d="M34.4 44.1 C37.6 43.5 39.2 45.2 39.6 48.1 C40 51.1 42.1 52.3 44.6 52.3"/><path d="M30.8 56.8 C34.3 54.8 36.3 56.1 38.6 58.4 L38.3 63.1"/><path d="M47.3 46.4 C49.4 48.1 49.4 51.1 48.2 53.3 C46.8 55.7 47.3 59.2 50.2 60.4"/><path d="M53.3 43.2 C57.2 40.4 61.3 41.7 63.7 45.3 C66.2 49 64.5 52.3 61.7 54.1"/><path d="M64.9 28.2 C67.1 31.2 66.7 34.6 64.8 37.6 C62.7 41 63.4 43.7 65.5 46"/><path d="M76.2 33.3 C75.3 37.1 72.9 39.2 70.1 39.7 C67.2 40.2 66.1 43.2 67.4 46"/><path d="M76.7 47.2 C73.5 43.5 69.4 44.1 67.4 46"/><path d="M85.2 42.4 C81.6 43.2 80.1 46.2 80.7 49.1"/><path d="M61.7 54.1 C58.7 56.3 58.7 60.4 61.2 62.8 C63.4 65 62.5 68.2 59.5 69.5"/></g></svg>',
       badge: {
         pt: 'Memória Neural & Continuidade',
@@ -87,6 +90,9 @@
     {
       id: 'session-capture',
       color: '#10b981',
+      hasHeaderVideo: true,
+      headerVideoSrc: 'assets/video/session-capture-modal.mp4',
+      headerVideoPoster: 'assets/video/session-capture-poster.jpg',
       iconHtml: '<i>🧠</i>',
       badge: {
         pt: 'Automação & Fechamento de Ciclo',
@@ -167,6 +173,9 @@
     {
       id: 'decision-gate',
       color: '#a3e635',
+      hasHeaderVideo: true,
+      headerVideoSrc: 'assets/video/decision-gate-modal.mp4',
+      headerVideoPoster: 'assets/video/decision-gate-poster.jpg',
       iconHtml: '<i>⚡</i>',
       badge: {
         pt: 'Roteamento & Otimização de Tokens',
@@ -692,6 +701,8 @@
   const nextBtn = document.getElementById('feature-modal-next');
   const counterEl = document.getElementById('feature-modal-counter');
   const headerEl = document.getElementById('feature-modal-header');
+  const headerVideoBg = document.getElementById('feature-modal-header-video-bg');
+  const headerVideo = document.getElementById('feature-modal-header-video');
   const iconWrap = document.getElementById('feature-modal-icon');
   const badgeEl = document.getElementById('feature-modal-badge');
   const titleEl = document.getElementById('feature-modal-title');
@@ -737,6 +748,28 @@
     if (badgeEl) badgeEl.textContent = t(f.badge);
     if (titleEl) titleEl.textContent = t(f.title);
     if (taglineEl) taglineEl.textContent = t(f.tagline);
+
+    // Vídeo de fundo no cabeçalho do modal (se a feature possuir vídeo cinemático)
+    if (headerVideoBg && headerVideo) {
+      if (f.hasHeaderVideo) {
+        headerVideoBg.style.display = 'block';
+        if (headerEl) headerEl.classList.add('has-video');
+        const targetSrc = f.headerVideoSrc || 'assets/video/synapse-modal.mp4';
+        const targetPoster = f.headerVideoPoster || 'assets/video/synapse-poster.jpg';
+        const sourceEl = headerVideo.querySelector('source');
+        if (sourceEl && sourceEl.getAttribute('src') !== targetSrc) {
+          sourceEl.setAttribute('src', targetSrc);
+          headerVideo.setAttribute('poster', targetPoster);
+          headerVideo.load();
+        }
+        headerVideo.currentTime = 0;
+        headerVideo.play().catch(() => {});
+      } else {
+        headerVideoBg.style.display = 'none';
+        if (headerEl) headerEl.classList.remove('has-video');
+        headerVideo.pause();
+      }
+    }
 
     // Navegação e contador
     if (counterEl) {
@@ -857,6 +890,10 @@
     modal.classList.remove('active');
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+
+    if (headerVideo) {
+      headerVideo.pause();
+    }
 
     if (lastActiveElement && typeof lastActiveElement.focus === 'function') {
       lastActiveElement.focus();

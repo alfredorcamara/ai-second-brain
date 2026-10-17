@@ -409,25 +409,68 @@
         total.</p>
 
       <div class="grid">
-        <div class="card rv" data-feature="memoria-persistente" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Memória Persistente Real">
-          <div class="card-icon-wrap" style="--c:#38bdf8"><img src="assets/cerebro_neon_animado.svg"
-              alt="Memória Persistente" class="card-brain-neon-img" width="36" height="36"></div>
-          <h3>Memória Persistente Real</h3>
-          <p>Contexto vital que sobrevive a fechamento de abas, reinicialização de IDEs, trocas de LLMs e mudanças na
-            equipe.</p>
-          <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
+        <div class="card card-video-featured rv" data-feature="memoria-persistente" style="--card-accent: #38bdf8;" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Memória Persistente Real">
+          <div class="card-video-header">
+            <div class="card-video-media-wrap">
+              <video class="card-video-media" autoplay loop muted playsinline preload="auto" poster="assets/video/synapse-poster.jpg">
+                <source src="assets/video/synapse-card.mp4" type="video/mp4">
+              </video>
+              <div class="card-video-header-overlay"></div>
+            </div>
+            <div class="card-video-header-content">
+              <div class="card-video-badge">
+                <span class="card-video-badge-dot"></span>
+                <span>Memória Neural Ativa</span>
+              </div>
+              <h3>Memória Persistente Real</h3>
+            </div>
+          </div>
+          <div class="card-video-body">
+            <p>Contexto vital que sobrevive a fechamento de abas, reinicialização de IDEs, trocas de LLMs e mudanças na equipe.</p>
+            <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
+          </div>
         </div>
-        <div class="card rv" data-feature="session-capture" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Session Capture com IA">
-          <div class="card-icon-wrap" style="--c:#10b981"><i>🧠</i></div>
-          <h3>Session Capture com IA</h3>
-          <p>Feche o ciclo em 30 segundos. A IA inspeciona commits e arquivos modificados, sintetiza entregas e pendências com revisão humana antes de gravar.</p>
-          <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
+        <div class="card card-video-featured rv" data-feature="session-capture" style="--card-accent: #10b981;" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Session Capture com IA">
+          <div class="card-video-header">
+            <div class="card-video-media-wrap">
+              <video class="card-video-media" autoplay loop muted playsinline preload="auto" poster="assets/video/session-capture-poster.jpg">
+                <source src="assets/video/session-capture-card.mp4" type="video/mp4">
+              </video>
+              <div class="card-video-header-overlay"></div>
+            </div>
+            <div class="card-video-header-content">
+              <div class="card-video-badge">
+                <span class="card-video-badge-dot"></span>
+                <span>Automação &amp; Ciclo Git</span>
+              </div>
+              <h3>Session Capture com IA</h3>
+            </div>
+          </div>
+          <div class="card-video-body">
+            <p>Feche o ciclo em 30 segundos. A IA inspeciona commits e arquivos modificados, sintetiza entregas e pendências com revisão humana antes de gravar.</p>
+            <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
+          </div>
         </div>
-        <div class="card rv" data-feature="decision-gate" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de AI Decision Gate & Motor JEV">
-          <div class="card-icon-wrap" style="--c:#a3e635"><i>⚡</i></div>
-          <h3>AI Decision Gate &amp; Motor JEV</h3>
-          <p>O motor de decisão local `RulesDecisionProvider` (0ms / custo zero) classifica tarefas e ambiguidades antes de chamar LLMs, economizando milhares de tokens.</p>
-          <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
+        <div class="card card-video-featured rv" data-feature="decision-gate" style="--card-accent: #a3e635;" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de AI Decision Gate & Motor JEV">
+          <div class="card-video-header">
+            <div class="card-video-media-wrap">
+              <video class="card-video-media" autoplay loop muted playsinline preload="auto" poster="assets/video/decision-gate-poster.jpg">
+                <source src="assets/video/decision-gate-card.mp4" type="video/mp4">
+              </video>
+              <div class="card-video-header-overlay"></div>
+            </div>
+            <div class="card-video-header-content">
+              <div class="card-video-badge">
+                <span class="card-video-badge-dot"></span>
+                <span>Zero Tokens / 0ms</span>
+              </div>
+              <h3>AI Decision Gate &amp; Motor JEV</h3>
+            </div>
+          </div>
+          <div class="card-video-body">
+            <p>O motor de decisão local `RulesDecisionProvider` (0ms / custo zero) classifica tarefas e ambiguidades antes de chamar LLMs, economizando milhares de tokens.</p>
+            <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
+          </div>
         </div>
         <div class="card rv" data-feature="prompt-bootstrap" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Prompt Bootstrap & IDEs">
           <div class="card-icon-wrap" style="--c:#6366f1"><i>🚀</i></div>
@@ -763,6 +806,12 @@
     <div class="feature-modal-backdrop" id="feature-modal-backdrop"></div>
     <div class="feature-modal-dialog">
       <div class="feature-modal-header" id="feature-modal-header">
+        <div class="feature-modal-header-video-bg" id="feature-modal-header-video-bg" style="display: none;">
+          <video id="feature-modal-header-video" class="feature-modal-header-video" loop muted playsinline preload="none" poster="assets/video/synapse-poster.jpg">
+            <source src="assets/video/synapse-modal.mp4" type="video/mp4">
+          </video>
+          <div class="feature-modal-header-video-overlay"></div>
+        </div>
         <div class="feature-modal-header-main">
           <div class="feature-modal-icon-stage">
             <div id="feature-modal-icon" class="feature-modal-hero-icon" style="--c: var(--gold);"></div>

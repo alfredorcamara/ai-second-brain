@@ -20,6 +20,40 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 | `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway, Research Engine, Session Capture, Brain Search) |
 
 ## Sessões Recentes
+- **Data**: 2026-10-17
+  - **Padronização de Cards com Vídeo no Cabeçalho & Ultra-Otimização de Mídia (Card 1, Card 2 & Card 3)**:
+    - **Demanda**: Desenvolver padrão visual onde o cabeçalho do card na Bento Grid (`#vantagens`) possui um banner cinemático em loop com texto/badge sobrepostos, replicável para os 9 cards, com otimização extrema de peso e resolução para máxima performance web.
+    - **Implementação**:
+      1. *Card 1 ("Memória Persistente Real")*: `.card-video-header` (altura 195px) com vídeo H.264 de alto brilho, overlay gradiente na base, badge temática bioluminescente (`#38bdf8`) e título sobreposto.
+      2. *Card 2 ("Session Capture com IA")*: Padrão estético e funcional com acento esmeralda (`#10b981`), badge `Automação & Ciclo Git` e integração aos vídeos otimizados `session-capture-card.mp4` e `session-capture-modal.mp4`.
+      3. *Card 3 ("AI Decision Gate & Motor JEV")*: Padrão estético e funcional com acento verde-limão elétrico (`#a3e635`), badge `Zero Tokens / 0ms` e integração aos vídeos otimizados `decision-gate-card.mp4` e `decision-gate-modal.mp4`.
+      4. *Arquitetura Dinâmica Multi-Cores (`--card-accent`)*: Refatorado CSS em `extra.css` para utilizar variáveis CSS dinâmicas (`--card-accent`), permitindo que cada card e modal herdem automaticamente sua paleta temática sem duplicação de regras.
+      5. *Ajustes Cirúrgicos de Cabeçalho do Modal*:
+         - Container de ícone à esquerda ocultado (`.feature-modal-icon-stage { display: none !important; }`), com o bloco textual ocupando toda a margem esquerda.
+         - Botão Fechar (`✕`) rigorosamente posicionado no topo superior direito (`position: absolute; top: 22px; right: 24px; z-index: 10;`).
+      6. *Otimização Extrema de Vídeo (FFmpeg)*:
+         - `synapse-card.mp4`: Reduzido de 427 KB para 133,8 KB (400x224, -68,7%).
+         - `synapse-modal.mp4`: Reduzido de 1.488 KB para 375,6 KB (800x250, crop panorâmico do cabeçalho, -74,8%).
+         - `synapse-poster.jpg`: Reduzido de 22,5 KB para 14,2 KB (-38,5%).
+         - `session-capture-card.mp4`: Reduzido de 7,8 MB para 217,5 KB (400x224, -97,2%).
+         - `session-capture-modal.mp4`: Reduzido de 7,8 MB para 410,5 KB (800x250, crop panorâmico central, -94,7%).
+         - `session-capture-poster.jpg`: 23,5 KB.
+         - `decision-gate-card.mp4`: Reduzido de 11,9 MB para 239,9 KB (400x224, 5.0s, -98,0%).
+         - `decision-gate-modal.mp4`: Reduzido de 11,9 MB para 536,8 KB (800x250, 5.0s, -95,5%).
+         - `decision-gate-poster.jpg`: 16,0 KB.
+         - Economia cumulativa de tráfego nos 3 primeiros cards: **~20,0 MB economizados (>94% de redução)**.
+      7. *Guia Técnico Universal e Procedimento Padrão (SOP)*: Atualizado `docs/GUIA_PADRONIZACAO_CARDS_VIDEO.md` com as diretrizes mandatórias de: (a) Duração máxima de 5 segundos (`-t 5`), e (b) Aplicação mandatória de compressão H.264 de alta precisão via FFmpeg (`libx264`, preset `slow`, `yuv420p`, `+faststart`).
+      8. *Modal Dinâmico Multi-Vídeo (`features-modal.js`)*: Suporte a `headerVideoSrc` e `headerVideoPoster` individuais por feature, com troca dinâmica de fonte, preload sob demanda e pause automático ao fechar ou trocar de slide.
+      9. *Compressão H.264 de Alta Precisão Universal em Todos os Vídeos da Pasta*:
+         - `Promo-16x9.mp4`: Reduzido de 29,17 MB para 12,46 MB (-57,3%) com 100% de aceleração por GPU (`yuv420p`, zero travamentos em tela cheia).
+         - `Reels-9x16.mp4`: Reduzido de 8,33 MB para 3,62 MB (-57,5%) com aceleração nativa mobile e áudio AAC 160k.
+         - `session-capture-card.mp4`: Reduzido para 160,2 KB (5.0s, alta precisão H.264).
+         - `session-capture-modal.mp4`: Reduzido para 311,0 KB (5.0s, alta precisão H.264).
+         - `synapse-card.mp4`: Reduzido para 117,1 KB (5.0s, alta precisão H.264).
+         - `synapse-modal.mp4`: Reduzido para 345,8 KB (5.0s, alta precisão H.264).
+         - `decision-gate-card.mp4`: 239,9 KB (5.0s).
+         - `decision-gate-modal.mp4`: 536,8 KB (5.0s).
+         - **Economia Total do Catálogo de Vídeos**: **Mais de 26 MB eliminados** sem perda de qualidade visual. Original de Reels salvo em `Reels-9x16-original.mp4.bak`.
 - **Data**: 2026-10-16
   - **Cards Interativos de Superpoderes & Modal de Detalhamento Técnico na Landing Page**:
     - **Demanda**: Permitir ao usuário clicar em qualquer card da seção `#vantagens` ("Superpoderes do Sistema") para abrir um modal rico, profundo e 100% embasado na realidade técnica do que o projeto faz.
