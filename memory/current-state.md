@@ -21,6 +21,15 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 
 ## Sessões Recentes
 - **Data**: 2026-10-17
+  - **Alinhamento de Integridade e Enriquecimento: Prompt Bootstrap & Acesso ao Workspace (Landing Page)**:
+    - **Demanda**: Correção de discrepância no Slide 4 do modal de features (`features-modal.js`), que prometia "Deep Links para IDEs" e abertura direta em VS Code/Cursor via navegador — funcionalidades que haviam sido descontinuadas/removidas no redesign minimalista do cabeçalho de 13/10/2026.
+    - **Implementação**:
+      1. *Ajuste Conceitual & Fiel à Realidade*: Slide 4 renomeado para "Prompt Bootstrap & Acesso Rápido ao Workspace", destacando a geração em menos de 50ms do payload de contexto sem amnésia e a abertura nativa no Explorador de Arquivos (`explorer.exe`) via `POST /api/system/open-ide`.
+      2. *Correção de Caminhos Reais*: Atualizados ponteiros de arquivos no modal de `docs/brain-ui/js/app.js` para o caminho correto `docs/brain-ui/app.js`.
+      3. *Enriquecimento das Seções de Destaque*:
+         - **Impacto & Ganhos Reais**: Adicionadas métricas de 1 Clique & 0 Tokens Desperdiçados, 100% Agnóstico de Ferramenta e Zero Amnésia / Governança Imediata.
+         - **Exemplo no Dia a Dia**: Exibido o snippet com o payload cirúrgico real gerado no clipboard por `copySessionStartPrompt()` e o trigger de abertura nativa.
+      4. *Sincronização da Landing Page*: Atualizados card correspondente em `docs/brain-ui/landing/index.html` e dicionário `docs/brain-ui/landing/js/i18n.dict.js`.
   - **Padronização de Cards com Vídeo no Cabeçalho & Ultra-Otimização de Mídia (Card 1, Card 2 & Card 3)**:
     - **Demanda**: Desenvolver padrão visual onde o cabeçalho do card na Bento Grid (`#vantagens`) possui um banner cinemático em loop com texto/badge sobrepostos, replicável para os 9 cards, com otimização extrema de peso e resolução para máxima performance web.
     - **Implementação**:

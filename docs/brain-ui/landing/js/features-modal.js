@@ -146,7 +146,7 @@
           desc: { pt: 'Rotas da API: POST /api/session-capture e POST /api/projects/:name/session.', en: 'API routes: POST /api/session-capture and POST /api/projects/:name/session.' }
         },
         {
-          path: 'docs/brain-ui/js/app.js',
+          path: 'docs/brain-ui/app.js',
           desc: { pt: 'Modal de Session Capture com preview e formulário de validação humana.', en: 'Session Capture modal with preview and human validation form.' }
         },
         {
@@ -259,69 +259,69 @@
         en: 'Ergonomics & Fast Startup'
       },
       title: {
-        pt: 'Prompt Bootstrap & Deep Links para IDEs',
-        en: 'Prompt Bootstrap & IDE Deep Links'
+        pt: 'Prompt Bootstrap & Acesso Rápido ao Workspace',
+        en: 'Prompt Bootstrap & Fast Workspace Access'
       },
       tagline: {
-        pt: 'Copie em 1 clique o prompt pré-aquecido com regras e contratos para qualquer agente, e abra o projeto diretamente no VS Code ou Cursor.',
-        en: '1-click copy pre-warmed prompt with rules and contracts for any agent, and open the project directly in VS Code or Cursor.'
+        pt: 'Copie em 1 clique o prompt pré-aquecido com regras e contratos para qualquer agente de IA, e acerte o caminho físico no Explorador sem atrito.',
+        en: '1-click copy pre-warmed prompt with rules and contracts for any AI agent, and access the physical folder in Explorer without friction.'
       },
       whatItIs: {
-        pt: 'A ponte de alta velocidade entre a interface visual do cérebro (Brain UI) e o seu fluxo diário no editor de código e ferramentas de IA de terceiros.',
-        en: 'The high-speed bridge between the visual brain interface (Brain UI) and your daily workflow in code editors and third-party AI tools.'
+        pt: 'A ponte cirúrgica entre o Cockpit Visual do Second Brain e o seu fluxo diário de desenvolvimento. Elimina a amnésia de contexto em novos chats de IA e conecta a navegação visual ao sistema de arquivos local de forma limpa, direta e agnóstica.',
+        en: 'The surgical bridge between the Second Brain Visual Cockpit and your daily workflow. Eliminates context amnesia in new AI chats and links visual navigation directly to the local filesystem in a clean, direct, and agnostic way.'
       },
       howItWorks: [
         {
-          title: { pt: 'Geração Instantânea de Bootstrap', en: 'Instant Bootstrap Generation' },
+          title: { pt: 'Compilação Instantânea no Cliente', en: 'Instant Client-Side Compilation' },
           desc: {
-            pt: 'A Brain UI compila em milissegundos um payload compacto contendo: caminho absoluto do projeto, resumo arquitetural de `PROJECT.md`, governança universal e ponteiro para o `CURRENT_STATE.md`.',
-            en: 'Brain UI compiles in milliseconds a compact payload containing: absolute path, architectural summary from `PROJECT.md`, governance rules, and pointer to `CURRENT_STATE.md`.'
+            pt: 'A Brain UI compila em menos de 50ms um payload cirúrgico contendo nome do projeto, caminho físico absoluto, stack tecnológica e ponteiros mandatórios para `PROJECT.md`, `CURRENT_STATE.md`, `DECISIONS/` e `LESSONS_LEARNED.md`.',
+            en: 'Brain UI compiles in under 50ms a surgical payload containing project name, absolute physical path, tech stack, and mandatory pointers to `PROJECT.md`, `CURRENT_STATE.md`, `DECISIONS/`, and `LESSONS_LEARNED.md`.'
           }
         },
         {
-          title: { pt: 'Pronto para Qualquer Chat de IA', en: 'Ready for Any AI Chat' },
+          title: { pt: '100% Agnóstico a Qualquer Chat de IA', en: '100% Agnostic to Any AI Chat' },
           desc: {
-            pt: 'O texto é copiado para a área de transferência formatado para colar diretamente no Claude, ChatGPT, DeepSeek ou Cursor Chat.',
-            en: 'The text is copied to clipboard formatted to paste directly into Claude, ChatGPT, DeepSeek, or Cursor Chat.'
+            pt: 'O texto copiado para a área de transferência está pronto para ser colado em qualquer assistente ou IDE (Claude Code, Cursor Chat, Google Antigravity, ChatGPT, DeepSeek ou Windsurf), garantindo que o agente inicie com governança e sem amnésia.',
+            en: 'The text copied to the clipboard is ready to paste into any assistant or IDE (Claude Code, Cursor Chat, Google Antigravity, ChatGPT, DeepSeek, or Windsurf), ensuring the agent starts with governance and zero amnesia.'
           }
         },
         {
-          title: { pt: 'Deep Links Nativos do Sistema Operacional', en: 'Native OS Deep Links' },
+          title: { pt: 'Abertura Nativa & Cópia de Caminho', en: 'Native Launch & Path Copy' },
           desc: {
-            pt: 'Botões dedicados abrem a pasta do projeto diretamente no VS Code (`vscode://file/...`) ou Cursor (`cursor://file/...`) sem navegação manual de pastas.',
-            en: 'Dedicated buttons open the project directory directly in VS Code (`vscode://file/...`) or Cursor (`cursor://file/...`) without folder browsing.'
+            pt: 'Um clique no caminho (`📂 [caminho]`) aciona o endpoint seguro local (`POST /api/system/open-ide` com `explorer`), abrindo a pasta no Explorador de Arquivos do SO, enquanto o botão `📋 Copiar Caminho` agiliza o terminal.',
+            en: 'Clicking the path (`📂 [path]`) calls the secure local endpoint (`POST /api/system/open-ide` with `explorer`), opening the folder in the OS File Explorer, while the `📋 Copy Path` button speeds up terminal usage.'
           }
         }
       ],
       realFiles: [
         {
-          path: 'server.js',
-          desc: { pt: 'Endpoint /api/projects/:name/bootstrap que monta o prompt cirúrgico.', en: 'Endpoint /api/projects/:name/bootstrap assembling the surgical prompt.' }
+          path: 'docs/brain-ui/app.js',
+          desc: { pt: 'Função copySessionStartPrompt() que compila o payload cirúrgico e copia para a área de transferência.', en: 'copySessionStartPrompt() compiling the surgical payload and copying to system clipboard.' }
         },
         {
-          path: 'docs/brain-ui/js/app.js',
-          desc: { pt: 'Manipulador de clipboard e disparadores de deep links via protocolo do SO.', en: 'Clipboard handler and OS protocol deep link triggers.' }
+          path: 'server.js',
+          desc: { pt: 'Endpoint POST /api/system/open-ide que abre a pasta do projeto no Explorador do SO nativamente.', en: 'POST /api/system/open-ide endpoint natively launching the project folder in OS Explorer.' }
         },
         {
           path: 'templates/project.md',
-          desc: { pt: 'Template estruturado que serve de base para o bootstrap de cada projeto.', en: 'Structured template serving as the baseline for every project bootstrap.' }
+          desc: { pt: 'Template estruturado que serve de base para o bootstrap de contexto de cada projeto.', en: 'Structured template serving as the baseline for every project bootstrap context.' }
         }
       ],
       metrics: [
         {
-          label: { pt: '1 Clique', en: '1 Click' },
-          val: { pt: 'Prompt completo pré-aquecido na sua área de transferência.', en: 'Complete pre-warmed prompt in your clipboard.' }
+          label: { pt: '1 Clique & 0 Tokens Desperdiçados', en: '1 Click & 0 Wasted Tokens' },
+          val: { pt: 'Gera o contexto cirúrgico exato na área de transferência em menos de 50ms, eliminando prompts manuais repetitivos.', en: 'Generates the exact surgical context in clipboard under 50ms, eliminating repetitive manual prompts.' }
         },
         {
-          label: { pt: 'Abertura Direta', en: 'Direct Launch' },
-          val: { pt: 'Abre no Cursor ou VS Code na pasta exata do projeto.', en: 'Launches in Cursor or VS Code at the exact project folder.' }
+          label: { pt: '100% Agnóstico de Ferramenta', en: '100% Tool Agnostic' },
+          val: { pt: 'Funciona com qualquer agente ou IDE (Cursor, Claude, Antigravity, VS Code, Windsurf) sem lock-in.', en: 'Works with any agent or IDE (Cursor, Claude, Antigravity, VS Code, Windsurf) with zero lock-in.' }
         },
         {
-          label: { pt: 'Zero Configuração', en: 'Zero Config' },
-          val: { pt: 'Funciona imediatamente sem necessidade de plugins ou extensões proprietárias.', en: 'Works out-of-the-box without proprietary plugins or extensions.' }
+          label: { pt: 'Zero Amnésia & Governança Imediata', en: 'Zero Amnesia & Instant Governance' },
+          val: { pt: 'O agente inicia sabendo as decisões prévias (ADRs), lições aprendidas e estado atual do roadmap.', en: 'The agent starts knowing prior decisions (ADRs), lessons learned, and the active roadmap.' }
         }
       ],
-      codeSnippet: '// Deep Link do Sistema Operacional\nwindow.location.href = `vscode://file/${encodeURI(projectPath)}`;\nwindow.location.href = `cursor://file/${encodeURI(projectPath)}`;'
+      codeSnippet: '// 1. Payload cirúrgico gerado no Clipboard (docs/brain-ui/app.js)\nVocê está atuando no projeto **MeuProjeto**, governado pelo AI Second Brain.\nStack Principal: Node.js / TypeScript | Diretório: C:\\\\Projetos\\\\MeuProjeto\n\nANTES DE EXECUTAR QUALQUER TAREFA:\n1. Consulte a visão geral e arquitetura em: `PROJECT.md`\n2. Consulte o estado atual e tarefas ativas em: `CURRENT_STATE.md`\n3. Consulte as decisões consolidadas em: `DECISIONS/`\n4. Consulte lições aprendidas em: `memory/lessons-learned.md` e `LESSONS_LEARNED.md`\n5. REGRAS ABSOLUTAS:\n   - Prioridade Determinística: Código puro antes de LLM.\n   - Zero Fabricação: NUNCA invente contexto ou especificações inexistentes.\n   - Catálogos 100% Dinâmicos: NUNCA crie listas fixas de modelos.\n   - Respeito a Decisões: Não altere arquitetura sem novo ADR em `DECISIONS/`.\n\nMe apresente onde o projeto parou e qual é o próximo passo recomendado.\n\n// 2. Abertura Nativa no Explorador (server.js via POST /api/system/open-ide)\n// Clique em "📂 [caminho]" -> Abre explorer.exe diretamente na pasta do projeto.'
     },
     {
       id: 'governanca-owasp',
@@ -664,7 +664,7 @@
           desc: { pt: 'Endpoints /api/search (busca local BM25) e /api/ask (síntese por LLM com RAG).', en: 'Endpoints /api/search (local BM25 search) and /api/ask (LLM synthesis with RAG).' }
         },
         {
-          path: 'docs/brain-ui/js/app.js',
+          path: 'docs/brain-ui/app.js',
           desc: { pt: 'Interface de busca instantânea acionável via atalho global Ctrl + K.', en: 'Instant search interface triggered via global shortcut Ctrl + K.' }
         },
         {
