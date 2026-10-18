@@ -64,14 +64,14 @@ Cada card possui um identificador único no DOM (`data-feature`) e no JavaScript
 | # | `id` / `data-feature` | Título do Card | Cor Temática (`--c`) | Tag Sugerida para o Cabeçalho |
 |---|---|---|---|---|
 | **01** | `memoria-persistente` | Memória Persistente Real | `#38bdf8` (Cyan) | `Memória Neural Ativa` *(Concluído)* |
-| **02** | `session-capture` | Session Capture com IA | `#10b981` (Esmeralda) | `Automação & Ciclo Git` |
-| **03** | `decision-gate` | AI Decision Gate & Motor JEV | `#a3e635` (Verde Limão) | `Zero Tokens / 0ms` |
-| **04** | `prompt-bootstrap` | Prompt Bootstrap & IDEs | `#6366f1` (Índigo) | `Context Injection` |
-| **05** | `governanca-owasp` | Governança & OWASP | `#f87171` (Coral/Vermelho) | `Segurança & Anti-Leak` |
-| **06** | `agnostico-stack` | 100% Agnóstico de Stack | `#ffc76b` (Âmbar/Dourado) | `Universal / Multi-Stack` |
-| **07** | `zero-lock-in` | Zero Lock-In (Puro Markdown) | `#facc15` (Amarelo Ouro) | `Git & Open Formats` |
-| **08** | `grafo-3d` | Grafo Espacial 3D Vivo | `#c084fc` (Púrpura/Violeta) | `Neurônios & Sinapses 3D` |
-| **09** | `pergunte-cerebro` | Pergunte ao Cérebro (Ctrl+K) | `#ec4899` (Magenta/Rosa) | `Busca Semântica & BYOK` |
+| **02** | `session-capture` | Session Capture com IA | `#10b981` (Esmeralda) | `Automação & Ciclo Git` *(Concluído)* |
+| **03** | `decision-gate` | AI Decision Gate & Motor JEV | `#a3e635` (Verde Limão) | `Zero Tokens / 0ms` *(Concluído)* |
+| **04** | `prompt-bootstrap` | Prompt Bootstrap & Workspace | `#6366f1` (Índigo) | `Context Injection` *(Concluído)* |
+| **05** | `governanca-owasp` | Governança & OWASP | `rgb(113, 175, 255)` (Azul Neon) | `Segurança & Anti-Leak` *(Concluído)* |
+| **06** | `agnostico-stack` | 100% Agnóstico de Stack | `#ffc76b` (Âmbar/Dourado) | `Universal / Multi-Stack` *(Concluído)* |
+| **07** | `zero-lock-in` | Zero Lock-In (Puro Markdown) | `#22d3ee` (Ciano Neon / Turquesa) | `Git & Open Formats` *(Concluído)* |
+| **08** | `grafo-3d` | Grafo Espacial 3D Vivo | `#c084fc` (Púrpura/Violeta) | `Neurônios & Sinapses 3D` *(Concluído)* |
+| **09** | `pergunte-cerebro` | Pergunte ao Cérebro (Ctrl+K) | `rgb(72, 102, 236)` (Azul Brilhante) | `Busca Semântica & BYOK` *(Concluído)* |
 
 ---
 
@@ -89,7 +89,33 @@ Ao receber o comando para aplicar o vídeo em um card específico (ex: `card-2`,
 > 2. **Resolução 1:1**: Nunca use vídeos em resolução Full HD (1080p) ou arquivos acima de 500 KB para elementos decorativos de UI. Reduza a resolução para bater 1:1 com a área de visualização em tela.
 > 3. **Compressão H.264 de Alta Precisão via FFmpeg**: Deve ser aplicada obrigatoriamente a compressão H.264 de alta precisão via FFmpeg (`libx264`, preset `slow`, `yuv420p` e `+faststart`). Esse padrão elimina overhead de CPU, ativa a aceleração nativa de hardware da GPU nos navegadores e impede travamentos em tela cheia.
 
-Com o vídeo bruto fornecido pelo usuário (ex: `video-origem.mp4`), execute no **PowerShell** a geração dos três derivados otimizados em `docs/brain-ui/landing/assets/video/`:
+### Automação Rápida via Python (`scripts/optimize_card_videos.py`)
+
+Para não precisar rodar comandos manuais de FFmpeg, utilize o script oficial. Ele gera o trio de arquivos padronizados (`<nome>-card.mp4`, `<nome>-modal.mp4`, `<nome>-poster.jpg`), **salva por padrão na mesma pasta do vídeo original** e possui as opções de nome personalizado e `--landing`:
+
+```bash
+# 1. Processar com o NOME ORIGINAL (salva na mesma pasta do vídeo):
+python scripts/optimize_card_videos.py "C:/Users/alfre/Downloads/meu_video.mp4"
+
+# 2. Processar indicando um NOME PERSONALIZADO (ex: prompt-bootstrap):
+#    Gera automaticamente: prompt-bootstrap-card.mp4, prompt-bootstrap-modal.mp4, prompt-bootstrap-poster.jpg
+python scripts/optimize_card_videos.py "Video Project 9.mp4" "prompt-bootstrap"
+# ou usando a flag -n:
+python scripts/optimize_card_videos.py "Video Project 9.mp4" -n "prompt-bootstrap"
+
+# 3. Processar com nome personalizado e salvar DIRETO na Landing Page:
+python scripts/optimize_card_videos.py "Video Project 9.mp4" "prompt-bootstrap" --landing
+
+# 4. Processar TODOS os vídeos da pasta atual de uma vez (salva na própria pasta):
+python scripts/optimize_card_videos.py --batch
+python scripts/optimize_card_videos.py --batch --landing
+```
+
+---
+
+### Execução Manual via FFmpeg (Comandos de Referência)
+
+Caso prefira rodar os comandos individualmente no **PowerShell**, execute os 3 passos:
 
 #### 1.1. Vídeo do Card (`<nome>-card.mp4`):
 * **Duração**: Máximo **5 segundos** (`-t 5`).

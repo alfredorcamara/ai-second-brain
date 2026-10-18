@@ -85,7 +85,11 @@
           val: { pt: 'Toda a evolução do pensamento fica versionada no Git.', en: 'The entire evolution of AI reasoning is tracked in Git.' }
         }
       ],
-      codeSnippet: 'projects/MEU_APP/MEMORY/sessions/2026-10-16.md\n# Sessão 2026-10-16 — Implementação de Gateway\n- Entregas: Adicionado RulesDecisionProvider\n- Arquivos: server.js, index.html\n- Pendências: Validação de telemetria'
+      codeBadge: { pt: 'Project State (Git)', en: 'Project State (Git)' },
+      codeSnippet: {
+        pt: '# 1. Estado Vivo do Projeto (projects/MEU_APP/CURRENT_STATE.md)\nStatus: Sprint 04 — Motor de Decisão Local e RAG Ativo\nÚltima Sessão: 2026-10-18 (Entregas com validação humana)\nDecisões Aplicadas: ADR-001 (Zero Lock-in), ADR-003 (Motor JEV)\nPróximo Passo: Refatorar telemetria de tokens no server.js',
+        en: '# 1. Live Project State (projects/MY_APP/CURRENT_STATE.md)\nStatus: Sprint 04 — Local Decision Engine and RAG Active\nLast Session: 2026-10-18 (Deliveries with human-in-the-loop)\nDecisions Applied: ADR-001 (Zero Lock-in), ADR-003 (JEV Engine)\nNext Step: Refactor token telemetry in server.js'
+      }
     },
     {
       id: 'session-capture',
@@ -168,7 +172,11 @@
           val: { pt: 'O próximo agente ou colega sabe exatamente onde a tarefa parou.', en: 'The next agent or peer knows exactly where the task left off.' }
         }
       ],
-      codeSnippet: 'POST /api/session-capture\nBody: { project: "MEU_APP" }\n-> Analisa `git diff` -> Gera rascunho -> Human-in-the-loop -> Salva MEMORY/'
+      codeBadge: { pt: 'CLI & Session Capture', en: 'CLI & Session Capture' },
+      codeSnippet: {
+        pt: '# 1. Ciclo de encerramento rápido pelo terminal:\n$ git commit -m "feat(auth): shield against secret leakage"\n$ ai-brain session-capture --project MEU_APP\n\n# 2. Síntese com Human-in-the-Loop antes de gravar:\n[DIFF] 3 arquivos modificados (server.js, .env, auth.ts)\n[RESUMO] 3 entregas consolidadas, 1 pendência de telemetria\n[GRAVADO] projects/MEU_APP/MEMORY/sessions/2026-10-18.md',
+        en: '# 1. Fast closure cycle via terminal:\n$ git commit -m "feat(auth): shield against secret leakage"\n$ ai-brain session-capture --project MY_APP\n\n# 2. Human-in-the-Loop synthesis before saving:\n[DIFF] 3 files modified (server.js, .env, auth.ts)\n[SUMMARY] 3 consolidated deliveries, 1 telemetry pending\n[SAVED] projects/MY_APP/MEMORY/sessions/2026-10-18.md'
+      }
     },
     {
       id: 'decision-gate',
@@ -248,11 +256,15 @@
           val: { pt: 'Código determinístico não alucina nem altera comportamento arbitrariamente.', en: 'Deterministic code does not hallucinate or change behavior arbitrarily.' }
         }
       ],
+      codeBadge: { pt: 'Decision Gate (0ms)', en: 'Decision Gate (0ms)' },
       codeSnippet: 'TAREFA -> É DETERMINÍSTICA?\n  [SIM] -> Código / Regra Direta (0 tokens, 0ms, R$ 0,00)\n  [NÃO] -> É DECISÃO/CLASSIFICAÇÃO?\n           [SIM] -> AIJev / RulesDecisionProvider\n           [NÃO] -> Precisa Gerar? [SIM] -> LLM Especializado'
     },
     {
       id: 'prompt-bootstrap',
       color: '#6366f1',
+      hasHeaderVideo: true,
+      headerVideoSrc: 'assets/video/prompt-bootstrap-modal.mp4',
+      headerVideoPoster: 'assets/video/prompt-bootstrap-poster.jpg',
       iconHtml: '<i>🚀</i>',
       badge: {
         pt: 'Ergonomia & Inicialização Rápida',
@@ -321,11 +333,15 @@
           val: { pt: 'O agente inicia sabendo as decisões prévias (ADRs), lições aprendidas e estado atual do roadmap.', en: 'The agent starts knowing prior decisions (ADRs), lessons learned, and the active roadmap.' }
         }
       ],
+      codeBadge: { pt: 'Context Injection', en: 'Context Injection' },
       codeSnippet: '// 1. Payload cirúrgico gerado no Clipboard (docs/brain-ui/app.js)\nVocê está atuando no projeto **MeuProjeto**, governado pelo AI Second Brain.\nStack Principal: Node.js / TypeScript | Diretório: C:\\\\Projetos\\\\MeuProjeto\n\nANTES DE EXECUTAR QUALQUER TAREFA:\n1. Consulte a visão geral e arquitetura em: `PROJECT.md`\n2. Consulte o estado atual e tarefas ativas em: `CURRENT_STATE.md`\n3. Consulte as decisões consolidadas em: `DECISIONS/`\n4. Consulte lições aprendidas em: `memory/lessons-learned.md` e `LESSONS_LEARNED.md`\n5. REGRAS ABSOLUTAS:\n   - Prioridade Determinística: Código puro antes de LLM.\n   - Zero Fabricação: NUNCA invente contexto ou especificações inexistentes.\n   - Catálogos 100% Dinâmicos: NUNCA crie listas fixas de modelos.\n   - Respeito a Decisões: Não altere arquitetura sem novo ADR em `DECISIONS/`.\n\nMe apresente onde o projeto parou e qual é o próximo passo recomendado.\n\n// 2. Abertura Nativa no Explorador (server.js via POST /api/system/open-ide)\n// Clique em "📂 [caminho]" -> Abre explorer.exe diretamente na pasta do projeto.'
     },
     {
       id: 'governanca-owasp',
-      color: '#f87171',
+      color: 'rgb(113, 175, 255)',
+      hasHeaderVideo: true,
+      headerVideoSrc: 'assets/video/governanca-owasp-modal.mp4',
+      headerVideoPoster: 'assets/video/governanca-owasp-poster.jpg',
       iconHtml: '<i>🛡️</i>',
       badge: {
         pt: 'Segurança & Blindagem',
@@ -394,11 +410,15 @@
           val: { pt: 'Qualquer novo agente respeita os mesmos limites de segurança.', en: 'Any new agent automatically adheres to the same security boundaries.' }
         }
       ],
-      codeSnippet: '// REGRA DE GOVERNANÇA (AGENTS.md)\n1. Prioridade Determinística: NUNCA utilize LLM quando código resolver.\n2. Zero Fabricação: NUNCA invente bibliotecas ou telas especulativas.\n3. Catálogos Dinâmicos: NUNCA crie listas fixas de modelos no código.'
+      codeBadge: { pt: 'OWASP Security Gate', en: 'OWASP Security Gate' },
+      codeSnippet: '// Checklist de Governança Ativa (.agents/rules/03-security.md):\n[PASS] Zero Fabricação: Todas as bibliotecas validadas no package.json\n[PASS] Anti-Leak: Nenhuma API Key ou secret hardcoded (.env sanitizado)\n[PASS] OWASP LLM-01: Sanitização de injeção de prompt em inputs externos\n[PASS] Respeito a Decisões: Nenhuma mudança arquitetural sem novo ADR'
     },
     {
       id: 'agnostico-stack',
       color: '#ffc76b',
+      hasHeaderVideo: true,
+      headerVideoSrc: 'assets/video/agnostico-stack-modal.mp4',
+      headerVideoPoster: 'assets/video/agnostico-stack-poster.jpg',
       iconHtml: '<i>🧩</i>',
       badge: {
         pt: 'Interoperabilidade Universal',
@@ -467,11 +487,15 @@
           val: { pt: 'Conecte múltiplos serviços e compartilhe lições aprendidas globais.', en: 'Connect multiple services and share global lessons learned.' }
         }
       ],
-      codeSnippet: '# Conectar projeto existente no Windows sem mover pastas:\ncmd /c mklink /J "projects\\MEU_SISTEMA" "C:\\MeusRepos\\MEU_SISTEMA"'
+      codeBadge: { pt: 'Filesystem Junctions', en: 'Filesystem Junctions' },
+      codeSnippet: '# Conectar projeto existente sem duplicar pastas:\n# Windows (Directory Junction):\ncmd /c mklink /J "projects\\MEU_SAAS" "D:\\Workspace\\Rust\\meu-saas"\n\n# Linux / macOS (Symlink nativo):\nln -s "/workspace/go/meu-servico" "projects/meu-servico"'
     },
     {
       id: 'zero-lock-in',
-      color: '#facc15',
+      color: '#22d3ee',
+      hasHeaderVideo: true,
+      headerVideoSrc: 'assets/video/zero-lock-in-modal.mp4',
+      headerVideoPoster: 'assets/video/zero-lock-in-poster.jpg',
       iconHtml: '<i>📝</i>',
       badge: {
         pt: 'Soberania de Dados & Git',
@@ -540,11 +564,15 @@
           val: { pt: 'Veja exatamente quem alterou cada regra com `git log` e `git diff`.', en: 'Inspect exactly who changed each rule with `git log` and `git diff`.' }
         }
       ],
-      codeSnippet: '# Inspecionar o histórico de qualquer decisão no terminal:\ngit log -p decisions/ADR-001.md'
+      codeBadge: { pt: 'Git Auditability', en: 'Git Auditability' },
+      codeSnippet: '# Total soberania e rastreabilidade pelo Git terminal:\n$ git log -p -1 DECISIONS/ADR-004-arquitetura-rag.md\n+ Status: Aceito em 2026-10-18\n+ Decisão: Busca híbrida BM25 ponderada sem banco vetorial proprietário\n+ Autoria: 100% legível por humanos e qualquer IA hoje ou em 2035'
     },
     {
       id: 'grafo-3d',
       color: '#c084fc',
+      hasHeaderVideo: true,
+      headerVideoSrc: 'assets/video/grafo-3d-modal.mp4',
+      headerVideoPoster: 'assets/video/grafo-3d-poster.jpg',
       iconHtml: '<i>🌐</i>',
       badge: {
         pt: 'Visualização Neural & Cartografia',
@@ -613,11 +641,15 @@
           val: { pt: 'WebGL acelerado por hardware rodando a 60 FPS com Three.js.', en: 'Hardware-accelerated WebGL running at 60 FPS with Three.js.' }
         }
       ],
-      codeSnippet: '// Inicialização do Grafo Neural no Canvas\nconst g = new BrainGraph(canvas, tooltip);\ng.loadData(nodes, edges, categoryColors);\ng.start();'
+      codeBadge: { pt: 'Three.js / WebGL', en: 'Three.js / WebGL' },
+      codeSnippet: '// Renderização em tempo real do Grafo Neural 3D (Three.js):\nconst vault = await fetch(\'/api/graph\').then(r => r.json());\n// 142 documentos, 28 neurônios (pastas), 384 sinapses [[wiki-links]]\nconst graph = new BrainGraph({ canvas, container: \'#graph-stage\' });\ngraph.render(vault.nodes, vault.edges, { pulseSpeed: 1.2, bloom: 0.85 });'
     },
     {
       id: 'pergunte-cerebro',
-      color: '#ec4899',
+      color: 'rgb(72, 102, 236)',
+      hasHeaderVideo: true,
+      headerVideoSrc: 'assets/video/pergunte-cerebro-modal.mp4',
+      headerVideoPoster: 'assets/video/pergunte-cerebro-poster.jpg',
       iconHtml: '<i>✨</i>',
       badge: {
         pt: 'Busca Semântica & RAG Local',
@@ -686,7 +718,14 @@
           val: { pt: 'Cada resposta acompanha os caminhos dos arquivos fontes para conferência.', en: 'Every answer provides clickable source file paths for verification.' }
         }
       ],
-      codeSnippet: '// Busca Ponderada por Governança:\nconst score = bm25Score * (isADR ? 1.8 : isRule ? 1.5 : 1.0);\n// Resposta com citação obrigatória dos arquivos auditados'
+      codeBadge: {
+        pt: 'Ctrl+K RAG Console',
+        en: 'Ctrl+K RAG Console'
+      },
+      codeSnippet: {
+        pt: '// 1. Pergunta em linguagem natural no Cockpit (Ctrl+K):\n> "Qual a regra para uso de IA versus código determinístico?"\n\n// 2. Busca BM25 com Pesos de Governança (server.js):\n[RANK 1] AGENTS.md:L23 (Regras Universais)          -> Score: 9.8 ★★★\n[RANK 2] DECISIONS/ADR-003-motor-jev.md             -> Score: 9.1 ★★★\n[RANK 3] .agents/rules/02-architecture.md           -> Score: 8.4 ★★☆\n\n// 3. Síntese Local RAG com Citações Auditáveis (Zero Fabricação):\n"NUNCA utilize LLM quando código determinístico ou regras resolverem.\nLLMs são reservados estritamente para geração de conteúdo e raciocínio aberto."\nFontes Auditadas: `AGENTS.md:L23` | `DECISIONS/ADR-003.md:L12`',
+        en: '// 1. Natural language query in Cockpit (Ctrl+K):\n> "What is the rule for using LLM vs deterministic code?"\n\n// 2. BM25 Search with Governance Multipliers (server.js):\n[RANK 1] AGENTS.md:L23 (Universal Rules)            -> Score: 9.8 ★★★\n[RANK 2] DECISIONS/ADR-003-motor-jev.md             -> Score: 9.1 ★★★\n[RANK 3] .agents/rules/02-architecture.md           -> Score: 8.4 ★★☆\n\n// 3. Local RAG Synthesis with Audited Citations (Zero Fabrication):\n"NEVER use an LLM when deterministic code or rules resolve it.\nLLMs are reserved strictly for content generation and open reasoning."\nAudited Sources: `AGENTS.md:L23` | `DECISIONS/ADR-003.md:L12`'
+      }
     }
   ];
 
@@ -719,6 +758,40 @@
     if (typeof obj === 'string') return obj;
     const lang = getLang();
     return obj[lang] || obj.pt || '';
+  };
+
+  const highlightSnippet = (rawText, cardColor) => {
+    if (!rawText) return '';
+    const lines = rawText.split('\n');
+    return lines.map(line => {
+      let escaped = line
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      const trimmed = line.trim();
+
+      // Comentários: // ou #
+      if (trimmed.startsWith('//') || trimmed.startsWith('#')) {
+        return `<span class="tok-comment">${escaped}</span>`;
+      }
+
+      // Prompts / Perguntas: > ou $ ou +
+      if (trimmed.startsWith('&gt;') || trimmed.startsWith('$') || trimmed.startsWith('+')) {
+        return `<span class="tok-prompt">${escaped}</span>`;
+      }
+
+      // Tokens entre colchetes: [RANK 1], [PASS], [DIFF], [SIM], [NÃO], etc.
+      escaped = escaped.replace(/(\[[^\]]+\])/g, `<span class="tok-tag" style="--c:${cardColor}">$1</span>`);
+
+      // Código inline entre crases `codigo`
+      escaped = escaped.replace(/(`[^`]+`)/g, `<span class="tok-code">$1</span>`);
+
+      // Strings entre aspas "..."
+      escaped = escaped.replace(/(&quot;[^&]+&quot;|"[^"]*")/g, `<span class="tok-string">$1</span>`);
+
+      return escaped;
+    }).join('\n');
   };
 
   function renderFeature(index) {
@@ -763,7 +836,7 @@
           headerVideo.load();
         }
         headerVideo.currentTime = 0;
-        headerVideo.play().catch(() => {});
+        headerVideo.play().catch(() => { });
       } else {
         headerVideoBg.style.display = 'none';
         if (headerEl) headerEl.classList.remove('has-video');
@@ -856,10 +929,31 @@
 
     // 5. Bloco de Código / Exemplo
     if (f.codeSnippet) {
+      const rawCode = typeof f.codeSnippet === 'object' ? (f.codeSnippet[lang] || f.codeSnippet.pt || '') : f.codeSnippet;
+      const highlighted = highlightSnippet(rawCode, f.color);
+      const badgeText = t(f.codeBadge) || (lang === 'en' ? 'Interactive Terminal' : 'Terminal Interativo');
+      const copyLabel = lang === 'en' ? 'Copy' : 'Copiar';
+
       html += `
-        <div class="fm-section">
+        <div class="fm-section fm-code-section">
           <h4 class="fm-section-title"><i>⚡</i> ${labels.code}</h4>
-          <div class="fm-code-box">${f.codeSnippet}</div>
+          <div class="fm-code-container" style="--c: ${f.color}">
+            <div class="fm-code-header">
+              <div class="fm-code-dots">
+                <span class="fm-code-dot red"></span>
+                <span class="fm-code-dot yellow"></span>
+                <span class="fm-code-dot green"></span>
+              </div>
+              <div class="fm-code-title">
+                <span class="fm-code-badge">${badgeText}</span>
+              </div>
+              <button class="fm-code-copy-btn" type="button" aria-label="${copyLabel}">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <span class="fm-copy-text">${copyLabel}</span>
+              </button>
+            </div>
+            <div class="fm-code-box"><code>${highlighted}</code></div>
+          </div>
         </div>
       `;
     }
@@ -867,6 +961,23 @@
     if (bodyEl) {
       bodyEl.innerHTML = html;
       bodyEl.scrollTop = 0;
+
+      // Ativar botão de copiar do exemplo
+      const copyBtn = bodyEl.querySelector('.fm-code-copy-btn');
+      if (copyBtn && f.codeSnippet) {
+        copyBtn.addEventListener('click', () => {
+          const rawCode = typeof f.codeSnippet === 'object' ? (f.codeSnippet[lang] || f.codeSnippet.pt || '') : f.codeSnippet;
+          navigator.clipboard.writeText(rawCode).then(() => {
+            const txt = copyBtn.querySelector('.fm-copy-text');
+            if (txt) txt.textContent = lang === 'en' ? 'Copied!' : 'Copiado!';
+            copyBtn.classList.add('copied');
+            setTimeout(() => {
+              if (txt) txt.textContent = lang === 'en' ? 'Copy' : 'Copiar';
+              copyBtn.classList.remove('copied');
+            }, 2000);
+          }).catch(() => {});
+        });
+      }
     }
   }
 

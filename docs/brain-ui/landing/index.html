@@ -50,8 +50,8 @@
 
   <!-- ── Barra de Navegação ── -->
   <nav class="nav">
-    <a class="brand" href="#topo" aria-label="AI Second Brain"><img src="assets/ai-second-brain-logo-animado.svg" alt="AI Second Brain Logo"
-        class="brand-brain-img"></a>
+    <a class="brand" href="#topo" aria-label="AI Second Brain"><img src="assets/ai-second-brain-logo-animado.svg"
+        alt="AI Second Brain Logo" class="brand-brain-img"></a>
     <div class="links">
       <a href="#problema">Problema</a>
       <a href="#como">4 Camadas</a>
@@ -89,7 +89,8 @@
             </svg>
             <span>Baixar no GitHub</span>
           </a>
-          <button class="btn video-hero-btn" id="hero-video-btn" type="button" aria-label="Assistir ao vídeo de demonstração">
+          <button class="btn video-hero-btn" id="hero-video-btn" type="button"
+            aria-label="Assistir ao vídeo de demonstração">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
               <path d="M8 5v14l11-7z" />
             </svg>
@@ -198,7 +199,8 @@
 
         <div class="chat" data-mode="com" hidden>
           <div class="chat-banner success-banner">
-            <span>⚡ Memória conectada: <code>memory/current-state.md</code>, <code>decisions/GLOBAL_DECISIONS.md</code> e
+            <span>⚡ Memória conectada: <code>memory/current-state.md</code>, <code>decisions/GLOBAL_DECISIONS.md</code>
+              e
               <code>.agents/rules/03-security.md</code> carregados no início da sessão.</span>
           </div>
           <div class="msg you">
@@ -208,10 +210,12 @@
           <div class="msg ai ok">
             <div class="msg-author">Agente de IA (Com Segundo Cérebro)</div>
             <div class="msg-text">
-              Pronto! Li o <code>memory/current-state.md</code> da sessão anterior e o <code>decisions/GLOBAL_DECISIONS.md</code>. O
+              Pronto! Li o <code>memory/current-state.md</code> da sessão anterior e o
+              <code>decisions/GLOBAL_DECISIONS.md</code>. O
               schema Prisma com refresh token já foi migrado ontem; falta apenas o middleware de validação JWT.
               <br><br>
-              Vou seguir o padrão de hashing seguro definido em <code>.agents/rules/03-security.md</code> e documentar a alteração
+              Vou seguir o padrão de hashing seguro definido em <code>.agents/rules/03-security.md</code> e documentar a
+              alteração
               na memória da sessão. Posso gerar o middleware?
             </div>
           </div>
@@ -221,7 +225,8 @@
           </div>
           <div class="msg ai ok">
             <div class="msg-author">Agente de IA (Com Segundo Cérebro)</div>
-            <div class="msg-text">Feito! Middleware criado e testado. Atualizei <code>memory/current-state.md</code> com os
+            <div class="msg-text">Feito! Middleware criado e testado. Atualizei <code>memory/current-state.md</code> com
+              os
               próximos passos e aprendizados. Próximo agente assume sem perda de contexto.</div>
           </div>
           <div class="chat-footer-stat green-stat">
@@ -343,7 +348,9 @@
           vai para um modelo de IA.</p>
         <p class="diag-cap" data-d="lab">O prompt de pesquisa é um documento vivo: refinado com IA e versionado (v1,
           v2…). O motor gera duas camadas de arquivos: conhecimento conceitual e especificações acionáveis.</p>
-        <p class="diag-cap" data-d="ciclo">Zero amnésia: cada sessão começa lendo o estado atual com Prompt Bootstrap, consulta regras e ADRs via Pergunte ao Cérebro (Ctrl+K) e termina registrando entregas com Session Capture. A próxima assume exatamente de onde esta parou.</p>
+        <p class="diag-cap" data-d="ciclo">Zero amnésia: cada sessão começa lendo o estado atual com Prompt Bootstrap,
+          consulta regras e ADRs via Pergunte ao Cérebro (Ctrl+K) e termina registrando entregas com Session Capture. A
+          próxima assume exatamente de onde esta parou.</p>
       </div>
     </section>
     <section class="sec " id="research">
@@ -366,10 +373,14 @@
       <div class="resil rv">
         <h3>Feito para não quebrar</h3>
         <ul>
-          <li><b>AI Gateway Multi-Provedor:</b> conecte Groq, OpenAI, Anthropic, Gemini, DeepSeek, OpenRouter ou Ollama local com auto-descoberta dinâmica de modelos.</li>
-          <li><b>Prompt Vivo Cirúrgico com JEV:</b> motor de decisão local sem poluição cruzada de contratos, detecção de ambiguidade com chips em 1 clique e botão Desfazer.</li>
-          <li><b>Recuperação inteligente de rate limit:</b> lê o tempo de espera informado pelo provedor e retenta automaticamente com margem de segurança.</li>
-          <li><b>Cadência preventiva controlada</b> entre arquivos, para não esgotar o limite de tokens por minuto da sua chave.</li>
+          <li><b>AI Gateway Multi-Provedor:</b> conecte Groq, OpenAI, Anthropic, Gemini, DeepSeek, OpenRouter ou Ollama
+            local com auto-descoberta dinâmica de modelos.</li>
+          <li><b>Prompt Vivo Cirúrgico com JEV:</b> motor de decisão local sem poluição cruzada de contratos, detecção
+            de ambiguidade com chips em 1 clique e botão Desfazer.</li>
+          <li><b>Recuperação inteligente de rate limit:</b> lê o tempo de espera informado pelo provedor e retenta
+            automaticamente com margem de segurança.</li>
+          <li><b>Cadência preventiva controlada</b> entre arquivos, para não esgotar o limite de tokens por minuto da
+            sua chave.</li>
           <li><b>Retomada automática:</b> reconhece arquivos já gerados e não gasta tokens refazendo.</li>
           <li><b>Progresso em tempo real</b> (SSE) na interface durante toda a pesquisa.</li>
           <li><b>Fallback entre modelos</b> com retentativas exponenciais; decisões determinísticas seguem 100% locais.
@@ -386,12 +397,14 @@
         <div class="card rv">
           <div class="card-icon-wrap" style="--c:#a3e635"><i>🚀</i></div>
           <h3>Criar do zero</h3>
-          <p>Para ideias novas. Criação guiada em 1 clique com git init automático, .gitignore sanitizado contra segredos, pontes multi-IA e qualquer stack de tecnologia.</p>
+          <p>Para ideias novas. Criação guiada em 1 clique com git init automático, .gitignore sanitizado contra
+            segredos, pontes multi-IA e qualquer stack de tecnologia.</p>
         </div>
         <div class="card rv">
           <div class="card-icon-wrap" style="--c:#38bdf8"><i>🔗</i></div>
           <h3>Vincular um projeto existente</h3>
-          <p>Conecta qualquer pasta ou repositório Git sem duplicar arquivos. Cria automaticamente pontes de governança multi-IA e atalhos diretos para abrir no VS Code e Cursor.</p>
+          <p>Conecta qualquer pasta ou repositório Git sem duplicar arquivos. Cria automaticamente pontes de governança
+            multi-IA e atalhos diretos para abrir no VS Code e Cursor.</p>
         </div>
         <div class="card rv">
           <div class="card-icon-wrap" style="--c:#c084fc"><i>💾</i></div>
@@ -409,10 +422,12 @@
         total.</p>
 
       <div class="grid">
-        <div class="card card-video-featured rv" data-feature="memoria-persistente" style="--card-accent: #38bdf8;" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Memória Persistente Real">
+        <div class="card card-video-featured rv" data-feature="memoria-persistente" style="--card-accent: #38bdf8;"
+          tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Memória Persistente Real">
           <div class="card-video-header">
             <div class="card-video-media-wrap">
-              <video class="card-video-media" autoplay loop muted playsinline preload="auto" poster="assets/video/synapse-poster.jpg">
+              <video class="card-video-media" autoplay loop muted playsinline preload="auto"
+                poster="assets/video/synapse-poster.jpg">
                 <source src="assets/video/synapse-card.mp4" type="video/mp4">
               </video>
               <div class="card-video-header-overlay"></div>
@@ -426,14 +441,17 @@
             </div>
           </div>
           <div class="card-video-body">
-            <p>Contexto vital que sobrevive a fechamento de abas, reinicialização de IDEs, trocas de LLMs e mudanças na equipe.</p>
+            <p>Contexto vital que sobrevive a fechamento de abas, reinicialização de IDEs, trocas de LLMs e mudanças na
+              equipe.</p>
             <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
           </div>
         </div>
-        <div class="card card-video-featured rv" data-feature="session-capture" style="--card-accent: #10b981;" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Session Capture com IA">
+        <div class="card card-video-featured rv" data-feature="session-capture" style="--card-accent: #10b981;"
+          tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Session Capture com IA">
           <div class="card-video-header">
             <div class="card-video-media-wrap">
-              <video class="card-video-media" autoplay loop muted playsinline preload="auto" poster="assets/video/session-capture-poster.jpg">
+              <video class="card-video-media" autoplay loop muted playsinline preload="auto"
+                poster="assets/video/session-capture-poster.jpg">
                 <source src="assets/video/session-capture-card.mp4" type="video/mp4">
               </video>
               <div class="card-video-header-overlay"></div>
@@ -447,14 +465,17 @@
             </div>
           </div>
           <div class="card-video-body">
-            <p>Feche o ciclo em 30 segundos. A IA inspeciona commits e arquivos modificados, sintetiza entregas e pendências com revisão humana antes de gravar.</p>
+            <p>Feche o ciclo em 30 segundos. A IA inspeciona commits e arquivos modificados, sintetiza entregas e
+              pendências com revisão humana antes de gravar.</p>
             <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
           </div>
         </div>
-        <div class="card card-video-featured rv" data-feature="decision-gate" style="--card-accent: #a3e635;" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de AI Decision Gate & Motor JEV">
+        <div class="card card-video-featured rv" data-feature="decision-gate" style="--card-accent: #a3e635;"
+          tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de AI Decision Gate & Motor JEV">
           <div class="card-video-header">
             <div class="card-video-media-wrap">
-              <video class="card-video-media" autoplay loop muted playsinline preload="auto" poster="assets/video/decision-gate-poster.jpg">
+              <video class="card-video-media" autoplay loop muted playsinline preload="auto"
+                poster="assets/video/decision-gate-poster.jpg">
                 <source src="assets/video/decision-gate-card.mp4" type="video/mp4">
               </video>
               <div class="card-video-header-overlay"></div>
@@ -468,49 +489,157 @@
             </div>
           </div>
           <div class="card-video-body">
-            <p>O motor de decisão local `RulesDecisionProvider` (0ms / custo zero) classifica tarefas e ambiguidades antes de chamar LLMs, economizando milhares de tokens.</p>
+            <p>O motor de decisão local `RulesDecisionProvider` (0ms / custo zero) classifica tarefas e ambiguidades
+              antes de chamar LLMs, economizando milhares de tokens.</p>
             <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
           </div>
         </div>
-        <div class="card rv" data-feature="prompt-bootstrap" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Prompt Bootstrap & Workspace">
-          <div class="card-icon-wrap" style="--c:#6366f1"><i>🚀</i></div>
-          <h3>Prompt Bootstrap & Workspace</h3>
-          <p>Copie em 1 clique o prompt pré-aquecido com regras e contratos para qualquer agente de IA, e acesse a pasta física no Explorador sem atrito.</p>
-          <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
+        <div class="card card-video-featured rv" data-feature="prompt-bootstrap" style="--card-accent: #6366f1;"
+          tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Prompt Bootstrap & Workspace">
+          <div class="card-video-header">
+            <div class="card-video-media-wrap">
+              <video class="card-video-media" autoplay loop muted playsinline preload="auto"
+                poster="assets/video/prompt-bootstrap-poster.jpg">
+                <source src="assets/video/prompt-bootstrap-card.mp4" type="video/mp4">
+              </video>
+              <div class="card-video-header-overlay"></div>
+            </div>
+            <div class="card-video-header-content">
+              <div class="card-video-badge">
+                <span class="card-video-badge-dot"></span>
+                <span>Context Injection</span>
+              </div>
+              <h3>Prompt Bootstrap &amp; Workspace</h3>
+            </div>
+          </div>
+          <div class="card-video-body">
+            <p>Copie em 1 clique o prompt pré-aquecido com regras e contratos para qualquer agente de IA, e acesse a
+              pasta física no Explorador sem atrito.</p>
+            <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
+          </div>
         </div>
-        <div class="card rv" data-feature="governanca-owasp" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Governança & OWASP">
-          <div class="card-icon-wrap" style="--c:#f87171"><i>🛡️</i></div>
-          <h3>Governança & OWASP</h3>
-          <p>Proteção contra vazamento de segredos, injeção de prompt e violação de privacidade tratados como regra
-            inegociável.</p>
-          <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
+        <div class="card card-video-featured rv" data-feature="governanca-owasp"
+          style="--card-accent: rgb(113, 175, 255);" tabindex="0" role="button" aria-haspopup="dialog"
+          aria-label="Ver detalhes de Governança &amp; OWASP">
+          <div class="card-video-header">
+            <div class="card-video-media-wrap">
+              <video class="card-video-media" autoplay loop muted playsinline preload="auto"
+                poster="assets/video/governanca-owasp-poster.jpg">
+                <source src="assets/video/governanca-owasp-card.mp4" type="video/mp4">
+              </video>
+              <div class="card-video-header-overlay"></div>
+            </div>
+            <div class="card-video-header-content">
+              <div class="card-video-badge">
+                <span class="card-video-badge-dot"></span>
+                <span>Segurança &amp; Anti-Leak</span>
+              </div>
+              <h3>Governança &amp; OWASP</h3>
+            </div>
+          </div>
+          <div class="card-video-body">
+            <p>Proteção contra vazamento de segredos, injeção de prompt e violação de privacidade tratados como regra
+              inegociável.</p>
+            <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
+          </div>
         </div>
-        <div class="card rv" data-feature="agnostico-stack" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de 100% Agnóstico de Stack">
-          <div class="card-icon-wrap" style="--c:#ffc76b"><i>🧩</i></div>
-          <h3>100% Agnóstico de Stack</h3>
-          <p>Node, Python, Go, C#, Rust, Flutter, React ou SQL. O cérebro opera sobre o raciocínio e a governança, não a
-            sintaxe.</p>
-          <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
+        <div class="card card-video-featured rv" data-feature="agnostico-stack" style="--card-accent: #ffc76b;"
+          tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de 100% Agnóstico de Stack">
+          <div class="card-video-header">
+            <div class="card-video-media-wrap">
+              <video class="card-video-media" autoplay loop muted playsinline preload="auto"
+                poster="assets/video/agnostico-stack-poster.jpg">
+                <source src="assets/video/agnostico-stack-card.mp4" type="video/mp4">
+              </video>
+              <div class="card-video-header-overlay"></div>
+            </div>
+            <div class="card-video-header-content">
+              <div class="card-video-badge">
+                <span class="card-video-badge-dot"></span>
+                <span>Universal / Multi-Stack</span>
+              </div>
+              <h3>100% Agnóstico de Stack</h3>
+            </div>
+          </div>
+          <div class="card-video-body">
+            <p>Node, Python, Go, C#, Rust, Flutter, React ou SQL. O cérebro opera sobre o raciocínio e a governança, não
+              a
+              sintaxe.</p>
+            <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
+          </div>
         </div>
-        <div class="card rv" data-feature="zero-lock-in" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Zero Lock-In (Puro Markdown)">
-          <div class="card-icon-wrap" style="--c:#facc15"><i>📝</i></div>
-          <h3>Zero Lock-In (Puro Markdown)</h3>
-          <p>Sem bancos de dados proprietários. Seus arquivos estão versionados no Git, auditáveis por humanos e
-            legíveis por qualquer IA.</p>
-          <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
+        <div class="card card-video-featured rv" data-feature="zero-lock-in" style="--card-accent: #22d3ee;"
+          tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Zero Lock-In (Puro Markdown)">
+          <div class="card-video-header">
+            <div class="card-video-media-wrap">
+              <video class="card-video-media" autoplay loop muted playsinline preload="auto"
+                poster="assets/video/zero-lock-in-poster.jpg">
+                <source src="assets/video/zero-lock-in-card.mp4" type="video/mp4">
+              </video>
+              <div class="card-video-header-overlay"></div>
+            </div>
+            <div class="card-video-header-content">
+              <div class="card-video-badge">
+                <span class="card-video-badge-dot"></span>
+                <span>Git &amp; Open Formats</span>
+              </div>
+              <h3>Zero Lock-In (Puro Markdown)</h3>
+            </div>
+          </div>
+          <div class="card-video-body">
+            <p>Sem bancos de dados proprietários. Seus arquivos estão versionados no Git, auditáveis por humanos e
+              legíveis por qualquer IA.</p>
+            <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
+          </div>
         </div>
-        <div class="card rv" data-feature="grafo-3d" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Grafo Espacial 3D Vivo">
-          <div class="card-icon-wrap" style="--c:#c084fc"><i>🌐</i></div>
-          <h3>Grafo Espacial 3D Vivo</h3>
-          <p>Visualize seu conhecimento como neurônios conectados. Descubra links cruzados e abra qualquer arquivo num
-            clique.</p>
-          <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
+        <div class="card card-video-featured rv" data-feature="grafo-3d" style="--card-accent: #c084fc;" tabindex="0"
+          role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Grafo Espacial 3D Vivo">
+          <div class="card-video-header">
+            <div class="card-video-media-wrap">
+              <video class="card-video-media" autoplay loop muted playsinline preload="auto"
+                poster="assets/video/grafo-3d-poster.jpg">
+                <source src="assets/video/grafo-3d-card.mp4" type="video/mp4">
+              </video>
+              <div class="card-video-header-overlay"></div>
+            </div>
+            <div class="card-video-header-content">
+              <div class="card-video-badge">
+                <span class="card-video-badge-dot"></span>
+                <span>Neurônios &amp; Sinapses 3D</span>
+              </div>
+              <h3>Grafo Espacial 3D Vivo</h3>
+            </div>
+          </div>
+          <div class="card-video-body">
+            <p>Visualize seu conhecimento como neurônios conectados. Descubra links cruzados e abra qualquer arquivo num
+              clique.</p>
+            <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
+          </div>
         </div>
-        <div class="card rv" data-feature="pergunte-cerebro" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de Pergunte ao Cérebro (Ctrl+K)">
-          <div class="card-icon-wrap" style="--c:#ec4899"><i>✨</i></div>
-          <h3>Pergunte ao Cérebro (Ctrl+K)</h3>
-          <p>Busca semântica determinística (TF-IDF/BM25) com multiplicadores de governança e síntese por IA (BYOK). Tire dúvidas técnicas em segundos com citações verificadas e Zero Fabricação.</p>
-          <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
+        <div class="card card-video-featured rv" data-feature="pergunte-cerebro"
+          style="--card-accent: rgb(72, 102, 236);" tabindex="0" role="button" aria-haspopup="dialog"
+          aria-label="Ver detalhes de Pergunte ao Cérebro (Ctrl+K)">
+          <div class="card-video-header">
+            <div class="card-video-media-wrap">
+              <video class="card-video-media" autoplay loop muted playsinline preload="auto"
+                poster="assets/video/pergunte-cerebro-poster.jpg">
+                <source src="assets/video/pergunte-cerebro-card.mp4" type="video/mp4">
+              </video>
+              <div class="card-video-header-overlay"></div>
+            </div>
+            <div class="card-video-header-content">
+              <div class="card-video-badge">
+                <span class="card-video-badge-dot"></span>
+                <span>Busca Semântica &amp; BYOK</span>
+              </div>
+              <h3>Pergunte ao Cérebro (Ctrl+K)</h3>
+            </div>
+          </div>
+          <div class="card-video-body">
+            <p>Busca semântica determinística (TF-IDF/BM25) com multiplicadores de governança e síntese por IA (BYOK).
+              Tire dúvidas técnicas em segundos com citações verificadas e Zero Fabricação.</p>
+            <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
+          </div>
         </div>
       </div>
 
@@ -529,11 +658,13 @@
     <section class="sec" id="video-showcase">
       <div class="sec-badge rv">Vídeo Oficial</div>
       <h2 class="rv">Veja o Segundo Cérebro <em>em ação.</em></h2>
-      <p class="sub rv">Assista em 1 minuto como transformar a amnésia de qualquer agente em uma memória neural persistente, viva e auditável.</p>
+      <p class="sub rv">Assista em 1 minuto como transformar a amnésia de qualquer agente em uma memória neural
+        persistente, viva e auditável.</p>
 
       <div class="video-showcase-box rv">
         <div class="video-showcase-header">
-          <div class="video-showcase-dots"><span class="v-dot red"></span><span class="v-dot yellow"></span><span class="v-dot green"></span></div>
+          <div class="video-showcase-dots"><span class="v-dot red"></span><span class="v-dot yellow"></span><span
+              class="v-dot green"></span></div>
           <div class="video-showcase-title">
             <span class="video-live-dot"></span>
             <span>ai-second-brain-overview.mp4</span>
@@ -545,7 +676,8 @@
         </div>
 
         <div class="video-player-container">
-          <video id="inline-video-player" class="video-player" controls preload="none" playsinline poster="assets/og-image.png">
+          <video id="inline-video-player" class="video-player" controls preload="none" playsinline
+            poster="assets/og-image.png">
             <source src="assets/video/Promo-16x9.mp4" type="video/mp4" media="(min-width: 769px)">
             <source src="assets/video/Reels-9x16.mp4" type="video/mp4" media="(max-width: 768px)">
             <source src="assets/video/Promo-16x9.mp4" type="video/mp4">
@@ -571,7 +703,8 @@
     <section class="sec " id="demo">
       <div class="sec-badge rv">Demo ao vivo</div>
       <h2 class="rv">Não acredite: <em>teste agora.</em></h2>
-      <p class="sub rv">O dashboard real, rodando no navegador com um vault de exemplo. Explore o grafo 3D, pressione Ctrl+K para perguntar ao cérebro e leia a documentação. É somente leitura.</p>
+      <p class="sub rv">O dashboard real, rodando no navegador com um vault de exemplo. Explore o grafo 3D, pressione
+        Ctrl+K para perguntar ao cérebro e leia a documentação. É somente leitura.</p>
       <div class="browser rv">
         <div class="browser-bar"><span class="dots"><i></i><i></i><i></i></span><span
             class="url">demo/index.html</span><a href="../demo/index.html" target="_blank" rel="noopener">Abrir em tela
@@ -600,11 +733,17 @@
         </details>
         <details class="rv">
           <summary>Funciona com qualquer agente de IA?</summary>
-          <p>Com qualquer agente. O sistema adota o padrão aberto universal <code>AGENTS.md</code> e gera pontes nativas para Cursor (<code>.cursorrules</code>), Claude Code (<code>CLAUDE.md</code>), Google Antigravity (<code>GEMINI.md</code>), Windsurf (<code>.windsurfrules</code>), Cline (<code>.clinerules</code>) e GitHub Copilot (<code>copilot-instructions.md</code>). Ao vincular ou criar projetos via CLI, essas pontes são geradas diretamente no repositório.</p>
+          <p>Com qualquer agente. O sistema adota o padrão aberto universal <code>AGENTS.md</code> e gera pontes nativas
+            para Cursor (<code>.cursorrules</code>), Claude Code (<code>CLAUDE.md</code>), Google Antigravity
+            (<code>GEMINI.md</code>), Windsurf (<code>.windsurfrules</code>), Cline (<code>.clinerules</code>) e GitHub
+            Copilot (<code>copilot-instructions.md</code>). Ao vincular ou criar projetos via CLI, essas pontes são
+            geradas diretamente no repositório.</p>
         </details>
         <details class="rv">
           <summary>E se eu abrir o projeto isoladamente em outro editor?</summary>
-          <p>Você pode trabalhar tanto pelo Cockpit Central do AI Second Brain quanto em modo Standalone. Os comandos de vínculo geram as pontes (AGENTS.md, .cursorrules, CLAUDE.md, etc.) no seu repositório físico, mantendo a governança ativa em qualquer editor.</p>
+          <p>Você pode trabalhar tanto pelo Cockpit Central do AI Second Brain quanto em modo Standalone. Os comandos de
+            vínculo geram as pontes (AGENTS.md, .cursorrules, CLAUDE.md, etc.) no seu repositório físico, mantendo a
+            governança ativa em qualquer editor.</p>
         </details>
         <details class="rv">
           <summary>Preciso de banco vetorial ou de alguma infraestrutura?</summary>
@@ -613,15 +752,21 @@
         </details>
         <details class="rv">
           <summary>Meus dados saem da minha máquina?</summary>
-          <p>O cérebro vive nos seus arquivos locais e no seu Git. As chamadas de IA ocorrem apenas se você usar o Research Lab com sua própria chave (BYOK) — suportando Groq, OpenAI, Anthropic, Gemini, DeepSeek, OpenRouter e até modelos locais via Ollama sem sair da máquina.</p>
+          <p>O cérebro vive nos seus arquivos locais e no seu Git. As chamadas de IA ocorrem apenas se você usar o
+            Research Lab com sua própria chave (BYOK) — suportando Groq, OpenAI, Anthropic, Gemini, DeepSeek, OpenRouter
+            e até modelos locais via Ollama sem sair da máquina.</p>
         </details>
         <details class="rv">
           <summary>Como o Session Capture garante que nenhum segredo seja gravado na memória?</summary>
-          <p>O fluxo de Session Capture adota o padrão <b>Draft & Commit</b> com revisão humana obrigatória. O extrator sanitiza automaticamente arquivos de ambiente (.env), chaves e credenciais do Git diff antes de apresentar o rascunho. Nada é gravado em <code>CURRENT_STATE.md</code> sem a sua validação e aprovação explícita no Cockpit.</p>
+          <p>O fluxo de Session Capture adota o padrão <b>Draft & Commit</b> com revisão humana obrigatória. O extrator
+            sanitiza automaticamente arquivos de ambiente (.env), chaves e credenciais do Git diff antes de apresentar o
+            rascunho. Nada é gravado em <code>CURRENT_STATE.md</code> sem a sua validação e aprovação explícita no
+            Cockpit.</p>
         </details>
         <details class="rv">
           <summary>O que acontece se um provedor de IA oscilar ou ficar indisponível?</summary>
-          <p>O AI Gateway tem fallback entre modelos, retentativas automáticas e suporte a provedores locais. Tarefas determinísticas e decisões do portão de IA continuam funcionando com 100% de disponibilidade local.</p>
+          <p>O AI Gateway tem fallback entre modelos, retentativas automáticas e suporte a provedores locais. Tarefas
+            determinísticas e decisões do portão de IA continuam funcionando com 100% de disponibilidade local.</p>
         </details>
         <details class="rv">
           <summary>Onde ficam os backups e dossiês de governança?</summary>
@@ -630,11 +775,18 @@
         </details>
         <details class="rv">
           <summary>Como funciona o "Pergunte ao Cérebro" e por que ele não exige banco vetorial?</summary>
-          <p>Diferente de bancos vetoriais pesados e opacos, o AI Second Brain utiliza um motor RAG determinístico inspirado em BM25/TF-IDF com multiplicadores de arquitetura (ADRs 2.4x, Estado Atual 2.2x, Contratos 2.0x, Regras 1.8x). Ele recupera os trechos mais densos do cofre e utiliza a IA configurada (BYOK) para sintetizar respostas técnicas precisas com links clicáveis para os arquivos originais, seguindo a diretriz de Zero Fabricação e transparência algorítmica.</p>
+          <p>Diferente de bancos vetoriais pesados e opacos, o AI Second Brain utiliza um motor RAG determinístico
+            inspirado em BM25/TF-IDF com multiplicadores de arquitetura (ADRs 2.4x, Estado Atual 2.2x, Contratos 2.0x,
+            Regras 1.8x). Ele recupera os trechos mais densos do cofre e utiliza a IA configurada (BYOK) para sintetizar
+            respostas técnicas precisas com links clicáveis para os arquivos originais, seguindo a diretriz de Zero
+            Fabricação e transparência algorítmica.</p>
         </details>
         <details class="rv">
           <summary>O que é o Progressive Disclosure nas buscas do cofre?</summary>
-          <p>Para evitar o efeito "Lost in the Middle" (onde LLMs alucinam ou ignoram trechos do meio ao receberem dezenas de documentos), a IA sintetiza prioritariamente os 5 a 7 documentos mais relevantes. Ao mesmo tempo, o desenvolvedor pode expandir com 1 clique até 12 fontes adicionais encontradas no cofre através do botão interativo, inspecionando cada arquivo no leitor ou focando diretamente no Grafo Neural 3D.</p>
+          <p>Para evitar o efeito "Lost in the Middle" (onde LLMs alucinam ou ignoram trechos do meio ao receberem
+            dezenas de documentos), a IA sintetiza prioritariamente os 5 a 7 documentos mais relevantes. Ao mesmo tempo,
+            o desenvolvedor pode expandir com 1 clique até 12 fontes adicionais encontradas no cofre através do botão
+            interativo, inspecionando cada arquivo no leitor ou focando diretamente no Grafo Neural 3D.</p>
         </details>
         <details class="rv">
           <summary>Posso testar antes de instalar?</summary>
@@ -802,12 +954,14 @@
   </aside>
 
   <!-- ── MODAL DE DETALHES TÉCNICOS (SUPERPODERES DO SISTEMA) ── -->
-  <div id="feature-modal" class="feature-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="feature-modal-title">
+  <div id="feature-modal" class="feature-modal" aria-hidden="true" role="dialog" aria-modal="true"
+    aria-labelledby="feature-modal-title">
     <div class="feature-modal-backdrop" id="feature-modal-backdrop"></div>
     <div class="feature-modal-dialog">
       <div class="feature-modal-header" id="feature-modal-header">
         <div class="feature-modal-header-video-bg" id="feature-modal-header-video-bg" style="display: none;">
-          <video id="feature-modal-header-video" class="feature-modal-header-video" loop muted playsinline preload="none" poster="assets/video/synapse-poster.jpg">
+          <video id="feature-modal-header-video" class="feature-modal-header-video" loop muted playsinline
+            preload="none" poster="assets/video/synapse-poster.jpg">
             <source src="assets/video/synapse-modal.mp4" type="video/mp4">
           </video>
           <div class="feature-modal-header-video-overlay"></div>
@@ -835,9 +989,11 @@
 
       <div class="feature-modal-footer">
         <div class="feature-modal-nav">
-          <button id="feature-modal-prev" class="btn-feature-nav" title="Anterior">← <span class="nav-btn-label">Anterior</span></button>
+          <button id="feature-modal-prev" class="btn-feature-nav" title="Anterior">← <span
+              class="nav-btn-label">Anterior</span></button>
           <span id="feature-modal-counter" class="feature-counter">1 / 9</span>
-          <button id="feature-modal-next" class="btn-feature-nav" title="Próximo"><span class="nav-btn-label">Próximo</span> →</button>
+          <button id="feature-modal-next" class="btn-feature-nav" title="Próximo"><span
+              class="nav-btn-label">Próximo</span> →</button>
         </div>
         <button id="feature-modal-action-btn" class="btn-feature-close">Entendi</button>
       </div>
@@ -845,7 +1001,8 @@
   </div>
 
   <!-- ── MODAL DE VÍDEO (LIGHTBOX) ── -->
-  <div id="video-modal" class="video-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Vídeo de Apresentação">
+  <div id="video-modal" class="video-modal" aria-hidden="true" role="dialog" aria-modal="true"
+    aria-label="Vídeo de Apresentação">
     <div class="video-modal-backdrop" id="video-modal-backdrop"></div>
     <div class="video-modal-dialog">
       <div class="video-modal-header">
@@ -857,7 +1014,8 @@
       </div>
       <div class="video-modal-body">
         <div class="video-modal-frame" id="video-modal-frame">
-          <video id="modal-video-player" class="video-player" controls preload="none" playsinline poster="assets/og-image.png">
+          <video id="modal-video-player" class="video-player" controls preload="none" playsinline
+            poster="assets/og-image.png">
             <source src="assets/video/Promo-16x9.mp4" type="video/mp4" media="(min-width: 769px)">
             <source src="assets/video/Reels-9x16.mp4" type="video/mp4" media="(max-width: 768px)">
             <source src="assets/video/Promo-16x9.mp4" type="video/mp4">
@@ -877,7 +1035,8 @@
   <script src="js/extra.js"></script>
   <script src="js/features-modal.js"></script>
   <!-- Cloudflare Web Analytics -->
-  <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f08fbcf60143457fbeaa9d2acf09b239"}'></script>
+  <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js'
+    data-cf-beacon='{"token": "f08fbcf60143457fbeaa9d2acf09b239"}'></script>
   <!-- End Cloudflare Web Analytics -->
 </body>
 
