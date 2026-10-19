@@ -19,7 +19,7 @@
         f.src = DEMO_URL; f.title = 'AI Second Brain — demo ao vivo'; f.loading = 'lazy'; f.allow = 'fullscreen';
         u.className = 'unload'; u.type = 'button'; u.textContent = (window.I18N && I18N.lang === 'en') ? 'Unload ✕' : 'Descarregar ✕';
         u.onclick = () => { f.remove(); u.remove(); loadBtn.hidden = false; g && g.start(); };
-        loadBtn.hidden = true; 
+        loadBtn.hidden = true;
         body.append(f);
         const fullLink = bar ? bar.querySelector('a') : null;
         if (fullLink) {
@@ -49,13 +49,13 @@
 
     // ── Integração de Vídeo (Modal, Showcase e Adaptação Responsiva) ──
     const heroBtn = $('#hero-video-btn'),
-          modal = $('#video-modal'),
-          modalClose = $('#video-modal-close'),
-          modalBackdrop = $('#video-modal-backdrop'),
-          modalVideo = $('#modal-video-player'),
-          modalFrame = $('#video-modal-frame'),
-          inlineVideo = $('#inline-video-player'),
-          inlineExpand = $('#inline-video-expand');
+        modal = $('#video-modal'),
+        modalClose = $('#video-modal-close'),
+        modalBackdrop = $('#video-modal-backdrop'),
+        modalVideo = $('#modal-video-player'),
+        modalFrame = $('#video-modal-frame'),
+        inlineVideo = $('#inline-video-player'),
+        inlineExpand = $('#inline-video-expand');
 
     const getAdaptiveSrc = () => window.innerWidth <= 768 ? 'assets/video/Reels-9x16.mp4' : 'assets/video/Promo-16x9.mp4';
 
@@ -77,6 +77,10 @@
         if (modalFrame) modalFrame.classList.toggle('is-mobile-reels', isMobile);
         syncVideoSource(modalVideo);
 
+        // Pausa Three.js e vídeos em loop para liberar GPU
+        if (g) g.stop();
+        $$('.card-video-media').forEach(v => v.pause());
+
         if (syncTime && inlineVideo && !inlineVideo.paused) {
             modalVideo.currentTime = inlineVideo.currentTime;
             inlineVideo.pause();
@@ -87,7 +91,7 @@
         document.body.style.overflow = 'hidden';
 
         if (modalVideo) {
-            modalVideo.play().catch(() => {});
+            modalVideo.play().catch(() => { });
         }
     };
 
@@ -99,6 +103,9 @@
         if (modalVideo) {
             modalVideo.pause();
         }
+        // Restaura Three.js e vídeos em loop
+        if (g) g.start();
+        $$('.card-video-media').forEach(v => v.play().catch(() => { }));
     };
 
     if (heroBtn) heroBtn.addEventListener('click', () => openModal(false));
@@ -126,4 +133,85 @@
             syncVideoSource(modalVideo);
         }
     });
+
+    // ── Modal de Vídeo Vertical 9:16 (Reels / Shorts) ──
+    const promo9x16Modal = $('#promo-video-modal-9x16'),
+        promo9x16Close = $('#promo-modal-9x16-close'),
+        promo9x16Backdrop = $('#promo-modal-9x16-backdrop'),
+        promo9x16Video = $('#promo-video-9x16-player');
+
+    const openPromo9x16 = (videoSrc, posterSrc, e) => {
+        if (e && e.stopPropagation) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+        if (!promo9x16Modal) return;
+
+        // 1. Pausa o grafo 3D Three.js e vídeos dos cards para liberar 100% da GPU para o player
+        if (g) g.stop();
+        $$('.card-video-media').forEach(v => v.pause());
+        if (modalVideo && !modalVideo.paused) modalVideo.pause();
+        if (inlineVideo && !inlineVideo.paused) inlineVideo.pause();
+
+        // 2. Garante source e poster corretos sem forçar reload desnecessário
+        if (promo9x16Video && videoSrc) {
+            const cur = promo9x16Video.currentSrc || promo9x16Video.src || '';
+            if (!cur.endsWith(videoSrc)) {
+                promo9x16Video.src = videoSrc;
+                if (posterSrc) promo9x16Video.poster = posterSrc;
+                promo9x16Video.load();
+            }
+        }
+
+        promo9x16Modal.classList.add('active');
+        promo9x16Modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+
+        if (promo9x16Video) {
+            const playPromise = promo9x16Video.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {
+                    // Se o navegador bloquear áudio no autoplay, muta e retenta
+                    promo9x16Video.muted = true;
+                    promo9x16Video.play().catch(() => { });
+                });
+            }
+        }
+    };
+
+    const closePromo9x16 = () => {
+        if (!promo9x16Modal) return;
+        promo9x16Modal.classList.remove('active');
+        promo9x16Modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+
+        if (promo9x16Video) {
+            promo9x16Video.pause();
+        }
+
+        // Restaura animação do grafo 3D e loops dos cards
+        if (g) g.start();
+        $$('.card-video-media').forEach(v => v.play().catch(() => { }));
+    };
+
+    $$('.card-video-9x16-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const src = btn.dataset.videoSrc || 'assets/video/pergunte-cerebro-card-promo-9x16.mp4';
+            const poster = btn.dataset.videoPoster || 'assets/video/pergunte-cerebro-promo-poster.jpg';
+            openPromo9x16(src, poster, e);
+        });
+    });
+
+    if (promo9x16Close) promo9x16Close.addEventListener('click', closePromo9x16);
+    if (promo9x16Backdrop) promo9x16Backdrop.addEventListener('click', closePromo9x16);
+
+    window.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && promo9x16Modal && promo9x16Modal.classList.contains('active')) {
+            e.preventDefault();
+            closePromo9x16();
+        }
+    });
+
+    window.openPromoVideo9x16 = openPromo9x16;
+    window.closePromoVideo9x16 = closePromo9x16;
 })();

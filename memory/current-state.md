@@ -21,6 +21,27 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 
 ## Sessões Recentes
 - **Data**: 2026-10-18
+  - **Jornada do Quickstart Interativa (3 Atos), Streaming de Vídeo HTTP 206 & Player Modal Vertical 9:16 (Reels)**:
+    - **Demanda**: Modernizar a seção `#projeto` da Landing Page para refletir fielmente a jornada real de criação/vinculação do Quickstart Studio em 3 atos clicáveis conectados ao modal técnico de arquitetura; otimizar o servidor nativo Node.js (`server.js`) para suportar streaming de vídeo fluido com HTTP 206 Partial Content (Range requests); e integrar botão de vídeo vertical 9:16 no card do "Pergunte ao Cérebro" com modal dedicado dark glass e pausa automática de GPU.
+    - **Implementação**:
+      1. *Streaming de Vídeo HTTP 206 Partial Content (`server.js`)*:
+         - Adicionados tipos MIME `.mp4` (`video/mp4`), `.webm` (`video/webm`) e `.jpeg`.
+         - Implementado parser de cabeçalho `Range: bytes=start-end`, cálculo de chunks sob demanda e resposta com status `206 Partial Content`, cabeçalhos `Content-Range: bytes ${start}-${end}/${fileSize}`, `Accept-Ranges: bytes`, `Content-Length` e stream particionado via `fs.createReadStream(filePath, { start, end })`.
+         - Configurado `Cache-Control: public, max-age=3600` para mídias estáticas (`.mp4`, `.webm`, `.jpg`, `.png`, `.jpeg`), garantindo scrubbing e seek instantâneos sem travamentos ou alto consumo de RAM no servidor.
+      2. *Redesign da Jornada de Abertura / Quickstart na Landing Page (`#projeto`)*:
+         - Substituídos os 3 cards estáticos anteriores por 3 Atos Interativos de Onboarding fiéis ao sistema real:
+           - *Ato 1: Greenfield vs Brownfield (`qs-greenfield-symlink`)*: Mini-cards interativos de criação do zero com `git init` vs vinculação de repositório via Symlink NTFS nativo sem duplicação de arquivos, com pílulas de modo Express (50ms) vs Sabatina Grill (IA).
+           - *Ato 2: Sabatina Técnica Grill Studio (`qs-sabatina-grill`)*: Simulação dinâmica da pergunta arquitetural adaptativa, chips de seleção rápida, barra de progresso (75%, 3 de 4 decisões, até 8 com audit badge) e link para anatomia técnica.
+           - *Ato 3: 4 Contratos Vivos & Prompt Vivo (`qs-contratos-jev`)*: Abas dos 4 contratos (`PROJECT`, `ARCH`, `STATE`, `ADR-0001`), prompt dock do motor local JEV com botão "↺ Desfazer" e link para o modelo de contratos.
+         - *Extensão do Modal Dinâmico de Arquitetura (`features-modal.js`)*: Criada coleção `QUICKSTART_DATA` com detalhamento em 5 seções técnicas para cada ato (o que é na prática, funcionamento por baixo dos panos, arquivos reais do workspace, métricas de impacto e exemplos práticos de código). A navegação interna e contadores adaptam-se dinamicamente à lista ativa (`FEATURES_DATA` ou `QUICKSTART_DATA`).
+      3. *Modal Dedicado de Vídeo Vertical 9:16 (Reels / Shorts) & Ações Duplas no Rodapé*:
+         - *Ações Duplas no Rodapé (`.card-footer-actions`)*: No Card 09 da Bento Grid ("Pergunte ao Cérebro"), o rodapé agora abriga lado a lado o link "Ver arquitetura ↗" e o botão `.card-video-9x16-btn` ("▶ Vídeo Demo (9:16)").
+         - *Modal Vertical 9:16 (`#promo-video-modal-9x16`)*: Construído player responsivo em formato 9:16 vertical de smartphone em dark glass luxury com borda cobalto `rgb(72, 102, 236)`, backdrop blur de 10px, controle de reprodução nativo e fechamento via botão ✕, clique no backdrop ou tecla `ESC`.
+         - *Liberação Total de Recursos de GPU*: Ao abrir o modal vertical (ou o modal de pitch 16:9), a renderização contínua do grafo 3D Three.js e os vídeos em loop de todos os cards da página são pausados imediatamente (`g.stop()` e `.pause()`), liberando a GPU do dispositivo para decodificação limpa do vídeo, sendo reativados ao fechar.
+         - *Prevenção Defensiva de Conflitos*: O manipulador de clique nos cards verifica `.card-video-9x16-btn` e utiliza `stopPropagation`, garantindo que o clique no botão 9:16 abra apenas o player de vídeo sem disparar indevidamente o modal de arquitetura.
+      4. *Guia Técnico e i18n*:
+         - `docs/GUIA_PADRONIZACAO_CARDS_VIDEO.md` estendido com a subseção 2.1 documentando as ações duplas no rodapé e padronização do botão vertical 9:16.
+         - Dicionário `i18n.dict.js` atualizado com termos bilíngues (PT/EN) para botões e legendas dos novos componentes.
   - **Conclusão de 100% dos 9 Cards com Vídeo Cinemático & Redesign da Seção "Exemplo no Dia a Dia"**:
     - **Finalização dos Cards 5 a 9 na Bento Grid (`#vantagens`)**:
       - *Card 05 (`governanca-owasp`)*: Integrado cabeçalho de vídeo em loop `governanca-owasp-card.mp4` e modal `governanca-owasp-modal.mp4`, cor temática `rgb(113, 175, 255)` (Azul Neon), badge `Segurança & Anti-Leak`.

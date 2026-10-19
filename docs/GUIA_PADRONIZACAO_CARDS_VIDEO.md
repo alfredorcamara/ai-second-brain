@@ -176,6 +176,24 @@ No arquivo `docs/brain-ui/landing/index.html`, localize o card alvo na seção `
 </div>
 ```
 
+#### 2.1. Extensão Opcional: Ações Duplas no Rodapé (Botão de Vídeo Vertical 9:16)
+Quando o card dispuser de uma demonstração prática gravada em formato vertical 9:16 (como o **Card 09 "Pergunte ao Cérebro"** com `pergunte-cerebro-card-promo-9x16.mp4`), o rodapé `.card-video-body` utiliza o contêiner de ações duplas `.card-footer-actions`:
+
+```html
+<div class="card-footer-actions">
+  <div class="card-more-btn"><span>Ver arquitetura</span> <i>↗</i></div>
+  <button type="button" class="card-video-9x16-btn" id="btn-<nome>-video-9x16"
+    data-video-src="assets/video/<nome>-promo-9x16.mp4"
+    data-video-poster="assets/video/<nome>-promo-poster.jpg"
+    aria-label="Assistir demonstração rápida em vídeo 9:16">
+    <span class="btn-video-icon">▶</span>
+    <span>Vídeo Demo (9:16)</span>
+  </button>
+</div>
+```
+
+* **Prevenção de Conflito de Cliques**: No `features-modal.js`, a rotina `initCards` verifica se o clique/tecla teve origem no botão `.card-video-9x16-btn`, prevenindo o borbulhamento (`stopPropagation`) para que o modal técnico de arquitetura não seja acionado conjuntamente. O botão aciona com exclusividade o modal vertical `#promo-video-modal-9x16`.
+
 ---
 
 ### ETAPA 3: Registro do Vídeo no Modal (`features-modal.js`)

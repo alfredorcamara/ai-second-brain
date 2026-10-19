@@ -729,6 +729,260 @@
     }
   ];
 
+  const QUICKSTART_DATA = [
+    {
+      id: 'qs-entrada-dual',
+      color: '#a3e635',
+      hasHeaderVideo: false,
+      iconHtml: '<svg viewBox="0 0 48 48" width="46" height="46" fill="none" stroke="#a3e635" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M26 6C26 6 38 8 40 20C40 20 42 32 30 32C26 32 24 30 22 28L16 34L14 32L20 26C18 24 16 22 16 18C16 6 26 6 26 6Z"/><path d="M12 36L6 42"/><path d="M10 24L6 28"/><path d="M24 38L20 42"/><circle cx="30" cy="18" r="3" fill="#a3e635" opacity="0.4"/></svg>',
+      badge: {
+        pt: 'Quickstart Studio · Passo 1',
+        en: 'Quickstart Studio · Step 1'
+      },
+      title: {
+        pt: 'Entrada Dual: Greenfield vs. Brownfield (Zero Duplicação)',
+        en: 'Dual Entry: Greenfield vs. Brownfield (Zero Duplication)'
+      },
+      tagline: {
+        pt: 'Inicie uma ideia nova do zero ou plugue um repositório Git existente via Symlink NTFS sem duplicar nenhum byte.',
+        en: 'Start a clean idea from scratch or connect an existing Git repo via native NTFS Symlinks without duplicating a single byte.'
+      },
+      whatItIs: {
+        pt: 'O Quickstart Studio resolve o maior atrito de adoção em ferramentas de governança: o receio de ter que migrar pastas ou alterar a estrutura de repositórios consolidados. Com a Entrada Dual, você tem dois caminhos autênticos: Criar do Zero (Greenfield) com git init automático e .gitignore sanitizado contra segredos, ou Vincular Repositório Existente (Brownfield) via junção NTFS / Symlink nativo, mantendo o seu código 100% no local original e injetando a camada de memória persistente e regras multi-agente.',
+        en: 'Quickstart Studio eliminates the major friction when adopting governance tools: the fear of migrating folders or disrupting established repositories. With Dual Entry, you have two native paths: Greenfield creation with automatic git init and secret-sanitized .gitignore, or Brownfield linking via native NTFS Junction / Symlink, keeping code 100% in its original directory while injecting persistent memory and multi-agent governance.'
+      },
+      howItWorks: [
+        {
+          title: { pt: 'Junção NTFS / Symlink Nativo Instantâneo', en: 'Instant Native NTFS Junction / Symlink' },
+          desc: {
+            pt: 'Em repositórios existentes, o AI Second Brain cria um ponteiro de sistema de arquivos em `projects/<nome>/`. Nenhuma pasta de código é copiada ou movida, garantindo compatibilidade total com git branch, commits, hooks e pipelines de CI/CD.',
+            en: 'For existing repositories, AI Second Brain creates an OS-level filesystem junction under `projects/<name>/`. Zero code is copied or moved, maintaining complete git branch and CI/CD integrity.'
+          }
+        },
+        {
+          title: { pt: 'Sanitização Automática Anti-Vazamento (.gitignore)', en: 'Automatic Secret Sanitization (.gitignore)' },
+          desc: {
+            pt: 'Em projetos novos, o gerador cria regras blindadas de `.gitignore` que impedem o commit acidental de arquivos `.env`, chaves de API, credenciais e caches de dependências pesadas (`node_modules/`, `venv/`, `bin/`, `obj/`).',
+            en: 'For new projects, the engine writes fortified `.gitignore` rules preventing accidental leaks of `.env` files, API keys, credentials, and dependency caches.'
+          }
+        },
+        {
+          title: { pt: 'Dual-Mode: Express (50ms) vs. Sabatina Grill', en: 'Dual-Mode: Express (50ms) vs. Grill Studio' },
+          desc: {
+            pt: 'Você escolhe a velocidade: o Modo Express cria instantaneamente contratos limpos (0 tokens gastos), enquanto o Modo Assistido (Grill Studio) convoca o Arquiteto de IA para validar a stack e eliminar ambiguidades.',
+            en: 'You pick the speed: Express Mode creates clean template contracts instantly (0 tokens spent), while Assisted Mode (Grill) invokes the AI Architect to challenge your stack and eliminate ambiguity.'
+          }
+        }
+      ],
+      realFiles: [
+        {
+          path: 'scripts/create-project.js',
+          desc: { pt: 'Script de inicialização determinística de projetos do zero com git init.', en: 'Deterministic greenfield project initialization script with git init.' }
+        },
+        {
+          path: 'scripts/link-project.js',
+          desc: { pt: 'Motor de junção NTFS e verificação de integridade de links simbólicos.', en: 'NTFS junction engine and symlink integrity verification.' }
+        },
+        {
+          path: 'templates/project.md',
+          desc: { pt: 'Template de governança mandatório injetado no projeto.', en: 'Mandatory governance template injected into project.' }
+        },
+        {
+          path: 'server.js',
+          desc: { pt: 'Endpoints REST `/api/projects/create` e `/api/projects/link`.', en: 'REST endpoints for project creation and linking.' }
+        }
+      ],
+      metrics: [
+        {
+          label: { pt: '0 Bytes Duplicados', en: '0 Bytes Duplicated' },
+          val: { pt: 'Seu código permanece intacto no caminho original.', en: 'Your code remains 100% untouched in its original path.' }
+        },
+        {
+          label: { pt: '50ms no Modo Express', en: '50ms in Express Mode' },
+          val: { pt: 'Geração instantânea e determinística sem custo de API.', en: 'Instant deterministic generation with zero API cost.' }
+        },
+        {
+          label: { pt: 'Multi-Stack Nativo', en: 'Native Multi-Stack' },
+          val: { pt: 'Compatível com Node, .NET, Python, Go, Rust, Java e Mobile.', en: 'Compatible with Node, .NET, Python, Go, Rust, Java, and Mobile.' }
+        }
+      ],
+      codeBadge: {
+        pt: 'Simulação da Criação via Cockpit',
+        en: 'Cockpit Creation Simulation'
+      },
+      codeSnippet: {
+        pt: '// 1. Vincular repositório existente sem duplicar arquivos:\nPOST /api/projects/link\nBody: { "name": "meu-ecommerce", "targetPath": "C:\\\\Projetos\\\\meu-ecommerce" }\n\n// 2. Criação da Junção NTFS no Windows (0ms):\ncmd.exe /c mklink /J "c:\\\\AI_SECOND_BRAIN\\\\projects\\\\meu-ecommerce\\\\src" "C:\\\\Projetos\\\\meu-ecommerce"\n\n// 3. Resultado de Governança:\n✔ Junção NTFS ativa: C:\\\\Projetos\\\\meu-ecommerce <==> projects/meu-ecommerce/\n✔ Pontes de IA multi-agente criadas (.agents/rules/)\n✔ Estado inicial registrado em projects/meu-ecommerce/CURRENT_STATE.md',
+        en: '// 1. Link existing repository without duplicating files:\nPOST /api/projects/link\nBody: { "name": "my-ecommerce", "targetPath": "C:\\\\Projects\\\\my-ecommerce" }\n\n// 2. NTFS Junction creation on Windows (0ms):\ncmd.exe /c mklink /J "c:\\\\AI_SECOND_BRAIN\\\\projects\\\\my-ecommerce\\\\src" "C:\\\\Projects\\\\my-ecommerce"\n\n// 3. Governance result:\n✔ NTFS Junction active: C:\\\\Projects\\\\my-ecommerce <==> projects/my-ecommerce/\n✔ Multi-agent IA bridges created (.agents/rules/)\n✔ Active state initialized in projects/my-ecommerce/CURRENT_STATE.md'
+      }
+    },
+    {
+      id: 'qs-sabatina-grill',
+      color: '#38bdf8',
+      hasHeaderVideo: false,
+      iconHtml: '<svg viewBox="0 0 48 48" width="46" height="46" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="16"/><circle cx="24" cy="24" r="9"/><circle cx="24" cy="24" r="3" fill="#38bdf8"/><path d="M24 4V8"/><path d="M24 40V44"/><path d="M4 24H8"/><path d="M40 24H44"/></svg>',
+      badge: {
+        pt: 'Quickstart Studio · Passo 2',
+        en: 'Quickstart Studio · Step 2'
+      },
+      title: {
+        pt: 'Sabatina Técnica de IA (Grill Studio)',
+        en: 'AI Technical Grill (Grill Studio)'
+      },
+      tagline: {
+        pt: 'Um Arquiteto de IA formula de 3 a 4 perguntas cirúrgicas iniciais, permitindo aprofundar com até +4 complementares (máximo de 8 no total) em accordion focado antes de gerar código.',
+        en: 'An AI Architect asks 3 to 4 initial surgical questions, expandable by up to +4 complementary questions (maximum 8 in total) in a focused accordion before writing code.'
+      },
+      whatItIs: {
+        pt: 'A maioria dos assistentes de código comete erros graves porque inicia a geração a partir de prompts vagos. O Grill Studio inverte essa dinâmica: o Arquiteto de IA analisa a stack e sabatina o desenvolvedor com 3 a 4 perguntas técnicas profundas em accordion inteligente. Caso deseje aprofundar tópicos como observabilidade, logs, circuit breakers, cache ou CI/CD, é possível solicitar rodadas adicionais de até +4 perguntas, atingindo o teto calibrado de 8 decisões arquiteturais consolidadas antes de gerar qualquer arquivo.',
+        en: 'Most coding agents fail because they start from ambiguous prompts. Grill Studio reverses this dynamic: the AI Architect inspects your stack and questions the developer with 3 to 4 deep technical questions in a smart accordion. If you want to deepen topics like observability, logs, circuit breakers, cache, or CI/CD, you can request additional rounds of up to +4 questions, reaching a calibrated ceiling of 8 architectural decisions before generating files.'
+      },
+      howItWorks: [
+        {
+          title: { pt: 'Rodada Inicial Cirúrgica (3 a 4 Perguntas)', en: 'Initial Surgical Round (3 to 4 Questions)' },
+          desc: {
+            pt: 'O motor em `scripts/quickstart-grill.js` detecta a stack e formula as primeiras decisões capitais: persistência (SQL vs NoSQL), autenticação (JWT vs Session/OAuth) e contratos de API.',
+            en: 'The engine in `scripts/quickstart-grill.js` detects the stack and asks foundational questions: persistence (SQL vs NoSQL), auth (JWT vs OAuth/Session), and API contracts.'
+          }
+        },
+        {
+          title: { pt: 'Aprofundamento Sob Demanda (Até +4, Máximo 8)', en: 'On-Demand Deepening (Up to +4, Maximum 8)' },
+          desc: {
+            pt: 'Na barra de ações do Grill Studio, a caixa "Aprofundar Sabatina" permite gerar até mais 4 perguntas complementares sobre resiliência (Circuit Breakers, DLQs), observabilidade (OpenTelemetry, Winston) e deploy (Docker, CI/CD), travando no teto de 8 decisões para evitar sobrecarga.',
+            en: 'In Grill Studio action cards, the "Deepen Grill" box requests up to 4 complementary questions on resilience (Circuit Breakers), observability, and CI/CD, capping at 8 decisions to prevent cognitive fatigue.'
+          }
+        },
+        {
+          title: { pt: 'Accordion Inteligente com Auditoria Semântica', en: 'Smart Accordion with Semantic Coherence Audit' },
+          desc: {
+            pt: 'Apenas 1 pergunta permanece aberta por vez com chips de 1 clique. Se você digitar respostas contraditórias, o validador semântico em tempo real alerta o conflito e sugere correções antes de sintetizar os contratos.',
+            en: 'Only 1 question remains open at a time with 1-click chips. If contradictory answers are typed, the real-time semantic validator flags the conflict and suggests fixes before contract synthesis.'
+          }
+        }
+      ],
+      realFiles: [
+        {
+          path: 'scripts/quickstart-grill.js',
+          desc: { pt: 'Motor de geração de perguntas da sabatina e auditoria semântica.', en: 'Grill questions generation engine and semantic coherence validator.' }
+        },
+        {
+          path: 'scripts/decision-provider.js',
+          desc: { pt: 'Regras locais determinísticas para prevenção de alucinação e ambiguidade.', en: 'Local deterministic rules preventing ambiguity and hallucinations.' }
+        },
+        {
+          path: 'docs/brain-ui/app.js',
+          desc: { pt: 'Interface do Accordion Focado e barra de progresso da sabatina.', en: 'Focused Accordion UI and live progress bar implementation.' }
+        }
+      ],
+      metrics: [
+        {
+          label: { pt: '3 a 8 Perguntas', en: '3 to 8 Questions' },
+          val: { pt: '3 a 4 iniciais + até 4 complementares (teto de 8).', en: '3 to 4 initial + up to 4 complementary (max 8).' }
+        },
+        {
+          label: { pt: '1 por Vez (Accordion)', en: '1 at a Time (Accordion)' },
+          val: { pt: 'Zero fadiga mental e avanço automático suave.', en: 'Zero cognitive fatigue with smooth auto-advance.' }
+        },
+        {
+          label: { pt: 'Auditoria em Tempo Real', en: 'Real-Time Audit' },
+          val: { pt: 'Detecção imediata de respostas incoerentes ou vagas.', en: 'Immediate detection of incoherent or vague answers.' }
+        }
+      ],
+      codeBadge: {
+        pt: 'Exemplo Real da Sabatina Técnica',
+        en: 'Real Technical Grill Example'
+      },
+      codeSnippet: {
+        pt: '// 1. Rodada Inicial (3 a 4 Perguntas):\nPOST /api/projects/quickstart/questions\nPayload: { "name": "gateway-pagamentos", "stack": "Node.js / TypeScript" }\n-> Resposta: [q1: Persistência, q2: Autenticação, q3: Tolerância a Falhas]\n\n// 2. Aprofundamento Sob Demanda (Até +4, Máximo de 8):\nPOST /api/projects/quickstart/questions\nPayload: { "name": "gateway-pagamentos", "stack": "...", "existingQuestions": [q1, q2, q3] }\n-> Resposta Complementar: [q4: Resiliência/Circuit Breaker, q5: Observabilidade/Pino, q6: DLQ/RabbitMQ]\n\n// 3. Trava do Motor (docs/brain-ui/app.js:4240):\nif (currentGrillQuestions.length >= 8) {\n  badgeMore.textContent = "Máx 8";\n  textMore.textContent = "✓ Sabatina completa (8 perguntas)";\n}',
+        en: '// 1. Initial Round (3 to 4 Questions):\nPOST /api/projects/quickstart/questions\nPayload: { "name": "payments-gateway", "stack": "Node.js / TypeScript" }\n-> Response: [q1: Persistence, q2: Authentication, q3: Fault Tolerance]\n\n// 2. On-Demand Deepening (Up to +4, Maximum 8):\nPOST /api/projects/quickstart/questions\nPayload: { "name": "payments-gateway", "stack": "...", "existingQuestions": [q1, q2, q3] }\n-> Complementary Response: [q4: Resilience/Circuit Breaker, q5: Observability/Pino, q6: DLQ/RabbitMQ]\n\n// 3. Engine Cap (docs/brain-ui/app.js:4240):\nif (currentGrillQuestions.length >= 8) {\n  badgeMore.textContent = "Max 8";\n  textMore.textContent = "✓ Complete grill (8 questions)";\n}'
+      }
+    },
+    {
+      id: 'qs-contratos-jev',
+      color: '#c084fc',
+      hasHeaderVideo: false,
+      iconHtml: '<svg viewBox="0 0 48 48" width="46" height="46" fill="none" stroke="#c084fc" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 8C10 6.89543 10.8954 6 12 6H28L38 16V40C38 41.1046 37.1046 42 36 42H12C10.8954 42 10 41.1046 10 40V8Z"/><path d="M28 6V16H38"/><path d="M22 22L16 30H24L20 38L30 28H22L26 22H22Z" fill="#c084fc" opacity="0.3"/></svg>',
+      badge: {
+        pt: 'Quickstart Studio · Passo 3',
+        en: 'Quickstart Studio · Step 3'
+      },
+      title: {
+        pt: '4 Contratos Vivos & Prompt Vivo (Motor JEV)',
+        en: '4 Living Contracts & Living Prompt (JEV Engine)'
+      },
+      tagline: {
+        pt: 'Síntese atômica de PROJECT.md, ARCHITECTURE.md, CURRENT_STATE.md e ADR-0001 com refinamento cirúrgico isolado e botão Desfazer.',
+        en: 'Atomic synthesis of PROJECT.md, ARCHITECTURE.md, CURRENT_STATE.md, and ADR-0001 with surgical isolated refinement and Undo button.'
+      },
+      whatItIs: {
+        pt: 'Com a sabatina concluída, o sistema sintetiza atomicamente os 4 pilares de governança. O grande trunfo é o Prompt Vivo governado pelo motor local JEV: ao solicitar um ajuste (ex: "adicione autenticação JWT"), a alteração é aplicada estritamente em ARCHITECTURE.md, sem contaminar ou corromper os outros 3 arquivos. E se não gostar do resultado, o desenvolvedor reverte na hora pelo botão ↺ Desfazer.',
+        en: 'Once the grill is completed, the system synthesizes all 4 governance pillars atomically. The crown jewel is the Living Prompt powered by the local JEV engine: when requesting an adjustment (e.g. "add JWT auth"), the change applies strictly to ARCHITECTURE.md, without contaminating the other 3 files. If you dislike the result, revert instantly with the ↺ Undo button.'
+      },
+      howItWorks: [
+        {
+          title: { pt: 'Síntese Atômica dos 4 Contratos', en: 'Atomic Synthesis of 4 Contracts' },
+          desc: {
+            pt: 'Gera simultaneamente: `PROJECT.md` (visão executiva e regras), `ARCHITECTURE.md` (diagramas e componentes), `CURRENT_STATE.md` (roadmap em 3 marcos) e `DECISIONS/ADR-0001` (primeiro registro formal de decisão).',
+            en: 'Simultaneously generates: `PROJECT.md` (scope and rules), `ARCHITECTURE.md` (diagrams and components), `CURRENT_STATE.md` (3-phase roadmap), and `DECISIONS/ADR-0001` (first formal ADR).'
+          }
+        },
+        {
+          title: { pt: 'Isolamento Cirúrgico com Motor JEV (Zero Poluição)', en: 'Surgical Isolation with JEV Engine (Zero Cross-Pollution)' },
+          desc: {
+            pt: 'Diferente de IAs convencionais que reescrevem tudo desnecessariamente provocando regressões, o motor JEV identifica o contrato exato que precisa mudar. Regras de negócio não vazam para diagramas técnicos e vice-versa.',
+            en: 'Unlike conventional AIs that rewrite everything and cause regressions, JEV targets strictly the relevant contract. Business rules do not leak into technical schemas.'
+          }
+        },
+        {
+          title: { pt: 'Aprovação Humana & Zero Fabricação', en: 'Human Approval & Zero Fabrication' },
+          desc: {
+            pt: 'Nenhum arquivo é gravado no disco até que o desenvolvedor clique em `💾 Aprovar e Criar Projeto`. O sistema cria a estrutura física atômica pronta para abrir imediatamente em qualquer IDE ou editor da sua preferência (VS Code, Cursor, Windsurf, Antigravity, Neovim, JetBrains ou terminal).',
+            en: 'Zero files are written to disk until the developer clicks `💾 Approve and Create Project`. The system sets up the atomic physical structure ready to open in any IDE or editor of your choice (VS Code, Cursor, Windsurf, Antigravity, Neovim, JetBrains, or terminal).'
+          }
+        }
+      ],
+      realFiles: [
+        {
+          path: 'projects/<projeto>/PROJECT.md',
+          desc: { pt: 'Visão executiva, stack homologada e regras de negócio do sistema.', en: 'Executive scope, approved stack, and core business rules.' }
+        },
+        {
+          path: 'projects/<projeto>/ARCHITECTURE.md',
+          desc: { pt: 'Diagrama de componentes, fluxos de dados e contratos de API.', en: 'Component diagrams, data flows, and API contracts.' }
+        },
+        {
+          path: 'projects/<projeto>/CURRENT_STATE.md',
+          desc: { pt: 'Estado consolidado e roadmap calibrado em 3 marcos objetivos.', en: 'Consolidated state and roadmap calibrated in 3 milestones.' }
+        },
+        {
+          path: 'projects/<projeto>/DECISIONS/ADR-0001-stack-inicial.md',
+          desc: { pt: 'Primeiro Registro de Decisão Arquitetural formalizado.', en: 'First formalized Architectural Decision Record.' }
+        }
+      ],
+      metrics: [
+        {
+          label: { pt: '4 Contratos Vivos', en: '4 Living Contracts' },
+          val: { pt: 'Governança completa e auditável em puro Markdown.', en: 'Complete auditable governance in pure Markdown.' }
+        },
+        {
+          label: { pt: '0ms no Motor JEV', en: '0ms in JEV Engine' },
+          val: { pt: 'Decisões e isolamento de contratos 100% determinísticos.', en: '100% deterministic decision routing and contract isolation.' }
+        },
+        {
+          label: { pt: '1 Clique: Undo', en: '1-Click Undo' },
+          val: { pt: 'Reversão instantânea de qualquer instrução do Prompt Vivo.', en: 'Instant rollback of any Living Prompt refinement instruction.' }
+        }
+      ],
+      codeBadge: {
+        pt: 'Exemplo de Refinamento com Prompt Vivo',
+        en: 'Living Prompt Refinement Example'
+      },
+      codeSnippet: {
+        pt: '// Instrução no Prompt Vivo:\n> "Troque o banco de dados para PostgreSQL e adicione refresh token JWT"\n\n// Ação do Motor Local JEV (scripts/decision-provider.js):\n[JEV ROUTING] Contexto: \'quickstart-refine\' | Alvo: ARCHITECTURE.md\n[ISOLAMENTO] Ignorando PROJECT.md e CURRENT_STATE.md (Sem poluição cruzada)\n\n// Resultado Atualizado em Tempo Real:\n✔ ARCHITECTURE.md atualizado: Schema PostgreSQL + Prisma Client\n✔ ADR-0001 atualizado: Justificativa de troca para PostgreSQL\n✔ Botão [↺ Desfazer] ativado para rollback em 1 clique',
+        en: '// Instruction in Living Prompt:\n> "Switch database to PostgreSQL and add JWT refresh token"\n\n// Local JEV Engine Action (scripts/decision-provider.js):\n[JEV ROUTING] Context: \'quickstart-refine\' | Target: ARCHITECTURE.md\n[ISOLATION] Skipping PROJECT.md and CURRENT_STATE.md (Zero cross-pollution)\n\n// Real-Time Updated Result:\n✔ ARCHITECTURE.md updated: PostgreSQL Schema + Prisma Client\n✔ ADR-0001 updated: Rationale for PostgreSQL adoption\n✔ Button [↺ Undo] enabled for instant 1-click rollback'
+      }
+    }
+  ];
+
   // Elementos do DOM
   const modal = document.getElementById('feature-modal');
   if (!modal) return;
@@ -748,6 +1002,7 @@
   const taglineEl = document.getElementById('feature-modal-tagline');
   const bodyEl = document.getElementById('feature-modal-body');
 
+  let activeList = FEATURES_DATA;
   let currentIndex = 0;
   let lastActiveElement = null;
 
@@ -795,9 +1050,9 @@
   };
 
   function renderFeature(index) {
-    if (index < 0 || index >= FEATURES_DATA.length) return;
+    if (index < 0 || index >= activeList.length) return;
     currentIndex = index;
-    const f = FEATURES_DATA[index];
+    const f = activeList[index];
     const lang = getLang();
 
     // Ícone e cabeçalho dinâmico com iluminação temática
@@ -846,10 +1101,10 @@
 
     // Navegação e contador
     if (counterEl) {
-      counterEl.textContent = `${currentIndex + 1} / ${FEATURES_DATA.length}`;
+      counterEl.textContent = `${currentIndex + 1} / ${activeList.length}`;
     }
     if (prevBtn) prevBtn.disabled = currentIndex === 0;
-    if (nextBtn) nextBtn.disabled = currentIndex === FEATURES_DATA.length - 1;
+    if (nextBtn) nextBtn.disabled = currentIndex === activeList.length - 1;
 
     // Rótulos de internacionalização
     const labels = {
@@ -982,7 +1237,13 @@
   }
 
   function openModal(featureId) {
-    const idx = FEATURES_DATA.findIndex(f => f.id === featureId);
+    let list = FEATURES_DATA;
+    let idx = list.findIndex(f => f.id === featureId);
+    if (idx === -1) {
+      list = QUICKSTART_DATA;
+      idx = list.findIndex(f => f.id === featureId);
+    }
+    activeList = list;
     currentIndex = idx >= 0 ? idx : 0;
     lastActiveElement = document.activeElement;
 
@@ -1024,7 +1285,7 @@
 
   if (nextBtn) {
     nextBtn.addEventListener('click', () => {
-      if (currentIndex < FEATURES_DATA.length - 1) renderFeature(currentIndex + 1);
+      if (currentIndex < activeList.length - 1) renderFeature(currentIndex + 1);
     });
   }
 
@@ -1041,7 +1302,7 @@
         renderFeature(currentIndex - 1);
       }
     } else if (e.key === 'ArrowRight') {
-      if (currentIndex < FEATURES_DATA.length - 1) {
+      if (currentIndex < activeList.length - 1) {
         e.preventDefault();
         renderFeature(currentIndex + 1);
       }
@@ -1055,9 +1316,9 @@
     }
   });
 
-  // Vincular clique e tecla Enter/Espaço nos cards da seção de superpoderes (#vantagens .card)
+  // Vincular clique e tecla Enter/Espaço nos cards (#vantagens .card e #projeto .qs-journey-card)
   function initCards() {
-    const cards = document.querySelectorAll('#vantagens .card');
+    const cards = document.querySelectorAll('#vantagens .card, #projeto .qs-journey-card');
     cards.forEach((card, idx) => {
       const featId = card.dataset.feature || (FEATURES_DATA[idx] ? FEATURES_DATA[idx].id : null);
       if (!featId) return;
@@ -1067,13 +1328,15 @@
       card.setAttribute('aria-haspopup', 'dialog');
 
       const clickHandler = (e) => {
-        // Evita clique redundante se clicou em outro elemento interativo interno
+        // Evita abrir modal de arquitetura se o clique veio do botão de vídeo 9:16 ou outro controle interno
+        if (e.target.closest('.card-video-9x16-btn, [data-prevent-feature-modal]')) return;
         openModal(featId);
       };
 
       card.addEventListener('click', clickHandler);
 
       card.addEventListener('keydown', (e) => {
+        if (e.target.closest('.card-video-9x16-btn, [data-prevent-feature-modal]')) return;
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           openModal(featId);
@@ -1094,6 +1357,7 @@
     open: openModal,
     close: closeModal,
     render: renderFeature,
-    data: FEATURES_DATA
+    data: FEATURES_DATA,
+    quickstartData: QUICKSTART_DATA
   };
 })();

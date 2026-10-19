@@ -249,6 +249,26 @@
 3. **Discrepância Cognitiva entre Model Discovery e Chat Inference**: A rota `GET /models` apenas autentica a chave de API e não consome cota de inferência de chat (`POST /chat/completions`). O modal de configurações de IA (BYOK) não pode depender apenas do teste de listagem de modelos para atestar a saúde do sistema: deve exibir um **Banner de Alerta Contextual** quando houver falha recente de cota (429), orientando o desenvolvedor a alternar o modelo ativo ou o provedor.
 **Ação**: Sempre proteger gateways de IA com limites estritos de espera em `retry-after`, utilizar `AbortController` para cancelar requisições em trânsito no frontend e exibir alertas explícitos no configurador BYOK quando a inferência do modelo ativo estiver com cota esgotada.
 
+---
+
+## 2026-10-18 — Streaming de Vídeo HTTP 206, Otimização de GPU & Quickstart 3 Atos
+
+### Lição 29: Suporte a HTTP 206 Partial Content (Range Requests) para Streaming Fluido de Vídeo em Servidores Zero-Deps
+**Contexto**: Ao reproduzir arquivos `.mp4` ou `.webm` na Landing Page e nos modais através do servidor nativo Node.js (`server.js`), os navegadores (Chrome, Safari, Edge) realizavam requisições com o cabeçalho `Range: bytes=start-end`. Como o servidor respondia estaticamente com `200 OK` e o arquivo inteiro via pipe, operações de seek/scrubbing travavam e causavam downloads redundantes de arquivos de múltiplos megabytes.
+**Aprendizado**:
+1. **Navegadores Modernos Exigem Range Requests para Mídia**: Para reproduzir vídeos com busca temporal, buffer progressivo e reprodução fluida, navegadores esperam status `HTTP 206 Partial Content` com cabeçalhos `Content-Range: bytes ${start}-${end}/${fileSize}`, `Accept-Ranges: bytes` e `Content-Length: chunksize`.
+2. **Chunking com Streams Nativos do Node.js (`fs.createReadStream`)**: Tratar o cabeçalho `req.headers.range` extraindo `start` e `end` e injetando no `fs.createReadStream(filePath, { start, end })` permite atender qualquer requisição parcial instantaneamente, com latência zero e consumo de memória virtualmente nulo no servidor.
+3. **Cache Distinto para Mídia vs Documentos**: Enquanto arquivos de aplicação (`.html`, `.json`) devem ter `no-cache` para refletir o estado ao vivo do workspace, mídias binárias (`.mp4`, `.webm`, `.jpg`, `.png`) devem receber `Cache-Control: public, max-age=3600`, poupando ciclos de I/O em loops de exibição.
+**Ação**: Em servidores nativos HTTP sem dependências externas, sempre implementar manipulação de `Range` com resposta 206 para arquivos de áudio/vídeo e cache público para assets estáticos pesados.
+
+### Lição 30: Gerenciamento Ativo de Recursos de GPU (WebGL/Three.js) e Isolamento de Cliques em Cards com Ações Múltiplas
+**Contexto**: A Landing Page possui um grafo neural 3D em Three.js animando continuamente na tela e múltiplos cards com vídeos em loop. Ao abrir modais pesados de vídeo (como o player 9:16 vertical), dispositivos móveis ou máquinas com GPU integrada sofriam engasgos e perda de frames. Além disso, no Card 09 que possui tanto ação de "Ver arquitetura ↗" quanto botão de "▶ Vídeo Demo (9:16)", cliques no botão de vídeo disparavam ambos os modais simultaneamente.
+**Aprendizado**:
+1. **Pausa Mandatória de Loops WebGL durante Vídeos em Tela Cheia / Modais**: Pausar a rotação do grafo 3D (`g.stop()`) e pausar os vídeos dos cards em segundo plano (`video.pause()`) ao abrir qualquer modal de vídeo libera 100% da aceleração de decodificação de hardware da GPU, garantindo reprodução a 60fps sem travamentos. Ao fechar o modal, basta retomar (`g.start()` e `video.play()`).
+2. **Isolamento Estrito de Eventos em Cards Clicáveis (`stopPropagation` + Verificação de Alvo)**: Quando um card inteiro é clicável (atuando como `role="button"` para um modal técnico) mas contém botões de ação específicos em seu interior, a delegação de eventos deve verificar `e.target.closest('.card-video-9x16-btn, [data-prevent-feature-modal]')` e acionar `e.stopPropagation()` / `e.preventDefault()`. Isso blinda a interface contra sobreposição acidental de modais.
+**Ação**: Sempre gerenciar ativamente o ciclo de vida de renderizadores WebGL e loops de vídeo de fundo durante a exibição de mídia em primeiro plano, e isolar programaticamente gatilhos secundários em cards interativos.
+
+
 
 
 
