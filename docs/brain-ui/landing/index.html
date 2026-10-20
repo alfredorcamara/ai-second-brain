@@ -56,6 +56,7 @@
       <a href="#problema">Problema</a>
       <a href="#como">4 Camadas</a>
       <a href="#arquitetura">Arquitetura</a>
+      <a href="#ai-gateway">AI Gateway</a>
       <a href="#video-showcase">Vídeo</a>
       <a href="#demo">Demo</a>
       <a href="#faq">FAQ</a>
@@ -359,39 +360,128 @@
           próxima assume exatamente de onde esta parou.</p>
       </div>
     </section>
-    <section class="sec " id="research">
-      <div class="sec-badge rv">Research Lab</div>
-      <h2 class="rv">Um laboratório que <em>pesquisa sozinho.</em></h2>
-      <p class="sub rv">Descreva o tema, refine o prompt com IA e deixe o motor autônomo, sem dependências externas,
-        gerar a base de conhecimento do seu projeto.</p>
-      <div class="duo">
-        <div class="layer rv" style="--c:#38bdf8"><b>1</b>
-          <h3>Camada Knowledge</h3>
-          <p>Arquivos conceituais com teoria de engenharia, arquitetura de sistemas, trade-offs e boas práticas de
-            mercado.</p><code>projects/&lt;projeto&gt;/RESEARCH/&lt;tema&gt;/knowledge/</code>
-        </div>
-        <div class="layer rv" style="--c:#ffc76b"><b>2</b>
-          <h3>Camada Actionable</h3>
-          <p>Especificações práticas: schemas SQL Server e Prisma, controllers TypeScript/Node.js e testes automatizados
-            prontos para uso.</p><code>projects/&lt;projeto&gt;/RESEARCH/&lt;tema&gt;/actionable/</code>
+    <!-- ── SEÇÃO: AI GATEWAY CENTRAL MULTI-PROVEDOR ── -->
+    <section class="sec" id="ai-gateway">
+      <div class="sec-badge rv">Espinha Dorsal de IA</div>
+      <h2 class="rv">AI Gateway Central: <em>Inteligência Sem Amarras.</em></h2>
+      <p class="sub rv">Um único gateway unificado e configurável por projeto que alimenta todo o ecossistema do AI Second Brain com 7 provedores nativos, BYOK (Bring Your Own Key) e catálogo 100% dinâmico em tempo real.</p>
+
+      <!-- Status do Cockpit / Topbar real -->
+      <div class="ai-gateway-cockpit-bar rv">
+        <div class="gw-cockpit-chip">
+          <span class="catalog-pulse-dot"></span>
+          <span class="gw-cockpit-title">AI Gateway Central Multi-Provedor</span>
+          <span class="gw-cockpit-sep">·</span>
+          <span class="gw-cockpit-sub">BYOK Local Seguro &amp; Zero Dependências npm</span>
         </div>
       </div>
-      <div class="resil rv">
-        <h3>Feito para não quebrar</h3>
-        <ul>
-          <li><b>AI Gateway Multi-Provedor:</b> conecte Groq, OpenAI, Anthropic, Gemini, DeepSeek, OpenRouter ou Ollama
-            local com auto-descoberta dinâmica de modelos.</li>
-          <li><b>Prompt Vivo Cirúrgico com JEV:</b> motor de decisão local sem poluição cruzada de contratos, detecção
-            de ambiguidade com chips em 1 clique e botão Desfazer.</li>
-          <li><b>Recuperação inteligente de rate limit:</b> lê o tempo de espera informado pelo provedor e retenta
-            automaticamente com margem de segurança.</li>
-          <li><b>Cadência preventiva controlada</b> entre arquivos, para não esgotar o limite de tokens por minuto da
-            sua chave.</li>
-          <li><b>Retomada automática:</b> reconhece arquivos já gerados e não gasta tokens refazendo.</li>
-          <li><b>Progresso em tempo real</b> (SSE) na interface durante toda a pesquisa.</li>
-          <li><b>Fallback entre modelos</b> com retentativas exponenciais; decisões determinísticas seguem 100% locais.
-          </li>
-        </ul>
+
+      <!-- Grid dos 4 Poderes Alimentados pelo Gateway Central -->
+      <div class="gateway-powers-grid rv">
+        <div class="gw-power-card">
+          <div class="gw-power-icon">⚡</div>
+          <div class="gw-power-tag">Onboarding &amp; Governança</div>
+          <h3>Quickstart Studio</h3>
+          <p>Alimenta a sabatina técnica adaptativa (<code>/grill-me</code>), a geração automática dos 4 contratos vivos (<code>PROJECT</code>, <code>ARCH</code>, <code>STATE</code>, <code>ADR-0001</code>) e o Prompt Vivo cirúrgico com motor de decisão local JEV.</p>
+        </div>
+
+        <div class="gw-power-card">
+          <div class="gw-power-icon">🔍</div>
+          <div class="gw-power-tag">RAG Determinístico</div>
+          <h3>Pergunte ao Cérebro</h3>
+          <p>Assistente semântico direto sobre o vault via <code>Ctrl+K</code>. Combina busca BM25/TF-IDF ponderada por arquitetura com síntese de IA e links clicáveis sob estrita política de Zero Fabricação.</p>
+        </div>
+
+        <div class="gw-power-card">
+          <div class="gw-power-icon">🧠</div>
+          <div class="gw-power-tag">Continuidade &amp; Memória</div>
+          <h3>Session Capture</h3>
+          <p>Sintetiza commits do Git e diffstat em menos de 30 segundos. Gera rascunho de entregas, decisões e lições aprendidas com validação humana obrigatória antes da gravação atômica no disco.</p>
+        </div>
+
+        <div class="gw-power-card">
+          <div class="gw-power-icon">🔬</div>
+          <div class="gw-power-tag">Síntese Autônoma</div>
+          <h3>Research Lab</h3>
+          <p>Executa pesquisas em profundidade em duas camadas (Knowledge conceitual + Actionable executável) com controle preventivo de cadência, retomada automática e streaming SSE em tempo real.</p>
+        </div>
+      </div>
+
+      <!-- Vitrine dos 7 Provedores Nativos do Modal Real -->
+      <div class="providers-showcase-box rv">
+        <div class="providers-showcase-header">
+          <div class="providers-badge">
+            <span class="catalog-pulse-dot"></span>
+            <span>✦ ARQUITETURA BYOK UNIVERSAL</span>
+          </div>
+          <h3>7 Provedores Nativos no Modal de Configuração</h3>
+          <p class="providers-lead">Alterne instantaneamente entre os maiores provedores do mundo ou rode modelos 100% offline no seu computador sem enviar dados para a internet:</p>
+        </div>
+
+        <div class="providers-pills-row">
+          <div class="provider-pill groq">
+            <div class="p-pill-top">
+              <span class="p-dot"></span>
+              <strong>Groq Cloud</strong>
+              <span class="p-badge free">Free Tier</span>
+            </div>
+            <p>Ultra-baixa latência LPU (300+ t/s). Ideal para raciocínio veloz e síntese instantânea sem exigir cartão de crédito.</p>
+          </div>
+
+          <div class="provider-pill gemini">
+            <div class="p-pill-top">
+              <span class="p-dot"></span>
+              <strong>Google Gemini</strong>
+              <span class="p-badge free">Free Tier</span>
+            </div>
+            <p>Até 2M tokens de contexto no Gemini 2.5 Flash / Pro. Ideal para ler vaults inteiros e correlacionar código.</p>
+          </div>
+
+          <div class="provider-pill openai">
+            <div class="p-pill-top">
+              <span class="p-dot"></span>
+              <strong>OpenAI</strong>
+              <span class="p-badge">Padrão da Indústria</span>
+            </div>
+            <p>Modelos GPT-4o e raciocínio avançado o1 / o3 com alta densidade analítica e precisão lógica.</p>
+          </div>
+
+          <div class="provider-pill claude">
+            <div class="p-pill-top">
+              <span class="p-dot"></span>
+              <strong>Anthropic Claude</strong>
+              <span class="p-badge">Engenharia</span>
+            </div>
+            <p>Claude 3.5 Sonnet &amp; Opus. Padrão ouro de engenharia de software, refatoração e auditoria de contratos.</p>
+          </div>
+
+          <div class="provider-pill deepseek">
+            <div class="p-pill-top">
+              <span class="p-dot"></span>
+              <strong>DeepSeek</strong>
+              <span class="p-badge">Raciocínio Aberto</span>
+            </div>
+            <p>DeepSeek-V3 e R1 de raciocínio aberto com alto custo-benefício e excelente desempenho matemático.</p>
+          </div>
+
+          <div class="provider-pill openrouter">
+            <div class="p-pill-top">
+              <span class="p-dot"></span>
+              <strong>OpenRouter</strong>
+              <span class="p-badge">Hub Unificado</span>
+            </div>
+            <p>Acesso a centenas de modelos abertos e proprietários (Llama, Mistral, Qwen) com uma única chave.</p>
+          </div>
+
+          <div class="provider-pill ollama">
+            <div class="p-pill-top">
+              <span class="p-dot"></span>
+              <strong>Ollama Local</strong>
+              <span class="p-badge local">100% Offline</span>
+            </div>
+            <p>Execução local no seu próprio hardware. Custo zero perpétuo e privacidade absoluta para dados confidenciais.</p>
+          </div>
+        </div>
       </div>
 
       <!-- ── DESTAQUE: CATÁLOGO 100% DINÂMICO & ZERO MODELOS HARDCODED ── -->
@@ -403,9 +493,7 @@
           </div>
           <h3>Catálogo 100% Dinâmico: Seus Modelos Sempre Atualizados</h3>
           <p class="catalog-lead">
-            Esqueça menus estáticos com modelos obsoletos de meses atrás. O AI Second Brain não mantém listas engessadas
-            no código. Ao conectar sua chave, a interface consulta as APIs oficiais do provedor em tempo real e agrupa
-            os modelos ativos automaticamente em 3 perfis de engenharia:
+            Esqueça menus estáticos com modelos obsoletos de meses atrás. O AI Second Brain não mantém listas engessadas no código. Ao conectar sua chave, a interface consulta as APIs oficiais do provedor em tempo real e agrupa os modelos ativos automaticamente em 3 perfis de engenharia:
           </p>
         </div>
 
@@ -413,8 +501,7 @@
           <div class="catalog-profile-card speed">
             <div class="profile-icon">⚡</div>
             <h4>Velocidade &amp; Flash</h4>
-            <p>Latência ultra-baixa e execução quase instantânea. Ideal para buscas rápidas, testes ágeis e geração
-              contínua.</p>
+            <p>Latência ultra-baixa e execução quase instantânea. Ideal para buscas rápidas, testes ágeis e geração contínua.</p>
             <div class="profile-example">
               <span class="prov-tag groq">Groq</span> <code>llama-3.3-70b-versatile</code> (+300 t/s)
               <br>
@@ -425,8 +512,7 @@
           <div class="catalog-profile-card balanced">
             <div class="profile-icon">⚖️</div>
             <h4>Equilibrado</h4>
-            <p>Ponto ideal de precisão analítica, densidade de contexto e cadência para refinar especificações técnicas.
-            </p>
+            <p>Ponto ideal de precisão analítica, densidade de contexto e cadência para refinar especificações técnicas.</p>
             <div class="profile-example">
               <span class="prov-tag openai">OpenAI</span> <code>gpt-4o</code> / <code>gpt-4o-mini</code>
               <br>
@@ -437,8 +523,7 @@
           <div class="catalog-profile-card reasoning">
             <div class="profile-icon">🧠</div>
             <h4>Raciocínio Profundo</h4>
-            <p>Modelos com cadeia de pensamento (CoT) para tomada de decisões arquiteturais complexas e blindagem de
-              código.</p>
+            <p>Modelos com cadeia de pensamento (CoT) para tomada de decisões arquiteturais complexas e blindagem de código.</p>
             <div class="profile-example">
               <span class="prov-tag groq">Groq</span> <code>deepseek-r1-distill-llama-70b</code>
               <br>
@@ -456,27 +541,53 @@
               <div class="ft-rec-item">
                 <div class="ft-rec-title">🥇 Groq Cloud · Campeão de Velocidade</div>
                 <p>Oferece tier gratuito generoso sem pedir cartão de crédito. Modelo recomendado:
-                  <strong><code>llama-3.3-70b-versatile</code></strong> — gera centenas de tokens por segundo e constrói
-                  bases de conhecimento em segundos.
+                  <strong><code>llama-3.3-70b-versatile</code></strong> — gera centenas de tokens por segundo e constrói bases de conhecimento em segundos.
                 </p>
               </div>
               <div class="ft-rec-item">
                 <div class="ft-rec-title">🥈 Google Gemini · Campeão de Contexto</div>
                 <p>Chave gratuita oficial via Google AI Studio sem cartão. Modelo recomendado:
-                  <strong><code>gemini-2.5-flash</code></strong> — excelente janela de contexto, ideal para ler e
-                  correlacionar múltiplos arquivos.
+                  <strong><code>gemini-2.5-flash</code></strong> — excelente janela de contexto, ideal para ler e correlacionar múltiplos arquivos.
                 </p>
               </div>
               <div class="ft-rec-item">
                 <div class="ft-rec-title">🥉 Ollama Local · Privacidade Absoluta</div>
                 <p>100% offline no seu computador, custo zero vitalício. Modelos recomendados:
-                  <strong><code>qwen2.5-coder</code></strong> ou <strong><code>llama3.2</code></strong> para trabalhar
-                  sem enviar dados para a internet.
+                  <strong><code>qwen2.5-coder</code></strong> ou <strong><code>llama3.2</code></strong> para trabalhar sem enviar dados para a internet.
                 </p>
               </div>
             </div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- ── SEÇÃO: RESEARCH LAB ── -->
+    <section class="sec " id="research">
+      <div class="sec-badge rv">Research Lab</div>
+      <h2 class="rv">Um laboratório que <em>pesquisa sozinho.</em></h2>
+      <p class="sub rv">Descreva o tema, refine o prompt com IA e deixe o motor autônomo, sem dependências externas, gerar a base de conhecimento do seu projeto.</p>
+      <div class="duo">
+        <div class="layer rv" style="--c:#38bdf8"><b>1</b>
+          <h3>Camada Knowledge</h3>
+          <p>Arquivos conceituais com teoria de engenharia, arquitetura de sistemas, trade-offs e boas práticas de mercado.</p><code>projects/&lt;projeto&gt;/RESEARCH/&lt;tema&gt;/knowledge/</code>
+        </div>
+        <div class="layer rv" style="--c:#ffc76b"><b>2</b>
+          <h3>Camada Actionable</h3>
+          <p>Especificações práticas: schemas SQL Server e Prisma, controllers TypeScript/Node.js e testes automatizados prontos para uso.</p><code>projects/&lt;projeto&gt;/RESEARCH/&lt;tema&gt;/actionable/</code>
+        </div>
+      </div>
+      <div class="resil rv">
+        <h3>Feito para não quebrar</h3>
+        <ul>
+          <li><b>Alimentado pelo AI Gateway Central:</b> opera com o provedor e modelo ativos configurados para o projeto, com auto-descoberta dinâmica de modelos.</li>
+          <li><b>Prompt Vivo Cirúrgico com JEV:</b> motor de decisão local sem poluição cruzada de contratos, detecção de ambiguidade com chips em 1 clique e botão Desfazer.</li>
+          <li><b>Recuperação inteligente de rate limit:</b> lê o tempo de espera informado pelo provedor e retenta automaticamente com margem de segurança.</li>
+          <li><b>Cadência preventiva controlada</b> entre arquivos, para não esgotar o limite de tokens por minuto da sua chave.</li>
+          <li><b>Retomada automática:</b> reconhece arquivos já gerados e não gasta tokens refazendo.</li>
+          <li><b>Progresso em tempo real</b> (SSE) na interface durante toda a pesquisa.</li>
+          <li><b>Fallback entre modelos</b> com retentativas exponenciais; decisões determinísticas seguem 100% locais.</li>
+        </ul>
       </div>
     </section>
     <section class="sec" id="projeto">
