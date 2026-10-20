@@ -2052,43 +2052,71 @@ main .video-expand-btn {
    ═══════════════════════════════════════════════════════════════ */
 
 /* ── Hero Version Pill & Free Tier Pill ── */
-.eyebrow-sep {
-  opacity: 0.35;
-  margin: 0 4px;
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--gold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  padding: 4px 5px 4px 18px;
+  border-radius: 999px;
+  background: rgba(255, 199, 107, 0.08);
+  border: 1px solid rgba(255, 199, 107, 0.28);
+  box-shadow: 0 0 24px rgba(255, 199, 107, 0.12);
 }
 
 .hero-version-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 999px;
-  background: rgba(99, 102, 241, 0.16);
-  border: 1px solid rgba(168, 85, 247, 0.45);
-  color: #c084fc;
-  font-size: 11.5px;
-  font-weight: 600;
+  background: linear-gradient(135deg, rgba(255, 199, 107, 0.16) 0%, rgba(245, 158, 11, 0.22) 100%);
+  border: 1px solid rgba(255, 199, 107, 0.45);
+  color: #fff3d6;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
   text-decoration: none;
   transition: all 0.25s ease;
-  box-shadow: 0 0 12px rgba(147, 51, 234, 0.2);
+  box-shadow: 0 0 14px rgba(255, 199, 107, 0.2);
+  margin-left: 4px;
 }
 
 .hero-version-pill:hover {
-  background: rgba(147, 51, 234, 0.3);
-  border-color: #c084fc;
-  color: #fff;
+  background: linear-gradient(135deg, rgba(255, 199, 107, 0.32) 0%, rgba(245, 158, 11, 0.45) 100%);
+  border-color: #ffc76b;
+  color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 0 0 18px rgba(147, 51, 234, 0.45);
+  box-shadow: 0 0 20px rgba(255, 199, 107, 0.45);
+}
+
+.hero-version-pill strong {
+  color: #ffe8b5;
+}
+
+.hero-version-pill:hover strong {
+  color: #ffffff;
+}
+
+.hero-version-pill .version-rocket {
+  font-size: 12px;
+  line-height: 1;
 }
 
 .hero-version-pill .version-arrow {
-  font-size: 10px;
-  opacity: 0.8;
-  transition: transform 0.2s;
+  font-size: 11px;
+  color: var(--gold);
+  transition: transform 0.2s ease;
 }
 
 .hero-version-pill:hover .version-arrow {
   transform: translate(2px, -2px);
+  color: #ffffff;
 }
 
 .hero-free-tier-pill {
