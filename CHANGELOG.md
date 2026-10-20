@@ -21,6 +21,11 @@ e este projeto adere ao [Versionamento Semântico (SemVer)](https://semver.org/l
   - Botão de IA na Topbar (`#btnAiGatewayModal`) passa a pulsar em vermelho (`.quota-exceeded`) imediatamente ao detectar falta de crédito ou limite por minuto em qualquer operação.
   - Banner contextual `#aiSettingsQuotaBanner` exibido com destaque dentro do modal de configurações indicando exatamente qual modelo/provedor esgotou e orientando como alternar em 1 clique.
   - Extração de cabeçalhos de taxa dos provedores (`tokensRemaining`, `requestsRemaining`, `retryAfter`) exibidos no mini-console do modal.
+- **Badge de Versão, Detecção Automática de Atualizações & Modal Changelog**:
+  - Badge dinâmico no Cockpit (`#versionBadgeSidebar` e `#versionBadgeTopbar`) exibindo a versão ativa (`v1.2.0`) e novidades.
+  - Verificação ativa via endpoint `/api/system/version` se a cópia local está defasada em relação ao `origin/main`, ativando badge dourado pulsante (`Atualização ⚡`) e orientação de `git pull origin main`.
+  - Modal interativo "O que há de novo?" (`#changelogModal`) renderizando o `CHANGELOG.md` estruturado, botão de 1 clique para copiar `git pull origin main` e link para a página oficial de releases.
+  - Checagem preventiva integrada ao CLI do sistema (`npm run doctor`).
 - **Pasta de Exemplos de Entrada**: Inclusão de `docs/Exemplos/` contendo casos de uso reais de requisitos complexos para teste do Quickstart e Research Lab.
 
 ### 🛡️ Corrigido

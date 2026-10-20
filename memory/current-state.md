@@ -21,6 +21,17 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 
 ## Sessões Recentes
 - **Data**: 2026-10-19
+  - **Notificação de Atualizações, Modal Changelog & Badge de Versão (v1.2.0)**:
+    - **Demanda do Usuário**:
+      1. Como desenvolvedores e usuários que já clonaram o repositório ficarão sabendo das correções, melhorias e novas versões lançadas?
+    - **Soluções Implementadas**:
+      1. *Badge de Versão no Cockpit*: No rodapé da sidebar e na topbar, exibição de pílula de versão `v1.2.0 • Novidades ✨` com visual moderno dark glassmorphism.
+      2. *Detecção Ativa de Atualizações via Git*: Endpoint `/api/system/version` e o CLI `scripts/doctor.js` checam se a cópia local está atrás de `origin/main` (`behind`). Se houver commits novos, o badge passa a pulsar em dourado/amarelo (`Atualização ⚡`) e orienta a execução de `git pull origin main`.
+      3. *Modal "O que há de novo?"*: Ao clicar no badge, um modal interativo renderiza o `CHANGELOG.md` estruturado (SemVer / Keep a Changelog), permitindo copiar o comando `git pull origin main` em 1 clique e acessar a página de releases no GitHub.
+      4. *Endpoints REST*: `/api/system/version` e `/api/system/changelog` no `server.js` com fallbacks completos e modo estático no `demo-mode.js`.
+      5. *Doctor CLI*: `npm run doctor` exibe a versão atual instalada e alerta proativamente se houver atualizações disponíveis no repositório remoto.
+      6. *Paridade Estrita*: 100% de paridade entre `docs/brain-ui/` e `docs/brain-ui/demo/`.
+
   - **Desacoplamento Universal de Provedores no Research Lab & Correção de Mensagens Hardcoded da Groq**:
     - **Diagnóstico & Causa Raiz**:
       1. Ao utilizar o Google Gemini (`gemini-3.8-flash`) no Research Lab ("Síntese em Tempo Real: Bolo de Banana"), o modal exibiu o badge fixo `GROQ CLOUD • SÍNTESE AUTÔNOMA EM TEMPO REAL` e um erro informando que o modelo "selecionado" não estava disponível no provedor Groq Cloud.

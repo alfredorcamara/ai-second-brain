@@ -384,6 +384,8 @@ function runDoctor() {
         });
     }
 
+    checkGitUpdateStatus();
+
     if (errors.length > 0) {
         console.log(`❌  ${errors.length} ERRO(S) DE INTEGRIDADE DETECTADOS:`);
         errors.forEach((err, idx) => {
@@ -400,6 +402,31 @@ function runDoctor() {
         console.log('   O AI Second Brain está livre de links quebrados ou violações de contrato.\n');
         return true;
     }
+}
+
+function checkGitUpdateStatus() {
+    try {
+        const { execSync } = require('child_process');
+        let localVersion = '1.2.0';
+        try {
+            const pkg = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf-8'));
+            if (pkg.version) localVersion = pkg.version;
+        } catch (_) {}
+
+        console.log(`📦 Versão do AI Second Brain: v${localVersion}`);
+        console.log(`   Registro de melhorias e notas de release: CHANGELOG.md\n`);
+
+        if (!fs.existsSync(path.join(ROOT_DIR, '.git'))) return;
+
+        const status = execSync('git status -uno', { cwd: ROOT_DIR, encoding: 'utf-8', timeout: 3000 });
+        if (/behind/i.test(status)) {
+            const match = status.match(/behind\s+.*by\s+(\d+)\s+commit/i);
+            const count = match ? match[1] : '';
+            console.log(`💡 NOVIDADES DISPONÍVEIS NO REPOSITÓRIO REMOTO! ${count ? `(${count} commit(s) atrás)` : ''}`);
+            console.log('   Execute `git pull origin main` para baixar as últimas melhorias e motores de IA.');
+            console.log('   Detalhes das atualizações em: https://github.com/alfredorcamara/ai-second-brain/releases\n');
+        }
+    } catch (_) {}
 }
 
 const success = runDoctor();

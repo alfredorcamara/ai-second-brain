@@ -1433,6 +1433,76 @@ Projeto externo vinculado ao AI Second Brain.
         return;
     }
 
+    // API: System Version & Remote Update Check
+    if (pathname === '/api/system/version' && req.method === 'GET') {
+        try {
+            let version = '1.2.0';
+            let name = 'ai-second-brain';
+            try {
+                const pkg = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf-8'));
+                if (pkg.version) version = pkg.version;
+                if (pkg.name) name = pkg.name;
+            } catch (_) {}
+
+            let updateAvailable = false;
+            let behindCommits = 0;
+            let statusText = 'Atualizado';
+
+            try {
+                const { execSync } = require('child_process');
+                if (fs.existsSync(path.join(ROOT_DIR, '.git'))) {
+                    const gitStatus = execSync('git status -uno', { cwd: ROOT_DIR, encoding: 'utf-8', timeout: 2500 });
+                    if (/behind/i.test(gitStatus)) {
+                        updateAvailable = true;
+                        const match = gitStatus.match(/behind\s+.*by\s+(\d+)\s+commit/i);
+                        behindCommits = match ? parseInt(match[1], 10) : 1;
+                        statusText = `Há ${behindCommits} atualização(ões) no repositório remoto.`;
+                    }
+                }
+            } catch (_) {}
+
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({
+                success: true,
+                version,
+                name,
+                updateAvailable,
+                behindCommits,
+                statusText,
+                changelogUrl: '/api/system/changelog',
+                releaseUrl: 'https://github.com/alfredorcamara/ai-second-brain/releases'
+            }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ success: false, error: err.message }));
+        }
+        return;
+    }
+
+    // API: Changelog (O que há de novo)
+    if (pathname === '/api/system/changelog' && req.method === 'GET') {
+        try {
+            const changelogPath = path.join(ROOT_DIR, 'CHANGELOG.md');
+            let content = '';
+            if (fs.existsSync(changelogPath)) {
+                content = fs.readFileSync(changelogPath, 'utf-8');
+            } else {
+                content = '# Changelog\n\nArquivo de changelog não encontrado.';
+            }
+
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({
+                success: true,
+                content,
+                version: '1.2.0'
+            }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ success: false, error: err.message }));
+        }
+        return;
+    }
+
     // ============================================================
     // RESEARCH LAB — AI-Powered Knowledge Synthesis
     // ============================================================

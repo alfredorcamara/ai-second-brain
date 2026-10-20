@@ -111,6 +111,77 @@
             toast('💻 Demo somente leitura — em instalação local seu editor (VS Code, Cursor) seria disparado no projeto.');
             return Promise.resolve(json({ success: true, message: 'Simulado no modo demo.' }));
         }
+        if (u.startsWith('/api/system/version')) {
+            return Promise.resolve(json({
+                success: true,
+                version: '1.2.0',
+                name: 'ai-second-brain',
+                updateAvailable: false,
+                behindCommits: 0,
+                statusText: 'Atualizado (Modo Demo)',
+                changelogUrl: '/api/system/changelog',
+                releaseUrl: 'https://github.com/alfredorcamara/ai-second-brain/releases'
+            }));
+        }
+        if (u.startsWith('/api/system/changelog')) {
+            const demoChangelog = `# Changelog — AI Second Brain
+
+Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
+
+O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
+e este projeto adere ao [Versionamento Semântico (SemVer)](https://semver.org/lang/pt-BR/).
+
+---
+
+## [1.2.0] — 2026-10-19
+
+### 🚀 Adicionado
+- **Suporte Nativo ao Google Gemini**: Integração direta no AI Gateway (BYOK) com suporte à família \`gemini-3.8-flash\`, \`gemini-flash-latest\`, \`gemini-3.5-flash-lite\`, e modelos de alto contexto (1M+ tokens).
+- **Curadoria e Agrupamento Semântico Dinâmico de Modelos**:
+  - Classificação automática e dinâmica via API sem hardcoding em três grupos no \`<select>\`:
+    - 🌟 *Recomendados para Arquitetura & Raciocínio*
+    - ⚡ *Rápidos & Baixa Latência*
+    - 🛠️ *Abertos & Código (Open-Weights)*
+  - Filtro inteligente que descarta automaticamente modelos irrelevantes para engenharia de software.
+- **Telemetria e Sinalização Visual de Cota Esgotada (HTTP 429 Rate Limit / Créditos)**:
+  - Botão de IA na Topbar passa a pulsar em vermelho imediatamente ao detectar cota ou limite esgotado.
+  - Banner contextual dentro do modal de configurações indicando exatamente qual modelo/provedor esgotou.
+- **Badge de Versão, Verificador de Atualizações e Modal Changelog**:
+  - Notificação de atualizações com detecção de commits remotos e instruções de \`git pull\`.
+- **Pasta de Exemplos de Entrada**: Inclusão de \`docs/Exemplos/\` contendo casos de uso reais de requisitos complexos.
+
+### 🛡️ Corrigido
+- **Desacoplamento Universal do Research Lab**:
+  - Eliminados todos os textos estáticos que mencionavam a Groq Cloud na síntese em tempo real. O modal agora exibe dinamicamente o provedor ativo.
+- **Invalidação de Cache de Módulos no Servidor Node.js**:
+  - Invalidação dinâmica de \`require.cache\` garantindo efeito imediato de novas rotas e configurações.
+- **Paridade Estrita**: 100% de sincronismo e paridade entre o Cockpit local e o modo online.
+
+---
+
+## [1.1.0] — 2026-10-18
+
+### 🚀 Adicionado
+- **Suporte a HTTP 206 Partial Content (Range Requests)**: Streaming fluido de vídeos \`.mp4\` e \`.webm\` no servidor nativo Node.js.
+- **Player Vertical 9:16 (Bento Grid Cinemática)**: Demonstrações em formato mobile-first/shorts com suspensão de GPU do Three.js.
+- **Quickstart Studio em 3 Atos**: Briefing, Sabatina Técnica e Contratos de Governança.
+
+---
+
+## [1.0.0] — 2026-10-03
+
+### 🚀 Lançamento Inicial
+- Fundação do **AI Second Brain**: plataforma agnóstica de governança e desenvolvimento assistido por IA.
+- Portal Cockpit Web com Grafo 3D Orbital e Spotlight "Pergunte ao Cérebro" (\`Ctrl+K\`).
+- AI Gateway agnóstico com suporte inicial Groq, OpenAI, Anthropic, OpenRouter e Ollama.
+- Linter de integridade estrutural e contratos de governança (\`npm run doctor\`).`;
+
+            return Promise.resolve(json({
+                success: true,
+                content: demoChangelog,
+                version: '1.2.0'
+            }));
+        }
         const sessionRoute = u.match(/^\/api\/projects\/[^/]+\/session\/(draft|commit)$/);
         if (sessionRoute) {
             if (sessionRoute[1] === 'commit') {

@@ -100,6 +100,11 @@
                 <div class="stats" id="brainStats">
                     <!-- Populated by JS -->
                 </div>
+                <div class="sidebar-version-badge" id="sidebarVersionBadge" onclick="openChangelogModal()" title="Ver novidades e histórico de versões">
+                    <span class="version-dot" id="sidebarVersionDot"></span>
+                    <span class="version-text" id="sidebarVersionText">v1.2.0</span>
+                    <span class="version-badge-action" id="sidebarVersionAction">Novidades ✨</span>
+                </div>
             </div>
         </aside>
 
@@ -137,6 +142,12 @@
                         </span>
                         <span class="ai-pill-provider" id="aiStatusPillProvider">AI Gateway</span>
                         <span class="status-dot snapshot" id="aiStatusPillDot"></span>
+                    </button>
+
+                    <!-- Version & Updates Pill -->
+                    <button id="btnTopVersion" class="btn-top-version" onclick="openChangelogModal()" title="AI Second Brain v1.2.0 • Ver Novidades e Histórico">
+                        <span class="top-version-icon">🚀</span>
+                        <span class="top-version-tag" id="topVersionTag">v1.2.0</span>
                     </button>
 
                     <div class="vault-status-container">
@@ -3726,6 +3737,62 @@
                     style="font-size: 12.5px; padding: 7px 16px;">
                     ← Voltar ao Pergunte ao Cérebro
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: O Que Há de Novo / Changelog -->
+    <div id="modalChangelog" class="modal-backdrop" style="display:none;" onclick="if(event.target === this) closeChangelogModal()">
+        <div class="modal-content changelog-modal-box">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 22px;">🚀</span>
+                        <h3 class="modal-title" style="margin: 0;">O que há de novo no AI Second Brain</h3>
+                        <span class="changelog-version-tag" id="changelogModalVersionTag">v1.2.0</span>
+                    </div>
+                    <div class="modal-subtitle">Melhorias contínuas, novos motores neurais e governança assistida por IA</div>
+                </div>
+                <button type="button" class="btn-close" onclick="closeChangelogModal()" aria-label="Fechar">✕</button>
+            </div>
+
+            <div class="modal-body changelog-modal-body">
+                <!-- Status da Versão / Notificação de Update Remoto -->
+                <div id="changelogUpdateBanner" class="changelog-update-banner" style="display:none;">
+                    <div class="changelog-update-icon">💡</div>
+                    <div class="changelog-update-info">
+                        <div class="changelog-update-title" id="changelogUpdateTitle">Nova versão disponível no repositório!</div>
+                        <div class="changelog-update-desc" id="changelogUpdateDesc">Execute <code>git pull origin main</code> para baixar as últimas melhorias.</div>
+                    </div>
+                    <button type="button" class="btn-copy-pull" onclick="copyGitPullCommand(this)">
+                        <span>📋 Copiar git pull</span>
+                    </button>
+                </div>
+
+                <!-- Conteúdo do Changelog Renderizado -->
+                <div id="changelogContentArea" class="changelog-content-area">
+                    <div style="text-align: center; padding: 40px 20px; color: var(--text-tertiary);">
+                        <div class="ai-sparkles" style="font-size: 24px; margin-bottom: 8px;">✨</div>
+                        <div>Carregando notas da versão...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer changelog-modal-footer">
+                <div class="changelog-footer-left">
+                    <span style="font-size: 11px; color: var(--text-tertiary);">
+                        Código aberto &middot; Licença MIT &middot; Desenvolvido por Alfredo R. Câmara
+                    </span>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <a href="https://github.com/alfredorcamara/ai-second-brain/releases" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="font-size: 12px; display: inline-flex; align-items: center; gap: 6px;">
+                        <span>Ver no GitHub</span>
+                        <span>↗</span>
+                    </a>
+                    <button type="button" class="btn btn-primary" onclick="closeChangelogModal()" style="font-size: 12px;">
+                        Continuar no Cockpit ✨
+                    </button>
+                </div>
             </div>
         </div>
     </div>

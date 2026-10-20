@@ -11948,6 +11948,11 @@ window.addEventListener('keydown', (e) => {
     }
 
     if (e.key === 'Escape') {
+        const changelogModal = document.getElementById('modalChangelog');
+        if (changelogModal && changelogModal.style.display === 'flex') {
+            closeChangelogModal();
+            return;
+        }
         const helpModal = document.getElementById('askBrainHelpModal');
         if (helpModal && helpModal.style.display === 'flex') {
             closeAskBrainHelpModal();
@@ -11973,6 +11978,233 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// --- Gerenciamento de Versão, Notificação de Atualização e Changelog ---
+let _cachedChangelogMarkdown = null;
+
+async function initSystemVersionCheck() {
+    try {
+        const res = await fetch('/api/system/version');
+        if (res.ok) {
+            const data = await res.json();
+            applyVersionToUI(data);
+            return;
+        }
+    } catch (e) {
+        // Fallback silencioso
+    }
+    applyVersionToUI({
+        version: '1.2.0',
+        updateAvailable: false,
+        behindCommits: 0
+    });
+}
+
+function applyVersionToUI(data) {
+    const ver = data?.version || data?.installedVersion || '1.2.0';
+    const hasUpdate = Boolean(data?.updateAvailable);
+
+    // Sidebar Version Badge
+    const sidebarText = document.getElementById('sidebarVersionText');
+    if (sidebarText) sidebarText.textContent = `v${ver}`;
+
+    const sidebarBadge = document.getElementById('sidebarVersionBadge');
+    const sidebarAction = document.getElementById('sidebarVersionAction');
+    const sidebarDot = document.getElementById('sidebarVersionDot');
+
+    if (sidebarBadge) {
+        if (hasUpdate) {
+            sidebarBadge.classList.add('has-update');
+            if (sidebarAction) sidebarAction.innerHTML = 'Atualização ⚡';
+            if (sidebarDot) sidebarDot.className = 'version-dot update';
+            sidebarBadge.title = `Nova versão disponível! Clique para ver novidades e atualizar.`;
+        } else {
+            sidebarBadge.classList.remove('has-update');
+            if (sidebarAction) sidebarAction.innerHTML = 'Novidades ✨';
+            if (sidebarDot) sidebarDot.className = 'version-dot';
+            sidebarBadge.title = `AI Second Brain v${ver} • Clique para ver novidades e histórico`;
+        }
+    }
+
+    // Topbar Version Pill
+    const topTag = document.getElementById('topVersionTag');
+    if (topTag) topTag.textContent = `v${ver}`;
+
+    const btnTopVersion = document.getElementById('btnTopVersion');
+    if (btnTopVersion) {
+        if (hasUpdate) {
+            btnTopVersion.classList.add('has-update');
+            btnTopVersion.title = `⚡ Nova versão disponível no repositório! Clique para ver novidades.`;
+        } else {
+            btnTopVersion.classList.remove('has-update');
+            btnTopVersion.title = `AI Second Brain v${ver} • Ver Novidades e Histórico`;
+        }
+    }
+
+    // Modal Version Tag
+    const modalTag = document.getElementById('changelogModalVersionTag');
+    if (modalTag) modalTag.textContent = `v${ver}`;
+
+    // Modal Update Banner
+    const banner = document.getElementById('changelogUpdateBanner');
+    if (banner) {
+        if (hasUpdate) {
+            banner.style.display = 'flex';
+            const titleEl = document.getElementById('changelogUpdateTitle');
+            const descEl = document.getElementById('changelogUpdateDesc');
+            if (titleEl) {
+                titleEl.textContent = data.remoteVersion
+                    ? `Nova versão disponível: v${data.remoteVersion}`
+                    : `Atualização disponível no repositório GitHub!`;
+            }
+            if (descEl) {
+                const commits = data.behindCommits ? `${data.behindCommits} commits atrás` : 'novas melhorias disponíveis';
+                descEl.innerHTML = `Seu workspace está ${commits}. Execute <code>git pull origin main</code> para atualizar.`;
+            }
+        } else {
+            banner.style.display = 'none';
+        }
+    }
+}
+
+async function openChangelogModal() {
+    const modal = document.getElementById('modalChangelog');
+    if (!modal) return;
+    modal.style.display = 'flex';
+
+    const contentArea = document.getElementById('changelogContentArea');
+    if (!contentArea) return;
+
+    if (_cachedChangelogMarkdown) {
+        renderChangelogMarkdown(_cachedChangelogMarkdown);
+        return;
+    }
+
+    contentArea.innerHTML = `
+        <div style="text-align: center; padding: 40px 20px; color: var(--text-tertiary);">
+            <div class="ai-sparkles" style="font-size: 24px; margin-bottom: 8px;">✨</div>
+            <div>Carregando histórico de versões e novidades...</div>
+        </div>
+    `;
+
+    try {
+        const res = await fetch('/api/system/changelog');
+        if (res.ok) {
+            const data = await res.json();
+            const md = data?.content || data?.changelog || '';
+            if (md) {
+                _cachedChangelogMarkdown = md;
+                renderChangelogMarkdown(md);
+                return;
+            }
+        }
+    } catch (e) {
+        console.warn('Não foi possível carregar changelog via API:', e);
+    }
+
+    renderChangelogFallback();
+}
+
+function closeChangelogModal() {
+    const modal = document.getElementById('modalChangelog');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function copyGitPullCommand(btn) {
+    const cmd = 'git pull origin main';
+    navigator.clipboard.writeText(cmd).then(() => {
+        if (btn) {
+            const originalHTML = btn.innerHTML;
+            btn.classList.add('copied');
+            btn.innerHTML = '<span>✓ Comando Copiado!</span>';
+            setTimeout(() => {
+                btn.classList.remove('copied');
+                btn.innerHTML = originalHTML;
+            }, 2000);
+        }
+    }).catch(err => {
+        console.error('Falha ao copiar:', err);
+    });
+}
+
+function renderChangelogMarkdown(markdownText) {
+    const contentArea = document.getElementById('changelogContentArea');
+    if (!contentArea) return;
+
+    if (window.marked && typeof window.marked.parse === 'function') {
+        try {
+            contentArea.innerHTML = window.marked.parse(markdownText);
+            return;
+        } catch (e) {
+            console.error('Erro no parser markdown:', e);
+        }
+    }
+
+    renderChangelogFallback();
+}
+
+function renderChangelogFallback() {
+    const contentArea = document.getElementById('changelogContentArea');
+    if (!contentArea) return;
+
+    contentArea.innerHTML = `
+        <div class="changelog-release-card highlight">
+            <div class="changelog-release-header">
+                <span class="changelog-release-badge current">v1.2.0 • Versão Atual</span>
+                <span class="changelog-release-date">19 de Outubro de 2026</span>
+            </div>
+            <div class="changelog-release-body">
+                <h4>🚀 Adicionado</h4>
+                <ul>
+                    <li><strong>Suporte Nativo ao Google Gemini:</strong> Integração direta no AI Gateway (BYOK) para <code>gemini-3.8-flash</code>, <code>gemini-flash-latest</code>, <code>gemini-3.5-flash-lite</code> e modelos de alto contexto (1M+ tokens).</li>
+                    <li><strong>Curadoria e Agrupamento Semântico Dinâmico:</strong> Classificação inteligente sem listas hardcoded em Recomendados, Rápidos e Modelos de Código/Abertos.</li>
+                    <li><strong>Telemetria de Cota Esgotada (HTTP 429):</strong> Botão de IA na Topbar passa a pulsar em vermelho e modal exibe banner explicativo com opções de troca imediata.</li>
+                    <li><strong>Badge de Versão & Notificação de Atualização:</strong> Modal "O que há de novo?" integrado com checagem automática de <code>git pull</code> e release notes.</li>
+                    <li><strong>Pasta de Exemplos de Entrada:</strong> Inclusão de <code>docs/Exemplos/</code> com briefings reais para testes guiados.</li>
+                </ul>
+                <h4>🛡️ Corrigido</h4>
+                <ul>
+                    <li><strong>Desacoplamento Universal do Research Lab:</strong> Remoção de qualquer texto fixo da Groq em sínteses e relatórios. O Research Lab agora reflete o provedor ativo com total transparência.</li>
+                    <li><strong>Invalidação de Cache no Servidor Node.js:</strong> Alterações de rotas e credenciais refletem instantaneamente no servidor sem reinício.</li>
+                    <li><strong>Paridade Estrita 100%:</strong> Paridade completa entre o Cockpit local e o modo demonstração Web.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="changelog-release-card">
+            <div class="changelog-release-header">
+                <span class="changelog-release-badge">v1.1.0</span>
+                <span class="changelog-release-date">18 de Outubro de 2026</span>
+            </div>
+            <div class="changelog-release-body">
+                <h4>🚀 Adicionado</h4>
+                <ul>
+                    <li><strong>Streaming HTTP 206 Partial Content:</strong> Reprodução fluida de mídias e vídeos no servidor nativo.</li>
+                    <li><strong>Player Vertical 9:16:</strong> Bento Grid com modo cinematográfico e suspensão de GPU do Three.js.</li>
+                    <li><strong>Quickstart Studio em 3 Atos:</strong> Briefing, Sabatina Técnica e Contratos de Governança guiados.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="changelog-release-card">
+            <div class="changelog-release-header">
+                <span class="changelog-release-badge">v1.0.0</span>
+                <span class="changelog-release-date">03 de Outubro de 2026</span>
+            </div>
+            <div class="changelog-release-body">
+                <h4>🚀 Lançamento Inicial</h4>
+                <ul>
+                    <li>Fundação da governança e desenvolvimento com IA agnóstica.</li>
+                    <li>Cockpit Web com Grafo 3D Orbital e Spotlight "Pergunte ao Cérebro" (<code>Ctrl+K</code>).</li>
+                    <li>AI Gateway agnóstico com suporte inicial Groq, OpenAI, Anthropic, OpenRouter e Ollama.</li>
+                    <li>Linter de integridade estrutural e contratos de governança (<code>npm run doctor</code>).</li>
+                </ul>
+            </div>
+        </div>
+    `;
+}
+
 window.openAskBrainModal = openAskBrainModal;
 window.closeAskBrainModal = closeAskBrainModal;
 window.handleAskBrainBackdrop = handleAskBrainBackdrop;
@@ -11995,18 +12227,27 @@ window.applyQsContractZoom = applyQsContractZoom;
 window.adjustEditorZoom = adjustEditorZoom;
 window.resetEditorZoom = resetEditorZoom;
 window.applyEditorZoom = applyEditorZoom;
+window.initSystemVersionCheck = initSystemVersionCheck;
+window.applyVersionToUI = applyVersionToUI;
+window.openChangelogModal = openChangelogModal;
+window.closeChangelogModal = closeChangelogModal;
+window.copyGitPullCommand = copyGitPullCommand;
+window.renderChangelogMarkdown = renderChangelogMarkdown;
+window.renderChangelogFallback = renderChangelogFallback;
 
-// Carrega status da IA automaticamente após carregar a interface
+// Carrega status da IA e versão automaticamente após carregar a interface
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         loadAiGatewayStatus();
         initQsContractZoomControls();
         initEditorZoomControls();
+        initSystemVersionCheck();
     });
 } else {
     loadAiGatewayStatus();
     initQsContractZoomControls();
     initEditorZoomControls();
+    initSystemVersionCheck();
 }
 
 
