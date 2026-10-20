@@ -72,6 +72,13 @@
         <div class="eyebrow rv">
           <span class="eyebrow-dot"></span>
           <span>Open Source · 100% Markdown · Qualquer Agente de IA</span>
+          <span class="eyebrow-sep">·</span>
+          <a class="hero-version-pill" href="https://github.com/alfredorcamara/ai-second-brain/releases/tag/v1.2.0"
+            target="_blank" rel="noopener" title="Ver Release Oficial v1.2.0 no GitHub">
+            <span class="version-rocket">🚀</span>
+            <strong>v1.2.0 Oficial</strong>
+            <span class="version-arrow">↗</span>
+          </a>
         </div>
         <h1 class="rv">
           Dê uma <span class="gradient-text">memória viva</span><br>ao seu Agente de IA.
@@ -386,6 +393,91 @@
           <li><b>Fallback entre modelos</b> com retentativas exponenciais; decisões determinísticas seguem 100% locais.
           </li>
         </ul>
+      </div>
+
+      <!-- ── DESTAQUE: CATÁLOGO 100% DINÂMICO & ZERO MODELOS HARDCODED ── -->
+      <div class="catalog-dynamic-card rv">
+        <div class="catalog-dynamic-header">
+          <div class="catalog-badge">
+            <span class="catalog-pulse-dot"></span>
+            <span>✦ ZERO LISTAS HARDCODED · API EM TEMPO REAL</span>
+          </div>
+          <h3>Catálogo 100% Dinâmico: Seus Modelos Sempre Atualizados</h3>
+          <p class="catalog-lead">
+            Esqueça menus estáticos com modelos obsoletos de meses atrás. O AI Second Brain não mantém listas engessadas
+            no código. Ao conectar sua chave, a interface consulta as APIs oficiais do provedor em tempo real e agrupa
+            os modelos ativos automaticamente em 3 perfis de engenharia:
+          </p>
+        </div>
+
+        <div class="catalog-profiles-grid">
+          <div class="catalog-profile-card speed">
+            <div class="profile-icon">⚡</div>
+            <h4>Velocidade &amp; Flash</h4>
+            <p>Latência ultra-baixa e execução quase instantânea. Ideal para buscas rápidas, testes ágeis e geração
+              contínua.</p>
+            <div class="profile-example">
+              <span class="prov-tag groq">Groq</span> <code>llama-3.3-70b-versatile</code> (+300 t/s)
+              <br>
+              <span class="prov-tag gemini">Gemini</span> <code>gemini-2.5-flash</code>
+            </div>
+          </div>
+
+          <div class="catalog-profile-card balanced">
+            <div class="profile-icon">⚖️</div>
+            <h4>Equilibrado</h4>
+            <p>Ponto ideal de precisão analítica, densidade de contexto e cadência para refinar especificações técnicas.
+            </p>
+            <div class="profile-example">
+              <span class="prov-tag openai">OpenAI</span> <code>gpt-4o</code> / <code>gpt-4o-mini</code>
+              <br>
+              <span class="prov-tag gemini">Gemini</span> <code>gemini-1.5-flash</code>
+            </div>
+          </div>
+
+          <div class="catalog-profile-card reasoning">
+            <div class="profile-icon">🧠</div>
+            <h4>Raciocínio Profundo</h4>
+            <p>Modelos com cadeia de pensamento (CoT) para tomada de decisões arquiteturais complexas e blindagem de
+              código.</p>
+            <div class="profile-example">
+              <span class="prov-tag groq">Groq</span> <code>deepseek-r1-distill-llama-70b</code>
+              <br>
+              <span class="prov-tag gemini">Gemini</span> <code>gemini-2.5-pro</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco de Custo Zero / Modelos Gratuitos Recomendados -->
+        <div class="free-tier-recommendation-box">
+          <div class="ft-rec-badge">💡 Dica de Custo Zero · Comece de Graça</div>
+          <div class="ft-rec-content">
+            <h4>Qual modelo gratuito é o ideal para o meu projeto?</h4>
+            <div class="ft-rec-grid">
+              <div class="ft-rec-item">
+                <div class="ft-rec-title">🥇 Groq Cloud · Campeão de Velocidade</div>
+                <p>Oferece tier gratuito generoso sem pedir cartão de crédito. Modelo recomendado:
+                  <strong><code>llama-3.3-70b-versatile</code></strong> — gera centenas de tokens por segundo e constrói
+                  bases de conhecimento em segundos.
+                </p>
+              </div>
+              <div class="ft-rec-item">
+                <div class="ft-rec-title">🥈 Google Gemini · Campeão de Contexto</div>
+                <p>Chave gratuita oficial via Google AI Studio sem cartão. Modelo recomendado:
+                  <strong><code>gemini-2.5-flash</code></strong> — excelente janela de contexto, ideal para ler e
+                  correlacionar múltiplos arquivos.
+                </p>
+              </div>
+              <div class="ft-rec-item">
+                <div class="ft-rec-title">🥉 Ollama Local · Privacidade Absoluta</div>
+                <p>100% offline no seu computador, custo zero vitalício. Modelos recomendados:
+                  <strong><code>qwen2.5-coder</code></strong> ou <strong><code>llama3.2</code></strong> para trabalhar
+                  sem enviar dados para a internet.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
     <section class="sec" id="projeto">
@@ -813,6 +905,42 @@
       <h2 class="rv">Dúvidas? <em>Respondidas.</em></h2>
       <p class="sub rv">O que quem vai instalar costuma perguntar.</p>
       <div class="faq">
+        <details class="rv" open>
+          <summary>Posso usar o AI Second Brain de graça sem cadastrar cartão de crédito? Quais os modelos ideais?
+          </summary>
+          <p>
+            <strong>Sim, 100%!</strong> Você não precisa gastar nenhum centavo nem cadastrar cartão de crédito para ter
+            uma experiência completa e de altíssimo nível. O AI Second Brain suporta:<br><br>
+            • <strong>Groq Cloud (Recomendado para velocidade brutal):</strong> O tier gratuito do Groq não exige cartão
+            e roda o <code>llama-3.3-70b-versatile</code> a mais de 300 tokens por segundo, gerando dossiês e pesquisas
+            completas em instantes.<br>
+            • <strong>Google Gemini (Recomendado para janelas longas de contexto):</strong> O Google AI Studio
+            disponibiliza cota gratuita generosa para o <code>gemini-2.5-flash</code> e <code>gemini-1.5-flash</code>
+            sem burocracia de cartão.<br>
+            • <strong>Ollama Local (100% Offline &amp; Custo Zero Vitalício):</strong> Roda localmente no hardware da
+            sua máquina (com modelos como <code>qwen2.5-coder</code> ou <code>llama3.2</code>), garantindo privacidade
+            total sem consumir internet ou gerar qualquer cobrança.
+          </p>
+        </details>
+        <details class="rv">
+          <summary>O que significa o "Catálogo 100% Dinâmico" de modelos de IA?</summary>
+          <p>
+            Ao contrário de plataformas que usam listas estáticas/hardcoded no código que ficam obsoletas em semanas, o
+            AI Second Brain faz uma <strong>descoberta em tempo real via API oficial</strong> do provedor configurado.
+            Assim que um provedor lança uma nova versão de modelo (ou aposenta uma antiga), o sistema detecta
+            imediatamente e organiza os modelos disponíveis da sua chave em 3 categorias inteligentes:
+            <em>Velocidade/Flash</em>, <em>Equilibrado</em> e <em>Raciocínio Profundo (Reasoning)</em>.
+          </p>
+        </details>
+        <details class="rv">
+          <summary>Como atualizo meu AI Second Brain para a versão mais recente?</summary>
+          <p>
+            Basta rodar <code>git pull origin main</code> na pasta raiz do projeto. O sistema sincroniza automaticamente
+            todas as novas regras, skills, correções e notas de versão. Cada lançamento oficial é carimbado como uma
+            <strong>Tag Git</strong> estável (como a versão oficial <code>v1.2.0</code>), permitindo congelar ou auditar
+            versões a qualquer momento.
+          </p>
+        </details>
         <details class="rv">
           <summary>Como os projetos são vinculados sem duplicar arquivos?</summary>
           <p>No Windows, o AI Second Brain usa junções NTFS (Junctions) ou symlinks de diretório. Os arquivos permanecem

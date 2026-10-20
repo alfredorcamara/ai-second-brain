@@ -2047,5 +2047,318 @@ main .video-expand-btn {
   text-overflow: ellipsis;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   DESTAQUES: VERSÃO OFICIAL v1.2.0 & CATÁLOGO 100% DINÂMICO DE IA
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Hero Version Pill & Free Tier Pill ── */
+.eyebrow-sep {
+  opacity: 0.35;
+  margin: 0 4px;
+}
+
+.hero-version-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.16);
+  border: 1px solid rgba(168, 85, 247, 0.45);
+  color: #c084fc;
+  font-size: 11.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  box-shadow: 0 0 12px rgba(147, 51, 234, 0.2);
+}
+
+.hero-version-pill:hover {
+  background: rgba(147, 51, 234, 0.3);
+  border-color: #c084fc;
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 0 18px rgba(147, 51, 234, 0.45);
+}
+
+.hero-version-pill .version-arrow {
+  font-size: 10px;
+  opacity: 0.8;
+  transition: transform 0.2s;
+}
+
+.hero-version-pill:hover .version-arrow {
+  transform: translate(2px, -2px);
+}
+
+.hero-free-tier-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 680px;
+  margin: 16px auto 0;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #6ee7b7;
+  font-size: 13px;
+  line-height: 1.5;
+  backdrop-filter: blur(8px);
+  text-align: center;
+}
+
+.hero-free-tier-pill strong {
+  color: #fff;
+}
+
+.free-tier-sparkle {
+  color: #34d399;
+  font-size: 14px;
+  animation: pulseLive 2s infinite ease-in-out;
+}
+
+/* ── Card do Catálogo 100% Dinâmico (Research Lab) ── */
+.catalog-dynamic-card {
+  width: min(940px, 100%);
+  margin: 28px auto 0;
+  padding: 32px 36px;
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  border-radius: 24px;
+  background: radial-gradient(ellipse at 80% 20%, rgba(147, 51, 234, 0.12) 0%, rgba(5, 10, 22, 0.85) 75%);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 60px rgba(147, 51, 234, 0.1);
+  text-align: left;
+}
+
+.catalog-dynamic-header {
+  margin-bottom: 24px;
+}
+
+.catalog-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  color: #d8b4fe;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.catalog-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #a855f7;
+  box-shadow: 0 0 10px #a855f7;
+  animation: pulseLive 2s infinite ease-in-out;
+}
+
+.catalog-dynamic-header h3 {
+  font-size: 24px;
+  color: #ffffff;
+  margin: 0 0 10px;
+  font-family: var(--font-sans);
+  letter-spacing: -0.01em;
+}
+
+.catalog-lead {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--fg-dim);
+  margin: 0;
+}
+
+/* ── Grid dos 3 Perfis Inteligentes ── */
+.catalog-profiles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.catalog-profile-card {
+  padding: 20px 22px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.catalog-profile-card:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.catalog-profile-card.speed {
+  border-color: rgba(56, 189, 248, 0.3);
+}
+.catalog-profile-card.speed:hover {
+  border-color: rgba(56, 189, 248, 0.6);
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.15);
+}
+
+.catalog-profile-card.balanced {
+  border-color: rgba(163, 230, 53, 0.3);
+}
+.catalog-profile-card.balanced:hover {
+  border-color: rgba(163, 230, 53, 0.6);
+  box-shadow: 0 0 25px rgba(163, 230, 53, 0.15);
+}
+
+.catalog-profile-card.reasoning {
+  border-color: rgba(192, 132, 252, 0.3);
+}
+.catalog-profile-card.reasoning:hover {
+  border-color: rgba(192, 132, 252, 0.6);
+  box-shadow: 0 0 25px rgba(192, 132, 252, 0.15);
+}
+
+.catalog-profile-card .profile-icon {
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+
+.catalog-profile-card h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 6px;
+}
+
+.catalog-profile-card p {
+  font-size: 13.5px;
+  color: var(--mut);
+  line-height: 1.55;
+  margin: 0 0 14px;
+  flex: 1;
+}
+
+.profile-example {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--fg-dim);
+}
+
+.profile-example code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.prov-tag {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-right: 4px;
+}
+
+.prov-tag.groq {
+  background: rgba(249, 115, 22, 0.2);
+  color: #fb923c;
+  border: 1px solid rgba(249, 115, 22, 0.4);
+}
+
+.prov-tag.gemini {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.prov-tag.openai {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+/* ── Caixa de Recomendação de Modelos Gratuitos (Custo Zero) ── */
+.free-tier-recommendation-box {
+  margin-top: 26px;
+  padding: 22px 26px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(99, 102, 241, 0.08) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.ft-rec-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-bottom: 10px;
+}
+
+.ft-rec-content h4 {
+  font-size: 18px;
+  color: #ffffff;
+  margin: 0 0 14px;
+}
+
+.ft-rec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.ft-rec-item {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ft-rec-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 6px;
+}
+
+.ft-rec-item p {
+  font-size: 12.5px;
+  color: var(--fg-dim);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.ft-rec-item strong {
+  color: #38bdf8;
+}
+
+@media (max-width: 768px) {
+  .catalog-dynamic-card {
+    padding: 22px 20px;
+  }
+  .catalog-dynamic-header h3 {
+    font-size: 20px;
+  }
+  .hero-free-tier-pill {
+    font-size: 12px;
+    padding: 8px 14px;
+  }
+}
+
 
 
