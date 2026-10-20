@@ -12070,6 +12070,7 @@ async function openChangelogModal() {
     const modal = document.getElementById('modalChangelog');
     if (!modal) return;
     modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
 
     const contentArea = document.getElementById('changelogContentArea');
     if (!contentArea) return;
@@ -12108,6 +12109,7 @@ function closeChangelogModal() {
     const modal = document.getElementById('modalChangelog');
     if (modal) {
         modal.style.display = 'none';
+        document.body.style.overflow = '';
     }
 }
 

@@ -15119,12 +15119,54 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 /* Modal Box & Conteúdo */
+.changelog-modal-backdrop {
+    z-index: 10050;
+}
+
 .changelog-modal-box {
-    max-width: 760px;
+    background: #0d0f1a;
+    background: linear-gradient(165deg, #131627 0%, #0a0c16 100%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.95), 0 0 50px rgba(99, 102, 241, 0.2);
+    border-radius: 18px;
+    max-width: 780px;
     width: 95%;
     max-height: 88vh;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    animation: brainDialogPop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.changelog-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.changelog-close-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.2s ease;
+}
+
+.changelog-close-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.5);
+    color: #f87171;
 }
 
 .changelog-version-tag {

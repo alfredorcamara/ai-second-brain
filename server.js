@@ -1436,7 +1436,7 @@ Projeto externo vinculado ao AI Second Brain.
     // API: System Version & Remote Update Check
     if (pathname === '/api/system/version' && req.method === 'GET') {
         try {
-            let version = '1.2.0';
+            let version = '0.0.0';
             let name = 'ai-second-brain';
             try {
                 const pkg = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf-8'));
@@ -1490,11 +1490,17 @@ Projeto externo vinculado ao AI Second Brain.
                 content = '# Changelog\n\nArquivo de changelog não encontrado.';
             }
 
+            let version = '0.0.0';
+            try {
+                const pkg = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf-8'));
+                if (pkg.version) version = pkg.version;
+            } catch (_) {}
+
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({
                 success: true,
                 content,
-                version: '1.2.0'
+                version
             }));
         } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });

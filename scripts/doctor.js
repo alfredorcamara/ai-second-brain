@@ -407,7 +407,7 @@ function runDoctor() {
 function checkGitUpdateStatus() {
     try {
         const { execSync } = require('child_process');
-        let localVersion = '1.2.0';
+        let localVersion = '0.0.0';
         try {
             const pkg = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf-8'));
             if (pkg.version) localVersion = pkg.version;

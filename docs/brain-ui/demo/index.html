@@ -3737,18 +3737,18 @@
     </div>
 
     <!-- Modal: O Que Há de Novo / Changelog -->
-    <div id="modalChangelog" class="modal-backdrop" style="display:none;" onclick="if(event.target === this) closeChangelogModal()">
-        <div class="modal-content changelog-modal-box">
-            <div class="modal-header">
+    <div id="modalChangelog" class="editor-modal-backdrop changelog-modal-backdrop" style="display:none;" onclick="if(event.target === this) closeChangelogModal()">
+        <div class="changelog-modal-box" role="dialog" aria-modal="true" aria-labelledby="changelogModalTitle">
+            <div class="changelog-modal-header">
                 <div class="modal-title-group">
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span style="font-size: 22px;">🚀</span>
-                        <h3 class="modal-title" style="margin: 0;">O que há de novo no AI Second Brain</h3>
+                        <h3 id="changelogModalTitle" class="modal-title" style="margin: 0; font-size: 16px; font-weight: 700; color: #fff;">O que há de novo no AI Second Brain</h3>
                         <span class="changelog-version-tag" id="changelogModalVersionTag">v1.2.0</span>
                     </div>
-                    <div class="modal-subtitle">Melhorias contínuas, novos motores neurais e governança assistida por IA</div>
+                    <div class="modal-subtitle" style="font-size: 12px; color: var(--text-secondary); margin-top: 3px;">Melhorias contínuas, novos motores neurais e governança assistida por IA</div>
                 </div>
-                <button type="button" class="btn-close" onclick="closeChangelogModal()" aria-label="Fechar">✕</button>
+                <button type="button" class="changelog-close-btn" onclick="closeChangelogModal()" aria-label="Fechar" title="Fechar (Esc)">✕</button>
             </div>
 
             <div class="modal-body changelog-modal-body">
