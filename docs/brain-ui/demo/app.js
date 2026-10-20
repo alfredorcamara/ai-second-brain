@@ -12003,6 +12003,10 @@ function applyVersionToUI(data) {
     const ver = data?.version || data?.installedVersion || '1.2.0';
     const hasUpdate = Boolean(data?.updateAvailable);
 
+    // Boot Screen Badge
+    const bootVer = document.getElementById('bootVersionText');
+    if (bootVer) bootVer.textContent = `v${ver}`;
+
     // Sidebar Version Badge
     const sidebarText = document.getElementById('sidebarVersionText');
     if (sidebarText) sidebarText.textContent = `v${ver}`;
@@ -12136,7 +12140,9 @@ function renderChangelogMarkdown(markdownText) {
 
     if (window.marked && typeof window.marked.parse === 'function') {
         try {
-            contentArea.innerHTML = window.marked.parse(markdownText);
+            // Remove o H1 inicial (# Changelog — AI Second Brain) redundante com o título do modal
+            let cleanMd = markdownText.replace(/^#\s+Changelog[^\n]*\n+/i, '');
+            contentArea.innerHTML = window.marked.parse(cleanMd);
             return;
         } catch (e) {
             console.error('Erro no parser markdown:', e);

@@ -15245,10 +15245,202 @@ body::-webkit-scrollbar-thumb:hover {
     border-color: #f59e0b;
 }
 
+/* ═══════════════════════════════════════════════════
+   CHANGELOG CONTENT AREA — Tipografia e Layout de Alta Legibilidade
+   ═══════════════════════════════════════════════════ */
 .changelog-content-area {
+    color: var(--text-primary, #e2e8f0);
+    font-size: 13.5px;
+    line-height: 1.7;
+    word-break: break-word;
+}
+
+/* Oculta H1 inicial redundante (já exibido no topo do modal) */
+.changelog-content-area > h1:first-child {
+    display: none;
+}
+
+/* Links estilizados (adeus azul padrão e baixo contraste) */
+.changelog-content-area a {
+    color: #818cf8;
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px dashed rgba(129, 140, 248, 0.45);
+    padding-bottom: 1px;
+    transition: all 0.2s ease;
+}
+
+.changelog-content-area a:hover {
+    color: #a5b4fc;
+    border-bottom: 1px solid #a5b4fc;
+    text-shadow: 0 0 10px rgba(129, 140, 248, 0.4);
+}
+
+/* Parágrafos com espaçamento respirável */
+.changelog-content-area p {
+    margin: 0 0 16px 0;
+    color: #94a3b8;
+    line-height: 1.7;
+}
+
+/* Divisor elegante com gradiente sutil */
+.changelog-content-area hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent);
+    margin: 32px 0 24px;
+}
+
+/* Versão / Release (H2) estilizada como Banner / Card Header */
+.changelog-content-area h2 {
+    font-size: 16.5px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 32px 0 18px 0;
+    padding: 12px 18px;
+    background: linear-gradient(90deg, rgba(99, 102, 241, 0.16) 0%, rgba(139, 92, 246, 0.05) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-left: 4px solid #6366f1;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+}
+
+.changelog-content-area h2:first-of-type {
+    margin-top: 10px;
+}
+
+/* Seções de Categorias (H3: 🚀 Adicionado, 🛡️ Corrigido, etc.) */
+.changelog-content-area h3 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin: 24px 0 14px 0;
+    padding: 6px 14px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #f1f5f9;
+}
+
+/* Listas de Primeiro Nível (Itens Principais em Cards Respiráveis) */
+.changelog-content-area > ul,
+.changelog-content-area ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 20px 0;
+}
+
+.changelog-content-area > ul > li {
+    position: relative;
+    padding: 12px 18px 12px 36px;
+    margin-bottom: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    line-height: 1.65;
+    font-size: 13.5px;
+    color: #cbd5e1;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.changelog-content-area > ul > li:hover {
+    background: rgba(255, 255, 255, 0.035);
+    border-color: rgba(99, 102, 241, 0.25);
+}
+
+/* Marcador estilizado do item principal */
+.changelog-content-area > ul > li::before {
+    content: '◆';
+    position: absolute;
+    left: 15px;
+    top: 13px;
+    font-size: 10px;
+    color: #818cf8;
+}
+
+.changelog-content-area strong {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Sub-listas (Segundo Nível - Indentação e Conexão em Árvore) */
+.changelog-content-area ul ul {
+    margin: 10px 0 4px 0;
+    padding-left: 16px;
+    border-left: 2px solid rgba(99, 102, 241, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.changelog-content-area ul ul > li {
+    position: relative;
+    padding: 4px 8px 4px 20px;
+    margin-bottom: 0;
+    background: transparent;
+    border: none;
+    font-size: 13px;
+    color: #94a3b8;
     line-height: 1.6;
 }
 
+.changelog-content-area ul ul > li:hover {
+    background: transparent;
+    border: none;
+    color: #cbd5e1;
+}
+
+.changelog-content-area ul ul > li::before {
+    content: '↳';
+    position: absolute;
+    left: 2px;
+    top: 3px;
+    font-size: 12px;
+    color: #6366f1;
+}
+
+/* Sub-sub-listas (Terceiro Nível - Itens Curados com Emojis) */
+.changelog-content-area ul ul ul {
+    margin: 6px 0 2px 0;
+    padding-left: 14px;
+    border-left: 2px solid rgba(139, 92, 246, 0.2);
+    gap: 4px;
+}
+
+.changelog-content-area ul ul ul > li {
+    padding: 2px 6px 2px 18px;
+    font-size: 12.5px;
+    color: #cbd5e1;
+}
+
+.changelog-content-area ul ul ul > li::before {
+    content: '–';
+    position: absolute;
+    left: 4px;
+    top: 2px;
+    font-size: 12px;
+    color: #a78bfa;
+}
+
+/* Código Inline (`code`) */
+.changelog-content-area code {
+    background: rgba(99, 102, 241, 0.12);
+    color: #c7d2fe;
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    border-radius: 5px;
+    padding: 2px 6px;
+    font-family: var(--font-mono, monospace);
+    font-size: 12px;
+}
+
+/* Fallback Card Styling (para compatibilidade caso marked falhe) */
 .changelog-release-card {
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.06);

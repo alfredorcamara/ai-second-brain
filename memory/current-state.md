@@ -21,6 +21,25 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 
 ## Sessões Recentes
 - **Data**: 2026-10-19
+  - **Sincronização da Versão no Boot Screen (v2.4 -> v1.2.0) & Redesign Tipográfico do Modal Changelog**:
+    - **Diagnóstico & Causa Raiz**:
+      1. A tela de splash/carregamento inicial exibia o texto estático `AI Operacional OS • v2.4`, gerando estranheza quanto à origem da numeração (era um placeholder legado estático escrito no HTML).
+      2. No modal "O que há de novo?", os links estavam em azul nativo de navegador (`#0000ee`), criando baixo contraste e poluição visual contra o fundo escuro.
+      3. A renderização do Markdown via `marked.parse` gerava HTML cru sem regras de estilização específicas: títulos `H1` repetidos desnecessariamente, parágrafos colados sem espaçamento, itens de lista sem margens e sub-listas aninhadas sem indentação ou diferenciação visual, tornando a leitura densa e desorganizada.
+    - **Soluções Implementadas**:
+      1. *Boot Screen Dinâmico*: Substituído o texto estático por `<span id="bootVersionText">` em `index.html` e `demo/index.html`. O `applyVersionToUI(data)` agora hidrata a versão dinamicamente direto do `package.json`.
+      2. *Links Dark Glassmorphism*: Links estilizados em lavanda/índigo suave (`#818cf8` e hover `#a5b4fc` com text-shadow glow suave), eliminando qualquer resquício do azul padrão.
+      3. *Layout e Tipografia Respirável*:
+         - Banners de release (`h2`) com borda índigo de 4px, fundo em gradiente e cantos arredondados.
+         - Seções (`h3`) estilizadas como tags de categoria (`🚀 Adicionado`, `🛡️ Corrigido`).
+         - Itens principais de lista (`ul > li`) convertidos em cards leves com marcadores `◆` em `#818cf8` e espaçamento confortável.
+         - Sublistas aninhadas (`ul ul`) em árvore visual com linha conectora lateral (`border-left: 2px solid rgba(99, 102, 241, 0.25)`) e marcadores `↳` em índigo.
+         - Sub-sublistas (`ul ul ul`) com marcadores `–` em violeta.
+         - Código inline destacado com fundo e borda sutis (`code`).
+         - Remoção inteligente do título `H1` duplicado no corpo do modal.
+      4. *Paridade Estrita*: 100% sincronizado entre `docs/brain-ui/` e `docs/brain-ui/demo/` (`index.html`, `style.css`, `app.js`).
+      5. *Validação*: `npm run doctor` e `node --check` aprovados com 100% de sucesso.
+
   - **Correção da Visibilidade do Modal Changelog & Versão 100% Dinâmica**:
     - **Diagnóstico & Causa Raiz**:
       1. Ao clicar em "Novidades ✨" no badge da sidebar ou topbar, a função `openChangelogModal()` executava normalmente, mas nenhum modal aparecia na tela.
