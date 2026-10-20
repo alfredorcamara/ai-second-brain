@@ -20,6 +20,100 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 | `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway, Research Engine, Session Capture, Brain Search, Otimização de Vídeo) |
 
 ## Sessões Recentes
+- **Data**: 2026-10-19
+  - **Desacoplamento Universal de Provedores no Research Lab & Correção de Mensagens Hardcoded da Groq**:
+    - **Diagnóstico & Causa Raiz**:
+      1. Ao utilizar o Google Gemini (`gemini-3.8-flash`) no Research Lab ("Síntese em Tempo Real: Bolo de Banana"), o modal exibiu o badge fixo `GROQ CLOUD • SÍNTESE AUTÔNOMA EM TEMPO REAL` e um erro informando que o modelo "selecionado" não estava disponível no provedor Groq Cloud.
+      2. No frontend (`docs/brain-ui/app.js` e `demo/app.js`), o modal de síntese em tempo real (`startLiveResearchFromModal`), os banners do hero, as métricas e os botões de refinamento continham rótulos estáticos mencionando "Groq Cloud" em vez de ler dinamicamente o provedor ativo configurado em `window.AI_GATEWAY_CONFIG.providerName`.
+      3. No backend (`scripts/research-engine.js`), o motor importava `./groq-client` com fallbacks para "Groq Cloud" e cadência fixa referenciando a Groq, e em `server.js` as rotas de refinamento e decomposição invocavam diretamente o adaptador legado `groq.*`.
+      4. O processo do servidor Node.js em background (`PID 26592`) estava em execução contínua desde as 16:15 com instâncias legadas dos módulos em cache (`require.cache`).
+    - **Soluções Implementadas**:
+      1. *Frontend 100% Dinâmico*: Todos os elementos do Research Lab (badge do hero, pílula de status, latência, modal de síntese em tempo real `.rl-live-engine-tag`, avisos de modo demo e eventos SSE) agora interpolam `activeProvName` dinamicamente a partir do provedor ativo (`Google Gemini`, `Anthropic Claude`, `OpenAI`, etc.).
+      2. *Motor Desacoplado (`scripts/research-engine.js`)*: Atualizado para importar diretamente `./ai-gateway`, gravando metadados enriquecidos (`model` e `provider` reais) no frontmatter dos documentos gerados.
+      3. *Rotas do Servidor Atualizadas (`server.js`)*: Chamadas de `refineResearchPrompt` e `decomposeResearchTopic` migradas para `getAiGateway()`, e recarregamento limpo de `research-engine` com invalidação de cache em cada disparo.
+      4. *Reinicialização do Servidor*: O processo stale foi finalizado e reiniciado limpo na porta 3333; teste real executado com sucesso e os 8 documentos do Bolo de Banana foram gerados via Google Gemini (`gemini-3.8-flash`).
+      5. *Paridade e Integridade*: 100% de paridade garantida entre `app.js` e `demo/app.js`, e `npm run doctor` aprovado com 0 erros em 126 arquivos.
+
+  - **Sinalização Universal de Cota Esgotada (429 Rate Limit / Créditos) & Telemetria do AI Gateway**:
+    - **Diagnóstico & Causa Raiz**:
+      1. Ao utilizar o Anthropic Claude (`claude-sonnet-4-6`) no Research Lab ("Síntese em Tempo Real: Bolo de Banana"), o usuário recebeu a notificação de falta de créditos/limite de requisições, mas o botão no topo (`#btnAiGatewayModal`) continuou verde e o banner contextual `#aiSettingsQuotaBanner` permaneceu oculto ao abrir as configurações de IA.
+      2. O `markAiInferenceError` e a injeção da classe `.quota-exceeded` haviam sido vinculados anteriormente apenas ao Quickstart Studio. O endpoint de execução do laboratório (`/api/projects/:name/research/:slug/run`) no `server.js` capturava a exceção e respondia com HTTP 500 genérico, descartando os metadados ricos (`statusCode: 429`, `isRateLimit: true`, `quotaExceeded: true`, `retryAfter`, `providerName`).
+      3. No frontend (`startLiveResearchFromModal`), o erro era capturado apenas localmente para atualizar o DOM interno do modal e disparar um toast, sem invocar o estado global do botão ou persistir o erro.
+      4. `updateAiGatewayPillUI` limpava incondicionalmente a classe `.quota-exceeded` ao recarregar a configuração, porque o backend não persistia o último erro da sessão do gateway.
+    - **Soluções Implementadas**:
+      1. *Propagação Universal de Status no Backend (`server.js`)*: Os endpoints `/research/:slug/run`, `/api/ai/refine-prompt`, `/api/ai/decompose`, `/session/draft` e `/brain/ask` agora preservam o status HTTP 429 e retornam JSON rico com `isRateLimit`, `quotaExceeded`, `retryAfter` e `providerName`.
+      2. *Memória de Erro no AI Gateway (`scripts/ai-gateway.js`)*: Adicionado `lastGatewayError` persistido em memória que é retornado no `getConfig()` e limpo automaticamente ao salvar nova configuração com sucesso ou em inferência bem-sucedida. Implementada extração de telemetria dos cabeçalhos HTTP (`anthropic-ratelimit-tokens-remaining`, `x-ratelimit-remaining-tokens`).
+      3. *Função Universal no Frontend (`markAiInferenceError` em `docs/brain-ui/app.js` e `demo/app.js`)*: Centraliza o tratamento de erros de inferência; adiciona imediatamente a classe `.quota-exceeded` (vermelho pulsante) no botão `#btnAiGatewayModal`, atualiza o tooltip (`title`) identificando o provedor e modelo esgotados, e sincroniza `#aiSettingsQuotaBanner`.
+      4. *Tratamento em Todas as Telas*: Integrado em `startLiveResearchFromModal`, `triggerAiRefinePrompt`, `triggerAiDecompose`, `triggerLiveDefinitionRefine`, `generateSessionDraftWithAi` e `executeAskBrainQuery`.
+      5. *Exibição de Cota no Mini-Console BYOK*: O terminal do modal exibe dinamicamente a cota de tokens/min e requisições/min detectadas nos cabeçalhos de resposta quando disponíveis.
+      6. *Paridade Estrita*: 100% sincronizado entre `docs/brain-ui/app.js` e `docs/brain-ui/demo/app.js`.
+
+  - **Expansão do AI Gateway (BYOK): Integração Nativa de Google Gemini & Solução para Rate Limits**:
+    - **Demanda do Usuário**:
+      1. Durante a síntese de documentos volumosos de requisitos, o usuário notou que a API gratuita da Groq atingiu os limites de tokens por minuto (TPM), questionando se isso havia prejudicado os testes de geração de contratos.
+      2. O usuário gerou e forneceu uma chave de API do Google Gemini para testes no AI Second Brain, visando evitar as limitações de taxa frequentes da Groq.
+      3. O usuário tentou abrir o modal de configuração de IA (BYOK) no Cockpit Web, mas não localizou a opção para Google Gemini, questionando se o provedor já era suportado.
+    - **Diagnóstico & Causa Raiz**:
+      1. Os testes na Groq haviam sido concluídos com 100% de integridade graças à síntese multi-passo em Markdown puro, mas a cota por minuto da Groq gratuita (6.000 TPM) de fato exigia backoff com frequência em arquivos extensos.
+      2. O usuário estava 100% correto: o Google Gemini não existia na lista de opções do `<select id="aiProviderSelect">`, nem no dicionário `AI_PROVIDER_PRESETS` do frontend, nem no `scripts/ai-gateway.js`.
+      3. No backend, existia um acoplamento sutil: `config.baseUrl` lido do `.env` sobrescrevia `provider.baseUrl` quando um novo provedor era chamado sem especificar `baseUrl`, fazendo chamadas para o Gemini vazarem para o endpoint da Groq com chave incorreta (HTTP 401).
+      4. A API do Gemini retorna mensagens de erro em formato de array de objetos (`[{ "error": { ... } }]`), o que tornava `parsed.error?.message` indefinido se não houvesse suporte a arrays no extrator HTTP.
+    - **Implementação**:
+      1. *Backend (`scripts/ai-gateway.js`)*:
+         - Provedor `gemini` adicionado a `PROVIDERS` com base URL `https://generativelanguage.googleapis.com/v1beta/openai` (compatível com a especificação OpenAI REST).
+         - Descoberta dinâmica de modelos (`GET /models`) com sanitização de IDs (remoção do prefixo `models/`) e filtragem de modelos de chat.
+         - Correção de isolamento: `baseUrl` de provedores pré-definidos (Gemini, Groq, OpenAI, Anthropic, OpenRouter) não é mais sobrescrita pelo `AI_BASE_URL` residual do `.env`.
+         - Extrator `makeHttpRequest` atualizado para ler `(Array.isArray(parsed) && parsed[0]?.error?.message) || parsed.error?.message`.
+         - Chave do usuário configurada com sucesso no `.env` e testada via inferência real (`gemini-3.8-flash`), atingindo 423ms de latência e 37 modelos detectados dinamicamente.
+      2. *Frontend & Cockpit Web (`docs/brain-ui/` e `docs/brain-ui/demo/`)*:
+         - Adicionado `<option value="gemini">Google Gemini (Gemini 3.8 Flash, Pro & 1M+ Contexto)</option>` ao seletor `#aiProviderSelect`.
+         - Adicionado preset `gemini` a `AI_PROVIDER_PRESETS` com ícone ✨, tag `Multimodal · 1M+ Contexto · Gratuito` e base URL oficial.
+         - Atualizado `demo-mode.js` com mocks dinâmicos de Gemini para garantir 100% de paridade estrita no GitHub Pages.
+
+  - **Quickstart Studio: Síntese Multi-Passo de Alta Densidade Técnica para Anexos de Requisitos (SPECS) & Resiliência do Gateway**:
+    - **Demanda**: Quando o usuário anexa documentos de requisitos extensos e completos (ex: 60KB com dicionário SQL Server, RFs e contratos REST), os contratos de governança gerados no Quickstart Studio resultavam em documentos muito vagos e superficiais, ou falhavam com `resposta não contém JSON válido` devido a estouro de tokens/loops de escape de JSON. Era imperativo garantir que a documentação gerada fosse completa, técnica e de nível profissional, transcrevendo fielmente todos os RFs, RNs, tabelas do SQL Server e endpoints REST.
+    - **Diagnóstico & Causa Raiz**:
+      1. Tentativa de empacotar 4 documentos Markdown altamente densos dentro de um único objeto JSON (`{ "projectMd": "...", ... }`) causava estouro da janela de `maxTokens` (3000-4000) e loops de repetição de quebras `\n\n---` dentro de strings escapadas.
+      2. Modelos de raciocínio como `openai/gpt-oss-120b` consomem centenas de tokens internos invisíveis de raciocínio, reduzindo a capacidade útil de geração.
+      3. O `ai-gateway.js` descartava o backoff exponencial quando o cabeçalho `retry-after` vinha com valores baixos (ex: 1s), esgotando as retentativas em segundos, e abortava com `quotaExceeded` para qualquer espera acima de 10s (sendo que esperas normais de TPM da Groq variam entre 15s e 45s).
+    - **Implementação**:
+      1. *Roteamento Cirúrgico de Especificações (`extractScopeSpecs` & `extractArchitectureSpecs`)*:
+         - Particionamento semântico do documento de especificação Markdown: seções de negócio (Objetivo, Escopo, RF-001..RF-012, RN-001..RN-020, Personas, Critérios de Aceite) alimentam o Passo 1 (`PROJECT.md`). Seções de infraestrutura (Tabelas SQL Server, colunas, tipos, constraints, endpoints REST, persistência, concorrência, segurança) alimentam o Passo 2 (`ARCHITECTURE.md`).
+      2. *Síntese Multi-Passo em Markdown Puro (Sem JSON Escaping)*:
+         - **Passo 1 (`PROJECT.md`)**: Chamada dedicada solicitando Markdown puro com mapeamento exaustivo de todos os Requisitos Funcionais, Regras de Negócio e Matriz RBAC.
+         - **Passo 2 (`ARCHITECTURE.md`)**: Chamada dedicada solicitando Markdown puro com Dicionário de Dados SQL Server completo (dbo.Cliente, dbo.ClienteEndereco, etc.), Contratos de API REST, Concorrência (`rowversion`/`If-Match`), Segurança e AI Decision Gate.
+         - **Passo 3 (`CURRENT_STATE.md` & `ADR-0001`)**: Chamada focada utilizando marcadores limpos `<<<CURRENT_STATE_MD>>>` e `<<<ADR_MD>>>`, gerando Roadmap acionável com checkboxes `- [ ]` e registro MADR de decisão técnica.
+      3. *Resiliência de Inferência no AI Gateway (`scripts/ai-gateway.js`)*:
+         - Backoff aprimorado com `Math.max(waitSeconds, Math.ceil(parsedWait))`, garantindo intervalo mínimo exponencial (4s, 8s, 16s...).
+         - Limite de tolerância para espera de recarga do balde por minuto (TPM) ampliado para 60s, evitando abortos falsos de cota esgotada durante inferências intensivas.
+      4. *Otimização do "Prompt Vivo" (`refineDraft`)*:
+         - Quando o motor JEV determina alteração em documento único (`isSingleDoc`), apenas o documento-alvo é injetado e retornado no JSON, economizando mais de 70% dos tokens de entrada e saída.
+      5. *Validação*:
+         - Teste end-to-end com a especificação real de 60KB (`requisitos_cadastro_clientes_node_typescript_sqlserver.md`), gerando com sucesso: `PROJECT.md` com 17.399 caracteres, `ARCHITECTURE.md` com 21.385 caracteres, `CURRENT_STATE.md` com 2.667 caracteres e `ADR-0001` com 4.281 caracteres.
+
+  - **Quickstart Studio: Redesign Compacto do Passo 2 (Configuração) & Gestão de Documentos de Origem (SPECS Accordion - Proposta 1)**:
+    - **Demanda**: Permitir que desenvolvedores anexem ou colem documentos de requisitos e especificações de negócio/sistema (`.md`, `.txt`, `.json`, até 5 arquivos, máx 1MB total) durante a inicialização de projetos do zero, blindando o modal contra crescimento vertical desnecessário ("Zero Scroll"), persistindo-os na pasta oficial `projects/<nome>/SPECS/`, e enriquecendo a formulação de contratos e sabatina técnica pelo Grill Studio IA.
+    - **Implementação**:
+      1. *Layout Refinado com Foco Ergonômico (Zero Scroll)*:
+         - **Campos Principais em Largura Total (100%)**: `Nome do Projeto` e `Descrição Rápida (Opcional)` retornaram para largura total, oferecendo espaçamento natural, digitação confortável e visualização completa de frases de negócio sem quebras forçadas.
+         - **Bloco Expansível 1 (`#qsTechAccordion`) — Stack Tecnológica & Git**: Substituição do mosaico de chips por uma caixa de seleção (`<select id="qsNewStackSelect">`) curada com stacks modernas (`Node.js / TS`, `C# / .NET 9`, `Python`, `React / Next.js`, `Go`, `Rust`, `Java / Spring Boot`, `PHP / Laravel` e `Outra / Stack Personalizada...`). Quando "Outra" é selecionada, revela suavemente um input de texto livre com foco automático. Inclui checkbox inline de `git init` e cabeçalho com live badge dinâmico (`#qsTechBadge`, ex: `Rust • Git ✓` ou `Node.js / TS • Git ✓`).
+         - **Bloco Expansível 2 (`#qsSpecsAccordion`) — Requisitos & Especificações (SPECS)**: Mantido logo abaixo em linha fina com badge roxo `SPECS`, contador de arquivos, abas de Upload Drag-and-drop e Colar Texto/PRD (`requisitos.md`).
+         - **Cards de Ação Permanentes**: `Modo Assistido com IA` e `Modo Express` permanecem 100% visíveis na base do modal sem nenhum scroll em repouso.
+      2. *Backend & Grill Engine (`server.js` & `scripts/quickstart-grill.js`)*:
+         - Endpoint `/api/projects/new` (Express) e `/api/projects/quickstart/commit` (Assisted) criam a subpasta `projects/<nome>/SPECS/` no disco e gravam todos os documentos recebidos.
+         - O arquivo de governança `PROJECT.md` ganha a seção `## Especificações & Requisitos de Origem (SPECS)` com links markdown relativos clicáveis para cada arquivo em `SPECS/`.
+         - A engine de sabatina IA (`quickstart-grill.js`) injeta `specsContext` no prompt do Arquiteto Grill, evitando perguntas redundantes sobre o que já está especificado nos arquivos e adaptando os 4 contratos (`PROJECT.md`, `ARCHITECTURE.md`, `CURRENT_STATE.md`, `ADR-0001`) aos requisitos reais informados.
+      3. *Paridade e Validação Visual*:
+         - Ajuste ergonômico de proximidade entre os blocos expansíveis: redução do espaçamento entre `#qsTechAccordion` e `#qsSpecsAccordion` para 3px quando recolhidos (com transição suave para 8px ao expandir), criando um agrupamento coeso e harmonioso das opções de configuração secundárias.
+         - Campo de Stack Personalizada Aprimorado: remoção do texto explicativo redundante abaixo do input e ampliação de `#qsNewStackCustom` para 100% da largura útil (`.qs-custom-stack-input`), com padding confortável (10px 14px), tipografia 13.5px e anel de foco índigo de alto contraste.
+         - Catálogo de Stacks com `<optgroup>` semânticos: expansão da lista para 14 stacks essenciais agrupadas por categoria (Web & Fullstack, Backend & APIs, Mobile & Multiplataforma incluindo .NET MAUI da Microsoft, e Personalizada), com styling dark glass e tipografia índigo nos grupos.
+         - Validação Obrigatória de Stack Personalizada com Modal Padrão (`showBrainAlert`): caso o dev escolha "Outra / Stack Personalizada" e não informe o nome da stack ao avançar, o sistema bloqueia a submissão, abre automaticamente o accordion caso recolhido, aciona animação shake de erro (`input-error-shake`) e exibe o modal de alerta padrão do projeto (`#brainConfirmModal`) com badge `PREENCHIMENTO REQUERIDO`, ícone `✏️` e foco automático no input após confirmação.
+         - Editor de Documentos Expandido em SPECS e Descrição Rápida (`openExpandedSpecsEditor` & `openExpandedDescEditor`): inclusão do botão "⛶ Expandir Visão" alinhado à direita no cabeçalho de "Descrição Rápida (Opcional)" e na aba "Colar Texto / PRD". Ambos abrem o editor de documentos nativo do projeto (`#fileEditorModal`), permitindo digitação e formatação confortável em tela cheia com barra de ferramentas Markdown (H2, H3, Negrito, Itálico, Listas, Checklists, Código, Citação), abas de Escrita e Pré-visualização formatada, zoom personalizável e sincronização bidirecional em tempo real ao salvar/concluir.
+         - Campo `qsNewDesc` como `<textarea>` com Alça de Redimensionamento (`resize: vertical`): conversão de `<input type="text">` para `<textarea class="qs-desc-textarea">` com alça nativa no canto inferior direito, permitindo expansão manual de altura no modal (min 48px, max 180px) sem quebrar o layout compacto padrão.
+         - Sincronização rigorosa e idempotente mantida entre `docs/brain-ui/` e `docs/brain-ui/demo/` (`index.html`, `style.css`, `app.js`).
+         - Validação sintática com `node --check` em todos os scripts JS.
+         - Teste automatizado de criação de projeto com subpasta SPECS e teste visual via navegador headless (`browser_subagent`) confirmando a renderização ampla do Nome/Descrição, expansão dinâmica do `<select>` e badge em tempo real.
+
 - **Data**: 2026-10-18
   - **Jornada do Quickstart Interativa (3 Atos), Streaming de Vídeo HTTP 206 & Player Modal Vertical 9:16 (Reels)**:
     - **Demanda**: Modernizar a seção `#projeto` da Landing Page para refletir fielmente a jornada real de criação/vinculação do Quickstart Studio em 3 atos clicáveis conectados ao modal técnico de arquitetura; otimizar o servidor nativo Node.js (`server.js`) para suportar streaming de vídeo fluido com HTTP 206 Partial Content (Range requests); e integrar botão de vídeo vertical 9:16 no card do "Pergunte ao Cérebro" com modal dedicado dark glass e pausa automática de GPU.

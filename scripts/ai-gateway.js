@@ -23,10 +23,52 @@ const completionCache = new Map();
 // Cache em memória de modelos descobertos dinamicamente por provedor (populado via testConnection em tempo real)
 const cachedModelsByProvider = {};
 
+// Memória de estado de erro recente de inferência (cota esgotada 429, auth 401, etc.)
+let lastGatewayError = null;
+
+// Telemetria de quotas e limites por provedor extraídos dos cabeçalhos HTTP
+let lastRateLimitInfo = null;
+
+function extractRateLimitHeaders(headers, providerId) {
+    if (!headers) return null;
+    const info = { provider: providerId, timestamp: Date.now() };
+
+    // Anthropic headers
+    if (headers['anthropic-ratelimit-tokens-remaining'] !== undefined) {
+        info.tokensRemaining = parseInt(headers['anthropic-ratelimit-tokens-remaining'], 10);
+        info.tokensLimit = parseInt(headers['anthropic-ratelimit-tokens-limit'], 10);
+        info.requestsRemaining = parseInt(headers['anthropic-ratelimit-requests-remaining'], 10);
+        info.requestsLimit = parseInt(headers['anthropic-ratelimit-requests-limit'], 10);
+        info.resetTime = headers['anthropic-ratelimit-tokens-reset'] || headers['anthropic-ratelimit-requests-reset'];
+    }
+    // OpenAI & Groq standard headers
+    else if (headers['x-ratelimit-remaining-tokens'] !== undefined || headers['x-ratelimit-remaining-requests'] !== undefined) {
+        if (headers['x-ratelimit-remaining-tokens'] !== undefined) info.tokensRemaining = parseInt(headers['x-ratelimit-remaining-tokens'], 10);
+        if (headers['x-ratelimit-limit-tokens'] !== undefined) info.tokensLimit = parseInt(headers['x-ratelimit-limit-tokens'], 10);
+        if (headers['x-ratelimit-remaining-requests'] !== undefined) info.requestsRemaining = parseInt(headers['x-ratelimit-remaining-requests'], 10);
+        if (headers['x-ratelimit-limit-requests'] !== undefined) info.requestsLimit = parseInt(headers['x-ratelimit-limit-requests'], 10);
+        info.resetTime = headers['x-ratelimit-reset-tokens'] || headers['x-ratelimit-reset-requests'];
+    }
+
+    if (headers['retry-after']) {
+        info.retryAfter = parseFloat(headers['retry-after']);
+    }
+
+    return info;
+}
+
 /**
  * Provedores suportados e metadados
  */
 const PROVIDERS = {
+    gemini: {
+        id: 'gemini',
+        name: 'Google Gemini',
+        tag: 'Multimodal · 1M+ Contexto · Gratuito',
+        baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
+        keyEnv: 'GEMINI_API_KEY',
+        requiresKey: true
+    },
     groq: {
         id: 'groq',
         name: 'Groq Cloud',
@@ -156,6 +198,8 @@ function getConfig() {
         cacheHours,
         maxRetries,
         configured: isConfigured,
+        lastError: lastGatewayError,
+        rateLimit: lastRateLimitInfo,
         availableProviders: Object.values(PROVIDERS).map(p => ({
             id: p.id,
             name: p.name,
@@ -174,13 +218,13 @@ function saveConfig({ provider, apiKey, model, baseUrl, maxTokens, temperature, 
         throw new Error(`Provedor desconhecido: "${provider}"`);
     }
 
-    // Validação estrita de parâmetros
-    const parsedCache = parseInt(cacheHours, 10);
+    const config = getConfig();
+    const parsedCache = parseInt(cacheHours !== undefined ? cacheHours : (config.cacheHours || 24), 10);
     if (isNaN(parsedCache) || parsedCache < 1 || parsedCache > 720) {
         throw new Error('O parâmetro Cache TTL deve ser um número inteiro entre 1 e 720 horas.');
     }
 
-    const parsedRetries = parseInt(maxRetries, 10);
+    const parsedRetries = parseInt(maxRetries !== undefined ? maxRetries : (config.maxRetries !== undefined ? config.maxRetries : 4), 10);
     if (isNaN(parsedRetries) || parsedRetries < 0 || parsedRetries > 10) {
         throw new Error('O parâmetro Tentativas Automáticas (Retries) deve ser um número inteiro entre 0 e 10.');
     }
@@ -243,6 +287,8 @@ function saveConfig({ provider, apiKey, model, baseUrl, maxTokens, temperature, 
         process.env[k] = v;
     }
 
+    lastGatewayError = null;
+
     return getConfig();
 }
 
@@ -278,7 +324,8 @@ function makeHttpRequest({ url, method = 'POST', headers = {}, body = null, time
                 if (res.statusCode >= 200 && res.statusCode < 300) {
                     resolve({ statusCode: res.statusCode, data: parsed, headers: res.headers });
                 } else {
-                    const errorMsg = parsed.error?.message || 
+                    const errorMsg = (Array.isArray(parsed) && parsed[0]?.error?.message) ||
+                                     parsed.error?.message || 
                                      parsed.message || 
                                      `HTTP ${res.statusCode}: ${data.substring(0, 200)}`;
                     const err = new Error(errorMsg);
@@ -375,10 +422,12 @@ async function testConnection({ provider, apiKey, baseUrl, model }) {
         if (rawList.length > 0) {
             fetchedModels = rawList.map(m => {
                 if (typeof m === 'string') {
-                    return { id: m, name: m };
+                    const clean = m.replace(/^models\//, '');
+                    return { id: clean, name: clean };
                 }
-                const id = m.id || m.name || '';
-                const name = m.name || m.display_name || m.displayName || id;
+                const rawId = m.id || m.name || '';
+                const id = rawId.replace(/^models\//, '');
+                const name = (m.display_name || m.displayName || m.name || id).replace(/^models\//, '');
                 const contextWindow = m.context_window || m.context_length || null;
                 const active = m.active !== false;
                 return {
@@ -389,28 +438,110 @@ async function testConnection({ provider, apiKey, baseUrl, model }) {
                 };
             }).filter(m => m.id && m.active !== false);
 
-            // Filtro universal e estrito de modelos utilizáveis para Chat/Completions (elimina áudio, guardrails, embeddings, tts, vision pura)
-            function isChatCompatible(modelId) {
+            // Filtro universal e inteligente de modelos aptos para Engenharia de Software, Arquitetura e Documentação
+            function isEngineeringCompatible(modelId, providerId) {
                 if (!modelId || typeof modelId !== 'string') return false;
                 const lower = modelId.toLowerCase();
-                // 1. Áudio, fala e transcrição
-                if (lower.startsWith('whisper') || lower.includes('audio') || lower.includes('transcription') || lower.includes('tts') || lower.includes('speech')) return false;
-                // 2. Classificadores de segurança e moderação
-                if (lower.includes('guard') || lower.includes('moderation') || lower.includes('safeguard') || lower.includes('orpheus')) return false;
-                // 3. Embeddings e vetores
-                if (lower.includes('embed') || lower.includes('embedding') || lower.startsWith('text-embedding')) return false;
-                // 4. Modelos de imagem/tempo real não-chat
-                if (lower.startsWith('dall-e') || lower.includes('flux') || lower.includes('diffusion') || lower.includes('realtime')) return false;
-                // 5. Modelos de recompensa / rerank
-                if (lower.includes('reward') || lower.includes('rerank')) return false;
+
+                // 1. Áudio, voz, transcrição e streaming bidirecional em tempo real (WebSockets)
+                if (lower.startsWith('whisper') || lower.includes('audio') || lower.includes('transcription') ||
+                    lower.includes('tts') || lower.includes('speech') || lower.includes('transcribe') ||
+                    lower.includes('live') || lower.includes('streaming') || lower.includes('realtime') ||
+                    lower.includes('translate') || lower.includes('bidi')) {
+                    return false;
+                }
+
+                // 2. Classificadores de segurança, moderação e guardrails
+                if (lower.includes('guard') || lower.includes('moderation') || lower.includes('safeguard') ||
+                    lower.includes('orpheus') || lower.includes('safety') || lower.includes('censor')) {
+                    return false;
+                }
+
+                // 3. Embeddings e representação vetorial
+                if (lower.includes('embed') || lower.includes('embedding') || lower.startsWith('text-embedding') ||
+                    lower.startsWith('bge-') || lower.startsWith('nomic-') || lower.includes('similarity')) {
+                    return false;
+                }
+
+                // 4. Imagem, vídeo, visão pura e mídia generativa
+                if (lower.startsWith('dall-e') || lower.includes('flux') || lower.includes('diffusion') ||
+                    lower.startsWith('veo') || lower.startsWith('lyria') || lower.includes('image-preview') ||
+                    lower.includes('-image') || lower.endsWith('-image') || lower.startsWith('sora') ||
+                    lower.startsWith('midjourney') || lower.startsWith('imagen')) {
+                    return false;
+                }
+
+                // 5. Modelos de recompensa, rerank e pontuação
+                if (lower.includes('reward') || lower.includes('rerank') || lower.includes('scorer')) {
+                    return false;
+                }
+
+                // 6. Automação de desktop/hardware, robótica e protocolos de API fechada não-chat
+                if (lower.includes('robotics') || lower.includes('computer-use') || lower.includes('deep-research') ||
+                    lower.includes('customtools') || lower.startsWith('antigravity-preview') || lower === 'aqa') {
+                    return false;
+                }
+
+                // 7. Modelos experimentais restritos / codinomes internos sem cota pública
+                if (lower.includes('banana') || lower.includes('argon') || (providerId === 'gemini' && lower.includes('omni-'))) {
+                    return false;
+                }
+
+                // 8. Modelos comprovadamente descontinuados/aposentados pelos provedores (retornam 404)
+                if (providerId === 'gemini' && /^gemini-2\.5-(flash|pro|flash-lite)$/.test(lower)) {
+                    return false;
+                }
+
                 return true;
             }
 
-            const chatOnly = fetchedModels.filter(m => isChatCompatible(m.id));
-            if (chatOnly.length > 0) fetchedModels = chatOnly;
+            // Categorização semântica dinâmica por propósito
+            function classifyModelCategory(modelId, providerId) {
+                const lower = modelId.toLowerCase();
+                const isMini = /(?:^|[-_])mini(?:[-_]|$)/.test(lower);
+                const isLite = /(?:^|[-_])lite(?:[-_]|$)/.test(lower);
+                const isInstant = /(?:^|[-_])instant(?:[-_]|$)/.test(lower);
+                const isHaiku = /(?:^|[-_])haiku(?:[-_]|$)/.test(lower);
+                const isSmall = /(?:^|[-_])small(?:[-_]|$)/.test(lower);
+                const is8b = /(?:^|[-_])8b(?:[-_]|$)/.test(lower);
 
-            // Ordena os modelos alfabeticamente ou prioriza maior janela de contexto
+                if (isMini || isLite || isInstant || isHaiku || isSmall || is8b) {
+                    return 'fast';
+                }
+                if (lower.includes('code') || lower.includes('coder') || /(?:^|[-_])it(?:[-_]|$)/.test(lower) ||
+                    lower.includes('gemma') || lower.includes('qwen') || lower.includes('deepseek-r1') || lower.includes('mixtral')) {
+                    return 'code';
+                }
+                if (lower.includes('flash') || lower.includes('pro') || lower.includes('sonnet') ||
+                    lower.includes('opus') || lower.includes('120b') || lower.includes('70b') ||
+                    lower.includes('latest') || lower.includes('4o') || /(?:^|[-_])o[13](?:[-_]|$)/.test(lower)) {
+                    return 'recommended';
+                }
+                return 'general';
+            }
+
+            const engineeringModels = fetchedModels
+                .filter(m => isEngineeringCompatible(m.id, p.id))
+                .map(m => ({
+                    ...m,
+                    category: classifyModelCategory(m.id, p.id)
+                }));
+
+            if (engineeringModels.length > 0) fetchedModels = engineeringModels;
+
+            // Ordenação inteligente: 1º Recomendados, 2º Rápidos, 3º Código, 4º Gerais
+            const categoryRank = { recommended: 0, fast: 1, code: 2, general: 3 };
             fetchedModels.sort((a, b) => {
+                const rankA = categoryRank[a.category] ?? 99;
+                const rankB = categoryRank[b.category] ?? 99;
+                if (rankA !== rankB) return rankA - rankB;
+
+                // Prioriza os modelos principais de cada provedor no topo do seu grupo
+                const isTopA = /3\.8-flash|flash-latest|gpt-oss-120b|gpt-4o$|claude-3-5-sonnet/i.test(a.id);
+                const isTopB = /3\.8-flash|flash-latest|gpt-oss-120b|gpt-4o$|claude-3-5-sonnet/i.test(b.id);
+                if (isTopA && !isTopB) return -1;
+                if (!isTopA && isTopB) return 1;
+
                 if (a.contextWindow && b.contextWindow && b.contextWindow !== a.contextWindow) {
                     return b.contextWindow - a.contextWindow;
                 }
@@ -466,8 +597,13 @@ async function testConnection({ provider, apiKey, baseUrl, model }) {
 
     const latencyMs = Date.now() - t0;
     const combinedModels = fetchedModels.map(m => {
-        if (typeof m === 'string') return { id: m, name: m };
-        return { id: m.id || m.name, name: m.name || m.label || m.id, contextWindow: m.contextWindow || null };
+        if (typeof m === 'string') return { id: m, name: m, category: 'general' };
+        return {
+            id: m.id || m.name,
+            name: m.name || m.label || m.id,
+            contextWindow: m.contextWindow || null,
+            category: m.category || 'general'
+        };
     });
 
     if (combinedModels.length > 0) {
@@ -490,8 +626,7 @@ async function chatCompletion(messages, options = {}) {
     const providerId = (options.provider || config.provider || 'groq').toLowerCase();
     const provider = PROVIDERS[providerId] || PROVIDERS.groq;
 
-    const apiKey = options.apiKey || (provider.keyEnv ? process.env[provider.keyEnv] : '') || config.apiKeyMasked;
-    const resolvedKey = options.apiKey || process.env[provider.keyEnv] || process.env.AI_API_KEY || '';
+    const resolvedKey = options.apiKey || (provider.keyEnv ? process.env[provider.keyEnv] : '') || (config.provider === provider.id ? process.env.AI_API_KEY : '') || '';
 
     if (provider.requiresKey && !resolvedKey) {
         const err = new Error(`Chave de API não configurada para ${provider.name}. Conecte seu provedor no AI Gateway.`);
@@ -499,7 +634,7 @@ async function chatCompletion(messages, options = {}) {
         throw err;
     }
 
-    const baseUrl = (options.baseUrl || config.baseUrl || provider.baseUrl).replace(/\/+$/, '');
+    const baseUrl = (options.baseUrl || ((provider.id === 'ollama' || provider.id === 'custom') ? (config.baseUrl || provider.baseUrl) : provider.baseUrl)).replace(/\/+$/, '');
     let targetModel = options.model || config.model || '';
     if (!targetModel) {
         const err = new Error(`Nenhum modelo de IA selecionado para ${provider.name}. Abra o configurador de IA no topo, teste a conexão e selecione um modelo.`);
@@ -563,6 +698,10 @@ async function chatCompletion(messages, options = {}) {
             });
 
             const contentText = res.data.content?.map(c => c.text).join('\n') || '';
+            lastGatewayError = null;
+            const rl = extractRateLimitHeaders(res.headers, provider.id);
+            if (rl) lastRateLimitInfo = rl;
+
             const result = {
                 content: contentText,
                 usage: res.data.usage || {},
@@ -607,6 +746,10 @@ async function chatCompletion(messages, options = {}) {
 
         const choice = res.data.choices?.[0];
         const content = choice?.message?.content || choice?.text || '';
+        lastGatewayError = null;
+        const rlOpenAi = extractRateLimitHeaders(res.headers, provider.id);
+        if (rlOpenAi) lastRateLimitInfo = rlOpenAi;
+
         const result = {
             content,
             usage: res.data.usage || {},
@@ -648,20 +791,35 @@ async function handleChatError(err, messages, options, provider, retryCount, max
         customErr.statusCode = err.statusCode || 401;
         customErr.providerName = provider.name;
         customErr.authError = true;
+        lastGatewayError = {
+            statusCode: customErr.statusCode,
+            authError: true,
+            isRateLimit: false,
+            quotaExceeded: false,
+            provider: provider.id,
+            providerName: provider.name,
+            model: options.model || '',
+            message: customErr.message,
+            timestamp: Date.now()
+        };
         throw customErr;
     }
 
     if (isRateLimit) {
+        const rl = extractRateLimitHeaders(err.headers, provider.id);
+        if (rl) lastRateLimitInfo = rl;
+
         let waitSeconds = Math.pow(2, retryCount + 1) * 2; // 4s, 8s, 16s...
         const retryHeader = err.headers?.['retry-after'];
         if (retryHeader) {
             const parsedWait = parseFloat(retryHeader);
-            if (!isNaN(parsedWait)) waitSeconds = Math.ceil(parsedWait);
+            if (!isNaN(parsedWait)) waitSeconds = Math.max(waitSeconds, Math.ceil(parsedWait));
         }
 
-        // Se o provedor exigir mais de 10 segundos de espera (ex: Groq pedindo 1243s / ~20 min por cota diária/por hora esgotada),
+        // Se o provedor exigir mais de 60 segundos de espera (ex: Groq pedindo 1243s / ~20 min por cota diária/por hora esgotada),
         // NUNCA bloqueamos o processo do servidor! Lançamos o erro imediatamente para apresentar o modal ao usuário.
-        if (waitSeconds > 10 || retryCount >= maxRetries) {
+        // Já esperas de recarga do balde por minuto (ex: 15s-45s) são toleradas pelo backoff automático.
+        if (waitSeconds > 60 || retryCount >= maxRetries) {
             const waitInfo = waitSeconds ? ` Tempo de redefinição da cota informado pelo provedor: ${waitSeconds}s.` : '';
             const quotaErr = new Error(
                 `Limite de requisições ou créditos esgotados no provedor ${provider.name}.${waitInfo} Alterne para outro provedor (OpenAI, Claude, Ollama Local gratuito ou OpenRouter) nas Configurações de IA.`
@@ -671,6 +829,17 @@ async function handleChatError(err, messages, options, provider, retryCount, max
             quotaErr.quotaExceeded = true;
             quotaErr.retryAfter = waitSeconds;
             quotaErr.providerName = provider.name;
+            lastGatewayError = {
+                statusCode: 429,
+                isRateLimit: true,
+                quotaExceeded: true,
+                retryAfter: waitSeconds,
+                provider: provider.id,
+                providerName: provider.name,
+                model: options.model || '',
+                message: quotaErr.message,
+                timestamp: Date.now()
+            };
             throw quotaErr;
         }
 
@@ -780,17 +949,72 @@ FORMATO DE RESPOSTA (JSON):
  */
 function parseJsonLoose(text) {
     let s = String(text || '').trim();
-    s = s.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '');
+    // 1. Remove cercas de markdown
+    s = s.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
+
+    // 2. Tenta parse direto
     try {
         return JSON.parse(s);
-    } catch (_) {
-        const start = s.indexOf('{');
-        const end = s.lastIndexOf('}');
-        if (start !== -1 && end > start) {
-            return JSON.parse(s.slice(start, end + 1));
-        }
-        throw new Error('resposta não contém JSON válido');
+    } catch (_) {}
+
+    // 3. Tenta extrair o bloco entre o primeiro '{' e o último '}'
+    const startObj = s.indexOf('{');
+    const endObj = s.lastIndexOf('}');
+    if (startObj !== -1 && endObj > startObj) {
+        const candidate = s.slice(startObj, endObj + 1);
+        try {
+            return JSON.parse(candidate);
+        } catch (_) {}
+
+        // 4. Repara caracteres de controle não escapados (como quebras de linha cruas dentro de strings)
+        try {
+            let inString = false;
+            let escaped = false;
+            let out = '';
+            for (let i = 0; i < candidate.length; i++) {
+                const char = candidate[i];
+                if (escaped) {
+                    out += char;
+                    escaped = false;
+                    continue;
+                }
+                if (char === '\\') {
+                    out += char;
+                    escaped = true;
+                    continue;
+                }
+                if (char === '"') {
+                    inString = !inString;
+                    out += char;
+                    continue;
+                }
+                if (inString && char === '\n') {
+                    out += '\\n';
+                    continue;
+                }
+                if (inString && char === '\r') {
+                    continue;
+                }
+                if (inString && char === '\t') {
+                    out += '\\t';
+                    continue;
+                }
+                out += char;
+            }
+            return JSON.parse(out);
+        } catch (_) {}
     }
+
+    // 5. Tenta extrair array entre '[' e ']' se aplicável
+    const startArr = s.indexOf('[');
+    const endArr = s.lastIndexOf(']');
+    if (startArr !== -1 && endArr > startArr) {
+        try {
+            return JSON.parse(s.slice(startArr, endArr + 1));
+        } catch (_) {}
+    }
+
+    throw new Error('resposta não contém JSON válido');
 }
 
 /**

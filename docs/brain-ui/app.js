@@ -3008,6 +3008,8 @@ function openQuickstartWizard(defaultMode = null) {
     currentGrillQuestions = [];
     currentGrillProjectInfo = null;
     currentGrillValidationIssue = null;
+    resetQuickstartTech();
+    resetQuickstartSpecs();
     const grillListEl = document.getElementById('qsGrillQuestionsList');
     if (grillListEl) grillListEl.innerHTML = '';
     const grillContainerEl = document.getElementById('qsGrillQuestionsContainer');
@@ -3030,6 +3032,8 @@ function closeQuickstartWizard() {
     }
     const headerBackBtn = document.getElementById('qsHeaderBackBtn');
     if (headerBackBtn) headerBackBtn.style.display = 'none';
+    resetQuickstartTech();
+    resetQuickstartSpecs();
     resetQuickstartGrillPanes();
 }
 
@@ -3220,17 +3224,577 @@ function setQuickstartSubMode(mode) {
     if (cardExpress) cardExpress.classList.toggle('active', mode === 'express');
 }
 
+/* ==========================================================================
+   Quickstart: Tech Accordion (Stack & Git)
+   ========================================================================== */
+function toggleQuickstartTechAccordion() {
+    const accordion = document.getElementById('qsTechAccordion');
+    const body = document.getElementById('qsTechBody');
+    const toggleText = document.getElementById('qsTechToggleText');
+    if (!accordion || !body) return;
+
+    const isOpen = accordion.classList.toggle('open');
+    body.style.display = isOpen ? 'block' : 'none';
+    if (toggleText) {
+        toggleText.textContent = isOpen ? 'Recolher −' : 'Expandir +';
+    }
+}
+
+function onQuickstartStackSelectChange(val) {
+    const customWrap = document.getElementById('qsCustomStackWrap');
+    const customInput = document.getElementById('qsNewStackCustom');
+    if (val === 'custom') {
+        if (customWrap) customWrap.style.display = 'block';
+        if (customInput) customInput.focus();
+    } else {
+        if (customWrap) customWrap.style.display = 'none';
+    }
+    updateTechAccordionBadge();
+}
+
+function onQuickstartCustomStackInput(val) {
+    updateTechAccordionBadge();
+}
+
+function getSelectedStackValue() {
+    const select = document.getElementById('qsNewStackSelect');
+    if (!select) return 'Node.js / TypeScript';
+    if (select.value === 'custom') {
+        const customInput = document.getElementById('qsNewStackCustom');
+        return customInput ? customInput.value.trim() : '';
+    }
+    return select.value;
+}
+
+function updateTechAccordionBadge() {
+    const badge = document.getElementById('qsTechBadge');
+    if (!badge) return;
+    const select = document.getElementById('qsNewStackSelect');
+    const isCustom = select && select.value === 'custom';
+    const customInput = document.getElementById('qsNewStackCustom');
+    const customVal = customInput ? customInput.value.trim() : '';
+    const gitCheckbox = document.getElementById('qsNewInitGit');
+    const isGit = gitCheckbox ? gitCheckbox.checked : true;
+
+    let shortStack = '';
+    if (isCustom) {
+        shortStack = customVal ? customVal : 'Definir Stack *';
+    } else {
+        shortStack = select ? select.value : 'Node.js / TypeScript';
+    }
+
+    if (shortStack.length > 20) shortStack = shortStack.substring(0, 18) + '...';
+
+    badge.textContent = `${shortStack} • Git ${isGit ? '✓' : '✕'}`;
+
+    if (isCustom && !customVal) {
+        badge.style.borderColor = 'rgba(244, 63, 94, 0.4)';
+        badge.style.color = '#fb7185';
+        badge.style.background = 'rgba(244, 63, 94, 0.1)';
+    } else {
+        badge.style.borderColor = '';
+        badge.style.color = '';
+        badge.style.background = '';
+    }
+}
+
+function resetQuickstartTech() {
+    const select = document.getElementById('qsNewStackSelect');
+    if (select) select.value = 'Node.js / TypeScript';
+
+    const customWrap = document.getElementById('qsCustomStackWrap');
+    if (customWrap) customWrap.style.display = 'none';
+
+    const customInput = document.getElementById('qsNewStackCustom');
+    if (customInput) customInput.value = '';
+
+    const gitCheckbox = document.getElementById('qsNewInitGit');
+    if (gitCheckbox) gitCheckbox.checked = true;
+
+    const accordion = document.getElementById('qsTechAccordion');
+    const body = document.getElementById('qsTechBody');
+    const toggleText = document.getElementById('qsTechToggleText');
+    if (accordion) accordion.classList.remove('open');
+    if (body) body.style.display = 'none';
+    if (toggleText) toggleText.textContent = 'Expandir +';
+
+    updateTechAccordionBadge();
+}
+
+/* ==========================================================================
+   Quickstart: SPECS Accordion & Attachment Management
+   ========================================================================== */
+let attachedSpecsFiles = []; // { filename: string, content: string, size: number }
+
+function toggleQuickstartSpecsAccordion() {
+    const accordion = document.getElementById('qsSpecsAccordion');
+    const body = document.getElementById('qsSpecsBody');
+    const toggleText = document.getElementById('qsSpecsToggleText');
+    if (!accordion || !body) return;
+
+    const isOpen = accordion.classList.toggle('open');
+    body.style.display = isOpen ? 'block' : 'none';
+    if (toggleText) {
+        toggleText.textContent = isOpen ? 'Recolher −' : 'Expandir +';
+    }
+}
+
+function switchSpecsTab(tab) {
+    const btnUpload = document.getElementById('btnSpecsTabUpload');
+    const btnPaste = document.getElementById('btnSpecsTabPaste');
+    const paneUpload = document.getElementById('paneSpecsTabUpload');
+    const panePaste = document.getElementById('paneSpecsTabPaste');
+
+    if (btnUpload) btnUpload.classList.toggle('active', tab === 'upload');
+    if (btnPaste) btnPaste.classList.toggle('active', tab === 'paste');
+    if (paneUpload) paneUpload.style.display = tab === 'upload' ? 'block' : 'none';
+    if (panePaste) panePaste.style.display = tab === 'paste' ? 'block' : 'none';
+}
+
+function handleSpecsDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const dropzone = document.getElementById('qsSpecsDropzone');
+    if (dropzone) dropzone.classList.add('drag-active');
+}
+
+function handleSpecsDragLeave(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const dropzone = document.getElementById('qsSpecsDropzone');
+    if (dropzone) dropzone.classList.remove('drag-active');
+}
+
+function handleSpecsDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const dropzone = document.getElementById('qsSpecsDropzone');
+    if (dropzone) dropzone.classList.remove('drag-active');
+    if (e.dataTransfer && e.dataTransfer.files) {
+        processSpecsFiles(e.dataTransfer.files);
+    }
+}
+
+function handleSpecsFileInputChange(e) {
+    if (e.target && e.target.files) {
+        processSpecsFiles(e.target.files);
+        e.target.value = ''; // permite re-selecionar o mesmo arquivo se quiser
+    }
+}
+
+function formatFileSize(bytes) {
+    if (!bytes || bytes < 1024) return (bytes || 0) + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+}
+
+async function processSpecsFiles(fileList) {
+    const files = Array.from(fileList || []);
+    if (!files.length) return;
+
+    const allowedExtensions = ['.md', '.txt', '.json'];
+    const maxFiles = 5;
+    const maxTotalBytes = 1024 * 1024; // 1MB
+
+    let currentTotalBytes = attachedSpecsFiles.reduce((acc, f) => acc + (f.size || 0), 0);
+
+    for (const file of files) {
+        if (attachedSpecsFiles.length >= maxFiles) {
+            const msg = `Limite de até ${maxFiles} arquivos de especificação atingido.`;
+            if (typeof showToast === 'function') showToast(msg, 'warning', 4000);
+            else alert(msg);
+            break;
+        }
+
+        const ext = '.' + file.name.split('.').pop().toLowerCase();
+        if (!allowedExtensions.includes(ext)) {
+            const msg = `Arquivo "${file.name}" ignorado. Formatos aceitos: .md, .txt, .json`;
+            if (typeof showToast === 'function') showToast(msg, 'warning', 4000);
+            else alert(msg);
+            continue;
+        }
+
+        if (currentTotalBytes + file.size > maxTotalBytes) {
+            const msg = `Arquivo "${file.name}" ultrapassa o limite total de 1 MB de especificações.`;
+            if (typeof showToast === 'function') showToast(msg, 'warning', 4000);
+            else alert(msg);
+            break;
+        }
+
+        // Evita duplicata com mesmo nome
+        const existingIdx = attachedSpecsFiles.findIndex(f => f.filename.toLowerCase() === file.name.toLowerCase());
+        try {
+            const content = await readFileAsText(file);
+            const specItem = {
+                filename: file.name,
+                content: content,
+                size: file.size
+            };
+            if (existingIdx >= 0) {
+                currentTotalBytes -= attachedSpecsFiles[existingIdx].size;
+                attachedSpecsFiles[existingIdx] = specItem;
+            } else {
+                attachedSpecsFiles.push(specItem);
+            }
+            currentTotalBytes += file.size;
+        } catch (err) {
+            console.error('Erro ao ler arquivo de especificação:', err);
+        }
+    }
+
+    renderSpecsChips();
+}
+
+function readFileAsText(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsText(file);
+    });
+}
+
+function removeSpecsFile(index) {
+    if (index >= 0 && index < attachedSpecsFiles.length) {
+        attachedSpecsFiles.splice(index, 1);
+        renderSpecsChips();
+    }
+}
+
+function onSpecsPasteInput() {
+    updateSpecsCounter();
+}
+
+function renderSpecsChips() {
+    const chipsContainer = document.getElementById('qsSpecsFileChips');
+    if (!chipsContainer) return;
+
+    if (!attachedSpecsFiles.length) {
+        chipsContainer.innerHTML = '';
+        chipsContainer.style.display = 'none';
+        updateSpecsCounter();
+        return;
+    }
+
+    chipsContainer.style.display = 'flex';
+    chipsContainer.innerHTML = attachedSpecsFiles.map((file, idx) => {
+        const icon = file.filename.endsWith('.json') ? '🔧' : (file.filename.endsWith('.txt') ? '📝' : '📄');
+        return `
+            <div class="qs-spec-chip" title="${escapeHtml(file.filename)} (${formatFileSize(file.size)})">
+                <span class="qs-spec-chip-icon">${icon}</span>
+                <span class="qs-spec-chip-name">${escapeHtml(file.filename)}</span>
+                <span class="qs-spec-chip-size">${formatFileSize(file.size)}</span>
+                <button type="button" class="qs-spec-chip-remove" onclick="removeSpecsFile(${idx})" title="Remover arquivo">✕</button>
+            </div>
+        `;
+    }).join('');
+
+    updateSpecsCounter();
+}
+
+function updateSpecsCounter() {
+    const counter = document.getElementById('qsSpecsCounter');
+    if (!counter) return;
+
+    const totalSpecs = getCollectedSpecs();
+    if (totalSpecs.length > 0) {
+        counter.style.display = 'inline-block';
+        counter.textContent = `${totalSpecs.length} ${totalSpecs.length === 1 ? 'arquivo' : 'arquivos'}`;
+    } else {
+        counter.style.display = 'none';
+        counter.textContent = '0 arquivos';
+    }
+}
+
+function getCollectedSpecs() {
+    const list = [...attachedSpecsFiles];
+
+    // Verifica se há texto colado na aba Colar
+    const pasteTextarea = document.getElementById('qsPasteTextarea');
+    const pasteFilenameInput = document.getElementById('qsPasteFilename');
+    if (pasteTextarea && pasteTextarea.value.trim().length > 0) {
+        const rawName = (pasteFilenameInput && pasteFilenameInput.value.trim()) || 'requisitos.md';
+        let safeName = rawName.replace(/[^a-zA-Z0-9._-]/g, '_');
+        if (!safeName.match(/\.(md|txt|json)$/i)) safeName += '.md';
+
+        const content = pasteTextarea.value.trim();
+        const exists = list.some(f => f.filename.toLowerCase() === safeName.toLowerCase());
+        if (!exists) {
+            list.push({
+                filename: safeName,
+                content: content,
+                size: new Blob([content]).size
+            });
+        }
+    }
+
+    return list;
+}
+
+function resetQuickstartSpecs() {
+    attachedSpecsFiles = [];
+    const fileInput = document.getElementById('qsSpecsFileInput');
+    if (fileInput) fileInput.value = '';
+
+    const pasteTextarea = document.getElementById('qsPasteTextarea');
+    if (pasteTextarea) pasteTextarea.value = '';
+
+    const pasteFilename = document.getElementById('qsPasteFilename');
+    if (pasteFilename) pasteFilename.value = 'requisitos.md';
+
+    const accordion = document.getElementById('qsSpecsAccordion');
+    const body = document.getElementById('qsSpecsBody');
+    const toggleText = document.getElementById('qsSpecsToggleText');
+    if (accordion) accordion.classList.remove('open');
+    if (body) body.style.display = 'none';
+    if (toggleText) toggleText.textContent = 'Expandir +';
+
+    switchSpecsTab('upload');
+    renderSpecsChips();
+}
+
+/* ==========================================================================
+   Quickstart: Expanded Specs Document Editor Modal
+   ========================================================================== */
+let isQuickstartSpecsEditorActive = false;
+
+function openExpandedSpecsEditor() {
+    isQuickstartSpecsEditorActive = true;
+    const modal = document.getElementById('fileEditorModal');
+    if (!modal) return;
+
+    const pasteTextarea = document.getElementById('qsPasteTextarea');
+    const filenameInput = document.getElementById('qsPasteFilename');
+    const rawName = (filenameInput && filenameInput.value.trim()) || 'requisitos.md';
+    let safeName = rawName.replace(/[^a-zA-Z0-9._-]/g, '_');
+    if (!safeName.match(/\.(md|txt|json)$/i)) safeName += '.md';
+    const content = pasteTextarea ? pasteTextarea.value : '';
+
+    activeEditingPath = 'SPECS/' + safeName;
+    currentEditorTab = 'write';
+
+    modal.classList.add('on-top');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    // Oculta seções do Grill/Contratos e exibe ações de Specs
+    const qsTabsWrap = document.getElementById('editorQuickstartTabsWrap');
+    const qsRefineBox = document.getElementById('editorQuickstartRefineBox');
+    const stdActions = document.getElementById('editorStandardActions');
+    const qsActions = document.getElementById('editorQuickstartActions');
+    const specsActions = document.getElementById('editorSpecsActions');
+
+    if (qsTabsWrap) qsTabsWrap.style.display = 'none';
+    if (qsRefineBox) qsRefineBox.style.display = 'none';
+    if (stdActions) stdActions.style.display = 'none';
+    if (qsActions) qsActions.style.display = 'none';
+    if (specsActions) specsActions.style.display = 'flex';
+
+    // Header info
+    const titleEl = document.getElementById('editorModalTitle');
+    const badgeEl = document.getElementById('editorBadgeText');
+    const pathEl = document.getElementById('editorFilePath');
+    const statusText = document.getElementById('editorStatusText');
+    const textarea = document.getElementById('editorTextarea');
+
+    if (titleEl) titleEl.textContent = `Documento de Especificação: ${safeName}`;
+    if (badgeEl) badgeEl.textContent = '📄 SPECS & REQUISITOS';
+    if (pathEl) pathEl.textContent = `SPECS/${safeName}`;
+    if (statusText) statusText.innerHTML = '<span class="status-dot" style="background:#6366f1"></span> Editando documento em tela cheia (Ctrl+S para concluir)';
+
+    if (textarea) {
+        textarea.value = content;
+        textarea.placeholder = 'Cole ou digite aqui os requisitos de sistema, histórias de usuário ou PRD em Markdown, Texto ou JSON...';
+
+        textarea.onkeydown = (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                applyExpandedSpecsEditor();
+                return;
+            }
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                textarea.value = textarea.value.substring(0, start) + '  ' + textarea.value.substring(end);
+                textarea.selectionStart = textarea.selectionEnd = start + 2;
+            }
+        };
+    }
+
+    switchEditorTab('write');
+    applyEditorZoom(currentEditorZoom || 80);
+}
+
+function applyExpandedSpecsEditor() {
+    const editorTextarea = document.getElementById('editorTextarea');
+    const pasteTextarea = document.getElementById('qsPasteTextarea');
+    if (editorTextarea && pasteTextarea) {
+        pasteTextarea.value = editorTextarea.value;
+        onSpecsPasteInput();
+    }
+    closeExpandedSpecsEditor();
+    if (typeof showToast === 'function') {
+        showToast('✓ Especificação atualizada com sucesso!', 'success', 2500);
+    }
+}
+
+function closeExpandedSpecsEditor() {
+    isQuickstartSpecsEditorActive = false;
+    const modal = document.getElementById('fileEditorModal');
+    if (modal) {
+        modal.classList.remove('on-top');
+        modal.style.display = 'none';
+    }
+
+    const qsModal = document.getElementById('quickstartModal');
+    const isQsOpen = qsModal && qsModal.style.display !== 'none';
+    document.body.style.overflow = isQsOpen ? 'hidden' : '';
+
+    const stdActions = document.getElementById('editorStandardActions');
+    const specsActions = document.getElementById('editorSpecsActions');
+    if (stdActions) stdActions.style.display = 'flex';
+    if (specsActions) specsActions.style.display = 'none';
+
+    const pasteTextarea = document.getElementById('qsPasteTextarea');
+    if (pasteTextarea) {
+        setTimeout(() => pasteTextarea.focus(), 80);
+    }
+}
+
+/* ==========================================================================
+   Quickstart: Expanded Project Description Editor Modal
+   ========================================================================== */
+let isQuickstartDescEditorActive = false;
+
+function openExpandedDescEditor() {
+    isQuickstartDescEditorActive = true;
+    const modal = document.getElementById('fileEditorModal');
+    if (!modal) return;
+
+    const descInput = document.getElementById('qsNewDesc');
+    const nameInput = document.getElementById('qsNewName');
+    const projectName = (nameInput && nameInput.value.trim()) || 'Novo Projeto';
+    const content = descInput ? descInput.value : '';
+
+    activeEditingPath = 'PROJECT.md';
+    currentEditorTab = 'write';
+
+    modal.classList.add('on-top');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    // Oculta seções do Grill e exibe ações
+    const qsTabsWrap = document.getElementById('editorQuickstartTabsWrap');
+    const qsRefineBox = document.getElementById('editorQuickstartRefineBox');
+    const stdActions = document.getElementById('editorStandardActions');
+    const qsActions = document.getElementById('editorQuickstartActions');
+    const specsActions = document.getElementById('editorSpecsActions');
+
+    if (qsTabsWrap) qsTabsWrap.style.display = 'none';
+    if (qsRefineBox) qsRefineBox.style.display = 'none';
+    if (stdActions) stdActions.style.display = 'none';
+    if (qsActions) qsActions.style.display = 'none';
+    if (specsActions) specsActions.style.display = 'flex';
+
+    // Header info
+    const titleEl = document.getElementById('editorModalTitle');
+    const badgeEl = document.getElementById('editorBadgeText');
+    const pathEl = document.getElementById('editorFilePath');
+    const statusText = document.getElementById('editorStatusText');
+    const textarea = document.getElementById('editorTextarea');
+
+    if (titleEl) titleEl.textContent = `Descrição: ${projectName}`;
+    if (badgeEl) badgeEl.textContent = '📝 DESCRIÇÃO DO PROJETO';
+    if (pathEl) pathEl.textContent = `PROJECT.md (Visão Geral & Domínio)`;
+    if (statusText) statusText.innerHTML = '<span class="status-dot" style="background:#6366f1"></span> Editando descrição em tela cheia (Ctrl+S para concluir)';
+
+    if (textarea) {
+        textarea.value = content;
+        textarea.placeholder = 'Descreva os objetivos de negócio, problemas a resolver, funcionalidades chave ou arquitetura esperada para guiar o Arquiteto IA...';
+
+        textarea.onkeydown = (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                applyExpandedDescEditor();
+                return;
+            }
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                textarea.value = textarea.value.substring(0, start) + '  ' + textarea.value.substring(end);
+                textarea.selectionStart = textarea.selectionEnd = start + 2;
+            }
+        };
+    }
+
+    switchEditorTab('write');
+    applyEditorZoom(currentEditorZoom || 80);
+}
+
+function applyExpandedDescEditor() {
+    const editorTextarea = document.getElementById('editorTextarea');
+    const descInput = document.getElementById('qsNewDesc');
+    if (editorTextarea && descInput) {
+        descInput.value = editorTextarea.value.trim();
+        onQuickstartDescInput(descInput.value);
+    }
+    closeExpandedDescEditor();
+    if (typeof showToast === 'function') {
+        showToast('✓ Descrição atualizada com sucesso!', 'success', 2500);
+    }
+}
+
+function closeExpandedDescEditor() {
+    isQuickstartDescEditorActive = false;
+    const modal = document.getElementById('fileEditorModal');
+    if (modal) {
+        modal.classList.remove('on-top');
+        modal.style.display = 'none';
+    }
+
+    const qsModal = document.getElementById('quickstartModal');
+    const isQsOpen = qsModal && qsModal.style.display !== 'none';
+    document.body.style.overflow = isQsOpen ? 'hidden' : '';
+
+    const stdActions = document.getElementById('editorStandardActions');
+    const specsActions = document.getElementById('editorSpecsActions');
+    if (stdActions) stdActions.style.display = 'flex';
+    if (specsActions) specsActions.style.display = 'none';
+
+    const descInput = document.getElementById('qsNewDesc');
+    if (descInput) {
+        setTimeout(() => descInput.focus(), 80);
+    }
+}
+
+function onEditorSpecsActionsCancel() {
+    if (isQuickstartDescEditorActive) {
+        closeExpandedDescEditor();
+    } else if (isQuickstartSpecsEditorActive) {
+        closeExpandedSpecsEditor();
+    }
+}
+
+function onEditorSpecsActionsApply() {
+    if (isQuickstartDescEditorActive) {
+        applyExpandedDescEditor();
+    } else if (isQuickstartSpecsEditorActive) {
+        applyExpandedSpecsEditor();
+    }
+}
+
 async function triggerQuickstartChoice(mode) {
     quickstartSubMode = mode;
     const nameInput = document.getElementById('qsNewName');
-    const stackInput = document.getElementById('qsNewStack');
     const descInput = document.getElementById('qsNewDesc');
     const initGitCheckbox = document.getElementById('qsNewInitGit');
 
     const name = nameInput ? nameInput.value.trim() : '';
-    const stack = stackInput ? stackInput.value.trim() : 'Node.js / TypeScript';
     const desc = descInput ? descInput.value.trim() : '';
     const initGit = initGitCheckbox ? initGitCheckbox.checked : true;
+    const specs = getCollectedSpecs();
 
     if (!name) {
         if (nameInput) {
@@ -3246,6 +3810,43 @@ async function triggerQuickstartChoice(mode) {
         return;
     }
 
+    const select = document.getElementById('qsNewStackSelect');
+    const isCustom = select && select.value === 'custom';
+    const customInput = document.getElementById('qsNewStackCustom');
+    const customVal = customInput ? customInput.value.trim() : '';
+
+    if (isCustom && !customVal) {
+        const techAccordion = document.getElementById('qsTechAccordion');
+        const techBody = document.getElementById('qsTechBody');
+        const techToggleText = document.getElementById('qsTechToggleText');
+        if (techAccordion && techBody && techBody.style.display === 'none') {
+            techAccordion.classList.add('open');
+            techBody.style.display = 'block';
+            if (techToggleText) techToggleText.textContent = 'Recolher −';
+        }
+
+        if (customInput) {
+            customInput.classList.add('input-error-shake');
+            setTimeout(() => customInput.classList.remove('input-error-shake'), 600);
+        }
+
+        await showBrainAlert({
+            title: 'Stack Tecnológica Obrigatória',
+            badge: 'PREENCHIMENTO REQUERIDO',
+            icon: '✏️',
+            message: 'Você selecionou a opção <strong>Outra / Stack Personalizada</strong>.<br><br>Por favor, informe a linguagem, framework ou stack tecnológica do projeto no campo correspondente antes de continuar.',
+            okText: 'Informar Stack',
+            type: 'warning'
+        });
+
+        setTimeout(() => {
+            if (customInput) customInput.focus();
+        }, 100);
+        return;
+    }
+
+    const stack = getSelectedStackValue();
+
     if (!isLocalEnvironment()) {
         showOnlineDemoNotice('criar projetos no disco rígido');
         return;
@@ -3254,7 +3855,7 @@ async function triggerQuickstartChoice(mode) {
     if (mode === 'assisted') {
         const spAssisted = document.getElementById('spinnerModeAssisted');
         if (spAssisted) spAssisted.style.display = 'inline-block';
-        startGrillQuestionsFlow({ name, stack, description: desc, initGit });
+        startGrillQuestionsFlow({ name, stack, description: desc, initGit, specs });
         return;
     }
 
@@ -3272,7 +3873,7 @@ async function triggerQuickstartChoice(mode) {
             const res = await fetch('/api/projects/new', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, stack, description: desc, initGit })
+                body: JSON.stringify({ name, stack, description: desc, initGit, specs })
             });
             const data = await res.json();
 
@@ -4118,7 +4719,8 @@ async function startGrillQuestionsFlow(projectInfo, forceRegenerate = false) {
     const isSameProject = currentGrillProjectInfo &&
         currentGrillProjectInfo.name === projectInfo.name &&
         currentGrillProjectInfo.stack === projectInfo.stack &&
-        (currentGrillProjectInfo.description || '') === (projectInfo.description || '');
+        (currentGrillProjectInfo.description || '') === (projectInfo.description || '') &&
+        JSON.stringify(currentGrillProjectInfo.specs || []) === JSON.stringify(projectInfo.specs || []);
 
     const hasExistingQuestions = Array.isArray(currentGrillQuestions) && currentGrillQuestions.length > 0;
 
@@ -4158,6 +4760,7 @@ async function startGrillQuestionsFlow(projectInfo, forceRegenerate = false) {
                 <span class="qs-grill-summary-item"><strong>Projeto:</strong> ${escapeHtml(projectInfo.name)}</span>
                 <span class="qs-grill-summary-item"><strong>Stack:</strong> ${escapeHtml(projectInfo.stack)}</span>
                 ${projectInfo.description ? `<span class="qs-grill-summary-item"><strong>Foco:</strong> ${escapeHtml(projectInfo.description)}</span>` : ''}
+                ${projectInfo.specs && projectInfo.specs.length > 0 ? `<span class="qs-grill-summary-item" style="color: #a5b4fc; border-color: rgba(99, 102, 241, 0.4);"><strong>SPECS:</strong> ${projectInfo.specs.length} ${projectInfo.specs.length === 1 ? 'doc' : 'docs'}</span>` : ''}
             </div>
             <button type="button" class="qs-grill-reset-btn" id="qsGrillResetBtn" onclick="confirmResetGrillQuestions()" title="Descartar respostas e formular novas perguntas com IA" style="display: none;">
                 🔄 Refazer perguntas com IA
@@ -7099,9 +7702,15 @@ function switchEditorTab(tab) {
         if (textarea) textarea.style.display = 'block';
         if (preview) preview.style.display = 'none';
         if (toolbar) toolbar.style.display = 'flex';
-        if (badgeEl) badgeEl.textContent = '✏️ EDITOR INTEGRADO';
+        if (badgeEl) {
+            badgeEl.textContent = isQuickstartDescEditorActive
+                ? '📝 DESCRIÇÃO DO PROJETO'
+                : (isQuickstartSpecsEditorActive ? '📄 SPECS & REQUISITOS' : '✏️ EDITOR INTEGRADO');
+        }
         if (titleEl && filename) titleEl.textContent = `Editando: ${filename}`;
-        if (statusText) statusText.innerHTML = '<span class="status-dot" style="background:#10b981"></span> Modo de Edição (Ctrl+S para salvar)';
+        if (statusText) statusText.innerHTML = (isQuickstartDescEditorActive || isQuickstartSpecsEditorActive)
+            ? '<span class="status-dot" style="background:#6366f1"></span> Editando documento (Ctrl+S para concluir)'
+            : '<span class="status-dot" style="background:#10b981"></span> Modo de Edição (Ctrl+S para salvar)';
         textarea?.focus();
     } else {
         if (textarea) textarea.style.display = 'none';
@@ -7115,7 +7724,11 @@ function switchEditorTab(tab) {
             preview.innerHTML = `<div class="doc-preview-inner">${html}</div>`;
         }
         if (toolbar) toolbar.style.display = 'none';
-        if (badgeEl) badgeEl.textContent = '👁️ PRÉ-VISUALIZAÇÃO';
+        if (badgeEl) {
+            badgeEl.textContent = isQuickstartDescEditorActive
+                ? '👁️ PRÉ-VISUALIZAÇÃO DESCRIÇÃO'
+                : (isQuickstartSpecsEditorActive ? '👁️ PRÉ-VISUALIZAÇÃO SPECS' : '👁️ PRÉ-VISUALIZAÇÃO');
+        }
         if (titleEl && filename) titleEl.textContent = `Visualizando: ${filename}`;
         if (statusText) statusText.innerHTML = '<span class="status-dot" style="background:#10b981"></span> Modo de Pré-visualização (clique em "Escrever" para editar)';
     }
@@ -7241,6 +7854,14 @@ async function saveFileContent() {
 }
 
 function closeFileEditor() {
+    if (isQuickstartDescEditorActive) {
+        applyExpandedDescEditor();
+        return;
+    }
+    if (isQuickstartSpecsEditorActive) {
+        applyExpandedSpecsEditor();
+        return;
+    }
     if (isQuickstartEditorActive) {
         closeExpandedContractModal();
         return;
@@ -7249,7 +7870,9 @@ function closeFileEditor() {
     if (modal) {
         modal.classList.remove('on-top');
         modal.style.display = 'none';
-        document.body.style.overflow = '';
+        const qsModal = document.getElementById('quickstartModal');
+        const isQsOpen = qsModal && qsModal.style.display !== 'none';
+        document.body.style.overflow = isQsOpen ? 'hidden' : '';
     }
 }
 
@@ -7319,10 +7942,14 @@ async function renderProjectResearchTab() {
             totalActionable += (r.actionableFiles || []).length;
         });
 
-        // Monta o Hero Banner
-        const aiBadgeHtml = aiStatus.ready
-            ? `<span class="rl-ai-status-pill"><span class="pulse-dot"></span> Groq Cloud Conectado (${aiStatus.model})</span>`
-            : `<span class="rl-ai-status-pill" style="border-color:rgba(245,158,11,0.3); color:#fcd34d;"><span class="pulse-dot" style="background:#f59e0b; box-shadow:0 0 8px #f59e0b;"></span> Chave Groq Ausente (.env)</span>`;
+        // Monta o Hero Banner dinâmico com o provedor de IA ativo
+        const activeProvName = window.AI_GATEWAY_CONFIG?.providerName || aiStatus.providerName || (aiStatus.provider ? aiStatus.provider.toUpperCase() : 'IA');
+        const activeModelName = window.AI_GATEWAY_CONFIG?.model || aiStatus.model || 'Ativo';
+        const isReady = (aiStatus.configured !== false && aiStatus.ready !== false && (aiStatus.hasKey || aiStatus.provider === 'ollama' || aiStatus.configured));
+
+        const aiBadgeHtml = isReady
+            ? `<span class="rl-ai-status-pill"><span class="pulse-dot"></span> ${escapeHtml(activeProvName)} Conectado (${escapeHtml(activeModelName)})</span>`
+            : `<span class="rl-ai-status-pill" style="border-color:rgba(245,158,11,0.3); color:#fcd34d;"><span class="pulse-dot" style="background:#f59e0b; box-shadow:0 0 8px #f59e0b;"></span> Chave ${escapeHtml(activeProvName)} Ausente (.env)</span>`;
 
         let html = `
             <!-- Hero Banner do Research Lab -->
@@ -7337,7 +7964,7 @@ async function renderProjectResearchTab() {
                             <span>Laboratório de Pesquisa Autônoma</span>
                         </h2>
                         <p class="rl-hero-desc">
-                            Pesquise temas profundos, consulte a IA (Groq Cloud) para refinar briefings com o contexto real de <strong>${escapeHtml(currentProject)}</strong>, decomponha em subtópicos e catalogue tudo em arquivos <code>.md</code> de conhecimento e ação.
+                            Pesquise temas profundos, consulte a IA conectada (${escapeHtml(activeProvName)}) para refinar briefings com o contexto real de <strong>${escapeHtml(currentProject)}</strong>, decomponha em subtópicos e catalogue tudo em arquivos <code>.md</code> de conhecimento e ação.
                         </p>
                     </div>
                     <button class="btn-new-research-glow" onclick="openResearchModal()">
@@ -7374,7 +8001,7 @@ async function renderProjectResearchTab() {
                     <div class="rl-metric-icon">⚡</div>
                     <div>
                         <div class="rl-metric-val">~1.5s</div>
-                        <div class="rl-metric-lbl">Latência de Inferência (Groq)</div>
+                        <div class="rl-metric-lbl">Latência de Inferência (${escapeHtml(activeProvName)})</div>
                     </div>
                 </div>
             </div>
@@ -7694,19 +8321,21 @@ async function triggerAiRefinePrompt() {
         return;
     }
 
+    const activeProvName = window.AI_GATEWAY_CONFIG?.providerName || (window.AI_GATEWAY_CONFIG?.provider ? window.AI_GATEWAY_CONFIG.provider.toUpperCase() : 'IA');
+
     if (!isLocalEnvironment()) {
-        showOnlineDemoNotice('consultar a API do Groq Cloud');
+        showOnlineDemoNotice(`consultar a API de IA (${activeProvName})`);
         return;
     }
 
     if (btn) {
         btn.classList.add('loading');
-        btn.querySelector('.ai-btn-text').textContent = 'Consultando Groq Cloud...';
+        btn.querySelector('.ai-btn-text').textContent = `Consultando ${activeProvName}...`;
         btn.querySelector('.ai-spinner').style.display = 'inline-block';
     }
 
     if (statusEl) {
-        statusEl.innerHTML = `<span class="pulse-dot"></span> Groq Cloud analisando contexto de ${escapeHtml(currentProject)}...`;
+        statusEl.innerHTML = `<span class="pulse-dot"></span> ${escapeHtml(activeProvName)} analisando contexto de ${escapeHtml(currentProject)}...`;
     }
 
     try {
@@ -7722,6 +8351,13 @@ async function triggerAiRefinePrompt() {
 
         if (!res.ok) {
             const errData = await res.json().catch(() => ({}));
+            const errObj = new Error(errData.error || 'Falha ao consultar a API de IA.');
+            errObj.statusCode = res.status;
+            errObj.isRateLimit = res.status === 429 || !!errData.isRateLimit || !!errData.quotaExceeded;
+            errObj.quotaExceeded = errObj.isRateLimit;
+            errObj.retryAfter = errData.retryAfter;
+            errObj.providerName = errData.providerName;
+            markAiInferenceError(errObj, { context: 'refine-prompt' });
             if (res.status === 429 || errData.quotaExceeded) {
                 showQuotaExceededModal(errData.error);
                 if (statusEl) {
@@ -7729,7 +8365,7 @@ async function triggerAiRefinePrompt() {
                 }
                 return;
             }
-            throw new Error(errData.error || 'Falha ao consultar a API de IA.');
+            throw errObj;
         }
 
         const data = await res.json();
@@ -7754,7 +8390,8 @@ async function triggerAiRefinePrompt() {
     } finally {
         if (btn) {
             btn.classList.remove('loading');
-            btn.querySelector('.ai-btn-text').textContent = 'Melhorar com IA (Groq)';
+            const pName = window.AI_GATEWAY_CONFIG?.providerName || (window.AI_GATEWAY_CONFIG?.provider ? window.AI_GATEWAY_CONFIG.provider.toUpperCase() : 'IA');
+            btn.querySelector('.ai-btn-text').textContent = `Melhorar com IA (${pName})`;
             btn.querySelector('.ai-spinner').style.display = 'none';
         }
     }
@@ -7806,11 +8443,18 @@ async function triggerPreviewDecompose() {
 
         if (!res.ok) {
             const errData = await res.json().catch(() => ({}));
+            const errObj = new Error(errData.error || 'Erro na decomposição.');
+            errObj.statusCode = res.status;
+            errObj.isRateLimit = res.status === 429 || !!errData.isRateLimit || !!errData.quotaExceeded;
+            errObj.quotaExceeded = errObj.isRateLimit;
+            errObj.retryAfter = errData.retryAfter;
+            errObj.providerName = errData.providerName;
+            markAiInferenceError(errObj, { context: 'decompose' });
             if (res.status === 429 || errData.quotaExceeded) {
                 showQuotaExceededModal(errData.error);
                 return;
             }
-            throw new Error(errData.error || 'Erro na decomposição.');
+            throw errObj;
         }
 
         const data = await res.json();
@@ -8001,7 +8645,17 @@ async function triggerPvAiRefine() {
             })
         });
 
-        if (!res.ok) throw new Error('Falha ao refinar com IA.');
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            const errObj = new Error(errData.error || 'Falha ao refinar com IA.');
+            errObj.statusCode = res.status;
+            errObj.isRateLimit = res.status === 429 || !!errData.isRateLimit || !!errData.quotaExceeded;
+            errObj.quotaExceeded = errObj.isRateLimit;
+            errObj.retryAfter = errData.retryAfter;
+            errObj.providerName = errData.providerName;
+            markAiInferenceError(errObj, { context: 'definition-refine' });
+            throw errObj;
+        }
         const data = await res.json();
 
         if (textarea && data.refinedPrompt) {
@@ -8341,12 +8995,14 @@ async function startLiveResearchFromModal(slug, topic) {
         `;
     }
 
+    const activeProvName = window.AI_GATEWAY_CONFIG?.providerName || (window.AI_GATEWAY_CONFIG?.provider ? window.AI_GATEWAY_CONFIG.provider.toUpperCase() : 'IA');
+
     contentEl.innerHTML = `
         <div class="rl-live-progress-container">
             <div class="rl-live-progress-top">
                 <div class="rl-live-engine-tag">
                     <span class="rl-live-dot-pulse"></span>
-                    <span>Groq Cloud &middot; Síntese Autônoma em Tempo Real</span>
+                    <span>${escapeHtml(activeProvName.toUpperCase())} &middot; Síntese Autônoma em Tempo Real</span>
                 </div>
                 <div id="rlLiveCounter" class="rl-live-counter">0 / ${subtopics.length || '?'} concluídos (0%)</div>
             </div>
@@ -8369,7 +9025,7 @@ async function startLiveResearchFromModal(slug, topic) {
     `;
 
     if (!isLocalEnvironment()) {
-        showOnlineDemoNotice('executar o motor autônomo de síntese da Groq');
+        showOnlineDemoNotice(`executar o motor autônomo de síntese de IA (${activeProvName})`);
         isResearchRunningLive = false;
         return;
     }
@@ -8382,7 +9038,14 @@ async function startLiveResearchFromModal(slug, topic) {
 
         if (!res.ok) {
             const errData = await res.json().catch(() => ({}));
-            throw new Error(errData.error || 'Falha ao iniciar motor de pesquisa.');
+            const errObj = new Error(errData.error || 'Falha ao iniciar motor de pesquisa.');
+            errObj.statusCode = res.status;
+            errObj.isRateLimit = res.status === 429 || !!errData.isRateLimit || !!errData.quotaExceeded;
+            errObj.quotaExceeded = errObj.isRateLimit;
+            errObj.retryAfter = errData.retryAfter;
+            errObj.providerName = errData.providerName;
+            markAiInferenceError(errObj, { context: 'research-run' });
+            throw errObj;
         }
 
         const data = await res.json();
@@ -8391,6 +9054,7 @@ async function startLiveResearchFromModal(slug, topic) {
 
     } catch (err) {
         console.error('❌ Erro na execução da pesquisa:', err);
+        markAiInferenceError(err, { context: 'research-run' });
         const headline = document.getElementById('rlLiveStatusHeadline');
         const sub = document.getElementById('rlLiveStatusSub');
         if (headline) {
@@ -8418,9 +9082,11 @@ function handleResearchLiveProgress(info) {
     const bar = document.getElementById('rlLiveBarFill');
     const counter = document.getElementById('rlLiveCounter');
 
+    const activeProvName = window.AI_GATEWAY_CONFIG?.providerName || (window.AI_GATEWAY_CONFIG?.provider ? window.AI_GATEWAY_CONFIG.provider.toUpperCase() : 'IA');
+
     if (info.step === 'decomposing') {
         if (headlineText) headlineText.textContent = 'Mapeando árvore de subtópicos com IA...';
-        if (sub) sub.textContent = 'Consultando o modelo neural Groq Cloud para taxonomia de conhecimento...';
+        if (sub) sub.textContent = `Consultando o modelo neural ${activeProvName} para taxonomia de conhecimento...`;
     }
 
     if (info.step === 'decomposed' && Array.isArray(info.subtopics)) {
@@ -8618,7 +9284,8 @@ async function forceReDecompose(slug, topic, definition) {
     const contentEl = document.getElementById('decModalContent');
     if (!contentEl) return;
 
-    if (subEl) subEl.textContent = 'Mapeando nova proposta de subtópicos com o modelo Groq Cloud...';
+    const activeProvName = window.AI_GATEWAY_CONFIG?.providerName || (window.AI_GATEWAY_CONFIG?.provider ? window.AI_GATEWAY_CONFIG.provider.toUpperCase() : 'IA');
+    if (subEl) subEl.textContent = `Mapeando nova proposta de subtópicos com o modelo ${activeProvName}...`;
 
     contentEl.innerHTML = `
         <div style="text-align:center; padding: 40px 20px; color: var(--text-tertiary);">
@@ -8634,7 +9301,17 @@ async function forceReDecompose(slug, topic, definition) {
             body: JSON.stringify({ topic, definition })
         });
 
-        if (!res.ok) throw new Error('Não foi possível decompor este tema.');
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            const errObj = new Error(errData.error || 'Não foi possível decompor este tema.');
+            errObj.statusCode = res.status;
+            errObj.isRateLimit = res.status === 429 || !!errData.isRateLimit || !!errData.quotaExceeded;
+            errObj.quotaExceeded = errObj.isRateLimit;
+            errObj.retryAfter = errData.retryAfter;
+            errObj.providerName = errData.providerName;
+            markAiInferenceError(errObj, { context: 'decompose-existing' });
+            throw errObj;
+        }
         const data = await res.json();
         const subtopics = data.subtopics || [];
         currentProposedSubtopics = subtopics;
@@ -8928,6 +9605,14 @@ async function confirmDeleteAllResearchFiles(slug, topic) {
 // ════════════════════════════════════════════════════════════
 
 const AI_PROVIDER_PRESETS = {
+    gemini: {
+        name: 'Google Gemini',
+        icon: '✨',
+        tag: 'Multimodal · 1M+ Contexto · Gratuito',
+        placeholder: 'Cole sua chave de API Gemini aqui...',
+        requiresKey: true,
+        baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai'
+    },
     groq: {
         name: 'Groq Cloud',
         icon: '🌐',
@@ -9023,6 +9708,20 @@ function updateAiGatewayPillUI(config) {
 
     btn.classList.remove('connected', 'unconfigured', 'quota-exceeded');
 
+    const quotaErr = (config && config.lastError && (config.lastError.isRateLimit || config.lastError.quotaExceeded)) ? config.lastError :
+                     (lastAiInferenceError && (lastAiInferenceError.isRateLimit || lastAiInferenceError.quotaExceeded)) ? lastAiInferenceError : null;
+
+    if (quotaErr) {
+        btn.classList.add('quota-exceeded');
+        const prov = quotaErr.providerName || quotaErr.provider || config.providerName || config.provider || 'Anthropic Claude';
+        const model = quotaErr.model || config.model || '';
+        const shortModel = model ? model.split('/').pop() : '';
+        label.textContent = `${prov} • ${shortModel || 'Cota Esgotada'}`;
+        btn.title = `⚠️ Cota/Rate Limit (429) esgotado em ${prov}${shortModel ? ' (' + shortModel + ')' : ''}. Clique para abrir as configurações e trocar de modelo ou provedor.`;
+        if (dot) dot.className = 'status-dot live';
+        return;
+    }
+
     if (config.configured) {
         btn.classList.add('connected');
         const shortModel = (config.model || '').split('/').pop();
@@ -9092,27 +9791,63 @@ function populateAiModelSelect(modelList, selectedModelId) {
     const previousVal = selectedModelId || (isManualModelMode && customInput?.value.trim() ? customInput.value.trim() : modelSelect.value);
     modelSelect.innerHTML = '';
 
+    // Agrupamento semântico dinâmico por finalidade
+    const categoryLabels = {
+        recommended: '🌟 Recomendados para Arquitetura & Raciocínio',
+        fast: '⚡ Rápidos & Baixa Latência',
+        code: '🛠️ Abertos & Código (Open-Weights)',
+        general: '📦 Outros Modelos de Chat'
+    };
+
+    const groups = {};
     modelList.forEach(m => {
         let id = '';
-        let label = '';
+        let name = '';
+        let ctx = '';
+        let category = 'general';
+
         if (typeof m === 'string') {
             id = m;
-            label = m;
+            name = m;
         } else if (m && typeof m === 'object') {
             id = m.id || m.name || m.value || '';
-            const name = m.name || m.label || m.displayName || m.display_name || id;
-            const ctx = m.contextWindow ? ` — ${Math.round(m.contextWindow / 1024)}k contexto` : '';
-            label = (name && name !== id && !name.includes(id))
-                ? `${name} (${id})${ctx}`
-                : `${id}${ctx}`;
+            name = m.name || m.label || m.displayName || m.display_name || id;
+            ctx = m.contextWindow ? ` — ${Math.round(m.contextWindow / 1024)}k contexto` : '';
+            category = m.category || 'general';
         }
         if (!id) return;
 
-        const opt = document.createElement('option');
-        opt.value = id;
-        opt.textContent = label;
-        modelSelect.appendChild(opt);
+        if (!groups[category]) groups[category] = [];
+        const label = (name && name !== id && !name.includes(id))
+            ? `${name} (${id})${ctx}`
+            : `${id}${ctx}`;
+
+        groups[category].push({ id, label });
     });
+
+    const categoryKeys = ['recommended', 'fast', 'code', 'general'].filter(k => groups[k] && groups[k].length > 0);
+    const useOptGroups = categoryKeys.length > 1;
+
+    if (useOptGroups) {
+        categoryKeys.forEach(catKey => {
+            const optgroup = document.createElement('optgroup');
+            optgroup.label = categoryLabels[catKey] || catKey;
+            groups[catKey].forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item.id;
+                opt.textContent = item.label;
+                optgroup.appendChild(opt);
+            });
+            modelSelect.appendChild(optgroup);
+        });
+    } else {
+        (groups[categoryKeys[0]] || []).forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item.id;
+            opt.textContent = item.label;
+            modelSelect.appendChild(opt);
+        });
+    }
 
     const optionsArray = Array.from(modelSelect.options);
     if (previousVal && optionsArray.some(o => o.value === previousVal)) {
@@ -9154,6 +9889,10 @@ async function openAiSettingsModal() {
         const res = await fetch('/api/ai/config');
         if (res.ok) {
             window.AI_GATEWAY_CONFIG = await res.json();
+            updateAiGatewayPillUI(window.AI_GATEWAY_CONFIG);
+            if (typeof renderAiSettingsQuotaBanner === 'function') {
+                renderAiSettingsQuotaBanner();
+            }
         }
     } catch (e) { }
 
@@ -9333,9 +10072,26 @@ function updateAiTerminalStatus(status, details = {}) {
         const latency = details.latencyMs ? `${details.latencyMs}ms` : 'sub-100ms';
         const models = details.modelCount !== undefined ? details.modelCount : 0;
         const modelsText = models > 0 ? `${models} modelo${models > 1 ? 's' : ''} compatíve${models > 1 ? 'is' : 'l'}` : '0 modelos detectados';
+        let quotaLine = '';
+        if (details.rateLimit) {
+            const rl = details.rateLimit;
+            const parts = [];
+            if (rl.tokensRemaining !== undefined) {
+                const kTokens = Math.round(rl.tokensRemaining / 1000);
+                const kLimit = rl.tokensLimit ? `/${Math.round(rl.tokensLimit / 1000)}k` : '';
+                parts.push(`${kTokens}k${kLimit} tokens/min`);
+            }
+            if (rl.requestsRemaining !== undefined) {
+                const rLimit = rl.requestsLimit ? `/${rl.requestsLimit}` : '';
+                parts.push(`${rl.requestsRemaining}${rLimit} reqs/min`);
+            }
+            if (parts.length > 0) {
+                quotaLine = `\n<span class="t-matrix">[QUOTA]</span> Cota disponível · ${escapeHtml(parts.join(' · '))}`;
+            }
+        }
         term.innerHTML = `<code><span class="t-matrix">$</span> CONNECTED TO ${escapeHtml(providerUpper)} [AUTHENTICATED]
 <span class="t-matrix">[OK]</span> Conexão bem-sucedida · Latência: ${escapeHtml(latency)}
-<span class="t-matrix">[OK]</span> Modelos detectados · ${escapeHtml(modelsText)}
+<span class="t-matrix">[OK]</span> Modelos detectados · ${escapeHtml(modelsText)}${quotaLine}
 <span class="t-matrix">LOCAL .ENV ENCRYPTION · PRONTO PARA ATIVAR</span></code>`;
     } else if (status === 'error') {
         const errorMsg = details.error || `Informe uma API Key para o provedor ${providerName}`;
@@ -9859,10 +10615,9 @@ async function handleSaveAiSettings(e) {
         }
 
         window.AI_GATEWAY_CONFIG = data.config;
-        updateAiGatewayPillUI(data.config);
-
         lastAiInferenceError = null;
         dismissAiSettingsQuotaBanner();
+        updateAiGatewayPillUI(data.config);
 
         closeAiSettingsModal();
 
@@ -9891,20 +10646,70 @@ async function handleSaveAiSettings(e) {
 let currentAiErrorContext = null;
 let lastAiInferenceError = null;
 
+function markAiInferenceError(err, options = {}) {
+    if (!err) return;
+    const errMsg = (err && (err.message || err.error)) || String(err || 'Erro desconhecido');
+    const statusCode = err && (err.statusCode || err.status);
+    const isRateLimit = (err && (err.isRateLimit || err.quotaExceeded)) ||
+        statusCode === 429 ||
+        /rate limit|quota|cota|crédito|credit|insufficient_quota|tpm|rpm/i.test(errMsg);
+    const isAuth = (err && err.authError) || statusCode === 401 || statusCode === 403 || /api key|unauthorized|chave/i.test(errMsg);
+    const isModelNotFound = (err && err.isModelNotFound) || statusCode === 404 || /modelo.*(não está disponível|descontinuado|not found)/i.test(errMsg);
+    const isTimeout = statusCode === 408 || /timeout/i.test(errMsg);
+
+    const activeProvider = (err && (err.providerName || err.provider)) || (window.AI_GATEWAY_CONFIG && (window.AI_GATEWAY_CONFIG.providerName || window.AI_GATEWAY_CONFIG.provider)) || 'Anthropic Claude';
+    const activeModel = (err && err.model) || (window.AI_GATEWAY_CONFIG && window.AI_GATEWAY_CONFIG.model) || '';
+    const shortModel = (activeModel || '').split('/').pop();
+
+    lastAiInferenceError = {
+        error: err,
+        isRateLimit,
+        isAuth,
+        isModelNotFound,
+        isTimeout,
+        provider: activeProvider,
+        providerName: activeProvider,
+        model: activeModel,
+        message: errMsg,
+        retryAfter: err && err.retryAfter,
+        timestamp: Date.now()
+    };
+
+    const btn = document.getElementById('btnAiGatewayModal');
+    const dot = document.getElementById('aiStatusPillDot');
+    const label = document.getElementById('aiStatusPillProvider');
+
+    if (btn && isRateLimit) {
+        btn.classList.remove('connected', 'unconfigured');
+        btn.classList.add('quota-exceeded');
+        btn.title = `⚠️ Cota/Rate Limit (429) esgotado em ${activeProvider}${shortModel ? ' (' + shortModel + ')' : ''}. Clique para abrir as configurações e trocar de modelo ou provedor.`;
+        if (label) {
+            label.textContent = `${activeProvider} • ${shortModel || 'Cota Esgotada'}`;
+        }
+        if (dot) {
+            dot.className = 'status-dot live';
+        }
+    }
+
+    if (typeof renderAiSettingsQuotaBanner === 'function') {
+        renderAiSettingsQuotaBanner();
+    }
+}
+
 function renderAiSettingsQuotaBanner() {
     const banner = document.getElementById('aiSettingsQuotaBanner');
     if (!banner) return;
 
     const btn = document.getElementById('btnAiGatewayModal');
     const hasQuotaExceeded = btn && btn.classList.contains('quota-exceeded');
-    const lastErr = lastAiInferenceError;
+    const lastErr = lastAiInferenceError || (window.AI_GATEWAY_CONFIG && window.AI_GATEWAY_CONFIG.lastError);
 
     if (hasQuotaExceeded || (lastErr && (lastErr.isRateLimit || lastErr.quotaExceeded))) {
         const titleEl = document.getElementById('aiQuotaBannerTitle');
         const textEl = document.getElementById('aiQuotaBannerText');
         const hintEl = document.getElementById('aiQuotaBannerHint');
 
-        const prov = (lastErr && lastErr.provider) || window.AI_GATEWAY_CONFIG?.providerName || window.AI_GATEWAY_CONFIG?.provider || 'Groq Cloud';
+        const prov = (lastErr && (lastErr.providerName || lastErr.provider)) || window.AI_GATEWAY_CONFIG?.providerName || window.AI_GATEWAY_CONFIG?.provider || 'Anthropic Claude';
         const model = (lastErr && lastErr.model) || window.AI_GATEWAY_CONFIG?.model || '';
         const shortModel = model ? model.split('/').pop() : '';
 
@@ -9912,10 +10717,10 @@ function renderAiSettingsQuotaBanner() {
             titleEl.textContent = `⚠️ Cota de Inferência Esgotada no Modelo ${shortModel ? '"' + shortModel + '"' : 'Ativo'} (Rate Limit 429)`;
         }
         if (textEl) {
-            textEl.innerHTML = `Sua chave de API está conectada e autenticada com sucesso, mas o modelo <strong>${escapeHtml(shortModel || model || 'atual')}</strong> atingiu o limite de taxa de requisições ou tokens por minuto da ${escapeHtml(prov)}.`;
+            textEl.innerHTML = `Sua chave de API está conectada e autenticada com sucesso, mas o modelo <strong>${escapeHtml(shortModel || model || 'atual')}</strong> atingiu o limite de taxa de requisições ou créditos da <strong>${escapeHtml(prov)}</strong>.`;
         }
         if (hintEl) {
-            hintEl.innerHTML = `💡 <strong>Como Resolver Agora:</strong> Selecione outro modelo com cota livre no <strong>Passo 3</strong> abaixo (ex: <code>llama-3.3-70b-versatile</code> ou <code>llama-3.1-8b-instant</code>) ou alterne para outro provedor no <strong>Passo 1</strong> e clique em <em>Salvar e Ativar ⚡</em>.`;
+            hintEl.innerHTML = `💡 <strong>Como Resolver Agora:</strong> Selecione outro modelo com cota livre no <strong>Passo 3</strong> abaixo ou alterne para outro provedor (Google Gemini, Groq, OpenAI, Ollama Local gratuito ou OpenRouter) no <strong>Passo 1</strong> e clique em <em>Salvar e Ativar ⚡</em>.`;
         }
         banner.style.display = 'flex';
     } else {
@@ -9929,6 +10734,7 @@ function dismissAiSettingsQuotaBanner() {
 }
 
 function showAiErrorModal(err, options = {}) {
+    markAiInferenceError(err, options);
     const modal = document.getElementById('aiErrorModal');
     if (!modal) {
         alert((err && err.message) || String(err));
@@ -10158,6 +10964,7 @@ window.closeAiQuotaModal = closeAiQuotaModal;
 window.handleAiQuotaBackdropClick = handleAiQuotaBackdropClick;
 window.proceedFromQuotaToSettings = proceedFromQuotaToSettings;
 window.showAiErrorModal = showAiErrorModal;
+window.markAiInferenceError = markAiInferenceError;
 window.closeAiErrorModal = closeAiErrorModal;
 window.handleAiErrorModalBackdrop = handleAiErrorModalBackdrop;
 window.handleAiErrorOpenConfig = handleAiErrorOpenConfig;
@@ -10290,6 +11097,14 @@ async function generateSessionDraft(regenerate = false) {
 
         if (!res.ok) {
             setSessionCaptureStep('input');
+            const errObj = new Error(data.error || 'Falha ao gerar o rascunho.');
+            errObj.statusCode = res.status;
+            errObj.isRateLimit = res.status === 429 || !!data.isRateLimit || !!data.quotaExceeded;
+            errObj.quotaExceeded = errObj.isRateLimit;
+            errObj.retryAfter = data.retryAfter;
+            errObj.providerName = data.providerName;
+            markAiInferenceError(errObj, { context: 'session-draft' });
+
             if (res.status === 429 || data.quotaExceeded) {
                 setSessionCaptureStatus('<span class="status-dot" style="background:#f59e0b"></span> Cota de IA esgotada.');
                 showQuotaExceededModal(data.error);
@@ -10717,7 +11532,14 @@ async function submitAskBrainQuery() {
         if (askBrainLoadingInterval) clearInterval(askBrainLoadingInterval);
 
         if (!res.ok || !data.success) {
-            throw new Error(data.error || 'Erro ao processar consulta com o Cérebro.');
+            const errObj = new Error(data.error || 'Erro ao processar consulta com o Cérebro.');
+            errObj.statusCode = res.status;
+            errObj.isRateLimit = res.status === 429 || !!data.isRateLimit || !!data.quotaExceeded;
+            errObj.quotaExceeded = errObj.isRateLimit;
+            errObj.retryAfter = data.retryAfter;
+            errObj.providerName = data.providerName;
+            markAiInferenceError(errObj, { context: 'ask-brain' });
+            throw errObj;
         }
 
         const elapsed = ((performance.now() - t0) / 1000).toFixed(1);

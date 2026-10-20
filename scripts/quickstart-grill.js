@@ -23,6 +23,172 @@ function sanitizeProjectName(rawName) {
     return rawName.trim().replace(/[^a-zA-Z0-9_\-]/g, '-');
 }
 
+/**
+ * Decompõe um documento Markdown em seções H2/H3 normalizadas.
+ */
+function parseMarkdownSections(raw) {
+    if (!raw || typeof raw !== 'string') return [];
+    const cleaned = raw
+        .replace(/[-]{5,}/g, '---')
+        .replace(/[ \t]{2,}/g, ' ')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+
+    const sections = [];
+    const lines = cleaned.split('\n');
+    let currentSec = null;
+    let secBuffer = [];
+
+    for (let line of lines) {
+        if (/^##\s+/.test(line)) {
+            if (currentSec && secBuffer.length > 0) {
+                sections.push({ title: currentSec, content: secBuffer.join('\n') });
+            }
+            currentSec = line.trim();
+            secBuffer = [line];
+        } else {
+            if (currentSec) secBuffer.push(line);
+        }
+    }
+    if (currentSec && secBuffer.length > 0) {
+        sections.push({ title: currentSec, content: secBuffer.join('\n') });
+    }
+    return sections;
+}
+
+/**
+ * Extrai seções pertinentes a Escopo, Visão Executiva, Requisitos Funcionais (RFs) e Regras de Negócio (RNs).
+ */
+function extractScopeSpecs(raw, maxChars = 14000) {
+    const sections = parseMarkdownSections(raw);
+    if (sections.length === 0) return (raw || '').slice(0, maxChars);
+
+    const scopeKeywords = [
+        'objetivo', 'escopo', 'requisitos funcionais', 'regras de negocio',
+        'perfis', 'permissoes', 'premissas', 'glossario', 'criterios de aceite'
+    ];
+
+    let result = '';
+    for (const sec of sections) {
+        const titleLower = sec.title.toLowerCase();
+        if (scopeKeywords.some(kw => titleLower.includes(kw))) {
+            if ((result + '\n\n' + sec.content).length <= maxChars) {
+                result += (result ? '\n\n' : '') + sec.content;
+            }
+        }
+    }
+    return result || raw.slice(0, maxChars);
+}
+
+/**
+ * Extrai seções pertinentes a Arquitetura, Dicionário SQL Server, Endpoints REST e Segurança.
+ */
+function extractArchitectureSpecs(raw, maxChars = 16000) {
+    const sections = parseMarkdownSections(raw);
+    if (sections.length === 0) return (raw || '').slice(0, maxChars);
+
+    const archKeywords = [
+        'modelo de dados', 'dicionario', 'tabela', 'api rest', 'contratos da api',
+        'arquitetura tecnica', 'sql server', 'seguranca', 'requisitos nao funcionais'
+    ];
+
+    let result = '';
+    for (const sec of sections) {
+        const titleLower = sec.title.toLowerCase();
+        if (archKeywords.some(kw => titleLower.includes(kw))) {
+            if ((result + '\n\n' + sec.content).length <= maxChars) {
+                result += (result ? '\n\n' : '') + sec.content;
+            }
+        }
+    }
+    return result || raw.slice(0, maxChars);
+}
+
+/**
+ * Remove eventuais blocos de código markdown que envolvem a resposta
+ */
+function cleanMarkdown(raw) {
+    if (!raw || typeof raw !== 'string') return '';
+    let text = raw.trim();
+    if (text.startsWith('```markdown')) text = text.slice(11);
+    else if (text.startsWith('```')) text = text.slice(3);
+    if (text.endsWith('```')) text = text.slice(0, -3);
+    return text.trim();
+}
+
+/**
+ * Extrai o conteúdo delimitado por marcadores limpos <<<TAG>>> ... <<<END_TAG>>>
+ */
+function extractTag(text, tag) {
+    if (!text) return '';
+    const regex = new RegExp(`<<<${tag}>>>([\\s\\S]*?)<<<END_${tag}>>>`, 'i');
+    const match = text.match(regex);
+    if (match && match[1]) {
+        return cleanMarkdown(match[1]);
+    }
+    const startTag = `<<<${tag}>>>`;
+    const sIdx = text.indexOf(startTag);
+    if (sIdx !== -1) {
+        let content = text.slice(sIdx + startTag.length);
+        const nextTagIdx = content.search(/<<<[A-Z_]+>>>/);
+        if (nextTagIdx !== -1) content = content.slice(0, nextTagIdx);
+        return cleanMarkdown(content);
+    }
+    return '';
+}
+
+/**
+ * Otimiza e extrai o núcleo de alta densidade técnica de documentos de especificação (SPECS).
+ * - Remove espaçamentos vazios redundantes de tabelas markdown
+ * - Se o documento for maior que a cota do provedor (ex: 8000 TPM na Groq), prioriza:
+ *   Dicionário de dados/tabelas SQL, contratos de API/endpoints, requisitos funcionais e regras de negócio.
+ */
+function extractArchitecturalCore(raw, maxChars = 20000) {
+    if (!raw || typeof raw !== 'string') return '';
+
+    // 1. Limpeza preliminar: reduz espaços inflados de tabelas pandoc e quebras excessivas
+    let cleaned = raw
+        .replace(/[-]{5,}/g, '---')
+        .replace(/[ \t]{2,}/g, ' ')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+
+    if (cleaned.length <= maxChars) return cleaned;
+
+    // 2. Se o documento for maior que a cota, particiona por seções Markdown e prioriza alta densidade técnica
+    const sections = parseMarkdownSections(cleaned);
+    const cleanTitle = (t) => (t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+    // Prioridade técnica: Dicionário, tabelas, API, requisitos funcionais, regras de negócio, escopo, segurança
+    const priorityKeywords = [
+        'dicionario', 'modelo de dados', 'tabela', 'contratos da api', 'api rest', 'endpoints',
+        'requisitos funcionais', 'regras de negocio', 'escopo', 'objetivo', 'seguranca'
+    ];
+
+    const highPriority = [];
+    for (const kw of priorityKeywords) {
+        const match = sections.find(s => cleanTitle(s.title).includes(kw));
+        if (match && !highPriority.includes(match)) {
+            highPriority.push(match);
+        }
+    }
+
+    let result = '';
+    for (const sec of highPriority) {
+        if ((result + '\n\n' + sec.content).length <= maxChars) {
+            result += (result ? '\n\n' : '') + sec.content;
+        } else {
+            const remaining = maxChars - result.length - 120;
+            if (remaining > 500) {
+                result += (result ? '\n\n' : '') + sec.content.slice(0, remaining) + '\n... [seção sintetizada para respeitar cota do provedor de IA]';
+            }
+            break;
+        }
+    }
+
+    return result || cleaned.slice(0, maxChars);
+}
+
 function formatGrillCategory(cat) {
     if (!cat || typeof cat !== 'string') return 'Decisão';
     const raw = cat.trim();
@@ -160,6 +326,20 @@ async function generateQuestions(aiGateway, projectInfo) {
 
     const startIndex = existing.length + 1;
     const isComplementary = existing.length > 0;
+    const gatewayConfig = typeof aiGateway.getConfig === 'function' ? aiGateway.getConfig() : {};
+    const providerId = (gatewayConfig.provider || process.env.AI_PROVIDER || 'groq').toLowerCase();
+    const isGroq = providerId === 'groq';
+    const maxCharsForSpecs = isGroq ? 20000 : 80000;
+
+    const specs = Array.isArray(projectInfo.specs) ? projectInfo.specs : [];
+
+    let specsContext = '';
+    if (specs.length > 0) {
+        specsContext = specs.map(s => {
+            const content = extractArchitecturalCore(s.content || '', maxCharsForSpecs);
+            return `--- [DOCUMENTO ANEXADO (SPECS): ${s.filename || 'requisitos.md'}] ---\n${content}`;
+        }).join('\n\n');
+    }
 
     let systemPrompt = '';
     let userPrompt = '';
@@ -169,6 +349,9 @@ async function generateQuestions(aiGateway, projectInfo) {
 O projeto "${safeName}" (Stack: "${stack}") já possui as seguintes perguntas de sabatina técnica:
 ${existing.map((eq, i) => `${i + 1}. [${eq.category || 'Requisitos'}] ${eq.question || eq.pergunta || ''}`).join('\n')}
 
+${specsContext ? `DOCUMENTOS DE ESPECIFICAÇÃO & REQUISITOS ENVIADOS PELO DESENVOLVEDOR (SPECS):
+${specsContext}
+` : ''}
 SUA MISSÃO:
 Formule EXATAMENTE mais 4 perguntas COMPLEMENTARES que AINDA NÃO FORAM ABORDADAS.
 Foque em aprofundar temas essenciais ainda em aberto, tais como:
@@ -208,24 +391,23 @@ O desenvolvedor está criando um novo projeto:
 - Stack Tecnológica: "${stack}"
 - Descrição Inicial: "${description || 'Em concepção'}"
 
+${specsContext ? `DOCUMENTOS DE ESPECIFICAÇÃO & REQUISITOS ENVIADOS PELO DESENVOLVEDOR (SPECS):
+${specsContext}
+
+DIRETRIZ MANDATÓRIA COM BASE NAS SPECS:
+- O desenvolvedor forneceu a especificação acima. Analise-a minuciosamente.
+- NUNCA faça perguntas genéricas ou redundantes sobre o que já está expressamente detalhado nos documentos anexados (ex: se o objetivo e domínio já estão claros na especificação, NÃO pergunte o propósito geral).
+- Formule perguntas focadas em aprofundar trade-offs de engenharia, arquitetura de persistência/banco, segurança, integrações e pontos que a especificação deixou em aberto para a stack (${stack}).
+` : ''}
 SUA MISSÃO:
 Conduzir a Sabatina Técnica (Grill) inicial para este projeto.
 Formule exatamente 3 a 4 perguntas cirúrgicas, práticas e decisivas para eliminar pontos cegos e ambiguidades antes de gerar os contratos de governança.
 
 DIRETRIZES OBRIGATÓRIAS:
 1. ALINHAMENTO DE DOMÍNIO DE NEGÓCIO & AMBIGUIDADE (CRÍTICO):
-   - Avalie o nome "${safeName}" e a descrição "${description}".
-   - Se a descrição for inexistente/vaga OU se o nome parecer abstrato, metafórico, temático ou codinome (ex: alimentos como "bolo-de-banana", doces, animais, palavras cotidianas ou termos genéricos), a PRIMEIRA PERGUNTA ("q1") DEVE SER OBRIGATORIAMENTE de ALINHAMENTO DE DOMÍNIO & PROPÓSITO DO SOFTWARE.
-   - Categoria de q1: "Domínio & Propósito".
-   - A pergunta q1 deve esclarecer diretamente o que o software faz no mundo real, sem assumir premissas infundadas nem bloquear o usuário.
-     Exemplo para "bolo-de-banana": "Qual é o domínio ou objetivo principal do software '${safeName}'?"
-     Opções inteligentes sugeridas cobrindo tanto o sentido temático quanto técnico:
-     - "App / Site de Culinária ou Catálogo de Receitas"
-     - "E-commerce / PDV / Gestão de Confeitaria"
-     - "Codinome para microsserviço / API interna"
-     - "Ferramenta / Dashboard de uso interno"
+   - ${specsContext ? 'Como há documentos em SPECS, use-os como fonte de verdade para o domínio.' : 'Avalie o nome "' + safeName + '" e a descrição "' + description + '". Se a descrição for inexistente/vaga OU se o nome parecer abstrato, metafórico, temático ou codinome, a PRIMEIRA PERGUNTA ("q1") DEVE SER OBRIGATORIAMENTE de ALINHAMENTO DE DOMÍNIO & PROPÓSITO DO SOFTWARE (Categoria: "Domínio & Propósito").'}
 2. PERGUNTAS TÉCNICAS COMPLEMENTARES:
-   - Formule as perguntas subsequentes ("q2", "q3", etc.) adaptadas à stack (${stack}), cobrindo:
+   - Formule perguntas adaptadas à stack (${stack}), cobrindo:
      - Persistência e dados (ex: PostgreSQL, SQLite, NoSQL, Stateless);
      - Arquitetura e comunicação (ex: REST, GraphQL, Clean Arch, EDA);
      - Autenticação e escopo do MVP.
@@ -246,7 +428,7 @@ FORMATO DE RESPOSTA (JSON):
     }
   ]
 }`;
-        userPrompt = `Gere as perguntas de sabatina técnica para o projeto "${safeName}" (Stack: ${stack}). Descrição: "${description || 'Nova aplicação'}".`;
+        userPrompt = `Gere as perguntas de sabatina técnica para o projeto "${safeName}" (Stack: ${stack}). Descrição: "${description || 'Nova aplicação'}".${specs.length > 0 ? ' Considere os documentos anexados em SPECS.' : ''}`;
     }
 
     let result = { model: 'deterministic-fallback', provider: 'local' };
@@ -378,8 +560,146 @@ async function generateDraft(aiGateway, projectInfo, answers) {
         return `[Pergunta ${idx + 1}] ${a.question || ''}\nCategoria: ${a.category || ''}\nResposta do Desenvolvedor: ${a.answer || 'Não especificado'}`;
     }).join('\n\n');
 
-    const systemPrompt = `Você é um Arquiteto de Software Sênior do AI Second Brain.
-Sua missão é produzir os contratos fundamentais de governança técnica em Markdown para o novo projeto '${safeName}' com stack '${stack}'.
+    const gatewayConfig = typeof aiGateway.getConfig === 'function' ? aiGateway.getConfig() : {};
+    const providerId = (gatewayConfig.provider || process.env.AI_PROVIDER || 'groq').toLowerCase();
+    const isGroq = providerId === 'groq';
+
+    const specs = Array.isArray(projectInfo.specs) ? projectInfo.specs : [];
+    const hasSpecs = specs.length > 0;
+
+    // =========================================================================
+    // ESTRATÉGIA A: SÍNTESE MULTI-PASSO DE ALTA DENSIDADE (QUANDO HÁ SPECS ANEXADAS)
+    // Evita o gargalo de JSON escaping e estouro de tokens, gerando Markdown puro e exaustivo.
+    // =========================================================================
+    if (hasSpecs) {
+        const rawSpecsCombined = specs.map(s => s.content || '').join('\n\n');
+        const scopeContext = extractScopeSpecs(rawSpecsCombined, isGroq ? 14000 : 35000);
+        const archContext = extractArchitectureSpecs(rawSpecsCombined, isGroq ? 16000 : 40000);
+        const maxTokensPerDoc = isGroq ? 5000 : 8192;
+
+        console.log(`[Quickstart Grill] Iniciando síntese multi-passo de alta densidade para '${safeName}' (${specs.length} anexo(s))...`);
+
+        // PASSO 1: PROJECT.md DEDICADO
+        console.log('[Quickstart Grill] [1/3] Gerando PROJECT.md...');
+        const promptPass1 = `Você é o Arquiteto de Software e Product Manager Sênior do AI Second Brain.
+Sua missão é produzir o arquivo Markdown COMPLETO do PROJECT.md para o projeto '${safeName}' (${stack}).
+
+DOCUMENTO DE ESPECIFICAÇÃO & REQUISITOS (ESCOPO FUNCIONAL):
+${scopeContext}
+
+RESPOSTAS DA SABATINA:
+${formattedQA || 'Nenhuma resposta adicional.'}
+
+DIRETRIZES DE SÍNTESE:
+- Visão Geral Executiva, Objetivos e Proposta de Valor.
+- Escopo Funcional do MVP (Mapeamento Exaustivo dos RFs): transcreva e detalhe TODOS os Requisitos Funcionais extraídos do anexo (RF-001 a RF-012 ou mais). Para cada um, forneça descrição detalhada e critérios de funcionamento. NÃO resuma em bullets vagos!
+- Regras de Negócio Fundamentais (RNs): transcreva as principais regras (RN-001 a RN-020: unicidade de CPF/CNPJ, validações de dígitos, inativação lógica, fuso UTC, concorrência otimista, idempotência).
+- Personas, Atores e Matriz de Permissões (RBAC).
+- Fora do Escopo Inicial e Próximas Fases.
+- Critérios de Sucesso e Aceite Mensuráveis (baseados nos CAs da especificação).
+
+ATENÇÃO: Responda APENAS com o texto Markdown puro do arquivo PROJECT.md, iniciando com '# ${safeName}'. NÃO use JSON nem marcadores adicionais!`;
+
+        const res1 = await aiGateway.chatCompletion([
+            { role: 'user', content: promptPass1 }
+        ], { temperature: 0.3, maxTokens: maxTokensPerDoc, skipCache: true });
+        const projectMd = cleanMarkdown(res1.content);
+
+        // Pausa preventiva de 1.5s para suavizar TPM na Groq
+        await new Promise(r => setTimeout(r, 1500));
+
+        // PASSO 2: ARCHITECTURE.md DEDICADO
+        console.log('[Quickstart Grill] [2/3] Gerando ARCHITECTURE.md...');
+        const promptPass2 = `Você é o Arquiteto de Software Sênior e DBA Especialista do AI Second Brain.
+Sua missão é produzir o arquivo Markdown COMPLETO do ARCHITECTURE.md para o projeto '${safeName}' (${stack}).
+
+DOCUMENTO DE ESPECIFICAÇÃO & REQUISITOS (MODELAGEM & TÉCNICA):
+${archContext}
+
+RESPOSTAS DA SABATINA:
+${formattedQA || 'Nenhuma resposta adicional.'}
+
+DIRETRIZES DE SÍNTESE:
+- Estilo Arquitetural (Hexagonal / Clean Architecture) adaptado à stack (${stack}).
+- Camadas Lógicas do Sistema em tabela Markdown completa (Camada, Responsabilidade, Bibliotecas/Componentes).
+- DICIONÁRIO DE DADOS & MODELAGEM RELACIONAL SQL (MANDATÓRIO E EXAUSTIVO):
+  Transcreva e estruture as tabelas do banco de dados em tabelas Markdown completas (dbo.Cliente, dbo.ClienteEndereco, dbo.ClienteContato, dbo.AuditoriaEvento, dbo.IdempotenciaRequisicao), contendo: Colunas, Tipos SQL específicos para a stack (${stack}), Obrigatoriedade, PK/FK e Constraints/Regras.
+- CONTRATOS DE API REST (MANDATÓRIO E EXAUSTIVO):
+  Tabela completa com Verbo HTTP, Rota, Descrição, Códigos de Retorno (200, 201, 400, 404, 409, 422) e resumo dos DTOs de Request / Response (com exemplos de payload JSON para PF e PJ extraídos da especificação).
+- Estratégia de Persistência, Transações e Concorrência (TypeORM/Prisma, migrations, controle concorrente via rowversion/If-Match, cache Redis para duplicidade, idempotência).
+- Segurança, LGPD e Auditoria (shadow tables via triggers, mascaramento PII, cookies de sessão seguros).
+- Seção 'AI Decision Gate' (.agents/rules/01-ai-decision.md).
+
+ATENÇÃO: Responda APENAS com o texto Markdown puro do arquivo ARCHITECTURE.md, iniciando com '# ${safeName} — Arquitetura da Solução'. NÃO use JSON nem marcadores adicionais!`;
+
+        const res2 = await aiGateway.chatCompletion([
+            { role: 'user', content: promptPass2 }
+        ], { temperature: 0.3, maxTokens: maxTokensPerDoc, skipCache: true });
+        const architectureMd = cleanMarkdown(res2.content);
+
+        // Pausa preventiva de 1.5s
+        await new Promise(r => setTimeout(r, 1500));
+
+        // PASSO 3: CURRENT_STATE.md & ADR-0001
+        console.log('[Quickstart Grill] [3/3] Gerando CURRENT_STATE.md e ADR-0001...');
+        const promptPass3 = `Você é o Arquiteto de Software Sênior do AI Second Brain.
+Sua missão é produzir os arquivos CURRENT_STATE.md e ADR-0001 para o projeto '${safeName}' (${stack}).
+
+RESUMO DO PROJETO:
+- Nome: ${safeName}
+- Stack: ${stack}
+- Descrição: ${description || 'Em concepção'}
+
+DIRETRIZES:
+1. CURRENT_STATE.md:
+   - Status inicial: 🟢 Em Planejamento / Ativo
+   - O que já foi Formalizado e Especificado (resumo dos contratos fechados).
+   - Roadmap de Implementação com Checklists em 3 a 4 Marcos Práticos derivados diretamente das entidades e rotas da especificação (com checkboxes '- [ ]' prontas para o Cockpit).
+2. ADR-0001 (ADR-0001-stack-inicial.md):
+   - ADR no padrão MADR completo: Status (Aceita), Data, Contexto (requisitos de integridade, concorrência e auditoria), Decisão Técnica (adoção de ${stack}, persistência e auditoria), Consequências Positivas, Consequências Negativas / Trade-offs, Alternativas Consideradas.
+
+FORMATO DE RESPOSTA OBRIGATÓRIO (use EXATAMENTE os marcadores abaixo, sem JSON):
+<<<CURRENT_STATE_MD>>>
+# ${safeName} — Estado Atual
+...
+<<<END_CURRENT_STATE_MD>>>
+
+<<<ADR_MD>>>
+# ADR-0001: Adoção da Stack Inicial e Arquitetura
+...
+<<<END_ADR_MD>>>`;
+
+        const res3 = await aiGateway.chatCompletion([
+            { role: 'user', content: promptPass3 }
+        ], { temperature: 0.3, maxTokens: isGroq ? 3500 : 5000, skipCache: true });
+
+        const currentStateMd = extractTag(res3.content, 'CURRENT_STATE_MD');
+        const adrMd = extractTag(res3.content, 'ADR_MD');
+
+        console.log(`[Quickstart Grill] Síntese multi-passo concluída com sucesso!
+- PROJECT.md: ${projectMd.length} chars
+- ARCHITECTURE.md: ${architectureMd.length} chars
+- CURRENT_STATE.md: ${currentStateMd.length} chars
+- ADR-0001: ${adrMd.length} chars`);
+
+        return {
+            contracts: {
+                projectMd: projectMd || `# ${safeName}\n\n## Visão Geral\n${description}\n`,
+                architectureMd: architectureMd || `# ${safeName} — Arquitetura\n\n## Stack\n${stack}\n`,
+                currentStateMd: currentStateMd || `# ${safeName} — Estado Atual\n\n## Status\n🟢 Em Planejamento / Ativo\n`,
+                adrMd: adrMd || `# ADR-0001: Adoção da Stack Inicial\n\n## Status\nAceita\n`
+            },
+            model: res1.model || res2.model || res3.model,
+            provider: res1.provider || res2.provider || res3.provider
+        };
+    }
+
+    // =========================================================================
+    // ESTRATÉGIA B: SÍNTESE DE PASSO ÚNICO (SEM ANEXO DE SPECS / RÁPIDO)
+    // =========================================================================
+    const maxOutputTokens = isGroq ? 4000 : 8192;
+    const systemPrompt = `Você é um Arquiteto de Software Sênior e Especialista em Governança do AI Second Brain.
+Sua missão é produzir os 4 contratos fundamentais de governança técnica em Markdown para o novo projeto '${safeName}' com stack '${stack}'.
 
 CONTEXTO DO PROJETO:
 - Nome: ${safeName}
@@ -387,20 +707,21 @@ CONTEXTO DO PROJETO:
 - Descrição Inicial: ${description || 'Em concepção'}
 - Data: ${today}
 
+DIRETRIZES DE SÍNTESE (SEM SPECS ANEXADAS):
+Como não há anexo de requisitos, gere contratos técnicos profissionais e bem estruturados baseando-se no nome, na descrição e nas respostas da sabatina:
+1. "projectMd": Visão Geral, Escopo do MVP ('Dentro do Escopo' e 'Fora do Escopo'), Personas/Atores primários, Critérios de Sucesso e Links de Governança.
+2. "architectureMd": Estilo Arquitetural, Camadas Lógicas, Decisão de Dados/Comunicação, Estratégia de API/Endpoints, e seção 'AI Decision Gate' (.agents/rules/01-ai-decision.md).
+3. "currentStateMd": Status inicial '🟢 Em Planejamento / Ativo', O que já foi definido, e Roadmap Inicial dividido em 3 Marcos práticos (Marco 1: Fundação & Modelagem, Marco 2: Funcionalidades Centrais do MVP, Marco 3: Testes, Integrações & Observabilidade), com checkboxes '- [ ]' prontas para o checklist do Cockpit.
+4. "adrMd": O arquivo ADR-0001 (sob DECISIONS/) registrando a decisão formal de adoção da stack e arquitetura inicial (Status: Aceita, Contexto, Decisão, Consequências Positivas/Negativas, Alternativas Consideradas).
+
 RESPOSTAS DA SABATINA TÉCNICA (GRILL):
 ${formattedQA || 'Nenhuma resposta adicional informada.'}
 
 REGRAS ABSOLUTAS:
-1. Prioridade Determinística: favoreça soluções simples, sólidas e sem sobre-engenharia.
-2. Zero Fabricação / Alucinação: ancore o conteúdo estritamente na stack informada, na descrição e nas respostas da sabatina (especialmente no domínio de negócio esclarecido pelo desenvolvedor). Não invente integrações ou dependências desnecessárias.
-3. Idioma: Português do Brasil. Tom técnico, profissional e direto.
-4. Responda ESTRITAMENTE com um objeto JSON contendo o Markdown completo de cada contrato.
-
-CONTRATOS A GERAR:
-1. "projectMd": Visão Geral, Escopo do MVP ('Dentro do Escopo' com 4-6 itens e 'Fora do Escopo' com 2-4 itens), Personas/Atores primários, Critérios de Sucesso e Links de Governança.
-2. "architectureMd": Estilo Arquitetural, Camadas Lógicas, Decisão de Dados/Comunicação, e seção 'AI Decision Gate' (.agents/rules/01-ai-decision.md).
-3. "currentStateMd": Status inicial '🟢 Em Planejamento / Ativo', O que já foi definido, e Roadmap Inicial dividido em 3 Marcos práticos (Marco 1: Fundação & Modelagem, Marco 2: Funcionalidades Centrais do MVP, Marco 3: Testes, Integrações & Observabilidade), com checkboxes '- [ ]' prontas para o checklist do Cockpit.
-4. "adrMd": O arquivo ADR-0001 (sob DECISIONS/) registrando a decisão formal de adoção da stack e arquitetura inicial (Status: Aceita, Contexto, Decisão, Consequências Positivas/Negativas, Alternativas Consideradas).
+1. Prioridade Determinística: favoreça soluções sólidas e sem sobre-engenharia.
+2. Zero Fabricação / Alucinação: ancore o conteúdo estritamente na stack informada, na descrição e nas respostas da sabatina.
+3. Idioma: Português do Brasil. Tom técnico, profissional, detalhado e rigoroso.
+4. Responda ESTRITAMENTE com um objeto JSON válido contendo o Markdown completo de cada contrato.
 
 FORMATO DE RESPOSTA (JSON):
 {
@@ -415,12 +736,14 @@ FORMATO DE RESPOSTA (JSON):
     const result = await aiGateway.chatCompletion([
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
-    ], { temperature: 0.3, maxTokens: 4000 });
+    ], { temperature: 0.25, maxTokens: maxOutputTokens, skipCache: true });
 
     let parsed;
     try {
         parsed = aiGateway.parseJsonLoose(result.content);
     } catch (e) {
+        fs.writeFileSync(path.join(__dirname, '..', 'scratch', 'failed-llm-response.txt'), String(result.content || ''), 'utf8');
+        console.error('FAILED LLM RESPONSE WRITTEN TO scratch/failed-llm-response.txt (Length:', (result.content || '').length, ')');
         throw new Error(`A IA retornou uma resposta inválida ao gerar os contratos: ${e.message}`);
     }
 
@@ -510,7 +833,30 @@ async function refineDraft(aiGateway, projectInfo, currentContracts, feedback, c
     const isSingleDoc = targetDocs.length === 1;
     const targetDocName = isSingleDoc ? targetDocs[0] : null;
 
+    const gatewayConfig = typeof aiGateway.getConfig === 'function' ? aiGateway.getConfig() : {};
+    const providerId = (gatewayConfig.provider || process.env.AI_PROVIDER || 'groq').toLowerCase();
+    const isGroq = providerId === 'groq';
+    const maxCharsForSpecs = isGroq ? 20000 : 80000;
+    const maxOutputTokens = isGroq ? 6000 : 8192;
+
+    const specs = Array.isArray(projectInfo.specs) ? projectInfo.specs : [];
+    let specsContext = '';
+    if (specs.length > 0) {
+        specsContext = specs.map(s => {
+            const content = extractArchitecturalCore(s.content || '', maxCharsForSpecs);
+            return `--- [DOCUMENTO DE ESPECIFICAÇÃO & REQUISITOS (SPECS): ${s.filename || 'requisitos.md'}] ---\n${content}`;
+        }).join('\n\n');
+    }
+
     // 3. ETAPA LLM GENERATIVO: Prompt cirúrgico estritamente balizado pela decisão do JEV
+    const docKeyMap = {
+        'PROJECT.md': 'projectMd',
+        'ARCHITECTURE.md': 'architectureMd',
+        'CURRENT_STATE.md': 'currentStateMd',
+        'ADR-0001': 'adrMd'
+    };
+    const targetKey = isSingleDoc ? (docKeyMap[targetDocName] || 'architectureMd') : null;
+
     const systemPrompt = `Você é o Arquiteto de Software Sênior do AI Second Brain.
 O desenvolvedor está revisando os contratos gerados para o projeto '${safeName}' (${stack}) e enviou uma instrução pelo "Prompt Vivo".
 
@@ -523,15 +869,20 @@ DECISÃO DO MOTOR JEV:
 - Racional Auditável: ${jevResult.rationale || 'Roteamento cirúrgico determinado por regras'}
 - Documentos-Alvo Autorizados: ${targetDocs.join(', ')}
 
+${specsContext ? `DOCUMENTOS DE ESPECIFICAÇÃO & REQUISITOS ORIGINAIS (SPECS):
+${specsContext}
+` : ''}
 DIRETRIZES CIRÚRGICAS OBRIGATÓRIAS (ISOLAMENTO E NÃO-POLUIÇÃO):
 1. O JEV delimitou esta alteração estritamente aos documentos: [${targetDocs.join(', ')}].
 2. Se um documento NÃO estiver na lista acima, ele DEVE PERMANECER 100% INALTERADO. NUNCA duplique ou copie informações de um documento para outro!
-3. Se o alvo for 'ARCHITECTURE.md' (ex: dicionário de dados, tabelas, schemas SQL, endpoints), adicione-o EXCLUSIVAMENTE em ARCHITECTURE.md. Jamais polua PROJECT.md ou CURRENT_STATE.md com tabelas ou schemas!
+3. Se o alvo for 'ARCHITECTURE.md' (ex: dicionário de dados, tabelas, schemas SQL, endpoints), adicione-o EXCLUSIVAMENTE em ARCHITECTURE.md com total profundidade técnica (tabelas completas em Markdown com tipos SQL, colunas, chaves, e endpoints REST com rotas, verbos, status codes e payloads). Jamais polua PROJECT.md ou CURRENT_STATE.md com tabelas ou schemas!
 4. Se o alvo for 'PROJECT.md', altere apenas escopo do MVP, objetivos ou personas.
-5. Se for CROSS_CUTTING_STACK (mudança de banco ou autenticação ampla), adapte cada documento especificamente para o seu papel (escopo em PROJECT.md, esquema em ARCHITECTURE.md, tarefas em CURRENT_STATE.md e decisão em ADR-0001).
+5. Se for CROSS_CUTTING_STACK (mudança de banco ou autenticação ampla) ou SPECS_DEEP_ENRICHMENT (aprofundamento geral com base nas especificações anexadas), adapte cada documento especificamente para o seu papel (escopo em PROJECT.md, esquema em ARCHITECTURE.md, tarefas em CURRENT_STATE.md e decisão em ADR-0001).
+6. Se houver SPECS anexadas acima, extraia diretamente os nomes reais de entidades, campos, tipos SQL e rotas dos documentos de especificação, sem inventar nem simplificar.
 
 CONTRATOS ATUAIS:
---- PROJECT.md ---
+${isSingleDoc ? `--- ${targetDocName} ---
+${currentContracts[targetKey] || ''}` : `--- PROJECT.md ---
 ${currentContracts.projectMd || ''}
 
 --- ARCHITECTURE.md ---
@@ -541,15 +892,15 @@ ${currentContracts.architectureMd || ''}
 ${currentContracts.currentStateMd || ''}
 
 --- ADR-0001 ---
-${currentContracts.adrMd || ''}
+${currentContracts.adrMd || ''}`}
 
 Idioma: Português do Brasil.
 Responda ESTRITAMENTE em formato JSON com as chaves correspondentes:
 {
-  "projectMd": "markdown atualizado ou original...",
+${isSingleDoc ? `  "${targetKey}": "markdown completo atualizado de ${targetDocName}...",` : `  "projectMd": "markdown atualizado ou original...",
   "architectureMd": "markdown atualizado ou original...",
   "currentStateMd": "markdown atualizado ou original...",
-  "adrMd": "markdown atualizado ou original...",
+  "adrMd": "markdown atualizado ou original...",`}
   "summary": "Resumo em 1 frase curta do ajuste aplicado cirurgicamente."
 }`;
 
@@ -560,7 +911,7 @@ Responda ESTRITAMENTE em formato JSON com as chaves correspondentes:
     const result = await aiGateway.chatCompletion([
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userMessage }
-    ], { temperature: 0.2, maxTokens: 4000 });
+    ], { temperature: 0.2, maxTokens: maxOutputTokens, skipCache: true });
 
     let parsed;
     try {
@@ -642,8 +993,22 @@ function commitProject(rootDir, projectInfo, contracts, options = {}) {
     fs.mkdirSync(path.join(targetFolder, 'DECISIONS'), { recursive: true });
     fs.mkdirSync(path.join(targetFolder, 'MEMORY', 'sessions'), { recursive: true });
 
+    // Cria diretório de SPECS e grava arquivos originais se fornecidos
+    const specs = Array.isArray(projectInfo.specs) ? projectInfo.specs : (Array.isArray(options.specs) ? options.specs : []);
+    let specsListMd = '';
+    if (specs.length > 0) {
+        const specsDir = path.join(targetFolder, 'SPECS');
+        fs.mkdirSync(specsDir, { recursive: true });
+        specs.forEach((s, idx) => {
+            const rawFilename = (s.filename || `spec-${idx + 1}.md`).trim();
+            const safeFilename = rawFilename.replace(/[^a-zA-Z0-9._\-]/g, '_');
+            fs.writeFileSync(path.join(specsDir, safeFilename), s.content || '', 'utf-8');
+            specsListMd += `- [${safeFilename}](SPECS/${safeFilename})\n`;
+        });
+    }
+
     // 1. PROJECT.md
-    const projectContent = (contracts && contracts.projectMd) || `# ${safeName}
+    let projectContent = (contracts && contracts.projectMd) || `# ${safeName}
 
 ## Visão Geral
 ${description}
@@ -661,6 +1026,10 @@ ${description}
 - Decisões Técnicas: \`DECISIONS/\`
 - Memória de Sessões: \`MEMORY/sessions/\`
 `;
+
+    if (specsListMd && !projectContent.includes('## Especificações')) {
+        projectContent += `\n## Especificações & Requisitos de Origem (SPECS)\n${specsListMd}`;
+    }
 
     // 2. ARCHITECTURE.md
     const archContent = (contracts && contracts.architectureMd) || `# ${safeName} — Arquitetura da Solução

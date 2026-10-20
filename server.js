@@ -217,10 +217,24 @@ async function handleRequest(req, res) {
             fs.mkdirSync(path.join(targetFolder, 'DECISIONS'), { recursive: true });
             fs.mkdirSync(path.join(targetFolder, 'MEMORY', 'sessions'), { recursive: true });
 
+            // Cria diretório de SPECS e grava arquivos originais se fornecidos
+            const specs = Array.isArray(body.specs) ? body.specs : [];
+            let specsListMd = '';
+            if (specs.length > 0) {
+                const specsDir = path.join(targetFolder, 'SPECS');
+                fs.mkdirSync(specsDir, { recursive: true });
+                specs.forEach((s, idx) => {
+                    const rawFilename = (s.filename || `spec-${idx + 1}.md`).trim();
+                    const safeFilename = rawFilename.replace(/[^a-zA-Z0-9._\-]/g, '_');
+                    fs.writeFileSync(path.join(specsDir, safeFilename), s.content || '', 'utf-8');
+                    specsListMd += `- [${safeFilename}](SPECS/${safeFilename})\n`;
+                });
+            }
+
             const today = new Date().toISOString().split('T')[0];
 
             // 1. PROJECT.md
-            const projectMd = `# ${safeName}
+            let projectMd = `# ${safeName}
 
 ## Visão Geral
 ${description}
@@ -238,6 +252,10 @@ ${description}
 - Decisões Técnicas: \`DECISIONS/\`
 - Memória de Sessões: \`MEMORY/sessions/\`
 `;
+
+            if (specsListMd) {
+                projectMd += `\n## Especificações & Requisitos de Origem (SPECS)\n${specsListMd}`;
+            }
 
             // 2. CURRENT_STATE.md
             const currentStateMd = `# ${safeName} — Estado Atual
@@ -490,7 +508,7 @@ Thumbs.db
             const body = await readJsonBody(req);
             delete require.cache[require.resolve('./scripts/quickstart-grill')];
             const grill = require('./scripts/quickstart-grill');
-            const result = grill.commitProject(ROOT_DIR, body, body.contracts, { initGit: body.initGit });
+            const result = grill.commitProject(ROOT_DIR, body, body.contracts, { initGit: body.initGit, specs: body.specs });
 
             // Atualiza snapshot do Vault e notifica SSE
             delete require.cache[require.resolve('./scripts/scan-vault')];
@@ -1419,12 +1437,9 @@ Projeto externo vinculado ao AI Second Brain.
     // RESEARCH LAB — AI-Powered Knowledge Synthesis
     // ============================================================
 
-    // Utilitário para carregar dinamicamente o AI Gateway com hot-reload de módulo
+    // Utilitário para carregar dinamicamente o AI Gateway com singleton de módulo
     function getAiGateway() {
-        try {
-            delete require.cache[require.resolve('./scripts/ai-gateway')];
-        } catch (_) {}
-        return require('./scripts/ai-gateway');
+        return aiGateway;
     }
 
     // API: Check AI Configuration Status (compatível com /status e /config)
@@ -1532,7 +1547,7 @@ Projeto externo vinculado ao AI Second Brain.
 
             console.log(`🧠 [Research Lab] Refinando prompt para projeto '${projectName || 'global'}' (${userText.length} chars)`);
 
-            const result = await groq.refineResearchPrompt(userText, projectContext);
+            const result = await getAiGateway().refineResearchPrompt(userText, projectContext);
 
             console.log(`✅ [Research Lab] Prompt refinado — ${result.usage.total_tokens || '?'} tokens usados`);
 
@@ -1551,9 +1566,13 @@ Projeto externo vinculado ao AI Second Brain.
             const status = err.statusCode === 429 || err.quotaExceeded ? 429 : (err.statusCode || 500);
             res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({ 
+                success: false,
                 error: err.message, 
-                quotaExceeded: status === 429,
-                statusCode: status 
+                quotaExceeded: status === 429 || !!err.quotaExceeded,
+                isRateLimit: status === 429 || !!err.isRateLimit,
+                statusCode: status,
+                retryAfter: err.retryAfter || null,
+                providerName: err.providerName || null
             }));
         }
         return;
@@ -1593,7 +1612,7 @@ Projeto externo vinculado ao AI Second Brain.
 
             console.log(`🔬 [Research Lab] Decompondo tópico para '${projectName || 'global'}'`);
 
-            const result = await groq.decomposeResearchTopic(definition, projectContext);
+            const result = await getAiGateway().decomposeResearchTopic(definition, projectContext);
 
             console.log(`✅ [Research Lab] ${result.subtopics.length} sub-tópicos identificados`);
 
@@ -1611,9 +1630,13 @@ Projeto externo vinculado ao AI Second Brain.
             const status = err.statusCode === 429 || err.quotaExceeded ? 429 : (err.statusCode || 500);
             res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({ 
+                success: false,
                 error: err.message, 
-                quotaExceeded: status === 429,
-                statusCode: status 
+                quotaExceeded: status === 429 || !!err.quotaExceeded,
+                isRateLimit: status === 429 || !!err.isRateLimit,
+                statusCode: status,
+                retryAfter: err.retryAfter || null,
+                providerName: err.providerName || null
             }));
         }
         return;
@@ -1680,8 +1703,11 @@ Projeto externo vinculado ao AI Second Brain.
             sendJson(status, {
                 success: false,
                 error: err.message,
-                quotaExceeded: status === 429,
-                statusCode: status
+                quotaExceeded: status === 429 || !!err.quotaExceeded,
+                isRateLimit: status === 429 || !!err.isRateLimit,
+                statusCode: status,
+                retryAfter: err.retryAfter || null,
+                providerName: err.providerName || null
             });
         }
         return;
@@ -1723,8 +1749,11 @@ Projeto externo vinculado ao AI Second Brain.
             sendJson(status, {
                 success: false,
                 error: err.message,
-                quotaExceeded: status === 429,
-                statusCode: status
+                quotaExceeded: status === 429 || !!err.quotaExceeded,
+                isRateLimit: status === 429 || !!err.isRateLimit,
+                statusCode: status,
+                retryAfter: err.retryAfter || null,
+                providerName: err.providerName || null
             });
         }
         return;
@@ -2023,8 +2052,10 @@ Projeto externo vinculado ao AI Second Brain.
 
             broadcastEvent('research-started', { project: projectName, slug: researchSlug, time: Date.now() });
 
-            // Executa a pesquisa chamando o motor
-            const result = await researchEngine.runResearchLab(projectName, researchSlug, (progress) => {
+            // Executa a pesquisa chamando o motor (sempre atualizado)
+            delete require.cache[require.resolve('./scripts/research-engine')];
+            const currentResearchEngine = require('./scripts/research-engine');
+            const result = await currentResearchEngine.runResearchLab(projectName, researchSlug, (progress) => {
                 broadcastEvent('research-progress', { project: projectName, slug: researchSlug, ...progress, time: Date.now() });
             });
 
@@ -2040,8 +2071,17 @@ Projeto externo vinculado ao AI Second Brain.
             res.end(JSON.stringify(result));
         } catch (err) {
             console.error('❌ [Research Lab] Erro na execução da pesquisa:', err.message);
-            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
-            res.end(JSON.stringify({ error: err.message }));
+            const status = err.statusCode === 429 || err.quotaExceeded ? 429 : (err.statusCode || 500);
+            res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ 
+                success: false,
+                error: err.message,
+                statusCode: status,
+                quotaExceeded: status === 429 || !!err.quotaExceeded,
+                isRateLimit: status === 429 || !!err.isRateLimit,
+                retryAfter: err.retryAfter || null,
+                providerName: err.providerName || null
+            }));
         }
         return;
     }

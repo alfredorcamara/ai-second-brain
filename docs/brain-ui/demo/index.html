@@ -1417,46 +1417,170 @@
                 <div class="qs-step-pane" id="qsPaneStep2">
                     <!-- Form for New Project -->
                     <form id="qsFormNew" class="qs-form" onsubmit="submitQuickstartNew(event)" style="display: none;">
+                        <!-- Campo 1: Nome do Projeto (Largura Total) -->
                         <div class="qs-field">
                             <label for="qsNewName">Nome do Projeto <span class="req">*</span></label>
-                            <input type="text" id="qsNewName" placeholder="ex: api-pagamentos, meu-saas, app-mobile"
+                            <input type="text" id="qsNewName"
+                                placeholder="ex: api-pagamentos, meu-saas, app-mobile. Use letras, números, hífens ou underscores."
                                 autocomplete="off">
-                            <small class="qs-hint">Use letras, números, hífens ou underscores.</small>
                         </div>
+
+                        <!-- Campo 2: Descrição Rápida (Largura Total) -->
                         <div class="qs-field">
-                            <label for="qsNewDesc">Descrição Rápida (Opcional)</label>
-                            <input type="text" id="qsNewDesc"
-                                placeholder="Ajuda o Grill Studio a entender o domínio de negócio e gerar contratos cirúrgicos sem suposições."
-                                autocomplete="off" oninput="onQuickstartDescInput(this.value)">
-                        </div>
-                        <div class="qs-field">
-                            <label for="qsNewStack">Stack Tecnológica Principal</label>
-                            <div class="qs-stack-chips" id="qsStackChips">
-                                <button type="button" class="qs-chip active" data-stack="Node.js / TypeScript">Node.js /
-                                    TS</button>
-                                <button type="button" class="qs-chip" data-stack="C# / .NET">C# / .NET</button>
-                                <button type="button" class="qs-chip" data-stack="Python">Python</button>
-                                <button type="button" class="qs-chip" data-stack="React / Next.js">React /
-                                    Next.js</button>
-                                <button type="button" class="qs-chip" data-stack="Go">Go</button>
-                                <button type="button" class="qs-chip" data-stack="Rust">Rust</button>
-                                <button type="button" class="qs-chip" data-stack="Livre / Multi-stack">Livre /
-                                    Outro</button>
+                            <div class="qs-field-header">
+                                <label for="qsNewDesc">Descrição Rápida (Opcional)</label>
+                                <button type="button" class="qs-specs-expand-btn" onclick="openExpandedDescEditor()"
+                                    title="Expandir no editor de documentos em tela cheia com abas de formatação e pré-visualização">
+                                    <span>⛶</span> Expandir Visão
+                                </button>
                             </div>
-                            <input type="text" id="qsNewStack" class="qs-input" value="Node.js / TypeScript"
-                                placeholder="ex: Node.js / TypeScript, FastAPI + Next.js, .NET 9 + SQL Server"
-                                autocomplete="off" style="margin-top: 8px;">
-                            <small class="qs-hint">Clique em um chip para preencher rápido ou edite livremente para
-                                stacks customizadas.</small>
+                            <textarea id="qsNewDesc" class="qs-desc-textarea" rows="2"
+                                placeholder="Ajuda o Grill Studio a entender o domínio de negócio e gerar contratos cirúrgicos sem suposições."
+                                autocomplete="off" oninput="onQuickstartDescInput(this.value)"></textarea>
                         </div>
-                        <div class="qs-field qs-checkbox-field">
-                            <label class="qs-checkbox-label">
-                                <input type="checkbox" id="qsNewInitGit" checked>
-                                <span>Inicializar repositório Git local automaticamente (<code>git init</code>)</span>
-                            </label>
-                            <small class="qs-hint">Cria o versionamento Git, gera o <code>.gitignore</code> padrão e as
-                                pontes de IA instantaneamente.</small>
+
+                        <!-- Bloco Expansível 1: Stack Tecnológica & Git -->
+                        <div class="qs-specs-accordion" id="qsTechAccordion">
+                            <div class="qs-specs-header" onclick="toggleQuickstartTechAccordion()" role="button"
+                                tabindex="0"
+                                onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleQuickstartTechAccordion();}">
+                                <div class="qs-specs-header-left">
+                                    <span class="qs-specs-arrow" id="qsTechArrow">▶</span>
+                                    <span class="qs-specs-badge"
+                                        style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">STACK</span>
+                                    <strong class="qs-specs-title">Stack Tecnológica & Versionamento Git</strong>
+                                </div>
+                                <div class="qs-specs-header-right">
+                                    <span class="qs-specs-counter" id="qsTechBadge">Node.js / TS • Git ✓</span>
+                                    <span class="qs-specs-toggle-text" id="qsTechToggleText">Expandir +</span>
+                                </div>
+                            </div>
+
+                            <div class="qs-specs-body" id="qsTechBody" style="display: none;">
+                                <div class="qs-field" style="margin-bottom: 10px;">
+                                    <label for="qsNewStackSelect">Stack Tecnológica Principal</label>
+                                    <select id="qsNewStackSelect" class="qs-select"
+                                        onchange="onQuickstartStackSelectChange(this.value)">
+                                        <optgroup label="🌐 Web &amp; Fullstack">
+                                            <option value="Node.js / TypeScript" selected>Node.js / TypeScript (Padrão)
+                                            </option>
+                                            <option value="React / Next.js">React / Next.js (App Router)</option>
+                                            <option value="Vue / Nuxt">Vue / Nuxt</option>
+                                        </optgroup>
+                                        <optgroup label="⚡ Backend &amp; APIs">
+                                            <option value="Python">Python (FastAPI / Django / Flask)</option>
+                                            <option value="C# / .NET">C# / .NET (C# 12 / .NET 9)</option>
+                                            <option value="Java / Spring Boot">Java / Spring Boot</option>
+                                            <option value="Go">Go (Golang)</option>
+                                            <option value="Rust">Rust (Actix / Axum)</option>
+                                            <option value="PHP / Laravel">PHP / Laravel</option>
+                                            <option value="Ruby on Rails">Ruby on Rails</option>
+                                            <option value="Elixir / Phoenix">Elixir / Phoenix</option>
+                                        </optgroup>
+                                        <optgroup label="📱 Mobile &amp; Multiplataforma">
+                                            <option value="React Native / Expo">React Native / Expo</option>
+                                            <option value="Flutter / Dart">Flutter / Dart</option>
+                                            <option value=".NET MAUI">.NET MAUI (Microsoft / C#)</option>
+                                            <option value="Kotlin (Android / KMP)">Kotlin (Android / KMP)</option>
+                                        </optgroup>
+                                        <optgroup label="✏️ Personalizada">
+                                            <option value="custom">✏️ Outra / Stack Personalizada...</option>
+                                        </optgroup>
+                                    </select>
+                                    <div id="qsCustomStackWrap" style="display: none; margin-top: 8px;">
+                                        <input type="text" id="qsNewStackCustom" class="qs-custom-stack-input"
+                                            placeholder="Digite a stack (obrigatório — ex: Elixir / Phoenix, FastAPI + SvelteKit, Bun + Elysia...)"
+                                            autocomplete="off" oninput="onQuickstartCustomStackInput(this.value)">
+                                    </div>
+                                </div>
+
+                                <div class="qs-field qs-checkbox-field" style="margin-top: 10px; margin-bottom: 2px;">
+                                    <label class="qs-checkbox-inline-label">
+                                        <input type="checkbox" id="qsNewInitGit" checked
+                                            onchange="updateTechAccordionBadge()">
+                                        <span>Inicializar repositório Git local automaticamente
+                                            (<code>git init</code>)</span>
+                                    </label>
+                                    <small class="qs-hint">Cria versionamento Git local, gera <code>.gitignore</code>
+                                        padrão e pontes de IA instantaneamente.</small>
+                                </div>
+                            </div>
                         </div>
+
+                        <!-- Bloco Expansível 2: Requisitos & Especificações (SPECS Accordion) -->
+                        <div class="qs-specs-accordion" id="qsSpecsAccordion">
+                            <div class="qs-specs-header" onclick="toggleQuickstartSpecsAccordion()" role="button"
+                                tabindex="0"
+                                onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleQuickstartSpecsAccordion();}">
+                                <div class="qs-specs-header-left">
+                                    <span class="qs-specs-arrow" id="qsSpecsArrow">▶</span>
+                                    <span class="qs-specs-badge">SPECS</span>
+                                    <strong class="qs-specs-title">Requisitos & Documentos de Especificação</strong>
+                                    <span class="qs-specs-subhint">(Opcional • .md, .txt, .json)</span>
+                                </div>
+                                <div class="qs-specs-header-right">
+                                    <span class="qs-specs-counter" id="qsSpecsCounter" style="display: none;">0
+                                        arquivos</span>
+                                    <span class="qs-specs-toggle-text" id="qsSpecsToggleText">Expandir +</span>
+                                </div>
+                            </div>
+
+                            <div class="qs-specs-body" id="qsSpecsBody" style="display: none;">
+                                <div class="qs-specs-tabs-bar">
+                                    <button type="button" class="qs-specs-tab-btn active" id="btnSpecsTabUpload"
+                                        onclick="switchSpecsTab('upload')">
+                                        📎 Anexar Arquivos (Até 5)
+                                    </button>
+                                    <button type="button" class="qs-specs-tab-btn" id="btnSpecsTabPaste"
+                                        onclick="switchSpecsTab('paste')">
+                                        📋 Colar Texto / PRD
+                                    </button>
+                                </div>
+
+                                <!-- Tab 1: Upload / Drag-and-drop -->
+                                <div class="qs-specs-tab-content active" id="paneSpecsTabUpload">
+                                    <div class="qs-dropzone" id="qsSpecsDropzone"
+                                        ondragover="handleSpecsDragOver(event)"
+                                        ondragleave="handleSpecsDragLeave(event)" ondrop="handleSpecsDrop(event)"
+                                        onclick="document.getElementById('qsSpecsFileInput').click()">
+                                        <input type="file" id="qsSpecsFileInput" multiple
+                                            accept=".md,.txt,.json,text/markdown,text/plain,application/json"
+                                            style="display: none;" onchange="handleSpecsFileInputChange(event)">
+                                        <div class="qs-dropzone-inner">
+                                            <span class="qs-dropzone-icon">📄</span>
+                                            <div class="qs-dropzone-text-group">
+                                                <strong>Arraste arquivos <code>.md</code>, <code>.txt</code> ou
+                                                    <code>.json</code></strong> ou <span class="qs-dropzone-link">clique
+                                                    para selecionar</span>
+                                                <small>Até 5 arquivos • Máximo 1 MB total • Salvos em
+                                                    <code>projects/&lt;nome&gt;/SPECS/</code></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Lista de arquivos anexados -->
+                                    <div class="qs-specs-file-chips" id="qsSpecsFileChips" style="display: none;"></div>
+                                </div>
+
+                                <!-- Tab 2: Colar Texto -->
+                                <div class="qs-specs-tab-content" id="paneSpecsTabPaste" style="display: none;">
+                                    <div class="qs-paste-header">
+                                        <input type="text" id="qsPasteFilename" class="qs-paste-filename-input"
+                                            value="requisitos.md" placeholder="Nome do arquivo (ex: requisitos.md)">
+                                        <small>Arquivo que será salvo na pasta <code>SPECS/</code></small>
+                                        <button type="button" class="qs-specs-expand-btn"
+                                            onclick="openExpandedSpecsEditor()"
+                                            title="Expandir no editor de documentos em tela cheia com abas de formatação e pré-visualização">
+                                            <span>⛶</span> Expandir Visão
+                                        </button>
+                                    </div>
+                                    <textarea id="qsPasteTextarea" class="qs-specs-textarea"
+                                        placeholder="Cole aqui o conteúdo em Markdown, texto puro ou JSON de requisitos, histórias de usuário ou PRD..."
+                                        oninput="onSpecsPasteInput()"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Linha 4: Modo de Inicialização do Projeto -->
                         <div class="qs-field">
                             <label>Modo de Inicialização do Projeto</label>
                             <div class="qs-mode-cards">
@@ -1470,8 +1594,8 @@
                                                 Studio)</strong>
                                             <span class="qs-mode-badge recommended">Recomendado</span>
                                         </div>
-                                        <p class="qs-mode-card-desc">Sabatina técnica dinâmica para eliminar
-                                            ambiguidades, gerando contratos ricos e roadmap ativo antes da gravação.</p>
+                                        <p class="qs-mode-card-desc">Sabatina técnica dinâmica adaptada à stack e às
+                                            SPECS, gerando contratos ricos e roadmap ativo antes da gravação.</p>
                                         <div class="qs-action-box-footer">
                                             <span class="qs-box-spinner" id="spinnerModeAssisted"
                                                 style="display:none"></span>
@@ -1488,8 +1612,8 @@
                                             <strong class="qs-mode-card-title">Modo Express (50ms)</strong>
                                             <span class="qs-mode-badge deterministic">Determinístico</span>
                                         </div>
-                                        <p class="qs-mode-card-desc">Criação imediata com contratos padrão limpos para
-                                            preenchimento manual.</p>
+                                        <p class="qs-mode-card-desc">Criação imediata com contratos padrão limpos e
+                                            pasta SPECS/ inicializada no disco.</p>
                                         <div class="qs-action-box-footer" style="color: #38bdf8;">
                                             <span class="qs-box-spinner" id="spinnerModeExpress"
                                                 style="display:none; border-top-color: #38bdf8;"></span>
@@ -1886,7 +2010,7 @@
                     <div class="qs-val-row ai-error-solution-row">
                         <span class="qs-val-label">💡 Como Resolver Agora:</span>
                         <div class="ai-error-solution-text" id="aiErrorSolutionText">
-                            Você pode <strong>alternar para outro provedor de IA</strong> (OpenAI, Claude, Ollama Local
+                            Você pode <strong>alternar para outro provedor de IA</strong> (Google Gemini, OpenAI, Claude, Ollama Local
                             gratuito ou OpenRouter) com 1 clique nas Configurações de IA, ou aguardar a janela de reset.
                         </div>
                     </div>
@@ -2032,6 +2156,13 @@
                     <button type="button" class="btn btn-primary btn-commit-grill" onclick="commitFromExpandedModal()">
                         <span class="btn-spinner" style="display:none"></span>
                         <span>💾 Aprovar e Criar Projeto</span>
+                    </button>
+                </div>
+                <div class="editor-footer-actions" id="editorSpecsActions" style="display: none;">
+                    <button type="button" class="btn btn-secondary" onclick="onEditorSpecsActionsCancel()">Voltar ao
+                        Quickstart</button>
+                    <button type="button" class="btn btn-primary" onclick="onEditorSpecsActionsApply()">
+                        <span>✓ Concluir e Atualizar</span>
                     </button>
                 </div>
             </div>
@@ -2986,15 +3117,19 @@
                     <div id="aiSettingsQuotaBanner" class="ai-settings-quota-banner" style="display: none;">
                         <div class="ai-quota-banner-icon">⚠️</div>
                         <div class="ai-quota-banner-body">
-                            <div class="ai-quota-banner-title" id="aiQuotaBannerTitle">Cota de Inferência Esgotada no Modelo Ativo (429)</div>
+                            <div class="ai-quota-banner-title" id="aiQuotaBannerTitle">Cota de Inferência Esgotada no
+                                Modelo Ativo (429)</div>
                             <div class="ai-quota-banner-text" id="aiQuotaBannerText">
-                                Sua chave de API está conectada e autenticada com sucesso, mas o modelo atual atingiu o limite de taxa de requisições ou tokens da Groq Cloud.
+                                Sua chave de API está conectada e autenticada com sucesso, mas o modelo atual atingiu o
+                                limite de taxa de requisições ou tokens da Groq Cloud.
                             </div>
                             <div class="ai-quota-banner-hint" id="aiQuotaBannerHint">
-                                💡 <strong>Como Resolver:</strong> Selecione outro modelo com cota livre no <strong>Passo 3</strong> abaixo ou alterne o provedor no <strong>Passo 1</strong>.
+                                💡 <strong>Como Resolver:</strong> Selecione outro modelo com cota livre no
+                                <strong>Passo 3</strong> abaixo ou alterne o provedor no <strong>Passo 1</strong>.
                             </div>
                         </div>
-                        <button type="button" class="ai-quota-banner-close" onclick="dismissAiSettingsQuotaBanner()" title="Dispensar aviso" aria-label="Dispensar">✕</button>
+                        <button type="button" class="ai-quota-banner-close" onclick="dismissAiSettingsQuotaBanner()"
+                            title="Dispensar aviso" aria-label="Dispensar">✕</button>
                     </div>
 
                     <!-- 1. Escolha o Provedor -->
@@ -3002,6 +3137,7 @@
                         <label class="ai-step-title" for="aiProviderSelect">1. Escolha o Provedor</label>
                         <div class="ai-select-wrap">
                             <select id="aiProviderSelect" class="ai-select-input" onchange="onProviderSelectChange()">
+                                <option value="gemini">Google Gemini (Gemini 3.8 Flash, Pro &amp; 1M+ Contexto)</option>
                                 <option value="groq">Groq Cloud (Gratuito &amp; Ultra-rápido LPU)</option>
                                 <option value="openai">OpenAI (GPT-4o, GPT-4o-mini, o1)</option>
                                 <option value="anthropic">Anthropic Claude (Claude 3.5 Sonnet &amp; Haiku)</option>

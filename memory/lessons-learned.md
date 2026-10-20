@@ -1,5 +1,34 @@
 # Lições Aprendidas
 
+## 2026-10-19 — Redesign de Modais Densos com Zero Scroll & Injeção de Contexto de Origem (SPECS)
+
+### Lição 19: Blindagem contra crescimento vertical ("Zero Scroll") em modais de onboarding
+**Contexto**: O modal do Quickstart Studio no Passo 2 acumulava Nome, Stack, Descrição, checkbox de Git e área de especificações, fazendo com que os botões de ação finais (`Modo Assistido` e `Modo Express`) exigissem rolagem vertical em telas comuns de notebook.
+**Aprendizado**: Agrupar campos correlatos em grid de 2 colunas (`.qs-grid-row-2` para Nome e Stack) e emparelhar a descrição com a checkbox de `git init` em linha (`.qs-grid-row-desc-git`) reduz o footprint vertical em mais de 40%. Alojar a área de especificação em um accordion retrátil com dropzone compacta e aba para colar texto permite suporte completo a documentos sem comprometer o layout principal.
+**Ação**: Priorize agrupamento relacional e blocos expansíveis para manter ações de submissão sempre visíveis na dobra do modal.
+
+### Lição 20: Persistência de documentos de origem em SPECS/ e economia de tokens na sabatina IA
+**Contexto**: Documentos de requisitos (PRDs, JSONs de schema, anotações de negócio) fornecidos pelo usuário no início de um projeto corriam o risco de se perder após a geração dos contratos ou forçar o Arquiteto IA a fazer perguntas cujas respostas já constavam nas notas.
+**Aprendizado**: Criar uma subpasta oficial `SPECS/` no projeto novo e referenciar os arquivos no `PROJECT.md` garante rastreabilidade histórica. Injetar o conteúdo dessas specs diretamente no prompt do Grill Studio evita que a IA alucine ou faça perguntas redundantes, focando a sabatina estritamente nos pontos arquiteturais não cobertos.
+**Ação**: Sempre salve arquivos de briefing em `SPECS/` e alimente a IA com seu contexto antes de iniciar questionamentos.
+
+### Lição 21: Gargalo de JSON escaping em contratos densos de governança e síntese multi-passo com roteamento cirúrgico
+**Contexto**: Ao processar documentos de especificação técnica extensos e detalhados (ex: 60KB com dicionário SQL Server completo, RF-01..12 e contratos REST), tentar solicitar os 4 contratos de governança simultaneamente dentro de um objeto JSON `{ "projectMd": "...", ... }` causava estouro de limite de tokens (`maxTokens`), loops degenerativos de repetição de quebras `\n\n---` dentro de strings escapadas e falhas de `JSON.parse`, gerando contratos resumidos e superficiais.
+**Aprendizado**:
+1. *Roteamento Cirúrgico de SPECS*: Dividir o documento de especificação por seções Markdown semânticas. Seções de negócio (Escopo, RFs, RNs, Personas, Critérios de Aceite) alimentam o gerador de `PROJECT.md`. Seções de infraestrutura (Tabelas SQL, tipos, constraints, endpoints REST, persistência, concorrência, segurança) alimentam `ARCHITECTURE.md`.
+2. *Markdown Puro vs JSON Escaping*: Arquivos técnicos de alta densidade (com tabelas, código e exemplos de payload) devem ser gerados em chamadas dedicadas com retorno em Markdown puro ou marcadores limpos (`<<<TAG>>>`), eliminando 100% dos erros de escape de aspas e contrabarras.
+3. *Resiliência de Balde de Tokens (TPM)*: Modelos modernos de raciocínio (ex: `gpt-oss-120b`) utilizam tokens internos de raciocínio que contam para o limite de saída e TPM do provedor. No `ai-gateway.js`, o cálculo de backoff deve garantir `Math.max(waitSeconds, Math.ceil(parsedWait))` e tolerar esperas de 15s a 60s para recarga do balde por minuto de provedores em nuvem como a Groq.
+### Lição 22: Propagação Universal de Falhas de Cota (429) e Rastreamento de Telemetria de Rate Limits (RPM/TPM)
+**Contexto**: O modal universal de erro de IA (`#aiErrorModal`) e o banner contextual do modal de configurações (`#aiSettingsQuotaBanner`) haviam sido acoplados apenas ao Quickstart Studio. Quando ocorria esgotamento de taxa (429 / falta de créditos) durante o Research Lab (`/research/:slug/run`), o backend capturava e retornava HTTP 500 genérico sem metadados de cota, e o frontend exibia o erro apenas no corpo do modal da pesquisa sem acionar a classe `.quota-exceeded` no botão da topbar (`#btnAiGatewayModal`) nem exibir o banner de cota no configurador.
+**Aprendizado**:
+1. *Ponto Único de Propagação*: O tratamento de erro de cota deve ser universal (`markAiInferenceError`). Qualquer endpoint consumidor de IA (Research Lab, Ask Brain, Session Capture, Quickstart) deve propagar `quotaExceeded`, `isRateLimit`, `retryAfter` e `providerName` preservando o status HTTP 429.
+2. *Persistência no Gateway*: O `scripts/ai-gateway.js` deve manter em memória o estado `lastGatewayError` retornado no `getConfig()` para que o Cockpit Web saiba imediatamente do estado de cota esgotada mesmo após recarregar a página ou navegar entre abas.
+3. *Limites de Saldo vs Cabeçalhos de Taxa*: Provedores como Anthropic e OpenAI não fornecem endpoints públicos para consulta de saldo financeiro (USD) via chaves de inferência padrão (`sk-ant-...`), mas retornam cabeçalhos ricos de telemetria (`anthropic-ratelimit-tokens-remaining`, `x-ratelimit-remaining-tokens`) a cada resposta, permitindo monitorar o balde de tokens e requisições em tempo real.
+**Ação**: Sempre utilize propagação centralizada de erros de inferência e monitore cabeçalhos de rate-limit HTTP para feedback preditivo de cota.
+
+---
+
+
 ## 2026-09-27 — Fundação do AI Second Brain
 
 ### Lição 1: Formato nativo importa
@@ -267,6 +296,52 @@
 1. **Pausa Mandatória de Loops WebGL durante Vídeos em Tela Cheia / Modais**: Pausar a rotação do grafo 3D (`g.stop()`) e pausar os vídeos dos cards em segundo plano (`video.pause()`) ao abrir qualquer modal de vídeo libera 100% da aceleração de decodificação de hardware da GPU, garantindo reprodução a 60fps sem travamentos. Ao fechar o modal, basta retomar (`g.start()` e `video.play()`).
 2. **Isolamento Estrito de Eventos em Cards Clicáveis (`stopPropagation` + Verificação de Alvo)**: Quando um card inteiro é clicável (atuando como `role="button"` para um modal técnico) mas contém botões de ação específicos em seu interior, a delegação de eventos deve verificar `e.target.closest('.card-video-9x16-btn, [data-prevent-feature-modal]')` e acionar `e.stopPropagation()` / `e.preventDefault()`. Isso blinda a interface contra sobreposição acidental de modais.
 **Ação**: Sempre gerenciar ativamente o ciclo de vida de renderizadores WebGL e loops de vídeo de fundo durante a exibição de mídia em primeiro plano, e isolar programaticamente gatilhos secundários em cards interativos.
+
+---
+
+## 2026-10-19 — Expansão Multiprovedor AI Gateway: Suporte Nativo a Google Gemini
+
+### Lição 31: Integração Nativa de Provedores de Alta Janela (Google Gemini) e Isolamento Estrito de Base URL
+**Contexto**: Durante o processamento de uploads densos de requisitos (ex: 61KB), o plano gratuito da Groq atingiu os limites de tokens por minuto (TPM), levando o usuário a fornecer uma chave de API do Google Gemini. Ao abrir o modal de configuração de IA, o usuário não encontrou a opção do Gemini, e ao tentar integrar o endpoint OpenAI-compatible do Gemini (`v1beta/openai`), requisições falhavam com HTTP 401 por vazamento do `AI_BASE_URL` da Groq previamente persistido no `.env`.
+**Aprendizado**:
+1. **Isolamento Estrito de `baseUrl` por Provedor**: Em arquiteturas multi-provedor com BYOK, o backend nunca deve permitir que `config.baseUrl` (herdado do provedor ativo anterior no `.env`) sobrescreva a URL padrão de um provedor em nuvem recém-selecionado (`gemini`, `groq`, `openai`, etc.). Apenas provedores locais ou personalizados (`ollama`, `custom`) devem ler e persistir `AI_BASE_URL` customizada.
+2. **Tratamento Resiliente de Erros em Array da API Gemini**: Ao reportar modelos obsoletos ou erros (ex: 404 para `gemini-2.5-flash`), a API do Gemini retorna o corpo em formato de array de objetos (`[{ "error": { "code": 404, "message": "..." } }]`). Clientes HTTP que esperam apenas `parsed.error?.message` de objetos raiz perdem a mensagem original e geram erros genéricos. O extrator de erros deve verificar `(Array.isArray(parsed) && parsed[0]?.error?.message) || parsed.error?.message`.
+3. **Catálogo 100% Dinâmico com Sanitização de IDs**: A API do Gemini retorna nomes de modelos com prefixo `models/` (ex: `models/gemini-3.8-flash`). O gateway deve sanitizar os identificadores para uso transparente no dropdown e na inferência, preservando a regra absoluta de Zero Fabricação e descoberta via `GET /models`.
+4. **Resolução de Gargalos de Taxa (TPM)**: O Google Gemini oferece uma janela de contexto massiva (1M+ a 2M+ de tokens) e limites de requisição generosos no plano gratuito, tornando-o ideal para tarefas de alta densidade textual como a Sabatina Técnica (Grill with Docs) e síntese de contratos de governança.
+**Ação**: Implementar sempre sanitização de IDs e detecção de formato de erro em array para novos provedores no AI Gateway, isolando URLs de base e garantindo 100% de paridade entre a interface local e o modo demo.
+
+### Lição 32: Curadoria e Classificação Semântica Dinâmica de Modelos por Finalidade de Engenharia
+**Contexto**: Ao listar os modelos retornados pela API do Google Gemini (`GET /models`), a lista continha 37 modelos, dos quais mais da metade eram incompatíveis com a finalidade do projeto (modelos de robótica `robotics`, agentes de desktop `computer-use`, áudio/streaming via WebSockets `live`, modelos mortos/descontinuados como `gemini-2.5-flash` que retornam 404 para novas contas, ou pipelines autônomos de 20 minutos como `deep-research`). O usuário destacou com precisão que só faz sentido ter na lista modelos capazes de cumprir a finalidade do projeto, e que essa curadoria precisa ser dinâmica e universal para qualquer provedor de IA.
+**Aprendizado**:
+1. **Filtro Universal por Propósito de Engenharia de Software**: O AI Second Brain atua em síntese de arquitetura, contratos, código, sabatina técnica e Q&A semântico. Provedores de IA retornam todos os modelos da conta em uma única lista genérica. Um gateway inteligente deve aplicar filtros universais que descartam:
+   - Áudio, fala e transcrição (`whisper`, `audio`, `tts`, `speech`, `transcribe`).
+   - Protocolos bidirecionais de streaming/WebSockets (`live`, `streaming`, `realtime`, `bidi`).
+   - Mídia pura e geração de imagem/vídeo (`veo`, `lyria`, `dall-e`, `sora`, `flux`, `diffusion`, `image-preview`, `-image`).
+   - Embeddings e representação vetorial (`embed`, `embedding`, `text-embedding`, `similarity`).
+   - Moderação e guardrails (`guard`, `moderation`, `safeguard`, `safety`, `censor`).
+   - Classificadores e rerankers (`reward`, `rerank`, `scorer`).
+   - Automação de SO e robótica (`computer-use`, `robotics`).
+   - Modelos comprovadamente mortos/aposentados pelos provedores (ex: `gemini-2.5-flash`).
+2. **Agrupamento Semântico Dinâmico via `<optgroup>`**: Uma lista linear de 30 nomes desorienta o desenvolvedor. Ao categorizar dinamicamente os modelos aprovados em grupos semânticos:
+   - 🌟 *Recomendados para Arquitetura & Raciocínio* (`gemini-3.8-flash`, `gemini-flash-latest`, `gpt-oss-120b`, `gpt-4o`, `claude-3-5-sonnet`).
+   - ⚡ *Rápidos & Baixa Latência* (`gemini-3.5-flash-lite`, `gpt-4o-mini`, `llama-3.1-8b-instant`, `claude-3-5-haiku`).
+   - 🛠️ *Abertos & Código (Open-Weights)* (`gemma-4-31b-it`, `qwen-2.5-32b`, `deepseek-r1`).
+   O desenvolvedor identifica imediatamente o melhor modelo para o seu objetivo de engenharia, com o modelo principal sempre posicionado com prioridade máxima.
+3. **Resiliência a Modelos que Nascem e Morrem Diariamente**: Como os provedores lançam versões e descontinuam modelos antigos continuamente, a heurística baseada em padrões semânticos de finalidade textual (e exclusão de padrões incompatíveis) mantém o sistema adaptável e autônomo sem requerer hardcoding de listas fechadas.
+**Ação**: Sempre aplicar filtros por finalidade de engenharia e agrupamento semântico dinâmico em qualquer provedor conectado ao AI Gateway, eliminando ruído e garantindo que apenas modelos 100% funcionais e adequados apareçam para seleção.
+
+---
+
+## 2026-10-19 — Desacoplamento Universal de Provedores no Research Lab
+
+### Lição 33: Desacoplamento Universal de Provedores no Research Lab e Ciclo de Vida do Servidor
+**Contexto**: O usuário configurou uma chave de API do Google Gemini (`gemini-3.8-flash`), mas ao iniciar a síntese autônoma de um laboratório de pesquisa ("Bolo de Banana"), o modal exibiu o badge fixo `GROQ CLOUD • SÍNTESE AUTÔNOMA EM TEMPO REAL` e um erro informando que o modelo não estava disponível no provedor Groq Cloud.
+**Aprendizado**:
+1. **Eliminação de Referências de Fornecedor Hardcoded em Recursos Legados**: Recursos concebidos originalmente para um único provedor (como o Research Lab inicial com Groq) devem ser completamente agnósticos quando o sistema evolui para um AI Gateway Universal. Textos estáticos em HTML/JS (ex: `Groq Cloud Conectado`, `Latência de Inferência (Groq)`, `Melhorar com IA (Groq)`, badges de modais) criam confusão cognitiva imediata no usuário quando outro provedor (Google Gemini, Claude, OpenAI) está ativo. 100% dos textos de interface devem interpolar dinamicamente `activeProvName = window.AI_GATEWAY_CONFIG.providerName`.
+2. **Ciclo de Vida de Módulos Node.js em Servidores de Longa Duração**: Processos Node.js que mantêm `require('./scripts/research-engine')` em memória desde o boot mantêm o cache estático de bibliotecas antigas. Sempre que rotas dinâmicas como `/run` forem executadas, deve-se limpar o cache do módulo (`delete require.cache[...]`) ou chamar o singleton dinâmico `getAiGateway()`, garantindo que a configuração mais recente do `.env` e dos scripts seja imediatamente utilizada sem necessidade de reinicialização manual.
+3. **Persistência de Metadados Claros nos Arquivos de Conhecimento**: Os arquivos Markdown gerados pelo motor autônomo devem gravar fielmente em seu frontmatter tanto o modelo quanto o provedor real utilizado (`model: "gemini-3.8-flash"`, `provider: "Google Gemini"`), garantindo auditabilidade e governança transparente em todo o cofre.
+**Ação**: Garantir que todos os módulos de execução de IA dependam exclusivamente do AI Gateway unificado, interpolando os nomes de provedores dinamicamente na UI e mantendo os scripts do backend desacoplados de qualquer fornecedor específico.
+
 
 
 

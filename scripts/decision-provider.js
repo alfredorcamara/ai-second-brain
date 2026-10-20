@@ -188,6 +188,20 @@ class RulesDecisionProvider extends IDecisionProvider {
             };
         }
 
+        // 2.1.1 Enriquecimento e aprofundamento global com base em Especificações / Anexo (multi-documento)
+        if (/\b(anexo|especifica[cs][aã]o|especifica[cs][oõ]es|documento\s+de\s+requisitos?|specs?)\b/i.test(clean) &&
+            /\b(aprofund(ar|e)|melhor(ar|e)|complet(ar|e)|expand(ir|a)|revis(ar|e)|atualiz(ar|e)|reflet(ir|a)|basead[ao]|sintetiz(ar|e)|vag[ao]s?)\b/i.test(clean)) {
+            return {
+                decision: 'PROCEED',
+                ruleId: 'JEV-RULE-SPECS-ENRICHMENT',
+                intentClass: 'SPECS_DEEP_ENRICHMENT',
+                confidence: 0.96,
+                rationale: 'Solicitação de enriquecimento global com base no anexo/especificações. Alvo em todos os contratos para alinhar escopo, tabelas, roadmap e decisões.',
+                targetDocs: ['PROJECT.md', 'ARCHITECTURE.md', 'CURRENT_STATE.md', 'ADR-0001'],
+                clarification: null
+            };
+        }
+
         // 2.2 Mudança estrutural transversal / troca de stack principal (multi-documento)
         if (/\b(troc(ar|a|que)|mud(ar|e)|migr(ar|e)|substitu(ir|a))\s+(o\s+)?(banco|stack|tecnologia|framework|backend|frontend|bd|database)\b/i.test(clean) ||
             /\b(trocar|mudar|migrar)\s+(para|pro|de\s+\w+\s+para)\s+(postgres|postgresql|mongodb|mysql|sqlite|sql\s*server|redis|graphql|rest|fastify|express|nest|prisma|typeorm|dapper)\b/i.test(clean) ||

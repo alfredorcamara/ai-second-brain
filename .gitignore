@@ -52,5 +52,6 @@ yarn-error.log*
 *.bak
 .cache/
 .trash/
+scratch/
 __pycache__/
 *.py[cod]

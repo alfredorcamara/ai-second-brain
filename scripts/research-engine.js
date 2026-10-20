@@ -5,7 +5,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const groq = require('./groq-client');
+const aiGateway = require('./ai-gateway');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 
@@ -86,7 +86,7 @@ async function runResearchLab(projectName, slug, onProgress = () => {}) {
         // 1. Decomposição de tópicos (se não existir em meta)
         let subtopics = meta.subtopics || [];
         if (subtopics.length === 0) {
-            const decResult = await groq.decomposeResearchTopic(definition, projectContext);
+            const decResult = await aiGateway.decomposeResearchTopic(definition, projectContext);
             subtopics = decResult.subtopics || [];
             meta.subtopics = subtopics;
             meta.researchDepth = decResult.researchDepth;
@@ -157,11 +157,15 @@ async function runResearchLab(projectName, slug, onProgress = () => {}) {
             console.log(`✍️ [Research Engine] [${index}/${subtopics.length}] Gerando com IA: ${st.title} (${targetFolderRel})`);
 
             // Chama a IA para sintetizar o conteúdo técnico
-            const synthResult = await groq.synthesizeSubtopic(
+            const synthResult = await aiGateway.synthesizeSubtopic(
                 { ...st, layer: targetFolderRel },
                 mainTopic,
                 projectContext
             );
+
+            const activeCfg = (aiGateway.getConfig ? aiGateway.getConfig() : null) || {};
+            const resolvedModel = synthResult.model || activeCfg.model || 'modelo-ativo';
+            const resolvedProvider = synthResult.provider || activeCfg.providerName || activeCfg.provider || 'IA';
 
             // Adiciona cabeçalho e metadados no markdown
             const fileContent = `---
@@ -169,7 +173,8 @@ topic: "${mainTopic}"
 subtopic: "${st.title}"
 layer: "${targetFolderRel}"
 created: "${new Date().toISOString()}"
-model: "${synthResult.model || 'Groq Cloud'}"
+model: "${resolvedModel}"
+provider: "${resolvedProvider}"
 ---
 
 ${synthResult.content}
@@ -204,9 +209,9 @@ ${synthResult.content}
 
             index++;
 
-            // Pausa estratégica de 6 segundos entre requisições para respeitar o limite de TPM (Tokens Por Minuto)
+            // Pausa estratégica de 6 segundos entre requisições para respeitar cadência de cota/TPM
             if (index <= subtopics.length) {
-                console.log(`⏱️ [Research Engine] Aguardando 6s para cadência de TPM do Groq Cloud...`);
+                console.log(`⏱️ [Research Engine] Aguardando 6s para cadência de requisições de IA (${resolvedProvider})...`);
                 await new Promise(r => setTimeout(r, 6000));
             }
         }
