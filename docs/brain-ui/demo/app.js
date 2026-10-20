@@ -12143,6 +12143,23 @@ function renderChangelogMarkdown(markdownText) {
             // Remove o H1 inicial (# Changelog — AI Second Brain) redundante com o título do modal
             let cleanMd = markdownText.replace(/^#\s+Changelog[^\n]*\n+/i, '');
             contentArea.innerHTML = window.marked.parse(cleanMd);
+
+            // Garante que todos os links abram em uma nova aba com segurança
+            contentArea.querySelectorAll('a').forEach(link => {
+                link.setAttribute('target', '_blank');
+                link.setAttribute('rel', 'noopener noreferrer');
+            });
+
+            if (!contentArea._hasTargetBlankDelegation) {
+                contentArea._hasTargetBlankDelegation = true;
+                contentArea.addEventListener('click', (e) => {
+                    const link = e.target.closest('a');
+                    if (link && link.href) {
+                        link.target = '_blank';
+                        link.rel = 'noopener noreferrer';
+                    }
+                });
+            }
             return;
         } catch (e) {
             console.error('Erro no parser markdown:', e);
