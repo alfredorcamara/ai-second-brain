@@ -21,6 +21,18 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 
 ## Sessões Recentes
 - **Data**: 2026-10-19
+  - **Correção da Visibilidade do Modal Changelog & Versão 100% Dinâmica**:
+    - **Diagnóstico & Causa Raiz**:
+      1. Ao clicar em "Novidades ✨" no badge da sidebar ou topbar, a função `openChangelogModal()` executava normalmente, mas nenhum modal aparecia na tela.
+      2. O elemento `#modalChangelog` utilizava classes inexistentes (`.modal-backdrop` e `.modal-content`). Como a aplicação define `body { height: 100vh; overflow: hidden; }` e `.modal-backdrop` não tinha `position: fixed; inset: 0; z-index: 10050`, o modal era renderizado como elemento estático no fim de 3.750 linhas de HTML, completamente fora do campo visual do desenvolvedor e transparente.
+      3. O endpoint `/api/system/changelog` no `server.js` continha `version: '1.2.0'` fixo no JSON sem consultar o `package.json`, e `server.js` / `scripts/doctor.js` mantinham `'1.2.0'` como fallbacks estáticos desnecessários.
+    - **Soluções Implementadas**:
+      1. *Backdrop e Posicionamento Fixo*: Atualizado `#modalChangelog` para a classe canônica `.editor-modal-backdrop.changelog-modal-backdrop` (`position: fixed; inset: 0; z-index: 10050; backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center;`).
+      2. *Estilização Dark Luxury Completa*: Aplicado gradiente escuro, borda bioluminescente suave, sombra profunda (`box-shadow: 0 30px 90px rgba(0, 0, 0, 0.95)`), animação de pop (`brainDialogPop`), cabeçalho `.changelog-modal-header` e botão de fechar `.changelog-close-btn` com hover avermelhado.
+      3. *Fonte Única da Verdade (SSOT)*: Removidas todas as ocorrências de `'1.2.0'` hardcoded do backend. Endpoints `/api/system/version` e `/api/system/changelog` leem dinamicamente do `package.json` com fallback neutro (`'0.0.0'`).
+      4. *Paridade Estrita*: 100% sincronizado entre `docs/brain-ui/` e `docs/brain-ui/demo/` (`index.html`, `style.css`, `app.js`).
+      5. *Validação*: `npm run doctor` aprovado com 0 erros em 129 arquivos Markdown e 32 scripts JS.
+
   - **Notificação de Atualizações, Modal Changelog & Badge de Versão (v1.2.0)**:
     - **Demanda do Usuário**:
       1. Como desenvolvedores e usuários que já clonaram o repositório ficarão sabendo das correções, melhorias e novas versões lançadas?
