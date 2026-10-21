@@ -12569,6 +12569,17 @@ async function openChangelogModal() {
         console.warn('Não foi possível carregar changelog via API:', e);
     }
 
+    // 2. Se a API falhar (ex: rodando sem backend Node ou no GitHub Pages), busca do Vault em memória
+    if (window.VAULT && typeof window.VAULT.getFile === 'function') {
+        const file = window.VAULT.getFile('CHANGELOG.md');
+        if (file && file.content) {
+            _cachedChangelogMarkdown = file.content;
+            renderChangelogMarkdown(file.content);
+            return;
+        }
+    }
+
+    // 3. Fallback de última contingência (HTML de emergência)
     renderChangelogFallback();
 }
 
