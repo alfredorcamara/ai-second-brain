@@ -150,6 +150,7 @@ AI_SECOND_BRAIN/
 | `npm run project:new <nome>` | Cria um novo projeto assistido por IA com contratos de governança |
 | `npm run project:link <nome> <caminho>` | Vincula um repositório Git existente no seu PC via junção NTFS sem duplicar arquivos |
 | `npm run doctor` *(ou `npm run check`)* | Executa o linter de integridade: valida links Markdown, contratos de projetos e **sintaxe de 100% dos scripts JS** |
+| `npm run version:sync` | Sincroniza automaticamente a versão do `package.json` em todas as interfaces HTML, apps e dicionários |
 | `npm run scan` | Força a re-varredura do cofre e atualiza o snapshot estático para visualização offline |
 | `npm run build:demo` | Reconstrói o cofre ilustrativo curado para a demonstração pública da web |
 

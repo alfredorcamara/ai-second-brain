@@ -436,6 +436,18 @@ function checkGitUpdateStatus() {
         }
         if (allSynced) {
             console.log(`   ✓ Todas as interfaces (Landing, Cockpit, Demo e App) 100% sincronizadas com v${localVersion}`);
+        } else {
+            if (process.argv.includes('--fix')) {
+                console.log(`   🛠️  Aplicando correção automática via sync-version...`);
+                try {
+                    const { syncVersion } = require('./sync-version');
+                    syncVersion(localVersion);
+                } catch (e) {
+                    console.error('Falha na autocorreção:', e.message);
+                }
+            } else {
+                console.log(`   💡 Dica: Execute 'npm run version:sync' para sincronizar automaticamente todas as interfaces!`);
+            }
         }
         console.log('');
 
