@@ -414,7 +414,18 @@ function checkGitUpdateStatus() {
         } catch (_) {}
 
         console.log(`📦 Versão do AI Second Brain: v${localVersion}`);
-        console.log(`   Registro de melhorias e notas de release: CHANGELOG.md\n`);
+        console.log(`   Registro de melhorias e notas de release: CHANGELOG.md`);
+
+        const landingHtmlPath = path.join(ROOT_DIR, 'docs', 'brain-ui', 'landing', 'index.html');
+        if (fs.existsSync(landingHtmlPath)) {
+            const landingHtml = fs.readFileSync(landingHtmlPath, 'utf-8');
+            if (!landingHtml.includes(`v${localVersion}`)) {
+                console.log(`   ⚠️  Alerta: A Landing Page (docs/brain-ui/landing/index.html) difere de package.json (v${localVersion})!`);
+            } else {
+                console.log(`   ✓ Landing Page sincronizada com v${localVersion}`);
+            }
+        }
+        console.log('');
 
         if (!fs.existsSync(path.join(ROOT_DIR, '.git'))) return;
 

@@ -20,6 +20,36 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 | `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway, Research Engine, Session Capture, Brain Search, Otimização de Vídeo) |
 
 ## Sessões Recentes
+- **Data**: 2026-10-20
+  - **Quickstart AI Synthesis Cockpit — Transparência Total e Telemetria em Tempo Real**:
+    - **Diagnóstico & Causa Raiz**:
+      1. Durante a criação de um novo projeto (com ou sem anexo de especificações, ex: `requisitos_cadastro_clientes_node_typescript_sqlserver.md`), o processo de síntese neural multi-passo leva de 1.5 a 3 minutos para produzir `PROJECT.md`, `ARCHITECTURE.md`, `CURRENT_STATE.md` e `ADR-0001`.
+      2. A interface anterior exibia apenas um spinner circular estático com o texto fixo "Sintetizando contratos de governança...", sem nenhum indicador de progresso, sem tempo decorrido, e com os botões inferiores desabilitados, criando a impressão de que a tela estava completamente congelada ou travada.
+    - **Soluções Implementadas**:
+      1. *Quickstart AI Synthesis Cockpit*: Novo container interativo com glassmorphism de luxo (`.qs-synth-cockpit`) substituindo o spinner estático.
+      2. *Header com Telemetria Dinâmica*:
+         - Anel orbital giratório com pulso de IA bioluminescente (`.qs-synth-spinner-ring` e `.qs-synth-center-icon`).
+         - Título dinâmico: "Arquiteto de IA Projetando a Governança" com badge de etapa (`Etapa 1 de 4`).
+         - Pílula do motor de IA ativo (`🧠 Modelo: Groq / llama-3.3-70b-versatile`).
+         - Pílula do documento anexado em análise (`📄 requisitos_...md`).
+         - Cronômetro progressivo em tempo real (`⏱️ 00:34s`).
+      3. *Barra de Progresso com Laser Shimmer*:
+         - Trilho com gradiente de alta precisão (índigo → violeta → ciano) e efeito laser de varredura contínua (`.qs-synth-progress-laser`).
+         - Percentual e legenda de status atualizados dinamicamente.
+      4. *Pipeline de Contratos em Tempo Real (Grid de 4 Cards)*:
+         - Cards específicos para **Extração de Requisitos**, **PROJECT.md**, **ARCHITECTURE.md** e **CURRENT_STATE.md & ADR-0001**.
+         - Estados visuais distintos: `⏳ Na fila` (pendente), `⚡ Sintetizando com IA...` (ativo com glow e mini-spinner) e `✓ Concluído` (com métricas de caracteres/tamanho gerado em KB).
+      5. *Terminal / Console de Telemetria Técnica ("Live Architecture Stream")*:
+         - Console estilo terminal Mac/Linux com header de 3 bolinhas coloridas (red/yellow/green) e tag `● LIVE STREAM`.
+         - Log monospace com timestamps (`[00:15]`) registrando cada ação do arquiteto neural, extração de entidades, RFs e tabelas SQL.
+      6. *Streaming de Eventos em Tempo Real (SSE)*:
+         - `scripts/quickstart-grill.js`: `generateDraft` agora recebe callback `onProgress` emitindo eventos em cada etapa da síntese multi-passo.
+         - `server.js`: Rota `POST /api/projects/quickstart/draft` dispara `broadcastEvent('quickstart-progress', ...)` via Server-Sent Events.
+         - `vault.js`: Adicionado listener para `quickstart-progress` chamando `handleQuickstartLiveProgress(info)`.
+         - `app.js`: Suporte dual com fallback preditivo para garantir que a tela continue viva e animada sob qualquer condição de rede.
+      7. *Gestão dos Botões de Ação*: Durante a síntese, os botões inferiores são ocultados para evitar dúvidas de usabilidade, e reaparecem suavemente quando os contratos são liberados para revisão.
+      8. *Paridade e Integridade*: 100% sincronizado entre `docs/brain-ui/` e `docs/brain-ui/demo/`. `npm run doctor` aprovado com 100% de integridade.
+
 - **Data**: 2026-10-19
   - **Sincronização da Versão no Boot Screen (v2.4 -> v1.2.0) & Redesign Tipográfico do Modal Changelog**:
     - **Diagnóstico & Causa Raiz**:
@@ -903,6 +933,22 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
     - **Empty State Futurista**: Orbe atômico pulsante em CSS, texto explicativo e botões de atalho para prompts rápidos de 1 clique (Microsserviços Event-Driven, Auth JWT, Cache & Redis).
     - **Grid de Cards de Laboratório**: Cards com efeito hover 3D, indicador de status `🟢 Ativo`, caixa expansível do **Prompt Vivo** com tag de versão (`v1`, `v2`), badges das duas camadas (`knowledge/` e `actionable/`) e botões de ação (`▶️ Pesquisar Agora`, `🔮 Grafo 3D`, `🧩 Subtópicos`, `📄 OVERVIEW.md`, `📂 Abrir Pasta`).
     - **Correção de Layout Responsivo**: Ajustado `.rl-card-title-text` com `word-break: break-word` e badge `🟢 Ativo` fixado à direita com `flex-shrink: 0`, eliminando qualquer sobreposição visual.
+    - **Quickstart AI Synthesis Cockpit (Cockpit de Síntese Neural em Tempo Real)**:
+      - **Otimização do Cabeçalho & Despoluição**:
+        - Título principal (`Arquiteto de IA Projetando a Governança`) e ícone `[⚡]` mantidos estritamente na mesma linha horizontal com `white-space: nowrap` e container flex.
+        - Removidos chips redundantes do cabeçalho (`especificação.md` e `🧠 Modelo: Groq...`), pois os detalhes da especificação pertencem ao Card 1 e o modelo é registrado no console de telemetria.
+        - Cronômetro decorrido (`⏱️ 00:00`) posicionado no topo alinhado à extrema direita via `space-between`.
+      - **Esteira de 4 Cards 100% Visível (Eliminação do Corte do 4º Card)**:
+        - Diagnóstico: A soma do `min-content` dos 4 cards somava ~1020px enquanto o modal draft estava limitado a `920px`, forçando o corte do 4º card (`CURRENT_STATE.md & ADR`) sob `overflow: hidden`.
+        - Solução: Modal expandido para `max-width: 1040px` (`width: 94vw`), padding do cockpit otimizado (`18px 20px`), e grid configurado com `grid-template-columns: repeat(4, minmax(0, 1fr))` e `min-width: 0` nos cards.
+        - Layout dos cards com tipografia e badges ajustados (`9px`), status em linha compacta e atributo `title` nativo nos nomes dos arquivos como tooltip informativo.
+        - Breakpoint responsivo em `@media (max-width: 860px)` converte suavemente para Grid 2x2.
+        - Sincronização e paridade 100% entre `docs/brain-ui/` e `docs/brain-ui/demo/` (`index.html` e `style.css`).
+      - **Guarda Anti-Fechamento Involuntário & Confirmação de Saída do Quickstart Studio**:
+        - **Proteção de Mousedown/Click no Backdrop & Resiliência a Escopo**: Implementado rastreamento de alvo em `mousedown` (`qsBackdropMouseDownTarget`). Se o usuário inicia um clique dentro de um campo ou seleciona texto e solta o cursor na área externa do modal, o evento de clique no backdrop é ignorado, eliminando fechamentos fantasmas enquanto o usuário digita ou transita entre campos. A função `hasQuickstartProgress()` foi blindada com checagens estritas via `typeof` para todos os estados (`attachedSpecsFiles`, `currentGrillQuestions`, `currentGrillDraft`, `quickstartStep`), eliminando erros de referência (`ReferenceError`) ao inspecionar o progresso.
+        - **Confirmação Visual Inteligente (`#qsConfirmExitModal`)**: Se o usuário já iniciou o preenchimento (Passo 2 com formulário, sabatina técnica, síntese neural ou revisão de contratos), qualquer tentativa de saída (clique no backdrop, botão `✕` ou tecla `Escape`) aciona um diálogo de confirmação elegante em dark glass com foco primário em *"← Continuar Preenchendo"* e opção de *"Sim, Descartar e Sair"*.
+        - **Isenção do Botão Verde (Passo 3 Conectado!)**: Quando o usuário clica no botão verde *"💾 Aprovar e Criar Projeto no Disco"* e os arquivos são gravados com sucesso, o fluxo transiciona para o Passo 3 (`quickstartStep === 3`). Nesta etapa os arquivos já estão salvos, permitindo fechamento imediato sem prompt confirmatório.
+        - **Paridade 100%**: Sincronizado integralmente em `docs/brain-ui/` e `docs/brain-ui/demo/` (`index.html`, `style.css` e `app.js`).
     - **Modal de Criação "Nova Pesquisa" com Efeito UAU**:
       - Campo de tema com chips de presets rápidos.
       - Botão com faíscas animadas `✨ Melhorar com IA (Groq)`.

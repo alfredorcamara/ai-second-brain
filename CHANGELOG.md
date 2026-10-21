@@ -7,6 +7,28 @@ e este projeto adere ao [Versionamento Semântico (SemVer)](https://semver.org/l
 
 ---
 
+## [1.3.0] — 2026-10-21
+
+### 🚀 Adicionado
+- **Cockpit de Síntese Neural em Tempo Real (Quickstart AI Synthesis Cockpit)**:
+  - Eliminação da sensação de tela congelada/opaca durante a geração dos contratos de governança.
+  - Streaming de telemetria técnica via Server-Sent Events (SSE `/api/vault/events` com evento `quickstart-progress`) diretamente do motor de inferência em `server.js` e `scripts/quickstart-grill.js`.
+  - Esteira visual de 4 cards interativos em pipeline (`📑 Extração de Requisitos`, `📄 PROJECT.md`, `🏗️ ARCHITECTURE.md`, `⚖️ CURRENT_STATE.md & ADR-0001`) com spinners animados, badges de status (`Pendente`, `Analisando / Gerando`, `Concluído`) e transições visuais fluidas.
+  - Console de telemetria técnica integrado com exibição em tempo real de logs de execução, modelo ativo, cronômetro de elapsed time e medidor de velocidade/tokens gerados.
+  - Modal expandido para `1040px` com `repeat(4, minmax(0, 1fr))` garantindo visualização 100% visível dos 4 cards sem cortes horizontais e conversão responsiva 2x2.
+- **Guarda Anti-Fechamento Involuntário & Confirmação de Saída do Quickstart Studio**:
+  - Isolamento de cliques acidentais no backdrop escuro via rastreamento de `mousedown` (`qsBackdropMouseDownTarget`), eliminando fechamentos fantasmas ao selecionar texto ou alternar entre campos do formulário.
+  - Modal de confirmação inteligente (`#qsConfirmExitModal`) para cliques fora do modal, botão `✕` e tecla `Escape`, protegendo o desenvolvedor contra a perda de respostas da sabatina e especificações preenchidas no Passo 2.
+  - Isenção automática de confirmação no Passo 3 ("Conectado!"): após clicar no botão verde *"💾 Aprovar e Criar Projeto no Disco"*, o modal pode ser concluído imediatamente sem prompt confirmatório.
+
+### 🛡️ Corrigido
+- **Resiliência a Escopo e Variáveis Globais**:
+  - Blindagem da função `hasQuickstartProgress()` com checagens estritas `typeof ... !== 'undefined'`, prevenindo `ReferenceError` em qualquer cenário de ciclo de vida.
+- **Paridade Estrita 100%**:
+  - Sincronização rigorosa de layout, comportamento e eventos entre o ambiente local (`docs/brain-ui/`) e a versão demo (`docs/brain-ui/demo/`).
+
+---
+
 ## [1.2.0] — 2026-10-19
 
 ### 🚀 Adicionado

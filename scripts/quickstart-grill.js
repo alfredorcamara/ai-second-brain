@@ -548,7 +548,7 @@ FORMATO DE RESPOSTA (JSON):
 /**
  * Gera o rascunho dos 4 contratos com base nas respostas da sabatina.
  */
-async function generateDraft(aiGateway, projectInfo, answers) {
+async function generateDraft(aiGateway, projectInfo, answers, onProgress) {
     const rawName = (projectInfo.name || '').trim();
     const safeName = sanitizeProjectName(rawName);
     const stack = (projectInfo.stack || 'Não definida').trim();
@@ -573,11 +573,40 @@ async function generateDraft(aiGateway, projectInfo, answers) {
     // =========================================================================
     if (hasSpecs) {
         const rawSpecsCombined = specs.map(s => s.content || '').join('\n\n');
+        const specName = specs[0]?.name || 'especificação.md';
+        const specKb = Math.round((rawSpecsCombined.length / 1024) * 10) / 10;
+
+        if (typeof onProgress === 'function') {
+            onProgress({
+                step: 'specs-start',
+                stage: 1,
+                totalStages: 4,
+                pct: 12,
+                title: 'Análise Profunda dos Requisitos',
+                detail: `Processando especificações de ${specs.length} documento(s) anexado(s)...`,
+                file: specName,
+                log: `📄 Analisando '${specName}' (${specKb} KB)... Extraindo Requisitos Funcionais (RFs), Regras de Negócio e Casos de Uso.`
+            });
+        }
+
         const scopeContext = extractScopeSpecs(rawSpecsCombined, isGroq ? 14000 : 35000);
         const archContext = extractArchitectureSpecs(rawSpecsCombined, isGroq ? 16000 : 40000);
         const maxTokensPerDoc = isGroq ? 5000 : 8192;
 
         console.log(`[Quickstart Grill] Iniciando síntese multi-passo de alta densidade para '${safeName}' (${specs.length} anexo(s))...`);
+
+        if (typeof onProgress === 'function') {
+            onProgress({
+                step: 'project-start',
+                stage: 2,
+                totalStages: 4,
+                pct: 25,
+                title: 'Sintetizando PROJECT.md',
+                detail: 'Consolidando Visão Executiva, Requisitos Funcionais (RFs) e Regras de Negócio...',
+                file: 'PROJECT.md',
+                log: `✍️ [Passo 1/3] Sintetizando PROJECT.md com IA (${isGroq ? 'Groq' : providerId}): Mapeamento exaustivo de RF-001..RF-012, regras de negócio e critérios de aceite...`
+            });
+        }
 
         // PASSO 1: PROJECT.md DEDICADO
         console.log('[Quickstart Grill] [1/3] Gerando PROJECT.md...');
@@ -605,8 +634,35 @@ ATENÇÃO: Responda APENAS com o texto Markdown puro do arquivo PROJECT.md, inic
         ], { temperature: 0.3, maxTokens: maxTokensPerDoc, skipCache: true });
         const projectMd = cleanMarkdown(res1.content);
 
+        if (typeof onProgress === 'function') {
+            onProgress({
+                step: 'project-done',
+                stage: 2,
+                totalStages: 4,
+                pct: 50,
+                title: 'PROJECT.md Concluído',
+                detail: `${projectMd.length} caracteres gerados com sucesso.`,
+                file: 'PROJECT.md',
+                chars: projectMd.length,
+                log: `✅ PROJECT.md concluído (${projectMd.length} caracteres gerados). Iniciando modelagem de arquitetura e dados...`
+            });
+        }
+
         // Pausa preventiva de 1.5s para suavizar TPM na Groq
         await new Promise(r => setTimeout(r, 1500));
+
+        if (typeof onProgress === 'function') {
+            onProgress({
+                step: 'arch-start',
+                stage: 3,
+                totalStages: 4,
+                pct: 55,
+                title: 'Arquitetando ARCHITECTURE.md & Modelagem',
+                detail: `Projetando schema relacional SQL, dicionário de dados, endpoints REST e concorrência para ${stack}...`,
+                file: 'ARCHITECTURE.md',
+                log: `🏗️ [Passo 2/3] Projetando ARCHITECTURE.md: Dicionário relacional SQL Server (dbo.Cliente...), contratos REST e concorrência otimista...`
+            });
+        }
 
         // PASSO 2: ARCHITECTURE.md DEDICADO
         console.log('[Quickstart Grill] [2/3] Gerando ARCHITECTURE.md...');
@@ -637,8 +693,35 @@ ATENÇÃO: Responda APENAS com o texto Markdown puro do arquivo ARCHITECTURE.md,
         ], { temperature: 0.3, maxTokens: maxTokensPerDoc, skipCache: true });
         const architectureMd = cleanMarkdown(res2.content);
 
+        if (typeof onProgress === 'function') {
+            onProgress({
+                step: 'arch-done',
+                stage: 3,
+                totalStages: 4,
+                pct: 75,
+                title: 'ARCHITECTURE.md Concluído',
+                detail: `${architectureMd.length} caracteres gerados com sucesso.`,
+                file: 'ARCHITECTURE.md',
+                chars: architectureMd.length,
+                log: `✅ ARCHITECTURE.md concluído (${architectureMd.length} caracteres gerados). Formalizando marcos e decisões técnicas...`
+            });
+        }
+
         // Pausa preventiva de 1.5s
         await new Promise(r => setTimeout(r, 1500));
+
+        if (typeof onProgress === 'function') {
+            onProgress({
+                step: 'gov-start',
+                stage: 4,
+                totalStages: 4,
+                pct: 80,
+                title: 'Formalizando Governança & Decisão Técnica',
+                detail: 'Estruturando Roadmap com Marcos práticos no Cockpit e ADR-0001 no padrão MADR...',
+                file: 'DECISIONS/ADR-0001.md',
+                log: `⚖️ [Passo 3/3] Redigindo CURRENT_STATE.md (Roadmap de 3 Marcos) e ADR-0001 (Adoção de Stack Inicial no padrão MADR)...`
+            });
+        }
 
         // PASSO 3: CURRENT_STATE.md & ADR-0001
         console.log('[Quickstart Grill] [3/3] Gerando CURRENT_STATE.md e ADR-0001...');
@@ -676,11 +759,27 @@ FORMATO DE RESPOSTA OBRIGATÓRIO (use EXATAMENTE os marcadores abaixo, sem JSON)
         const currentStateMd = extractTag(res3.content, 'CURRENT_STATE_MD');
         const adrMd = extractTag(res3.content, 'ADR_MD');
 
+        const totalChars = (projectMd.length + architectureMd.length + (currentStateMd || '').length + (adrMd || '').length);
+
         console.log(`[Quickstart Grill] Síntese multi-passo concluída com sucesso!
 - PROJECT.md: ${projectMd.length} chars
 - ARCHITECTURE.md: ${architectureMd.length} chars
-- CURRENT_STATE.md: ${currentStateMd.length} chars
-- ADR-0001: ${adrMd.length} chars`);
+- CURRENT_STATE.md: ${(currentStateMd || '').length} chars
+- ADR-0001: ${(adrMd || '').length} chars`);
+
+        if (typeof onProgress === 'function') {
+            onProgress({
+                step: 'completed',
+                stage: 4,
+                totalStages: 4,
+                pct: 100,
+                title: 'Contratos Prontos para Revisão!',
+                detail: `Todos os 4 contratos de governança foram sintetizados com perfeição (${Math.round(totalChars / 1024 * 10) / 10} KB no total).`,
+                file: 'Contratos Vivos',
+                chars: totalChars,
+                log: `✨ Todos os 4 contratos de governança foram sintetizados e validados com sucesso! Liberando para revisão e edição.`
+            });
+        }
 
         return {
             contracts: {
@@ -697,6 +796,19 @@ FORMATO DE RESPOSTA OBRIGATÓRIO (use EXATAMENTE os marcadores abaixo, sem JSON)
     // =========================================================================
     // ESTRATÉGIA B: SÍNTESE DE PASSO ÚNICO (SEM ANEXO DE SPECS / RÁPIDO)
     // =========================================================================
+    if (typeof onProgress === 'function') {
+        onProgress({
+            step: 'synthesis-start',
+            stage: 1,
+            totalStages: 2,
+            pct: 25,
+            title: 'Sintetizando Contratos de Governança',
+            detail: `Processando decisões da sabatina para ${safeName} (${stack})...`,
+            file: 'Contratos Vivos',
+            log: `⚡ Consultando modelo de IA para gerar simultaneamente PROJECT.md, ARCHITECTURE.md, CURRENT_STATE.md e ADR-0001...`
+        });
+    }
+
     const maxOutputTokens = isGroq ? 4000 : 8192;
     const systemPrompt = `Você é um Arquiteto de Software Sênior e Especialista em Governança do AI Second Brain.
 Sua missão é produzir os 4 contratos fundamentais de governança técnica em Markdown para o novo projeto '${safeName}' com stack '${stack}'.
@@ -745,6 +857,19 @@ FORMATO DE RESPOSTA (JSON):
         fs.writeFileSync(path.join(__dirname, '..', 'scratch', 'failed-llm-response.txt'), String(result.content || ''), 'utf8');
         console.error('FAILED LLM RESPONSE WRITTEN TO scratch/failed-llm-response.txt (Length:', (result.content || '').length, ')');
         throw new Error(`A IA retornou uma resposta inválida ao gerar os contratos: ${e.message}`);
+    }
+
+    if (typeof onProgress === 'function') {
+        onProgress({
+            step: 'completed',
+            stage: 2,
+            totalStages: 2,
+            pct: 100,
+            title: 'Contratos Prontos para Revisão!',
+            detail: 'Todos os 4 contratos vivos de governança foram sintetizados.',
+            file: 'Contratos Vivos',
+            log: `✨ Contratos de governança sintetizados com sucesso! Liberando para revisão e edição.`
+        });
     }
 
     return {

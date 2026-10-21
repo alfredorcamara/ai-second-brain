@@ -454,7 +454,9 @@ Thumbs.db
             const body = await readJsonBody(req);
             delete require.cache[require.resolve('./scripts/quickstart-grill')];
             const grill = require('./scripts/quickstart-grill');
-            const result = await grill.generateDraft(getAiGateway(), body, body.answers);
+            const result = await grill.generateDraft(getAiGateway(), body, body.answers, (progress) => {
+                broadcastEvent('quickstart-progress', { projectName: body.name, ...progress, time: Date.now() });
+            });
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({ success: true, ...result }));
         } catch (err) {

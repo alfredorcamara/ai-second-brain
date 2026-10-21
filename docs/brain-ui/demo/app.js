@@ -2914,9 +2914,33 @@ function setupEventListeners() {
         }
 
         if (e.key === 'Escape') {
+            const confirmModal = document.getElementById('qsConfirmExitModal');
+            if (confirmModal && confirmModal.style.display !== 'none') {
+                cancelQuickstartExit();
+                return;
+            }
+
+            const valModal = document.getElementById('qsGrillValidationModal');
+            if (valModal && valModal.style.display !== 'none') {
+                closeGrillValidationModal(true);
+                return;
+            }
+
+            const clarifyModal = document.getElementById('qsClarificationModal');
+            if (clarifyModal && clarifyModal.style.display !== 'none') {
+                closeClarificationModal();
+                return;
+            }
+
+            const aiErrModal = document.getElementById('aiErrorModal');
+            if (aiErrModal && aiErrModal.style.display !== 'none') {
+                closeAiErrorModal();
+                return;
+            }
+
             const qsModal = document.getElementById('quickstartModal');
             if (qsModal && qsModal.style.display !== 'none') {
-                closeQuickstartWizard();
+                requestCloseQuickstartWizard();
                 return;
             }
             if (currentView !== 'dashboard') {
@@ -2980,6 +3004,14 @@ function openQuickstartWizard(defaultMode = null) {
     const modal = document.getElementById('quickstartModal');
     if (!modal) return;
 
+    // Registra listener de mousedown no modal para prevenir fechamento involuntário ao arrastar o mouse entre campos
+    if (!modal.dataset.backdropGuarded) {
+        modal.dataset.backdropGuarded = 'true';
+        modal.addEventListener('mousedown', (e) => {
+            qsBackdropMouseDownTarget = e.target;
+        });
+    }
+
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 
@@ -3022,26 +3054,121 @@ function openQuickstartWizard(defaultMode = null) {
     }
 }
 
-function closeQuickstartWizard() {
+let qsBackdropMouseDownTarget = null;
+
+function hasQuickstartProgress() {
+    // 1. Se o usuário está no Passo 3 ("Conectado!"), os arquivos já foram
+    // gravados com sucesso no disco pelo botão verde ("💾 Aprovar e Criar Projeto no Disco"). Não há risco de perda.
+    if (typeof quickstartStep !== 'undefined' && quickstartStep === 3) return false;
+
+    // 2. Se avançou para o Passo 2 (formulário Greenfield/Brownfield, sabatina, síntese ou revisão de contratos),
+    // o usuário já avançou e está preenchendo etapas ativas.
+    if (typeof quickstartStep !== 'undefined' && quickstartStep === 2) return true;
+
+    // 3. Se por qualquer motivo está no Passo 1, mas já possui dados preenchidos
+    const nameVal = document.getElementById('qsNewName')?.value?.trim() || 
+                    document.getElementById('qsLinkName')?.value?.trim();
+    if (nameVal) return true;
+
+    const descVal = document.getElementById('qsNewDesc')?.value?.trim();
+    if (descVal) return true;
+
+    const pathVal = document.getElementById('qsLinkPath')?.value?.trim();
+    if (pathVal) return true;
+
+    if (typeof attachedSpecsFiles !== 'undefined' && Array.isArray(attachedSpecsFiles) && attachedSpecsFiles.length > 0) return true;
+    if (typeof currentGrillQuestions !== 'undefined' && Array.isArray(currentGrillQuestions) && currentGrillQuestions.length > 0) return true;
+    if (typeof currentGrillDraft !== 'undefined' && currentGrillDraft && (currentGrillDraft.projectMd || currentGrillDraft.architectureMd || currentGrillDraft.currentStateMd)) return true;
+
+    return false;
+}
+
+function requestCloseQuickstartWizard() {
+    const modal = document.getElementById('quickstartModal');
+    if (!modal || modal.style.display === 'none') return;
+
+    if (!hasQuickstartProgress()) {
+        forceCloseQuickstartWizard();
+    } else {
+        openQuickstartExitConfirm();
+    }
+}
+
+function openQuickstartExitConfirm() {
+    const confirmModal = document.getElementById('qsConfirmExitModal');
+    if (confirmModal) {
+        confirmModal.style.display = 'flex';
+        const cancelBtn = document.getElementById('btnCancelQuickstartExit');
+        if (cancelBtn) cancelBtn.focus();
+    } else {
+        const confirmed = window.confirm(
+            'Deseja realmente sair? Todas as informações preenchidas e contratos em elaboração serão descartados.'
+        );
+        if (confirmed) {
+            forceCloseQuickstartWizard();
+        }
+    }
+}
+
+function cancelQuickstartExit() {
+    const confirmModal = document.getElementById('qsConfirmExitModal');
+    if (confirmModal) {
+        confirmModal.style.display = 'none';
+    }
+}
+
+function confirmQuickstartExit() {
+    cancelQuickstartExit();
+    forceCloseQuickstartWizard();
+}
+
+function handleConfirmExitBackdrop(e) {
+    if (e.target && e.target.id === 'qsConfirmExitModal') {
+        cancelQuickstartExit();
+    }
+}
+
+function forceCloseQuickstartWizard() {
+    cancelQuickstartExit();
     const modal = document.getElementById('quickstartModal');
     if (modal) {
         modal.style.display = 'none';
         document.body.style.overflow = '';
         const card = modal.querySelector('.quickstart-modal-card');
-        if (card) card.classList.remove('wide');
+        if (card) {
+            card.classList.remove('wide', 'grill-mode', 'draft-mode');
+        }
     }
     const headerBackBtn = document.getElementById('qsHeaderBackBtn');
     if (headerBackBtn) headerBackBtn.style.display = 'none';
     resetQuickstartTech();
     resetQuickstartSpecs();
     resetQuickstartGrillPanes();
+    quickstartStep = 1;
+}
+
+function closeQuickstartWizard(force = false) {
+    if (force || !hasQuickstartProgress()) {
+        forceCloseQuickstartWizard();
+    } else {
+        requestCloseQuickstartWizard();
+    }
 }
 
 function handleModalBackdropClick(e) {
-    if (e.target && e.target.id === 'quickstartModal') {
-        closeQuickstartWizard();
+    // Previne fechar o modal se o clique começou dentro de algum campo/card e soltou fora (ex: seleção de texto ou clique em campo adjacente)
+    if (e.target && e.target.id === 'quickstartModal' && qsBackdropMouseDownTarget && qsBackdropMouseDownTarget.id === 'quickstartModal') {
+        requestCloseQuickstartWizard();
     }
+    qsBackdropMouseDownTarget = null;
 }
+
+window.requestCloseQuickstartWizard = requestCloseQuickstartWizard;
+window.forceCloseQuickstartWizard = forceCloseQuickstartWizard;
+window.cancelQuickstartExit = cancelQuickstartExit;
+window.confirmQuickstartExit = confirmQuickstartExit;
+window.handleConfirmExitBackdrop = handleConfirmExitBackdrop;
+window.hasQuickstartProgress = hasQuickstartProgress;
 
 function onHeaderBackClick() {
     const dPane = document.getElementById('qsGrillDraftPane');
@@ -3995,6 +4122,10 @@ function backFromGrillQuestions() {
 }
 
 function backToGrillQuestions() {
+    if (qsSynthInterval) {
+        clearInterval(qsSynthInterval);
+        qsSynthInterval = null;
+    }
     const modal = document.getElementById('quickstartModal');
     const modalCard = modal ? modal.querySelector('.quickstart-modal-card') : document.querySelector('.quickstart-modal-card');
     if (modalCard) modalCard.classList.remove('draft-mode');
@@ -5450,6 +5581,311 @@ async function submitGrillAnswers() {
     await executeGenerateDraftFlow(answers);
 }
 
+// ═════════════════════════════════════════════════════════════════════════════
+// QUICKSTART AI SYNTHESIS COCKPIT CONTROLLER
+// ═════════════════════════════════════════════════════════════════════════════
+let qsSynthInterval = null;
+let qsSynthStartTime = 0;
+let qsSynthProgress = 8;
+let qsSynthCurrentStage = 1;
+
+function formatSynthTime(ms) {
+    const totalSec = Math.floor(ms / 1000);
+    const m = String(Math.floor(totalSec / 60)).padStart(2, '0');
+    const s = String(totalSec % 60).padStart(2, '0');
+    return `${m}:${s}`;
+}
+
+function appendQuickstartConsoleLog(msg, type = 'info') {
+    const logBox = document.getElementById('qsSynthConsoleLog');
+    if (!logBox) return;
+
+    const elapsed = qsSynthStartTime ? formatSynthTime(Date.now() - qsSynthStartTime) : '00:00';
+    const line = document.createElement('div');
+    line.className = `qs-synth-log-line ${type === 'done' ? 'is-done' : type === 'highlight' ? 'is-highlight' : ''}`;
+
+    const ts = document.createElement('span');
+    ts.className = 'qs-synth-log-ts';
+    ts.textContent = `[${elapsed}]`;
+
+    const txt = document.createElement('span');
+    txt.className = 'qs-synth-log-msg';
+    txt.textContent = msg;
+
+    line.appendChild(ts);
+    line.appendChild(txt);
+    logBox.appendChild(line);
+
+    logBox.scrollTop = logBox.scrollHeight;
+}
+
+function startQuickstartSynthesisCockpit(projectInfo, answers) {
+    if (qsSynthInterval) {
+        clearInterval(qsSynthInterval);
+        qsSynthInterval = null;
+    }
+
+    qsSynthStartTime = Date.now();
+    qsSynthProgress = 8;
+    qsSynthCurrentStage = 1;
+
+    // 1. Cronômetro e barra
+    const timerVal = document.getElementById('qsSynthTimerVal');
+    if (timerVal) timerVal.textContent = '00:00';
+
+    const bar = document.getElementById('qsSynthProgressBar');
+    const pct = document.getElementById('qsSynthProgressPct');
+    if (bar) bar.style.width = '8%';
+    if (pct) pct.textContent = '8%';
+
+    const stepText = document.getElementById('qsSynthCurrentStepText');
+    if (stepText) stepText.textContent = 'Iniciando análise de especificações...';
+
+    const stageBadge = document.getElementById('qsSynthStageBadge');
+    if (stageBadge) stageBadge.textContent = 'Etapa 1 de 4';
+
+    // 2. Contexto do Modelo e Especificações para Telemetria
+    const provName = window.AI_GATEWAY_CONFIG?.providerName || 
+                    (window.AI_GATEWAY_CONFIG?.provider ? window.AI_GATEWAY_CONFIG.provider.toUpperCase() : 'IA Neural');
+    const activeModel = window.AI_GATEWAY_CONFIG?.model || 'Ativo';
+
+    const specs = Array.isArray(projectInfo?.specs) ? projectInfo.specs : [];
+    const hasSpecs = specs.length > 0;
+
+    // 4. Reset dos 4 cards de pipeline
+    const cardSpecs = document.getElementById('qsSynthCardSpecs');
+    const badgeSpecs = document.getElementById('qsSynthBadgeSpecs');
+    const metricsSpecs = document.getElementById('qsSynthMetricsSpecs');
+
+    const cardProj = document.getElementById('qsSynthCardProject');
+    const badgeProj = document.getElementById('qsSynthBadgeProject');
+    const metricsProj = document.getElementById('qsSynthMetricsProject');
+
+    const cardArch = document.getElementById('qsSynthCardArch');
+    const badgeArch = document.getElementById('qsSynthBadgeArch');
+    const metricsArch = document.getElementById('qsSynthMetricsArch');
+
+    const cardGov = document.getElementById('qsSynthCardGov');
+    const badgeGov = document.getElementById('qsSynthBadgeGov');
+    const metricsGov = document.getElementById('qsSynthMetricsGov');
+
+    if (hasSpecs) {
+        if (cardSpecs) { cardSpecs.className = 'qs-synth-card live-active'; }
+        if (badgeSpecs) { badgeSpecs.className = 'qs-synth-badge active'; badgeSpecs.innerHTML = '<span class="qs-synth-mini-spinner"></span> Analisando'; }
+        if (metricsSpecs) metricsSpecs.textContent = 'Processando documento...';
+    } else {
+        if (cardSpecs) { cardSpecs.className = 'qs-synth-card live-completed'; }
+        if (badgeSpecs) { badgeSpecs.className = 'qs-synth-badge completed'; badgeSpecs.textContent = '✓ Dispensado'; }
+        if (metricsSpecs) metricsSpecs.textContent = 'Sem anexo (Geração direta)';
+    }
+
+    if (cardProj) { cardProj.className = 'qs-synth-card live-pending'; }
+    if (badgeProj) { badgeProj.className = 'qs-synth-badge pending'; badgeProj.textContent = '⏳ Na fila'; }
+    if (metricsProj) metricsProj.textContent = 'Aguardando...';
+
+    if (cardArch) { cardArch.className = 'qs-synth-card live-pending'; }
+    if (badgeArch) { badgeArch.className = 'qs-synth-badge pending'; badgeArch.textContent = '⏳ Na fila'; }
+    if (metricsArch) metricsArch.textContent = 'Aguardando...';
+
+    if (cardGov) { cardGov.className = 'qs-synth-card live-pending'; }
+    if (badgeGov) { badgeGov.className = 'qs-synth-badge pending'; badgeGov.textContent = '⏳ Na fila'; }
+    if (metricsGov) metricsGov.textContent = 'Aguardando...';
+
+    // 5. Console de Telemetria
+    const logBox = document.getElementById('qsSynthConsoleLog');
+    if (logBox) logBox.innerHTML = '';
+
+    appendQuickstartConsoleLog(`🚀 Pipeline de governança ativado para o projeto "${projectInfo?.name || 'projeto'}" (${projectInfo?.stack || 'Geral'})`, 'highlight');
+    if (hasSpecs) {
+        const specKb = Math.round(((specs[0]?.content?.length || 0) / 1024) * 10) / 10;
+        appendQuickstartConsoleLog(`📄 Especificação técnica vinculada: ${specs[0]?.name || 'especificação.md'} (${specKb} KB)`, 'info');
+        appendQuickstartConsoleLog(`🔍 Extraindo requisitos funcionais (RFs), regras de negócio (RNs) e modelo relacional...`, 'info');
+    }
+    appendQuickstartConsoleLog(`🧠 Modelo neural conectado: ${provName} (${activeModel})`, 'info');
+
+    // 6. Cronômetro progressivo em tempo real
+    let ticks = 0;
+    qsSynthInterval = setInterval(() => {
+        const elapsedMs = Date.now() - qsSynthStartTime;
+        if (timerVal) timerVal.textContent = formatSynthTime(elapsedMs);
+        ticks++;
+
+        // Simulação preditiva de fallback suave para garantir dinamismo caso SSE oscile
+        if (hasSpecs) {
+            if (ticks === 12 && qsSynthCurrentStage === 1) {
+                handleQuickstartLiveProgress({
+                    step: 'project-start',
+                    stage: 2,
+                    totalStages: 4,
+                    pct: 28,
+                    detail: 'Sintetizando PROJECT.md: Escopo MVP, RF-001..RF-012 e critérios de aceite...',
+                    log: '✍️ [Passo 1/3] Sintetizando PROJECT.md com mapeamento de requisitos funcionais...'
+                });
+            } else if (ticks === 45 && qsSynthCurrentStage === 2) {
+                handleQuickstartLiveProgress({
+                    step: 'arch-start',
+                    stage: 3,
+                    totalStages: 4,
+                    pct: 58,
+                    detail: 'Arquitetando ARCHITECTURE.md: Dicionário SQL Server, contratos REST e concorrência...',
+                    log: '🏗️ [Passo 2/3] Projetando schema relacional SQL, endpoints REST e concorrência otimista...'
+                });
+            } else if (ticks === 85 && qsSynthCurrentStage === 3) {
+                handleQuickstartLiveProgress({
+                    step: 'gov-start',
+                    stage: 4,
+                    totalStages: 4,
+                    pct: 82,
+                    detail: 'Formalizando CURRENT_STATE.md e ADR-0001 no padrão MADR...',
+                    log: '⚖️ [Passo 3/3] Estruturando roadmap com 3 marcos práticos e decisão de arquitetura...'
+                });
+            } else if (ticks === 120 && qsSynthCurrentStage === 4) {
+                appendQuickstartConsoleLog('⚡ Consolidando validações e revisando contratos de governança com IA...', 'info');
+            }
+        } else {
+            if (ticks === 8 && qsSynthCurrentStage === 1) {
+                handleQuickstartLiveProgress({
+                    step: 'synthesis-start',
+                    stage: 1,
+                    totalStages: 2,
+                    pct: 35,
+                    detail: 'Sintetizando PROJECT.md, ARCHITECTURE.md, CURRENT_STATE.md e ADR-0001...',
+                    log: '⚡ Consultando IA para formalização dos 4 contratos de governança...'
+                });
+            }
+        }
+    }, 1000);
+}
+
+function handleQuickstartLiveProgress(info) {
+    if (!info) return;
+
+    if (info.stage) qsSynthCurrentStage = info.stage;
+
+    // Atualiza barra de progresso
+    if (typeof info.pct === 'number') {
+        qsSynthProgress = Math.max(qsSynthProgress, info.pct);
+        const bar = document.getElementById('qsSynthProgressBar');
+        const pct = document.getElementById('qsSynthProgressPct');
+        if (bar) bar.style.width = `${qsSynthProgress}%`;
+        if (pct) pct.textContent = `${qsSynthProgress}%`;
+    }
+
+    // Badge de estágio
+    const stageBadge = document.getElementById('qsSynthStageBadge');
+    if (stageBadge && info.stage && info.totalStages) {
+        stageBadge.textContent = `Etapa ${info.stage} de ${info.totalStages}`;
+    }
+
+    // Texto do passo atual
+    const stepText = document.getElementById('qsSynthCurrentStepText');
+    if (stepText && (info.detail || info.title)) {
+        stepText.textContent = info.detail || info.title;
+    }
+
+    // Atualiza cards específicos de acordo com o step
+    const cardSpecs = document.getElementById('qsSynthCardSpecs');
+    const badgeSpecs = document.getElementById('qsSynthBadgeSpecs');
+    const metricsSpecs = document.getElementById('qsSynthMetricsSpecs');
+
+    const cardProj = document.getElementById('qsSynthCardProject');
+    const badgeProj = document.getElementById('qsSynthBadgeProject');
+    const metricsProj = document.getElementById('qsSynthMetricsProject');
+
+    const cardArch = document.getElementById('qsSynthCardArch');
+    const badgeArch = document.getElementById('qsSynthBadgeArch');
+    const metricsArch = document.getElementById('qsSynthMetricsArch');
+
+    const cardGov = document.getElementById('qsSynthCardGov');
+    const badgeGov = document.getElementById('qsSynthBadgeGov');
+    const metricsGov = document.getElementById('qsSynthMetricsGov');
+
+    if (info.step === 'specs-start') {
+        if (cardSpecs) cardSpecs.className = 'qs-synth-card live-active';
+        if (badgeSpecs) { badgeSpecs.className = 'qs-synth-badge active'; badgeSpecs.innerHTML = '<span class="qs-synth-mini-spinner"></span> Analisando'; }
+        if (metricsSpecs) metricsSpecs.textContent = 'Mapeando entidades e RFs...';
+    } else if (info.step === 'project-start') {
+        if (cardSpecs) cardSpecs.className = 'qs-synth-card live-completed';
+        if (badgeSpecs) { badgeSpecs.className = 'qs-synth-badge completed'; badgeSpecs.textContent = '✓ Mapeado'; }
+        if (metricsSpecs) metricsSpecs.textContent = 'RFs e RNs extraídos';
+
+        if (cardProj) cardProj.className = 'qs-synth-card live-active';
+        if (badgeProj) { badgeProj.className = 'qs-synth-badge active'; badgeProj.innerHTML = '<span class="qs-synth-mini-spinner"></span> Sintetizando'; }
+        if (metricsProj) metricsProj.textContent = 'Escrevendo escopo e RFs...';
+    } else if (info.step === 'project-done') {
+        if (cardProj) cardProj.className = 'qs-synth-card live-completed';
+        if (badgeProj) { badgeProj.className = 'qs-synth-badge completed'; badgeProj.textContent = '✓ Concluído'; }
+        if (metricsProj && info.chars) metricsProj.textContent = `${Math.round(info.chars / 1024 * 10) / 10} KB gerados`;
+    } else if (info.step === 'arch-start') {
+        if (cardProj) cardProj.className = 'qs-synth-card live-completed';
+        if (badgeProj) { badgeProj.className = 'qs-synth-badge completed'; badgeProj.textContent = '✓ Concluído'; }
+
+        if (cardArch) cardArch.className = 'qs-synth-card live-active';
+        if (badgeArch) { badgeArch.className = 'qs-synth-badge active'; badgeArch.innerHTML = '<span class="qs-synth-mini-spinner"></span> Modelando'; }
+        if (metricsArch) metricsArch.textContent = 'Dicionário SQL e REST...';
+    } else if (info.step === 'arch-done') {
+        if (cardArch) cardArch.className = 'qs-synth-card live-completed';
+        if (badgeArch) { badgeArch.className = 'qs-synth-badge completed'; badgeArch.textContent = '✓ Concluído'; }
+        if (metricsArch && info.chars) metricsArch.textContent = `${Math.round(info.chars / 1024 * 10) / 10} KB gerados`;
+    } else if (info.step === 'gov-start') {
+        if (cardArch) cardArch.className = 'qs-synth-card live-completed';
+        if (badgeArch) { badgeArch.className = 'qs-synth-badge completed'; badgeArch.textContent = '✓ Concluído'; }
+
+        if (cardGov) cardGov.className = 'qs-synth-card live-active';
+        if (badgeGov) { badgeGov.className = 'qs-synth-badge active'; badgeGov.innerHTML = '<span class="qs-synth-mini-spinner"></span> Formalizando'; }
+        if (metricsGov) metricsGov.textContent = 'Roadmap e ADR-0001...';
+    } else if (info.step === 'completed') {
+        if (cardGov) cardGov.className = 'qs-synth-card live-completed';
+        if (badgeGov) { badgeGov.className = 'qs-synth-badge completed'; badgeGov.textContent = '✓ Concluído'; }
+        if (metricsGov) metricsGov.textContent = 'Pronto para revisão';
+    }
+
+    if (info.log) {
+        appendQuickstartConsoleLog(info.log, info.step === 'completed' ? 'done' : 'info');
+    }
+}
+
+async function completeQuickstartSynthesisCockpit(data) {
+    if (qsSynthInterval) {
+        clearInterval(qsSynthInterval);
+        qsSynthInterval = null;
+    }
+
+    // Progresso 100%
+    const bar = document.getElementById('qsSynthProgressBar');
+    const pct = document.getElementById('qsSynthProgressPct');
+    const stepText = document.getElementById('qsSynthCurrentStepText');
+    const stageBadge = document.getElementById('qsSynthStageBadge');
+
+    if (bar) bar.style.width = '100%';
+    if (pct) pct.textContent = '100%';
+    if (stepText) stepText.textContent = '✨ Todos os contratos de governança foram sintetizados com sucesso!';
+    if (stageBadge) stageBadge.textContent = 'Concluído';
+
+    // Todos os cards concluídos
+    const markDone = (cardId, badgeId, metricsId, text) => {
+        const card = document.getElementById(cardId);
+        const badge = document.getElementById(badgeId);
+        const metrics = document.getElementById(metricsId);
+        if (card) card.className = 'qs-synth-card live-completed';
+        if (badge) { badge.className = 'qs-synth-badge completed'; badge.textContent = '✓ Concluído'; }
+        if (metrics && text) metrics.textContent = text;
+    };
+
+    const c = data.contracts || {};
+    markDone('qsSynthCardSpecs', 'qsSynthBadgeSpecs', 'qsSynthMetricsSpecs', 'Análise profunda concluída');
+    markDone('qsSynthCardProject', 'qsSynthBadgeProject', 'qsSynthMetricsProject', `${Math.round(((c.projectMd || '').length / 1024) * 10) / 10} KB`);
+    markDone('qsSynthCardArch', 'qsSynthBadgeArch', 'qsSynthMetricsArch', `${Math.round(((c.architectureMd || '').length / 1024) * 10) / 10} KB`);
+    markDone('qsSynthCardGov', 'qsSynthBadgeGov', 'qsSynthMetricsGov', `${Math.round((((c.currentStateMd || '').length + (c.adrMd || '').length) / 1024) * 10) / 10} KB`);
+
+    appendQuickstartConsoleLog('✨ Todos os 4 contratos de governança foram sintetizados com sucesso! Carregando painel de revisão e governança...', 'done');
+
+    // Pausa suave de 600ms para o dev ver a conclusão
+    await new Promise(r => setTimeout(r, 600));
+}
+
+window.handleQuickstartLiveProgress = handleQuickstartLiveProgress;
+
 async function executeGenerateDraftFlow(answers) {
     const modal = document.getElementById('quickstartModal');
     const modalCard = modal ? modal.querySelector('.quickstart-modal-card') : document.querySelector('.quickstart-modal-card');
@@ -5460,11 +5896,13 @@ async function executeGenerateDraftFlow(answers) {
     const loadingEl = document.getElementById('qsGrillLoadingDraft');
     const wrapEl = document.getElementById('qsGrillDraftContentWrap');
     const btnCommit = document.getElementById('btnCommitGrill');
+    const draftActions = document.querySelector('#qsGrillDraftPane .qs-form-actions');
 
     if (qPane) qPane.style.display = 'none';
     if (dPane) dPane.style.display = 'flex';
     if (loadingEl) loadingEl.style.display = 'flex';
     if (wrapEl) wrapEl.style.display = 'none';
+    if (draftActions) draftActions.style.display = 'none';
     if (btnCommit) btnCommit.disabled = true;
 
     const headerBackBtn = document.getElementById('qsHeaderBackBtn');
@@ -5474,8 +5912,16 @@ async function executeGenerateDraftFlow(answers) {
     }
     const titleEl = document.getElementById('qsTitle');
     if (titleEl) {
-        titleEl.textContent = '📄 Contratos Prontos para Revisão';
+        titleEl.textContent = '⚡ Síntese Neural de Governança';
     }
+    const subtitleEl = document.getElementById('qsSubtitle');
+    const originalSubtitle = subtitleEl ? subtitleEl.textContent : '';
+    if (subtitleEl) {
+        subtitleEl.textContent = 'O Arquiteto de IA está processando requisitos e consolidando os contratos vivos...';
+    }
+
+    // Inicia Cockpit interativo
+    startQuickstartSynthesisCockpit(currentGrillProjectInfo, answers);
 
     try {
         const res = await fetch('/api/projects/quickstart/draft', {
@@ -5506,11 +5952,18 @@ async function executeGenerateDraftFlow(answers) {
             adrMd: rawContracts.adrMd || rawContracts['ADR-0001'] || rawContracts['ADR-0001.md'] || rawContracts.adr || ''
         };
 
+        // Finaliza Cockpit
+        await completeQuickstartSynthesisCockpit(data);
+
         const badge = document.getElementById('qsGrillDraftModelBadge');
         if (badge) badge.textContent = `✨ ${data.provider ? data.provider.toUpperCase() : 'IA'} (${data.model || 'ativo'})`;
 
+        if (titleEl) titleEl.textContent = '📄 Contratos Prontos para Revisão';
+        if (subtitleEl) subtitleEl.textContent = originalSubtitle || 'Governança, decisões de arquitetura e memória persistente em menos de 3 minutos.';
+
         if (loadingEl) loadingEl.style.display = 'none';
         if (wrapEl) wrapEl.style.display = 'flex';
+        if (draftActions) draftActions.style.display = 'flex';
         if (btnCommit) btnCommit.disabled = false;
 
         currentActiveContract = 'projectMd';
@@ -5523,13 +5976,17 @@ async function executeGenerateDraftFlow(answers) {
         switchQsContractMode('preview');
         applyQsContractZoom(currentQsContractZoom || 80);
     } catch (err) {
+        if (qsSynthInterval) { clearInterval(qsSynthInterval); qsSynthInterval = null; }
         showAiErrorModal(err, { context: 'quickstart-draft' });
         backToGrillQuestions();
     } finally {
-        if (loadingEl) loadingEl.style.display = 'none';
+        if (qsSynthInterval) { clearInterval(qsSynthInterval); qsSynthInterval = null; }
+        if (loadingEl && wrapEl && wrapEl.style.display === 'flex') {
+            loadingEl.style.display = 'none';
+        }
         const dPane = document.getElementById('qsGrillDraftPane');
-        if (dPane && dPane.style.display !== 'none') {
-            if (wrapEl) wrapEl.style.display = 'flex';
+        if (dPane && dPane.style.display !== 'none' && wrapEl && wrapEl.style.display === 'flex') {
+            if (draftActions) draftActions.style.display = 'flex';
             if (btnCommit) btnCommit.disabled = false;
         }
     }

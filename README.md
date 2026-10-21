@@ -51,7 +51,7 @@ Ao criar um novo projeto no Cockpit (botão **`+ Novo Projeto`** ou via `npm run
 ### 🧠 Como a Sabatina Técnica Ajuda o Desenvolvedor:
 
 ```
-Nome do Projeto ──► [Sabatina com IA] ──► [Accordion Focado] ──► [Auditoria em Tempo Real] ──► [Síntese dos 4 Contratos] ──► [Aprovação Humana]
+Nome do Projeto ──► [Sabatina com IA] ──► [Auditoria & JEV] ──► [Cockpit de Síntese em Tempo Real (4 Cards & SSE)] ──► [Aprovação Humana]
 ```
 
 1. **Perguntas Cirúrgicas e Contextualizadas**:
@@ -61,19 +61,24 @@ Nome do Projeto ──► [Sabatina com IA] ──► [Accordion Focado] ──�
    - O dev pode escolher entre **chips de resposta rápida em 1 clique** ou digitar livremente no campo de texto, com avanço automático fluído.
 3. **Auditoria de Respostas Incoerentes**:
    - Se o dev digitar respostas desconexas ou vagas, o motor de auditoria analisa a coerência arquitetural, aponta o diagnóstico e oferece **sugestões práticas em 1 clique** para blindar a especificação.
-4. **Síntese Automática dos 4 Contratos Vivos**:
+4. **Cockpit de Síntese Neural em Tempo Real (Zero Tela Congelada & SSE)**:
+   - Ao iniciar a geração, o sistema abre uma **esteira interativa em tempo real com 4 cards de governança** (`📑 Extração de Requisitos`, `📄 PROJECT.md`, `🏗️ ARCHITECTURE.md` e `⚖️ CURRENT_STATE.md & ADR-0001`).
+   - Acompanhamento com spinners ativos, transição automática para concluído (`✓`), cronômetro decorrido e **Console de Telemetria Técnica** transmitido via Server-Sent Events diretamente da inferência de IA.
+5. **Síntese Automática dos 4 Contratos Vivos**:
    - Com as respostas consolidadas, a IA sintetiza atomicamente os 4 pilares de governança:
      - `PROJECT.md`: Visão executiva, stack homologada e regras de negócio;
      - `ARCHITECTURE.md`: Diagrama de componentes, fluxos de dados e integrações;
      - `CURRENT_STATE.md`: Estado atual e roadmap calibrado em 3 marcos objetivos;
      - `DECISIONS/ADR-0001-stack-inicial.md`: O primeiro registro de decisão arquitetural formalizado.
-5. **Barra de Refinamento Iterativo ("Prompt Vivo Cirúrgico com Motor JEV")**:
+6. **Barra de Refinamento Iterativo ("Prompt Vivo Cirúrgico com Motor JEV")**:
    - Governado pelo motor local **`RulesDecisionProvider`** (0ms de latência e zero tokens gastos antes da decisão).
    - **Isolamento Cirúrgico**: Alterações de tabelas/dados afetam **estritamente** `ARCHITECTURE.md`, sem poluir `PROJECT.md` ou `CURRENT_STATE.md`.
    - **Clarificação Humana (*Human-in-the-Loop*)**: Ao detectar instruções vagas (pagamentos, mensageria, autenticação ou deploy vagos), o sistema abre modal de dúvida técnica com opções de resposta rápida em chips de 1 clique.
    - **Auto-Switch & Undo**: Alterna suavemente para a aba do documento modificado com animação de destaque e permite reverter instantaneamente pelo botão `↺ Desfazer`.
-6. **Aprovação Humana Obrigatória**:
-   - **Zero Fabricação**: Nada é gravado fisicamente em disco até que o desenvolvedor clique expressamente em `💾 Aprovar e Criar Projeto no Disco`.
+7. **Guarda Anti-Fechamento Involuntário**:
+   - Proteção inteligente contra cliques acidentais fora do modal ou tecla `Escape` durante as etapas de preenchimento. Um diálogo de confirmação impede que seu trabalho seja perdido antes da gravação.
+8. **Aprovação Humana Obrigatória**:
+   - **Zero Fabricação**: Nada é gravado fisicamente em disco até que o desenvolvedor clique expressamente em `💾 Aprovar e Criar Projeto no Disco`. Ao gravar com sucesso, o modal transiciona para o Passo 3 e pode ser concluído imediatamente.
 
 ---
 

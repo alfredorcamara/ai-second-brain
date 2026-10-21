@@ -127,6 +127,14 @@ class VaultManager {
                     }
                 } catch (e) {}
             });
+            this.eventSource.addEventListener('quickstart-progress', (event) => {
+                try {
+                    const info = JSON.parse(event.data);
+                    if (typeof handleQuickstartLiveProgress === 'function') {
+                        handleQuickstartLiveProgress(info);
+                    }
+                } catch (e) {}
+            });
         } catch (e) {
             console.warn('[Vault] SSE não suportado:', e);
         }

@@ -1367,7 +1367,7 @@
                 <h2 id="qsTitle" class="qs-title">Adicionar Projeto ao AI Second Brain</h2>
                 <p class="qs-subtitle">Governança, decisões de arquitetura e memória persistente em menos de 3 minutos.
                 </p>
-                <button class="qs-close-btn" onclick="closeQuickstartWizard()" aria-label="Fechar modal">✕</button>
+                <button class="qs-close-btn" onclick="requestCloseQuickstartWizard()" aria-label="Fechar modal">✕</button>
             </div>
 
             <!-- Stepper Progress -->
@@ -1707,11 +1707,133 @@
                     <!-- Pane 2.B: Rascunho dos Contratos & Refinamento ("Prompt Vivo") -->
                     <div id="qsGrillDraftPane" class="qs-grill-pane" style="display: none;">
 
-                        <div id="qsGrillLoadingDraft" class="qs-grill-loading" style="display: none;">
-                            <div class="qs-grill-spinner"></div>
-                            <p class="qs-grill-loading-title">Sintetizando contratos de governança...</p>
-                            <small class="qs-grill-loading-sub">Escrevendo PROJECT.md, ARCHITECTURE.md, CURRENT_STATE.md
-                                e ADR-0001.</small>
+                        <!-- Cockpit de Síntese em Tempo Real -->
+                        <div id="qsGrillLoadingDraft" class="qs-grill-loading qs-synth-cockpit" style="display: none;">
+                            <!-- Header da Síntese & Telemetria (Reorganizado & Minimalista) -->
+                            <div class="qs-synth-header">
+                                <div class="qs-synth-header-top">
+                                    <div class="qs-synth-title-group">
+                                        <div class="qs-synth-icon-wrap">
+                                            <div class="qs-synth-spinner-ring"></div>
+                                            <span class="qs-synth-center-icon">⚡</span>
+                                        </div>
+                                        <h3 class="qs-synth-main-title" id="qsSynthMainTitle">Arquiteto de IA Projetando a Governança</h3>
+                                        <span class="qs-synth-stage-badge" id="qsSynthStageBadge">Etapa 1 de 4</span>
+                                    </div>
+                                    <div class="qs-synth-timer-wrap">
+                                        <span class="qs-synth-pill qs-synth-pill-timer" id="qsSynthTimerPill" title="Tempo decorrido">
+                                            ⏱️ <span id="qsSynthTimerVal">00:00</span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <p class="qs-synth-sub-desc" id="qsSynthSubDesc">
+                                    Transformando especificações técnicas e decisões da sabatina em contratos vivos de governança.
+                                </p>
+                            </div>
+
+                            <!-- Barra de Progresso com Pulso Glow -->
+                            <div class="qs-synth-progress-container">
+                                <div class="qs-synth-progress-track">
+                                    <div class="qs-synth-progress-bar" id="qsSynthProgressBar" style="width: 8%;">
+                                        <div class="qs-synth-progress-laser"></div>
+                                    </div>
+                                </div>
+                                <div class="qs-synth-progress-meta">
+                                    <span class="qs-synth-progress-step" id="qsSynthCurrentStepText">Iniciando análise de especificações...</span>
+                                    <span class="qs-synth-progress-pct" id="qsSynthProgressPct">8%</span>
+                                </div>
+                            </div>
+
+                            <!-- Grid do Pipeline de Contratos (4 Cards Interativos) -->
+                            <div class="qs-synth-cards-grid" id="qsSynthCardsGrid">
+                                <!-- Card: Specs Extraction -->
+                                <div class="qs-synth-card live-active" id="qsSynthCardSpecs">
+                                    <div class="qs-synth-card-top">
+                                        <span class="qs-synth-card-icon">📑</span>
+                                        <div class="qs-synth-card-info">
+                                            <div class="qs-synth-card-name" title="Extração de Requisitos & Regras de Negócio">Extração de Requisitos</div>
+                                            <div class="qs-synth-card-sub" id="qsSynthCardSpecsSub">Mapeamento de RFs e RNs</div>
+                                        </div>
+                                        <span class="qs-synth-badge active" id="qsSynthBadgeSpecs">
+                                            <span class="qs-synth-mini-spinner"></span> Analisando
+                                        </span>
+                                    </div>
+                                    <div class="qs-synth-card-body" id="qsSynthDescSpecs">
+                                        Lendo anexo para extrair requisitos funcionais, regras de negócio e modelo relacional.
+                                    </div>
+                                    <div class="qs-synth-card-status" id="qsSynthMetricsSpecs">Processando documento...</div>
+                                </div>
+
+                                <!-- Card: PROJECT.md -->
+                                <div class="qs-synth-card live-pending" id="qsSynthCardProject">
+                                    <div class="qs-synth-card-top">
+                                        <span class="qs-synth-card-icon">📄</span>
+                                        <div class="qs-synth-card-info">
+                                            <div class="qs-synth-card-name" title="PROJECT.md — Escopo, Visão & Personas">PROJECT.md</div>
+                                            <div class="qs-synth-card-sub">Escopo, Visão & Personas</div>
+                                        </div>
+                                        <span class="qs-synth-badge pending" id="qsSynthBadgeProject">⏳ Na fila</span>
+                                    </div>
+                                    <div class="qs-synth-card-body" id="qsSynthDescProject">
+                                        Visão executiva, detalhamento exaustivo de RF-001..RF-012, personas e critérios de aceite.
+                                    </div>
+                                    <div class="qs-synth-card-status" id="qsSynthMetricsProject">Aguardando...</div>
+                                </div>
+
+                                <!-- Card: ARCHITECTURE.md -->
+                                <div class="qs-synth-card live-pending" id="qsSynthCardArch">
+                                    <div class="qs-synth-card-top">
+                                        <span class="qs-synth-card-icon">🏗️</span>
+                                        <div class="qs-synth-card-info">
+                                            <div class="qs-synth-card-name" title="ARCHITECTURE.md — Modelagem & Engenharia">ARCHITECTURE.md</div>
+                                            <div class="qs-synth-card-sub">Modelagem & Engenharia</div>
+                                        </div>
+                                        <span class="qs-synth-badge pending" id="qsSynthBadgeArch">⏳ Na fila</span>
+                                    </div>
+                                    <div class="qs-synth-card-body" id="qsSynthDescArch">
+                                        Dicionário de dados SQL Server, tabelas relacionais, rotas REST, concorrência e LGPD.
+                                    </div>
+                                    <div class="qs-synth-card-status" id="qsSynthMetricsArch">Aguardando...</div>
+                                </div>
+
+                                <!-- Card: CURRENT_STATE.md & ADR-0001 -->
+                                <div class="qs-synth-card live-pending" id="qsSynthCardGov">
+                                    <div class="qs-synth-card-top">
+                                        <span class="qs-synth-card-icon">⚖️</span>
+                                        <div class="qs-synth-card-info">
+                                            <div class="qs-synth-card-name" title="CURRENT_STATE.md & ADR-0001 (Padrão MADR)">CURRENT_STATE.md & ADR</div>
+                                            <div class="qs-synth-card-sub">Roadmap & Decisão MADR</div>
+                                        </div>
+                                        <span class="qs-synth-badge pending" id="qsSynthBadgeGov">⏳ Na fila</span>
+                                    </div>
+                                    <div class="qs-synth-card-body" id="qsSynthDescGov">
+                                        Roadmap em 3 marcos práticos para o Cockpit e decisão arquitetural ADR-0001 no padrão MADR.
+                                    </div>
+                                    <div class="qs-synth-card-status" id="qsSynthMetricsGov">Aguardando...</div>
+                                </div>
+                            </div>
+
+                            <!-- Live Architecture Telemetry & Feed (Console Estilizado) -->
+                            <div class="qs-synth-console">
+                                <div class="qs-synth-console-top">
+                                    <div class="qs-synth-console-dots">
+                                        <span class="dot dot-red"></span>
+                                        <span class="dot dot-yellow"></span>
+                                        <span class="dot dot-green"></span>
+                                    </div>
+                                    <span class="qs-synth-console-title">TELEMETRIA EM TEMPO REAL — PIPELINE DE ARQUITETURA</span>
+                                    <span class="qs-synth-console-live-tag">● LIVE STREAM</span>
+                                </div>
+                                <div class="qs-synth-console-log" id="qsSynthConsoleLog">
+                                    <!-- Entradas de log dinâmicas com timestamps -->
+                                </div>
+                            </div>
+
+                            <!-- Footer Informativo -->
+                            <div class="qs-synth-footer-hint" id="qsSynthFooterHint">
+                                <span class="qs-synth-pulse-dot"></span>
+                                <span>A síntese está ativa e transparente. Em menos de 2 minutos você terá todos os contratos prontos para revisar e editar.</span>
+                            </div>
                         </div>
 
                         <div id="qsGrillDraftContentWrap" class="qs-grill-draft-wrap">
@@ -1868,10 +1990,10 @@
                                 📄 Abrir Documentação
                             </button>
                             <button type="button" class="btn btn-secondary"
-                                onclick="showView('graph'); closeQuickstartWizard();">
+                                onclick="showView('graph'); closeQuickstartWizard(true);">
                                 🔮 Ver no Grafo Neural 3D
                             </button>
-                            <button type="button" class="btn btn-secondary" onclick="closeQuickstartWizard()">
+                            <button type="button" class="btn btn-secondary" onclick="closeQuickstartWizard(true)">
                                 Concluir
                             </button>
                         </div>
@@ -2036,6 +2158,45 @@
                     <button type="button" class="btn btn-primary ai-error-btn-config" id="btnAiErrorOpenConfig"
                         onclick="handleAiErrorOpenConfig()">
                         ⚙️ Abrir Configurações de IA (BYOK)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Saída / Descarte do Quickstart Studio -->
+    <div id="qsConfirmExitModal" class="quickstart-modal-backdrop" style="display: none; z-index: 10100;"
+        onclick="handleConfirmExitBackdrop(event)">
+        <div class="quickstart-modal-card qs-val-modal-card qs-confirm-exit-card" role="dialog" aria-modal="true"
+            aria-labelledby="qsConfirmExitTitle">
+            <div class="qs-header qs-val-header qs-confirm-exit-header">
+                <div class="qs-badge qs-confirm-exit-badge">⚠️ CONFIRMAÇÃO DE SAÍDA</div>
+                <h2 id="qsConfirmExitTitle" class="qs-title">Descartar Configuração do Projeto?</h2>
+                <p class="qs-subtitle">Você já iniciou as etapas deste projeto e há dados em elaboração.</p>
+                <button class="qs-close-btn" onclick="cancelQuickstartExit()" aria-label="Fechar confirmação">✕</button>
+            </div>
+            <div class="qs-body qs-val-body">
+                <div class="qs-val-card-box qs-confirm-exit-box">
+                    <div class="qs-val-row">
+                        <span class="qs-val-label">⚠️ Atenção:</span>
+                        <div class="qs-confirm-exit-desc">
+                            Se fechar o assistente agora, as informações preenchidas, respostas da sabatina técnica e contratos em síntese serão <strong>descartados</strong>.
+                        </div>
+                    </div>
+                    <div class="qs-val-row" style="margin-top: 6px;">
+                        <span class="qs-val-label">💡 Para Salvar:</span>
+                        <div style="font-size: 11.5px; color: var(--text-tertiary); line-height: 1.4;">
+                            Para persistir os arquivos no seu disco com governança completa, continue até a última etapa e clique no botão verde <strong>"💾 Aprovar e Criar Projeto no Disco"</strong>.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="qs-val-actions qs-confirm-exit-actions">
+                    <button type="button" class="btn btn-primary" id="btnCancelQuickstartExit" onclick="cancelQuickstartExit()">
+                        ← Continuar Preenchendo
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-danger-ghost" id="btnConfirmQuickstartExit" onclick="confirmQuickstartExit()">
+                        Sim, Descartar e Sair
                     </button>
                 </div>
             </div>

@@ -919,6 +919,13 @@
       },
       howItWorks: [
         {
+          title: { pt: 'Cockpit de Síntese Neural em Tempo Real (Zero Tela Congelada)', en: 'Live Neural Synthesis Cockpit (Zero Frozen Screen)' },
+          desc: {
+            pt: 'Durante a geração dos contratos, o sistema exibe uma esteira interativa de 4 cards com streaming de telemetria técnica via Server-Sent Events (SSE). O dev acompanha a extração de requisitos, escopo, arquitetura e decisões com cronômetro decorrido e status em tempo real.',
+            en: 'During contract generation, an interactive 4-card pipeline streams real-time technical telemetry via Server-Sent Events (SSE). Track requirement extraction, scope, architecture, and decisions live with an elapsed timer and status updates.'
+          }
+        },
+        {
           title: { pt: 'Síntese Atômica dos 4 Contratos', en: 'Atomic Synthesis of 4 Contracts' },
           desc: {
             pt: 'Gera simultaneamente: `PROJECT.md` (visão executiva e regras), `ARCHITECTURE.md` (diagramas e componentes), `CURRENT_STATE.md` (roadmap em 3 marcos) e `DECISIONS/ADR-0001` (primeiro registro formal de decisão).',
@@ -930,6 +937,13 @@
           desc: {
             pt: 'Diferente de IAs convencionais que reescrevem tudo desnecessariamente provocando regressões, o motor JEV identifica o contrato exato que precisa mudar. Regras de negócio não vazam para diagramas técnicos e vice-versa.',
             en: 'Unlike conventional AIs that rewrite everything and cause regressions, JEV targets strictly the relevant contract. Business rules do not leak into technical schemas.'
+          }
+        },
+        {
+          title: { pt: 'Guarda Anti-Descarte Acidental & Confirmação de Saída', en: 'Accidental Exit Guard & Safe Confirmation' },
+          desc: {
+            pt: 'Protege o desenvolvedor contra saídas acidentais no meio do processo. Cliques fora do modal, botão ✕ ou tecla Escape acionam confirmação inteligente, impedindo a perda de respostas e rascunhos antes da aprovação final.',
+            en: 'Protects against accidental exits during setup. Backdrop clicks, close button, or Escape key trigger a smart confirmation dialog, ensuring answers and drafts are never lost prior to final approval.'
           }
         },
         {

@@ -81,13 +81,18 @@ No portal web (`http://localhost:3000`), clique no botão **`+ Novo Projeto`** n
    - O Arquiteto de IA formula de 3 a 4 perguntas técnicas dinâmicas adaptadas à stack escolhida (ex: ORM, Mensageria, Estratégia de Autenticação).
    - **Accordion Inteligente / Modo Focado**: Apenas 1 pergunta permanece expandida por vez. Ao clicar em uma opção de resposta rápida (chip), o valor é preenchido e o sistema avança suavemente (220ms) para a próxima pergunta pendente, eliminando rolagens e mantendo os botões de ação sempre visíveis.
    - **Auditoria de Respostas**: O sistema valida se as respostas são coerentes e não estão vazias antes de sintetizar os contratos.
+   - **Cockpit de Síntese Neural em Tempo Real (Zero Tela Congelada & SSE)**:
+     - Ao clicar em *"Gerar Contratos com IA"*, a interface não fica opaca ou travada: abre-se a esteira visual com 4 cards (`📑 Extração de Requisitos`, `📄 PROJECT.md`, `🏗️ ARCHITECTURE.md`, `⚖️ CURRENT_STATE.md & ADR-0001`).
+     - O progresso de cada contrato é transmitido em tempo real pelo backend via Server-Sent Events (SSE), exibindo cronômetro, velocidade de geração e console de telemetria técnica viva.
    - **Refinamento Cirúrgico com "Prompt Vivo" & Motor JEV**:
      - **Governança JEV First (Nível 4 Composto)**: O motor nativo local `RulesDecisionProvider` (`scripts/decision-provider.js`) avalia o feedback em 0ms antes de qualquer chamada generativa.
      - **Isolamento e Não-Poluição**: Instruções de tabelas, schemas SQL ou endpoints afetam **exclusivamente** `ARCHITECTURE.md`, sem duplicar dados em `PROJECT.md` ou `CURRENT_STATE.md`.
      - **Detecção de Dúvida Técnica (*Human-in-the-Loop*)**: Ao detectar ambiguidades em domínios críticos (como pagamentos, mensageria, autenticação ou deploy vagos), o sistema não alucina: abre o modal de clarificação técnica com perguntas e chips de sugestões em 1 clique (preenchimento mandatório).
      - **Auto-Switch Visual**: Alterna automaticamente para a aba do contrato alterado com animação de destaque (`tab-flash-active`).
      - **Botão `↺ Desfazer` (Undo)**: Permite reverter instantaneamente qualquer alteração da IA para o rascunho anterior sem recarregar a tela.
-   - **Aprovação Humana Obrigatória**: O projeto só é gravado no disco após clique explícito em `💾 Aprovar e Criar Projeto no Disco`.
+   - **Guarda Anti-Descarte Acidental & Confirmação de Saída**:
+     - Protege o formulário contra saídas involuntárias. Se você clicar fora do modal, no botão `✕` ou pressionar `Escape` enquanto preenche o projeto no Passo 2, um diálogo em dark glass solicita confirmação (*"← Continuar Preenchendo"* vs *"Sim, Descartar e Sair"*), garantindo que suas respostas da sabatina nunca sejam perdidas.
+   - **Aprovação Humana Obrigatória**: O projeto só é gravado no disco após clique explícito em `💾 Aprovar e Criar Projeto no Disco`. Ao gravar com sucesso, o fluxo transiciona para o Passo 3 ("Conectado!") e pode ser concluído imediatamente sem confirmações.
 
 ---
 

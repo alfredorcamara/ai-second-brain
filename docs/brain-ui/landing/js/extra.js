@@ -214,4 +214,25 @@
 
     window.openPromoVideo9x16 = openPromo9x16;
     window.closePromoVideo9x16 = closePromo9x16;
+
+    // Sincronização dinâmica universal de versão (Localhost e GitHub Pages)
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const versionUrl = isLocal
+        ? '/api/system/version'
+        : 'https://raw.githubusercontent.com/alfredorcamara/ai-second-brain/main/package.json';
+
+    fetch(versionUrl)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+            if (data && data.version) {
+                const pillText = $('.hero-version-pill strong');
+                if (pillText) pillText.textContent = `v${data.version} Oficial`;
+                const pillLink = $('.hero-version-pill');
+                if (pillLink) {
+                    pillLink.href = `https://github.com/alfredorcamara/ai-second-brain/releases/tag/v${data.version}`;
+                    pillLink.title = `Ver Release Oficial v${data.version} no GitHub`;
+                }
+            }
+        })
+        .catch(() => {});
 })();
