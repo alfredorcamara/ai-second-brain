@@ -71,8 +71,11 @@
         }
     };
 
-    const openModal = (syncTime = false) => {
+    let videoModalTrigger = null;
+
+    const openModal = (syncTime = false, triggerEl = null) => {
         if (!modal) return;
+        videoModalTrigger = triggerEl || document.activeElement;
         const isMobile = window.innerWidth <= 768;
         if (modalFrame) modalFrame.classList.toggle('is-mobile-reels', isMobile);
         syncVideoSource(modalVideo);
@@ -86,9 +89,14 @@
             inlineVideo.pause();
         }
 
+        modal.removeAttribute('inert');
         modal.classList.add('active');
         modal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
+
+        if (modalClose) {
+            modalClose.focus();
+        }
 
         if (modalVideo) {
             modalVideo.play().catch(() => { });
@@ -97,8 +105,17 @@
 
     const closeModal = () => {
         if (!modal) return;
+
+        // Move foco para fora antes de setar aria-hidden="true" (WAI-ARIA)
+        if (videoModalTrigger && typeof videoModalTrigger.focus === 'function' && !modal.contains(videoModalTrigger)) {
+            videoModalTrigger.focus();
+        } else if (document.activeElement && modal.contains(document.activeElement)) {
+            document.activeElement.blur();
+        }
+
         modal.classList.remove('active');
         modal.setAttribute('aria-hidden', 'true');
+        modal.setAttribute('inert', '');
         document.body.style.overflow = '';
         if (modalVideo) {
             modalVideo.pause();
@@ -108,8 +125,8 @@
         $$('.card-video-media').forEach(v => v.play().catch(() => { }));
     };
 
-    if (heroBtn) heroBtn.addEventListener('click', () => openModal(false));
-    if (inlineExpand) inlineExpand.addEventListener('click', () => openModal(true));
+    if (heroBtn) heroBtn.addEventListener('click', () => openModal(false, heroBtn));
+    if (inlineExpand) inlineExpand.addEventListener('click', () => openModal(true, inlineExpand));
     if (modalClose) modalClose.addEventListener('click', closeModal);
     if (modalBackdrop) modalBackdrop.addEventListener('click', closeModal);
 
@@ -139,6 +156,7 @@
         promo9x16Close = $('#promo-modal-9x16-close'),
         promo9x16Backdrop = $('#promo-modal-9x16-backdrop'),
         promo9x16Video = $('#promo-video-9x16-player');
+    let promo9x16TriggerBtn = null;
 
     const openPromo9x16 = (videoSrc, posterSrc, e) => {
         if (e && e.stopPropagation) {
@@ -146,6 +164,8 @@
             e.preventDefault();
         }
         if (!promo9x16Modal) return;
+
+        promo9x16TriggerBtn = (e && (e.currentTarget || e.target)) || document.activeElement;
 
         // 1. Pausa o grafo 3D Three.js e vídeos dos cards para liberar 100% da GPU para o player
         if (g) g.stop();
@@ -163,9 +183,14 @@
             }
         }
 
+        promo9x16Modal.removeAttribute('inert');
         promo9x16Modal.classList.add('active');
         promo9x16Modal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
+
+        if (promo9x16Close) {
+            promo9x16Close.focus();
+        }
 
         if (promo9x16Video) {
             const playPromise = promo9x16Video.play();
@@ -181,8 +206,18 @@
 
     const closePromo9x16 = () => {
         if (!promo9x16Modal) return;
+
+        // Move/restaura foco para fora antes de setar aria-hidden="true" (WAI-ARIA)
+        // Evita a violação "Blocked aria-hidden on an element because its descendant retained focus"
+        if (promo9x16TriggerBtn && typeof promo9x16TriggerBtn.focus === 'function' && !promo9x16Modal.contains(promo9x16TriggerBtn)) {
+            promo9x16TriggerBtn.focus();
+        } else if (document.activeElement && promo9x16Modal.contains(document.activeElement)) {
+            document.activeElement.blur();
+        }
+
         promo9x16Modal.classList.remove('active');
         promo9x16Modal.setAttribute('aria-hidden', 'true');
+        promo9x16Modal.setAttribute('inert', '');
         document.body.style.overflow = '';
 
         if (promo9x16Video) {

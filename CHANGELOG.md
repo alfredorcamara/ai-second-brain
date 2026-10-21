@@ -26,6 +26,10 @@ e este projeto adere ao [Versionamento Semântico (SemVer)](https://semver.org/l
     - Snapshot `vault-data.js` regenerado com zero resquícios de fornecedores específicos.
 
 ### 🛡️ Corrigido
+- **Acessibilidade WAI-ARIA & Ciclo de Foco em Modais (Inert Attribute)**:
+  - **Prevenção da Violação Chromium (`Blocked aria-hidden because its descendant retained focus`)**:
+    - Ajustado o ciclo de vida de fechamento em todos os modais da Landing Page (`#promo-video-modal-9x16`, `#feature-modal`, `#video-modal`) e gaveta de leitura Markdown (`#reader`), restaurando o foco para o elemento disparador ou executando `blur()` defensivo **antes** de atribuir `aria-hidden="true"`.
+    - Adoção nativa do atributo `inert` em todos os contêineres modais quando inativos, prevenindo interações indesejadas, foco de teclado fantasma e leituras desnecessárias por tecnologias assistivas.
 - **Refinamento Visual & Geométrico no Diagrama `ai-decision-routing.svg`**:
   - **Alinhamento e Camada dos Badges "SIM ➔"**:
     - Badges `SIM ➔` perfeitamente centralizados no eixo horizontal de cada decisão (`y = 195`, `y = 335`, `y = 450`).

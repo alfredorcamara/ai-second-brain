@@ -56,19 +56,32 @@
     };
 
     const reader = $('#reader');
+    let lastReaderTrigger = null;
+
     function openDoc(n) {
         if (!n) return;
+        lastReaderTrigger = document.activeElement;
         $('#rpath').textContent = n.path || n.label;
         $('#rbody').innerHTML = md(n.content || '# ' + n.label);
+        reader.removeAttribute('inert');
         reader.classList.add('on');
         reader.setAttribute('aria-hidden', 'false');
+        if ($('#rclose')) $('#rclose').focus();
         g.focusNode(n);
         g.pulseSurge();
     }
 
     const closeDoc = () => {
+        // Move/restaura foco para fora antes de setar aria-hidden="true" (WAI-ARIA)
+        if (lastReaderTrigger && typeof lastReaderTrigger.focus === 'function' && !reader.contains(lastReaderTrigger)) {
+            lastReaderTrigger.focus();
+        } else if (document.activeElement && reader.contains(document.activeElement)) {
+            document.activeElement.blur();
+        }
+
         reader.classList.remove('on');
         reader.setAttribute('aria-hidden', 'true');
+        reader.setAttribute('inert', '');
         g.selectedNode = null;
         g.resetView();
     };

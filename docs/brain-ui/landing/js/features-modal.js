@@ -1263,6 +1263,7 @@
 
     renderFeature(currentIndex);
 
+    modal.removeAttribute('inert');
     modal.classList.add('active');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
@@ -1273,16 +1274,21 @@
 
   function closeModal() {
     if (!modal.classList.contains('active')) return;
+
+    // Retorna foco para o elemento original ANTES de setar aria-hidden="true" (WAI-ARIA)
+    if (lastActiveElement && typeof lastActiveElement.focus === 'function' && !modal.contains(lastActiveElement)) {
+      lastActiveElement.focus();
+    } else if (document.activeElement && modal.contains(document.activeElement)) {
+      document.activeElement.blur();
+    }
+
     modal.classList.remove('active');
     modal.setAttribute('aria-hidden', 'true');
+    modal.setAttribute('inert', '');
     document.body.style.overflow = '';
 
     if (headerVideo) {
       headerVideo.pause();
-    }
-
-    if (lastActiveElement && typeof lastActiveElement.focus === 'function') {
-      lastActiveElement.focus();
     }
   }
 

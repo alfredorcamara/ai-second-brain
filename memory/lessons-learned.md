@@ -340,7 +340,18 @@
 1. **Eliminação de Referências de Fornecedor Hardcoded em Recursos Legados**: Recursos concebidos originalmente para um único provedor (como o Research Lab inicial com Groq) devem ser completamente agnósticos quando o sistema evolui para um AI Gateway Universal. Textos estáticos em HTML/JS (ex: `Groq Cloud Conectado`, `Latência de Inferência (Groq)`, `Melhorar com IA (Groq)`, badges de modais) criam confusão cognitiva imediata no usuário quando outro provedor (Google Gemini, Claude, OpenAI) está ativo. 100% dos textos de interface devem interpolar dinamicamente `activeProvName = window.AI_GATEWAY_CONFIG.providerName`.
 2. **Ciclo de Vida de Módulos Node.js em Servidores de Longa Duração**: Processos Node.js que mantêm `require('./scripts/research-engine')` em memória desde o boot mantêm o cache estático de bibliotecas antigas. Sempre que rotas dinâmicas como `/run` forem executadas, deve-se limpar o cache do módulo (`delete require.cache[...]`) ou chamar o singleton dinâmico `getAiGateway()`, garantindo que a configuração mais recente do `.env` e dos scripts seja imediatamente utilizada sem necessidade de reinicialização manual.
 3. **Persistência de Metadados Claros nos Arquivos de Conhecimento**: Os arquivos Markdown gerados pelo motor autônomo devem gravar fielmente em seu frontmatter tanto o modelo quanto o provedor real utilizado (`model: "gemini-3.8-flash"`, `provider: "Google Gemini"`), garantindo auditabilidade e governança transparente em todo o cofre.
-**Ação**: Garantir que todos os módulos de execução de IA dependam exclusivamente do AI Gateway unificado, interpolando os nomes de provedores dinamicamente na UI e mantendo os scripts do backend desacoplados de qualquer fornecedor específico.
+---
+
+## 2026-10-21 — Acessibilidade WAI-ARIA & Ciclo de Foco em Modais (Inert Attribute)
+
+### Lição 34: Blindagem contra violações de `aria-hidden` ("Blocked aria-hidden because its descendant retained focus")
+**Contexto**: Ao fechar um modal de vídeo (`#promo-video-modal-9x16`, `#feature-modal` ou `#video-modal`) clicando no botão de fechar (`✕`), navegadores modernos baseados em Chromium (Chrome 122+) emitiam no console o erro/bloqueio:
+`Blocked aria-hidden on an element because its descendant retained focus. The focus must not be hidden from assistive technology users. Avoid using aria-hidden on a focused element or its ancestor. Consider using the inert attribute instead...`
+**Aprendizado**:
+1. **Ordem de Operações no Desmonte/Fechamento de Modais**: Quando o usuário clica no botão de fechar ou pressiona a tecla Enter nele, o botão retém o foco ativo no navegador (`document.activeElement`). Se a função de fechamento invocar `modal.setAttribute('aria-hidden', 'true')` antes de retirar o foco do elemento filho, a especificação WAI-ARIA bloqueia a mutação para proteger leitores de tela e usuários de tecnologia assistiva. O foco DEVE ser explicitamente restaurado para o elemento disparador original (`triggerBtn.focus()`) ou desarmado (`blur()`) ANTES de alterar o atributo `aria-hidden` para `'true'`.
+2. **Adoção do Atributo Nativo `inert`**: Modais fechados ou em estado inicial no HTML devem possuir `aria-hidden="true"` e o atributo booleano nativo `inert`. Ao abrir o modal, remove-se `inert` (`modal.removeAttribute('inert')`) e define-se `aria-hidden="false"`. Ao fechar, após transferir o foco, define-se `aria-hidden="true"` e adiciona-se `modal.setAttribute('inert', '')`. Isso impede nativamente que o modal receba eventos de teclado, cliques e leitura assistiva quando inativo.
+**Ação**: Sempre gerencie o foco antes de alternar `aria-hidden` e pareie `aria-hidden` com o atributo `inert` em todos os diálogos modais e gavetas laterais da interface.
+
 
 
 
