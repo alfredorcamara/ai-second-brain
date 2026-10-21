@@ -70,7 +70,7 @@ Uma das diretrizes absolutas do AI Second Brain é: **NUNCA queime tokens com LL
    - **Latência**: 0ms | **Custo**: $0 | **Confiabilidade**: 100%
 2. **Faixa B (Decisão & Classificação)**: Se a tarefa exige escolher entre alternativas finitas de negócio ou categorizar eventos, use **AIJev** ou motores de regras declarativos.
    - **Latência**: ~1ms | **Custo**: $0 | **Auditabilidade**: Total
-3. **Faixa C (Geração & Raciocínio Aberto)**: Somente quando há necessidade explícita de gerar prosa, sintetizar documentação ou criar código inédito, aciona-se um LLM (Groq Cloud).
+3. **Faixa C (Geração & Raciocínio de IA)**: Somente quando há necessidade explícita de gerar prosa, sintetizar documentação ou criar código inédito, aciona-se um LLM (Ia Conectada ao Projeto).
    - **Validação Obrigatória**: Todo output de IA generativa passa por validação antes da aplicação.
 
 ---
@@ -90,10 +90,10 @@ O **Research Lab** é o motor de aceleração técnica do AI Second Brain. Ele p
    - Focada em código executável, schemas de banco de dados (SQL Server, Prisma, PostgreSQL), testes automatizados e procedimentos passo a passo.
    - Exemplo: Implementação do cálculo ELO em TypeScript, schemas DDL, endpoints Express.
 
-### Resiliência do Motor Autônomo (Groq Cloud)
+### Resiliência do Motor Autônomo da IA Conectada ao Projeto
 
-O motor (`scripts/research-engine.js` + `scripts/groq-client.js`) opera com zero dependências externas:
-- **Tratamento Dinâmico de TPM (Tokens por Minuto)**: Detecta erros de rate limit, calcula a pausa exata exigida pelo servidor da Groq, adiciona +2s de margem de segurança e retenta até 3 vezes automaticamente.
+O motor (`scripts/research-engine.js` + `scripts/ai-gateway.js`) opera com zero dependências externas:
+- **Tratamento Dinâmico de TPM (Tokens por Minuto)**: Detecta erros de rate limit, calcula a pausa exata exigida pelo servidor da IA, adiciona +2s de margem de segurança e retenta até 3 vezes automaticamente.
 - **Cadência Estratégica**: Pausa automática de 6 segundos entre requisições para garantir estabilidade contínua na camada gratuita.
 - **Resumabilidade Inteligente**: Se uma pesquisa for interrompida, ao ser reiniciada ela detecta arquivos já gerados no disco e não gasta tokens novamente.
 - **Streaming em Tempo Real**: Envio de eventos via Server-Sent Events (SSE) para a interface com indicador visual passo a passo.

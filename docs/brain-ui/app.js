@@ -721,7 +721,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const _cachedVer = localStorage.getItem('ai_second_brain_system_version');
         if (_cachedVer) applyVersionToUI({ version: _cachedVer });
-    } catch (_) {}
+    } catch (_) { }
     initSystemVersionCheck();
     updateBootProgress(20, 'Carregando cofre neural e contratos...');
 
@@ -3071,8 +3071,8 @@ function hasQuickstartProgress() {
     if (typeof quickstartStep !== 'undefined' && quickstartStep === 2) return true;
 
     // 3. Se por qualquer motivo está no Passo 1, mas já possui dados preenchidos
-    const nameVal = document.getElementById('qsNewName')?.value?.trim() || 
-                    document.getElementById('qsLinkName')?.value?.trim();
+    const nameVal = document.getElementById('qsNewName')?.value?.trim() ||
+        document.getElementById('qsLinkName')?.value?.trim();
     if (nameVal) return true;
 
     const descVal = document.getElementById('qsNewDesc')?.value?.trim();
@@ -4074,7 +4074,7 @@ function resetQuickstartGrillPanes() {
 function backFromGrillQuestions() {
     // 1. Cancela qualquer requisição in-flight de formulação de perguntas com IA
     if (window._currentGrillQuestionsAbortController) {
-        try { window._currentGrillQuestionsAbortController.abort(); } catch (_) {}
+        try { window._currentGrillQuestionsAbortController.abort(); } catch (_) { }
         window._currentGrillQuestionsAbortController = null;
     }
 
@@ -4240,7 +4240,7 @@ function applyQsContractZoom(zoomPercent) {
 
     try {
         localStorage.setItem('qs_contract_zoom', String(clamped));
-    } catch (_) {}
+    } catch (_) { }
 }
 
 function adjustQsContractZoom(delta) {
@@ -4260,7 +4260,7 @@ function initQsContractZoomControls() {
                 currentQsContractZoom = parsed;
             }
         }
-    } catch (_) {}
+    } catch (_) { }
 
     applyQsContractZoom(currentQsContractZoom || 80);
 
@@ -4313,7 +4313,7 @@ function applyEditorZoom(zoomPercent) {
 
     try {
         localStorage.setItem('editor_zoom', String(clamped));
-    } catch (_) {}
+    } catch (_) { }
 }
 
 function adjustEditorZoom(delta) {
@@ -4333,7 +4333,7 @@ function initEditorZoomControls() {
                 currentEditorZoom = parsed;
             }
         }
-    } catch (_) {}
+    } catch (_) { }
 
     applyEditorZoom(currentEditorZoom || 80);
 
@@ -4929,7 +4929,7 @@ async function startGrillQuestionsFlow(projectInfo, forceRegenerate = false) {
     if (listEl) listEl.innerHTML = '';
 
     if (window._currentGrillQuestionsAbortController) {
-        try { window._currentGrillQuestionsAbortController.abort(); } catch (_) {}
+        try { window._currentGrillQuestionsAbortController.abort(); } catch (_) { }
     }
     window._currentGrillQuestionsAbortController = new AbortController();
 
@@ -5650,8 +5650,8 @@ function startQuickstartSynthesisCockpit(projectInfo, answers) {
     if (stageBadge) stageBadge.textContent = 'Etapa 1 de 4';
 
     // 2. Contexto do Modelo e Especificações para Telemetria
-    const provName = window.AI_GATEWAY_CONFIG?.providerName || 
-                    (window.AI_GATEWAY_CONFIG?.provider ? window.AI_GATEWAY_CONFIG.provider.toUpperCase() : 'IA Neural');
+    const provName = window.AI_GATEWAY_CONFIG?.providerName ||
+        (window.AI_GATEWAY_CONFIG?.provider ? window.AI_GATEWAY_CONFIG.provider.toUpperCase() : 'IA Neural');
     const activeModel = window.AI_GATEWAY_CONFIG?.model || 'Ativo';
 
     const specs = Array.isArray(projectInfo?.specs) ? projectInfo.specs : [];
@@ -8410,8 +8410,8 @@ async function renderProjectResearchTab() {
         const isReady = (aiStatus.configured !== false && aiStatus.ready !== false && (aiStatus.hasKey || aiStatus.provider === 'ollama' || aiStatus.configured));
 
         const aiBadgeHtml = isReady
-            ? `<span class="rl-ai-status-pill"><span class="pulse-dot"></span> ${escapeHtml(activeProvName)} Conectado (${escapeHtml(activeModelName)})</span>`
-            : `<span class="rl-ai-status-pill" style="border-color:rgba(245,158,11,0.3); color:#fcd34d;"><span class="pulse-dot" style="background:#f59e0b; box-shadow:0 0 8px #f59e0b;"></span> Chave ${escapeHtml(activeProvName)} Ausente (.env)</span>`;
+            ? `<span class="rl-ai-status-pill rl-ai-clickable" onclick="openAiSettingsModal()" role="button" tabindex="0" title="IA Conectada: ${escapeHtml(activeProvName)} (${escapeHtml(activeModelName)}). Clique para alternar ou configurar."><span class="pulse-dot"></span> ${escapeHtml(activeProvName)} Conectado (${escapeHtml(activeModelName)}) <span class="ai-pill-gear">⚙️</span></span>`
+            : `<span class="rl-ai-status-pill rl-ai-clickable rl-ai-missing" onclick="openAiSettingsModal()" role="button" tabindex="0" style="border-color:rgba(245,158,11,0.3); color:#fcd34d;" title="Chave ${escapeHtml(activeProvName)} ausente no .env. Clique para configurar."><span class="pulse-dot" style="background:#f59e0b; box-shadow:0 0 8px #f59e0b;"></span> Chave ${escapeHtml(activeProvName)} Ausente (.env) <span class="ai-pill-gear">⚙️</span></span>`;
 
         let html = `
             <!-- Hero Banner do Research Lab -->
@@ -8426,7 +8426,7 @@ async function renderProjectResearchTab() {
                             <span>Laboratório de Pesquisa Autônoma</span>
                         </h2>
                         <p class="rl-hero-desc">
-                            Pesquise temas profundos, consulte a IA conectada (${escapeHtml(activeProvName)}) para refinar briefings com o contexto real de <strong>${escapeHtml(currentProject)}</strong>, decomponha em subtópicos e catalogue tudo em arquivos <code>.md</code> de conhecimento e ação.
+                            Pesquise temas profundos, consulte a IA conectada para refinar briefings com o contexto real de <strong>${escapeHtml(currentProject)}</strong>, decomponha em subtópicos e catalogue tudo em arquivos <code>.md</code> de conhecimento e ação.
                         </p>
                     </div>
                     <button class="btn-new-research-glow" onclick="openResearchModal()">
@@ -8741,6 +8741,12 @@ function openResearchModal() {
         statusEl.innerHTML = `<span class="status-dot snapshot"></span> Pronto para criar laboratório`;
     }
 
+    const refineBtnText = document.querySelector('#btnAiRefine .ai-btn-text');
+    if (refineBtnText) {
+        const pName = window.AI_GATEWAY_CONFIG?.providerName || (window.AI_GATEWAY_CONFIG?.provider ? window.AI_GATEWAY_CONFIG.provider.toUpperCase() : '');
+        refineBtnText.textContent = pName ? `Melhorar com IA (${pName})` : 'Melhorar com IA';
+    }
+
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
     setTimeout(() => document.getElementById('rlTopicInput')?.focus(), 100);
@@ -8769,7 +8775,7 @@ function applyTopicPreset(topicText) {
 }
 
 /**
- * Aciona o refinamento de prompt com IA (Groq Cloud)
+ * Aciona o refinamento de prompt com IA Conectada ao Projeto
  */
 async function triggerAiRefinePrompt() {
     const topic = (document.getElementById('rlTopicInput')?.value || '').trim();
@@ -10171,7 +10177,7 @@ function updateAiGatewayPillUI(config) {
     btn.classList.remove('connected', 'unconfigured', 'quota-exceeded');
 
     const quotaErr = (config && config.lastError && (config.lastError.isRateLimit || config.lastError.quotaExceeded)) ? config.lastError :
-                     (lastAiInferenceError && (lastAiInferenceError.isRateLimit || lastAiInferenceError.quotaExceeded)) ? lastAiInferenceError : null;
+        (lastAiInferenceError && (lastAiInferenceError.isRateLimit || lastAiInferenceError.quotaExceeded)) ? lastAiInferenceError : null;
 
     if (quotaErr) {
         btn.classList.add('quota-exceeded');
@@ -12455,15 +12461,15 @@ async function initSystemVersionCheck() {
         // Fallback silencioso
     }
     applyVersionToUI({
-        version: '1.3.0',
+        version: '1.4.0',
         updateAvailable: false,
         behindCommits: 0
     });
 }
 
 function applyVersionToUI(data) {
-    const ver = data?.version || data?.installedVersion || '1.3.0';
-    try { localStorage.setItem('ai_second_brain_system_version', ver); } catch (_) {}
+    const ver = data?.version || data?.installedVersion || '1.4.0';
+    try { localStorage.setItem('ai_second_brain_system_version', ver); } catch (_) { }
     const hasUpdate = Boolean(data?.updateAvailable);
 
     // Boot Screen Badge

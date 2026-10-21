@@ -5,7 +5,7 @@
  * 2. Scans and serves all Markdown files across all subfolders dynamically
  * 3. Provides live file watching (SSE) so changes made by AI or user reflect instantly!
  * 4. Handles port busy (EADDRINUSE) gracefully with auto-fallback to next port!
- * 5. Research Lab — AI-powered knowledge synthesis via Groq API
+ * 5. Research Lab — AI-powered knowledge synthesis via Universal AI Gateway (BYOK)
  */
 
 const http = require('http');

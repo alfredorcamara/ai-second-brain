@@ -354,7 +354,7 @@ No módulo [`scripts/quickstart-grill.js`](file:///c:/Projetos/SaaS/Google%20Ant
      }
    }
    ```
-   **Resultado prático**: O portal abre instantaneamente o modal interativo com botões clicáveis de 1 clique (`Stripe`, `Mercado Pago`, etc.) **sem ter gasto sequer 1 token de API** em OpenAI ou Groq.
+   **Resultado prático**: O portal abre instantaneamente o modal interativo com botões clicáveis de 1 clique (`Stripe`, `Mercado Pago`, etc.) **sem ter gasto sequer 1 token de API** em modelos de LLM externos.
 
 2. **Isolamento Cirúrgico de Documentos**:
    Se o usuário disser *"adicione a coluna cpf na tabela de clientes"*, o motor classifica a intenção em 0ms como `ARCHITECTURE_DATA` (`targetDocs: ['ARCHITECTURE.md']`).  

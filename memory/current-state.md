@@ -1,6 +1,6 @@
 # Estado Atual do AI Second Brain
 
-> Última atualização: 2026-10-18
+> Última atualização: 2026-10-21
 
 ## Status do Framework: 🟢 Operacional & Cockpit Avançado + 🔬 Research Lab + ⚡ AI Gateway Multi-Provedor (BYOK Ativo) + 🧠 Session Capture + ✨ Pergunte ao Cérebro (Global Q&A) + 🎬 Bento Grid 100% Cinemática
 
@@ -20,6 +20,33 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 | `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway, Research Engine, Session Capture, Brain Search, Otimização de Vídeo) |
 
 ## Sessões Recentes
+- **Data**: 2026-10-21
+  - **Agnosticismo de IA no Cockpit & Documentação da Solução (Universal AI Gateway BYOK)**:
+    - **Diagnóstico & Causa Raiz**:
+      1. No *Research Lab*, o hero banner continha texto acoplado citando nominalmente fornecedor de IA, e o status pill da IA não permitia ação direta.
+      2. No leitor de documentação da solução embutido no Cockpit (`<!-- Corpo Principal da Documentação -->` em `docs/brain-ui/index.html` e `demo/index.html`), o pill superior exibia `Motor: Groq Cloud (120b) + SSE` e a FAQ continha pergunta vinculada a provedor específico com fallback para modelo inexistente (`openai/gpt-oss-20b`).
+    - **Soluções Implementadas**:
+      1. *Research Lab Interativo*: O pill de status da IA no hero tornou-se clicável (`.rl-ai-clickable` com `openAiSettingsModal()`), abrindo instantaneamente o modal de configurações de IA com animação e engrenagem rotativa. O texto descritivo foi neutralizado para referenciar a IA conectada via AI Gateway.
+      2. *Agnosticismo nos Documentos Markdown & Vault*: `RESEARCH_LAB.md`, `SOLUCAO_AI_SECOND_BRAIN.md`, `GUIA_TECNICO_AI_DECISION_GATE_JEV.md` e `decisao_groq_provider.md` atualizados para refletir o Universal AI Gateway (BYOK), e o snapshot `vault-data.js` regenerado com zero resquícios acoplados.
+      3. *Documentação da Solução (Cockpit)*:
+         - **Hero Meta Pill**: Atualizado para `🔬 Motor: Universal AI Gateway (BYOK) + SSE`.
+         - **Capítulo 03 (Governança & Roteamento)**: Adicionado callout ilustrando a camada generativa 100% desacoplada via BYOK (Groq, OpenAI, Claude, Gemini, DeepSeek, OpenRouter e Ollama local offline).
+         - **Capítulo 07 (FAQ Técnico)**: Atualizada a pergunta para "O que acontece se o provedor de IA atual ficar indisponível ou atingir a cota?", detalhando o monitoramento de rate limit (429), backoff exponencial, troca com 1 clique de provedor e execução 100% offline do motor de regras AIJev.
+      4. *Neutralização Global de Resquícios em Modais, Terminais e Diagramas SVG*:
+         - **Diagramas Arquiteturais SVG**: Os diagramas da documentação (`ai-decision-routing.svg` e `research-two-layers.svg`) exibiam no desenho `Groq Cloud (120b)` e `Groq (120b/20b)`. Ambos foram atualizados em todas as instâncias (`docs/brain-ui/assets/diagrams/`, `demo/` e `landing/`) para `Universal AI Gateway` e `Universal AI Gateway + Validação`.
+         - **Remoção de Jargão `(BYOK)` da UI Visível**: Eliminado o sufixo `(BYOK)` do botão do modal de erro (`#btnAiErrorOpenConfig`), do Hero pill da documentação e de callouts explicativos, mantendo uma experiência limpa e amigável.
+         - **Modal de Erro (`#aiErrorProviderText`)**: Alterado texto estático inicial de `Groq Cloud` para `Provedor de IA`.
+         - **Modal de Nova Pesquisa (`#btnAiRefine`)**: Substituído `Melhorar com IA (Groq)` por `Melhorar com IA` e adicionada sincronização dinâmica no `openResearchModal` para exibir o nome do provedor ativo.
+         - **Modal de Configurações (`#aiQuotaBannerText`)**: Removido acoplamento de texto a `Groq Cloud`, tornando o aviso de rate limit neutro.
+         - **Terminal Standby (`#aiModalTerminalOutput`)**: Atualizado de `ENGINE: GROQ [STANDBY]` para `ENGINE: AI GATEWAY [STANDBY]`.
+         - **Placeholder de Modelo Customizado**: Atualizado de `openai/gpt-oss-120b` para `gemini-2.5-flash, gpt-4o, claude-3-7-sonnet...`.
+         - **Comentários de Servidor**: Cabeçalho de `server.js` atualizado para Universal AI Gateway.
+      5. *Ajustes Visuais no Diagrama SVG de Roteamento de Decisão (`ai-decision-routing.svg`)*:
+         - **Linha Tracejada passando por baixo do centro dos Badges SIM**: Os 3 badges `SIM ➔` voltaram a ficar perfeitamente centralizados no eixo horizontal do fluxo (`y=195`, `y=335`, `y=450`), agora com fundo 100% sólido/opaco e sombra de profundidade (`filter="url(#cardShadow)"`), fazendo com que a linha tracejada animada passe por trás/por baixo do badge, sem riscar ou sobrepor o texto "SIM".
+         - **Enquadramento do Texto da 3ª Linha na Caixa "LLM com Governança"**: Expandida a largura dos 3 cards de resultado de 260px para 285px (`x=600`), unificada a altura para 80px e ajustado o tamanho da fonte do subtítulo de governança para 9px (`● Uso consciente: Apenas onde gera valor real`), eliminando o transbordamento do texto e garantindo respiro e margem interna perfeita.
+         - **Paridade e Cache-Buster**: Replicado de forma 100% idêntica em `docs/brain-ui/assets/diagrams/`, `demo/assets/diagrams/` e `landing/assets/diagrams/`, com bumping de cache (`?v=4`) no `index.html`, `demo/index.html` e `landing/index.html`.
+      6. *Paridade e Integridade*: 100% sincronizado entre `docs/brain-ui/`, `demo/` e `landing/`. `npm run doctor` e `npm run scan` aprovados com 0 erros.
+
 - **Data**: 2026-10-20
   - **Quickstart AI Synthesis Cockpit — Transparência Total e Telemetria em Tempo Real**:
     - **Diagnóstico & Causa Raiz**:

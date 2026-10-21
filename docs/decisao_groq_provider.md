@@ -1,8 +1,9 @@
 # Decisão: Groq como Provedor de IA para o Research Lab
 
 > **Data**: 2026-10-02  
-> **Status**: ✅ Aprovada  
-> **Contexto**: Escolha do provedor de IA para o motor de pesquisa e refinamento de prompts do Research Lab
+> **Status**: ✅ Histórica / Expandida  
+> **Contexto**: Escolha inicial do provedor de IA no MVP do Research Lab.  
+> **Evolução Arquitetural**: Esta decisão inicial de outubro/2026 foi posteriormente universalizada pelo **ADR-G006: AI Gateway Multi-Provedor com Arquitetura BYOK**, tornando o Research Lab e todo o AI Second Brain 100% agnósticos a provedores (suportando Google Gemini, Anthropic Claude, OpenAI, Groq, Ollama Local e OpenRouter).
 
 ---
 

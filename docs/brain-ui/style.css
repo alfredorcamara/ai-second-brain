@@ -9114,6 +9114,42 @@ body {
     gap: 6px;
 }
 
+.rl-ai-status-pill.rl-ai-clickable {
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+}
+
+.rl-ai-status-pill.rl-ai-clickable:hover {
+    background: rgba(16, 185, 129, 0.24);
+    border-color: rgba(16, 185, 129, 0.6);
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+    transform: translateY(-1px);
+}
+
+.rl-ai-status-pill.rl-ai-clickable:active {
+    transform: translateY(0);
+}
+
+.rl-ai-status-pill.rl-ai-clickable.rl-ai-missing:hover {
+    background: rgba(245, 158, 11, 0.22) !important;
+    border-color: rgba(245, 158, 11, 0.6) !important;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.25) !important;
+}
+
+.rl-ai-status-pill .ai-pill-gear {
+    font-size: 10px;
+    opacity: 0.7;
+    margin-left: 2px;
+    display: inline-block;
+    transition: transform 0.3s ease, opacity 0.2s ease;
+}
+
+.rl-ai-status-pill.rl-ai-clickable:hover .ai-pill-gear {
+    transform: rotate(45deg);
+    opacity: 1;
+}
+
 .pulse-dot {
     width: 7px;
     height: 7px;

@@ -64,13 +64,13 @@
     <text x="15" y="88" font-family="system-ui, sans-serif" font-size="10" fill="#64748b">Versionamento v1, v2...</text>
   </g>
 
-  <!-- 2. CENTRAL ENGINE: Research Engine (Groq) -->
+  <!-- 2. CENTRAL ENGINE: Research Engine (AI Gateway) -->
   <g transform="translate(290, 160)">
     <rect width="200" height="160" rx="18" fill="#121832" stroke="#818cf8" stroke-width="2" filter="url(#cardShadow)"/>
     <circle cx="100" cy="50" r="30" fill="rgba(99, 102, 241, 0.15)"/>
     <text x="100" y="58" font-size="28" text-anchor="middle">🔬</text>
     <text x="100" y="98" font-family="system-ui, sans-serif" font-size="13.5" font-weight="800" fill="#ffffff" text-anchor="middle">RESEARCH ENGINE</text>
-    <text x="100" y="115" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">Groq Cloud (120b)</text>
+    <text x="100" y="115" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">Universal AI Gateway</text>
     
     <!-- Engine Features -->
     <rect x="20" y="126" width="160" height="22" rx="6" fill="rgba(255,255,255,0.06)"/>

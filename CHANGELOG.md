@@ -7,6 +7,37 @@ e este projeto adere ao [Versionamento Semântico (SemVer)](https://semver.org/l
 
 ---
 
+## [1.4.0] — 2026-10-21
+
+### 🚀 Adicionado & Aprimorado
+- **Agnosticismo Total de IA na Solução (Universal AI Gateway)**:
+  - **Status Pill Interativo no Research Lab**: O pill de status da IA no hero banner (`#rlConnectedAiPill`) agora é clicável (`.rl-ai-clickable`) com micro-animação de engrenagem (`gear-spin-hover`), permitindo ao usuário abrir diretamente o modal de configurações de IA (`openAiSettingsModal()`) com 1 clique.
+  - **Neutralização Universal no Cockpit e Documentação**:
+    - Hero da documentação da solução (`index.html` e `demo/index.html`) atualizado para `🔬 Motor: Universal AI Gateway + SSE`.
+    - No Capítulo 3 (Governança & Roteamento), novo callout explicando a camada generativa universalmente desacoplada (Groq, OpenAI, Anthropic Claude, Google Gemini, DeepSeek, OpenRouter e Ollama local offline).
+    - No Capítulo 7 (FAQ Técnico), reformulação completa da pergunta sobre indisponibilidade de IA, detalhando tratamento automático de TPM/RPM (HTTP 429), backoff exponencial, troca transparente de fornecedor e independência do motor de regras AIJev.
+    - Modal de Nova Pesquisa (`#btnAiRefine`): Botão "Melhorar com IA" agora reflete dinamicamente em tempo real o provedor ativo.
+    - Modal de Erro (`#aiErrorProviderText`) e Terminais de Diagnóstico: Textos acoplados substituídos por designações neutras do AI Gateway.
+  - **Diagramas Arquiteturais Desacoplados**:
+    - `research-two-layers.svg`: Atualizado para referenciar o `Universal AI Gateway`.
+    - `ai-decision-routing.svg`: Atualizado para `Universal AI Gateway + Validação`.
+  - **Documentação Markdown & Vault**:
+    - `RESEARCH_LAB.md`, `SOLUCAO_AI_SECOND_BRAIN.md`, `GUIA_TECNICO_AI_DECISION_GATE_JEV.md` e `decisao_groq_provider.md` revisados e neutralizados.
+    - Snapshot `vault-data.js` regenerado com zero resquícios de fornecedores específicos.
+
+### 🛡️ Corrigido
+- **Refinamento Visual & Geométrico no Diagrama `ai-decision-routing.svg`**:
+  - **Alinhamento e Camada dos Badges "SIM ➔"**:
+    - Badges `SIM ➔` perfeitamente centralizados no eixo horizontal de cada decisão (`y = 195`, `y = 335`, `y = 450`).
+    - Aplicação de preenchimento 100% sólido/opaco (`#06130e`, `#05121c`, `#130815`) e sombra de profundidade (`filter="url(#cardShadow)"`), garantindo que as linhas animadas passem de forma limpa e contínua **por trás/por baixo** do badge pelo centro, sem atravessar nem riscar o texto do "SIM".
+  - **Enquadramento da Caixa "LLM com Governança"**:
+    - Largura dos cards de resultado expandida de 260px para 285px (`x = 600`), com altura unificada em 80px.
+    - Tamanho da fonte do subtítulo (`● Uso consciente: Apenas onde gera valor real`) ajustado para 9px, eliminando o transbordamento para fora da borda do card e garantindo margem interna e acabamento de alto padrão.
+- **Paridade Estrita 100%**:
+  - Sincronização rigorosa de todos os diagramas, templates e scripts entre `docs/brain-ui/`, `docs/brain-ui/demo/` e `docs/brain-ui/landing/`.
+
+---
+
 ## [1.3.0] — 2026-10-21
 
 ### 🚀 Adicionado

@@ -11,7 +11,7 @@ O **Research Lab** é um subsistema do AI Second Brain que permite a cada projet
 
 Em vez de buscas genéricas ou conversas efêmeras, o Research Lab opera de maneira autônoma e contextualizada:
 1. O desenvolvedor define livremente um tema ou dúvida tecnológica para o seu projeto.
-2. A IA (Groq Cloud) lê os contratos existentes do projeto (`PROJECT.md`, `ARCHITECTURE.md`) e refina o briefing, garantindo que a pesquisa atenda às restrições e objetivos reais daquele projeto.
+2. A IA lê os contratos existentes do projeto (`PROJECT.md`, `ARCHITECTURE.md`) e refina o briefing, garantindo que a pesquisa atenda às restrições e objetivos reais daquele projeto.
 3. O tema é decomposto em sub-tópicos com taxonomia clara.
 4. O motor cataloga todo o conhecimento em arquivos `.md` organizados e versionados no disco sob a pasta do projeto.
 5. Os arquivos gerados alimentam o Grafo Neural 3D do projeto e a memória de longo prazo.
@@ -53,10 +53,10 @@ A definição de uma pesquisa não é estática. No AI Second Brain, adotamos o 
 
 ## 4. Arquitetura Técnica & Stack
 
-- **Motor de Inferência**: [Groq Cloud](https://groq.com)
-  - **Modelo padrão**: `openai/gpt-oss-120b` (128k de contexto, inferência de alta velocidade)
-  - **Configuração**: Chave gerenciada em `.env` (`GROQ_API_KEY`) com fallback seguro
-- **Zero Dependências**: Cliente nativo implementado em `scripts/groq-client.js` usando os módulos padrão do Node.js (`https`, `fs`, `path`).
+- **Motor de Inferência**: Universal AI Gateway (BYOK — *Bring Your Own Key*)
+  - **Provedores Suportados**: Google Gemini, OpenAI, Anthropic Claude, Groq Cloud, Ollama Local e OpenRouter
+  - **Configuração**: Chave e provedor gerenciados localmente em `.env` e configuráveis dinamicamente via interface web
+- **Zero Dependências**: Cliente nativo implementado em `scripts/ai-gateway.js` usando os módulos padrão do Node.js (`https`, `http`, `fs`, `path`).
 - **Sanitização de Saída**: Tratamento defensivo de fences markdown (` ```json `) e extração de estruturas válidas.
 
 ---
@@ -65,7 +65,7 @@ A definição de uma pesquisa não é estática. No AI Second Brain, adotamos o 
 
 | Método | Rota | Descrição |
 |---|---|---|
-| `GET` | `/api/ai/status` | Retorna o status de configuração do Groq (ativo/inativo, modelo e máscara da chave) |
+| `GET` | `/api/ai/status` | Retorna o status de configuração da IA conectada ativa (provedor, modelo e máscara da chave) |
 | `POST` | `/api/ai/refine-prompt` | Refina uma intenção bruta do usuário usando o contexto de `PROJECT.md` e `ARCHITECTURE.md` |
 | `POST` | `/api/ai/decompose` | Decompõe o tema em lista de sub-tópicos com categoria (`knowledge` ou `actionable`) |
 | `GET` | `/api/projects/:name/research` | Lista todos os laboratórios de pesquisa criados para o projeto indicado |
@@ -78,15 +78,15 @@ A definição de uma pesquisa não é estática. No AI Second Brain, adotamos o 
 
 ## 6. Roadmap de Implementação
 
-- [x] **Etapa 1: Backend & Motor Groq** (Concluído em 2026-10-02)
-  - Módulo nativo `scripts/groq-client.js`
+- [x] **Etapa 1: Backend & Motor de IA Conectado** (Concluído em 2026-10-02 / Expandido no ADR-G006)
+  - Módulo nativo `scripts/ai-gateway.js` com suporte multi-provedor BYOK
   - Endpoints REST no `server.js`
   - Proteção de variáveis em `.env` e `.gitignore`
   - Testes de integração validados com sucesso
 - [x] **Etapa 2: Interface Visual (Brain UI - UX/UI UAU)** (Concluído em 2026-10-02)
   - Aba dedicada `🔬 Research Lab` no Project Workspace com contador no badge
-  - Hero Banner espacial com glassmorphism, pulso de status Groq Cloud e métricas
-  - Modal interativo de criação com botão mágico `✨ Melhorar com IA (Groq)`
+  - Hero Banner espacial com glassmorphism, pulso de status da IA conectada e métricas
+  - Modal interativo de criação com botão mágico `✨ Melhorar com IA`
   - Split View Comparador "Antes vs Depois" com aceitação/edição em 1 clique
   - Prévia de decomposição temática com chips luminosos (`knowledge` vs `actionable`)
   - Cards 3D de laboratórios com caixa do Prompt Vivo, contadores e ações rápidas
@@ -97,7 +97,7 @@ A definição de uma pesquisa não é estática. No AI Second Brain, adotamos o 
   - Motor de pesquisa autônoma implementado em `scripts/research-engine.js`
   - Síntese de artigos técnicos aprofundados com arquitetura, exemplos práticos de código, schemas de banco e trade-offs
   - Taxonomia em duas camadas: gravação física em `knowledge/` e `actionable/`
-  - Resiliência com auto-retry e detecção de TPM limit na API da Groq Cloud
+  - Resiliência com auto-retry e detecção de TPM/Rate limit na API do provedor ativo
   - Resumabilidade inteligente: arquivos pré-existentes são preservados sem retrabalho
   - Consolidação automática em `OVERVIEW.md` com links relativos navegáveis
   - Integração com o Grafo Neural 3D (`scripts/scan-vault.js`) com ícones específicos para cada camada de pesquisa
