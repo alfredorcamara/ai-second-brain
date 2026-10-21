@@ -416,14 +416,26 @@ function checkGitUpdateStatus() {
         console.log(`📦 Versão do AI Second Brain: v${localVersion}`);
         console.log(`   Registro de melhorias e notas de release: CHANGELOG.md`);
 
-        const landingHtmlPath = path.join(ROOT_DIR, 'docs', 'brain-ui', 'landing', 'index.html');
-        if (fs.existsSync(landingHtmlPath)) {
-            const landingHtml = fs.readFileSync(landingHtmlPath, 'utf-8');
-            if (!landingHtml.includes(`v${localVersion}`)) {
-                console.log(`   ⚠️  Alerta: A Landing Page (docs/brain-ui/landing/index.html) difere de package.json (v${localVersion})!`);
-            } else {
-                console.log(`   ✓ Landing Page sincronizada com v${localVersion}`);
+        const uiVersionFiles = [
+            { path: path.join(ROOT_DIR, 'docs', 'brain-ui', 'landing', 'index.html'), label: 'Landing Page (docs/brain-ui/landing/index.html)' },
+            { path: path.join(ROOT_DIR, 'docs', 'brain-ui', 'index.html'), label: 'Cockpit Visual (docs/brain-ui/index.html)' },
+            { path: path.join(ROOT_DIR, 'docs', 'brain-ui', 'demo', 'index.html'), label: 'Cockpit Demo (docs/brain-ui/demo/index.html)' },
+            { path: path.join(ROOT_DIR, 'docs', 'brain-ui', 'app.js'), label: 'App Core (docs/brain-ui/app.js)' },
+            { path: path.join(ROOT_DIR, 'docs', 'brain-ui', 'demo', 'app.js'), label: 'Demo App Core (docs/brain-ui/demo/app.js)' }
+        ];
+
+        let allSynced = true;
+        for (const target of uiVersionFiles) {
+            if (fs.existsSync(target.path)) {
+                const content = fs.readFileSync(target.path, 'utf-8');
+                if (!content.includes(`v${localVersion}`) && !content.includes(`version: '${localVersion}'`)) {
+                    console.log(`   ⚠️  Alerta: ${target.label} difere de package.json (v${localVersion})!`);
+                    allSynced = false;
+                }
             }
+        }
+        if (allSynced) {
+            console.log(`   ✓ Todas as interfaces (Landing, Cockpit, Demo e App) 100% sincronizadas com v${localVersion}`);
         }
         console.log('');
 

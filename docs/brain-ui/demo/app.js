@@ -718,6 +718,11 @@ async function dismissBootScreen() {
 // ── Initialize ────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
     // 0. Synaptic Boot HUD (Feedback imediato com estética premium)
+    try {
+        const _cachedVer = localStorage.getItem('ai_second_brain_system_version');
+        if (_cachedVer) applyVersionToUI({ version: _cachedVer });
+    } catch (_) {}
+    initSystemVersionCheck();
     updateBootProgress(20, 'Carregando cofre neural e contratos...');
 
     // 1. Instant Pre-Render (0ms) a partir do Snapshot em memória
@@ -12450,14 +12455,15 @@ async function initSystemVersionCheck() {
         // Fallback silencioso
     }
     applyVersionToUI({
-        version: '1.2.0',
+        version: '1.3.0',
         updateAvailable: false,
         behindCommits: 0
     });
 }
 
 function applyVersionToUI(data) {
-    const ver = data?.version || data?.installedVersion || '1.2.0';
+    const ver = data?.version || data?.installedVersion || '1.3.0';
+    try { localStorage.setItem('ai_second_brain_system_version', ver); } catch (_) {}
     const hasUpdate = Boolean(data?.updateAvailable);
 
     // Boot Screen Badge
@@ -12633,7 +12639,27 @@ function renderChangelogFallback() {
     contentArea.innerHTML = `
         <div class="changelog-release-card highlight">
             <div class="changelog-release-header">
-                <span class="changelog-release-badge current">v1.2.0 • Versão Atual</span>
+                <span class="changelog-release-badge current">v1.3.0 • Versão Atual</span>
+                <span class="changelog-release-date">21 de Outubro de 2026</span>
+            </div>
+            <div class="changelog-release-body">
+                <h4>🚀 Adicionado</h4>
+                <ul>
+                    <li><strong>Cockpit de Síntese Neural em Tempo Real (Quickstart):</strong> Pipeline visual com 4 cards interativos (Extração de Requisitos, PROJECT.md, ARCHITECTURE.md, CURRENT_STATE.md & ADR-0001) com streaming Server-Sent Events (/api/vault/events), spinners animados, badges de status dinâmicos e console técnico de telemetria live.</li>
+                    <li><strong>Guarda Anti-Fechamento Involuntário & Confirmação de Saída:</strong> Proteção inteligente (#qsConfirmExitModal) contra fechamentos acidentais por clique fora ou ESC quando há progresso preenchido, com bypass automático na etapa de gravação em disco.</li>
+                    <li><strong>Sincronização Dinâmica de Versão & Validação no Doctor:</strong> Resolução de versão automática e síncrona sem flicker durante o boot, acompanhada de checagem automatizada no <code>npm run doctor</code>.</li>
+                </ul>
+                <h4>🛡️ Corrigido</h4>
+                <ul>
+                    <li><strong>Resiliência de Escopo:</strong> Prevenção de ReferenceError em verificações de progresso do assistente.</li>
+                    <li><strong>Paridade Estrita 100%:</strong> Sincronismo total entre Cockpit local e modo demonstração web.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="changelog-release-card">
+            <div class="changelog-release-header">
+                <span class="changelog-release-badge">v1.2.0</span>
                 <span class="changelog-release-date">19 de Outubro de 2026</span>
             </div>
             <div class="changelog-release-body">
