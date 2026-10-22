@@ -225,6 +225,7 @@ body {
 .brand-brain-img {
   height: 90px;
   width: auto;
+  aspect-ratio: 1208 / 658;
   max-width: 100%;
   object-fit: contain;
   display: block;

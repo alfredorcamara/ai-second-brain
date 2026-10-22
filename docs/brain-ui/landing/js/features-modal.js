@@ -1261,6 +1261,11 @@
     currentIndex = idx >= 0 ? idx : 0;
     lastActiveElement = document.activeElement;
 
+    // Pausa Three.js e vídeos dos cards para liberar 100% da CPU/GPU para renderizar o modal sem latência (INP)
+    const bg = window.__brain && window.__brain.g;
+    if (bg && typeof bg.stop === 'function') bg.stop();
+    if (typeof window.__pauseCardVideos === 'function') window.__pauseCardVideos();
+
     renderFeature(currentIndex);
 
     modal.removeAttribute('inert');
@@ -1290,6 +1295,11 @@
     if (headerVideo) {
       headerVideo.pause();
     }
+
+    // Retoma o grafo Three.js e vídeos visíveis no viewport
+    const bg = window.__brain && window.__brain.g;
+    if (bg && typeof bg.start === 'function') bg.start();
+    if (typeof window.__resumeCardVideos === 'function') window.__resumeCardVideos();
   }
 
   // Event Listeners

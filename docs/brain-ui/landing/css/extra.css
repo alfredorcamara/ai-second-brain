@@ -9,8 +9,8 @@ main .pains,main .pain,main .diag-tabs,main .diagram-frame,main .diag-caps,main 
 .diag-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:18px}
 .diag-tab{padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:var(--glass);color:var(--mut);font:500 14px var(--font-sans);cursor:pointer;transition:.25s}
 .diag-tab:hover{color:#fff;border-color:var(--line-strong)}.diag-tab.on{color:#1a1203;background:linear-gradient(135deg,var(--gold2),var(--gold));border-color:transparent;font-weight:700}
-.diagram-frame{position:relative;width:min(980px,100%);padding:18px;border:1px solid var(--line);border-radius:24px;background:#050a16d9;backdrop-filter:blur(14px);box-shadow:0 30px 90px #000a,0 0 70px #ffc76b0f}
-.diag{display:none;width:100%;height:auto;border-radius:14px;animation:fadeUp .6s both}.diag.on{display:block}
+.diagram-frame{position:relative;width:min(980px,100%);min-height:clamp(260px,50vw,540px);padding:18px;border:1px solid var(--line);border-radius:24px;background:#050a16d9;backdrop-filter:blur(14px);box-shadow:0 30px 90px #000a,0 0 70px #ffc76b0f}
+.diag{display:none;width:100%;height:auto;aspect-ratio:920/520;border-radius:14px;animation:fadeUp .6s both}.diag.on{display:block}
 .diag-caps{width:min(820px,100%);margin-top:18px}.diag-cap{display:none;margin:0;color:var(--fg-dim);font-size:16px;line-height:1.7;animation:fadeUp .6s both}.diag-cap.on{display:block}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}}
 .duo{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;width:min(900px,100%);text-align:left}
@@ -683,6 +683,7 @@ main .video-expand-btn {
   flex-direction: column;
   justify-content: flex-end;
   background: #02050e;
+  contain: layout paint;
 }
 
 .card-video-media-wrap {
@@ -692,6 +693,7 @@ main .video-expand-btn {
   height: 100%;
   overflow: hidden;
   pointer-events: none;
+  contain: strict;
 }
 
 .card-video-media {
@@ -2624,5 +2626,8 @@ main .video-expand-btn {
   border: 1px solid rgba(148, 163, 184, 0.4);
 }
 
-
-
+/* ── Otimização de Performance Core Web Vitals (CLS & LCP) ── */
+#demo, #faq {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 750px;
+}

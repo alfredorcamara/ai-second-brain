@@ -20,6 +20,17 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 | `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway, Research Engine, Session Capture, Brain Search, Otimização de Vídeo) |
 
 ## Sessões Recentes
+- **Data**: 2026-10-22
+  - **Otimização de Core Web Vitals na Landing Page (LCP, INP e CLS via Cloudflare Analytics)**:
+    - **Diagnóstico & Causa Raiz**:
+      1. Relatório oficial do Cloudflare Web Analytics revelou LCP crítico no P75 (5.800 ms, com Element Render Delay de 4.370 ms e até 31.8s no P99), INP com 21% de interações ruins (picos de 944 ms em cards e 400 ms em modais) e CLS pontual em `#vantagens` (0.425) e `#ai-gateway` (0.134).
+      2. As causas raízes identificadas foram: poster do player de vídeo inline usando PNG não comprimido de 304 KB (`og-image.png`); 9 cards de vídeo com `preload="auto"` saturando rede e decodificador no boot; ausência de dimensões explícitas e aspect-ratio nos diagramas SVG de `#arquitetura` empurrando seções inferiores; ausência de pausa do loop Three.js em `features-modal.js` gerando contenção de thread durante abertura de modais; e retomada simultânea de 9 vídeos via `play()` no fechamento de modais.
+    - **Soluções Implementadas**:
+      1. *LCP*: Geração de poster WebP de alta eficiência (`promo-poster.webp`, 52 KB, redução de 83% no payload) para os players de vídeo inline e lightbox; inclusão de `<link rel="preload" as="image">` com `fetchpriority="high"` e dimensões explícitas `width="165" height="90"` no logo da navbar; e adição de `defer` em todos os scripts JavaScript para desbloquear a primeira pintura do DOM.
+      2. *INP*: Integração de `IntersectionObserver` inteligente para os 9 cards de vídeo, garantindo que apenas cards visíveis no viewport sejam reproduzidos; pausa do grafo Three.js (`window.__brain.g.stop()`) e de todos os vídeos de fundo ao abrir qualquer modal técnico ou de vídeo; e retomada cirúrgica apenas dos vídeos que estão dentro da viewport ao fechar modais.
+      3. *CLS*: Definição de `min-height: clamp(260px, 50vw, 540px)` no `.diagram-frame` e `aspect-ratio: 920 / 520` nos diagramas `.diag` da seção `#arquitetura`, eliminando saltos de layout nas seções inferiores; `aspect-ratio: 1208 / 658` no `.brand-brain-img`; `contain: layout paint` em `.card-video-header` e `contain: strict` em `.card-video-media-wrap`; e `content-visibility: auto` nas seções `#demo` e `#faq`.
+      4. *Validação*: `npm run doctor` executado com 100% de sucesso (33 scripts íntegros, links validados, 0 links ou assets quebrados).
+
 - **Data**: 2026-10-21
   - **Agnosticismo de IA no Cockpit & Documentação da Solução (Universal AI Gateway BYOK)**:
     - **Diagnóstico & Causa Raiz**:

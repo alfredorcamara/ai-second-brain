@@ -350,7 +350,20 @@
 **Aprendizado**:
 1. **Ordem de Operações no Desmonte/Fechamento de Modais**: Quando o usuário clica no botão de fechar ou pressiona a tecla Enter nele, o botão retém o foco ativo no navegador (`document.activeElement`). Se a função de fechamento invocar `modal.setAttribute('aria-hidden', 'true')` antes de retirar o foco do elemento filho, a especificação WAI-ARIA bloqueia a mutação para proteger leitores de tela e usuários de tecnologia assistiva. O foco DEVE ser explicitamente restaurado para o elemento disparador original (`triggerBtn.focus()`) ou desarmado (`blur()`) ANTES de alterar o atributo `aria-hidden` para `'true'`.
 2. **Adoção do Atributo Nativo `inert`**: Modais fechados ou em estado inicial no HTML devem possuir `aria-hidden="true"` e o atributo booleano nativo `inert`. Ao abrir o modal, remove-se `inert` (`modal.removeAttribute('inert')`) e define-se `aria-hidden="false"`. Ao fechar, após transferir o foco, define-se `aria-hidden="true"` e adiciona-se `modal.setAttribute('inert', '')`. Isso impede nativamente que o modal receba eventos de teclado, cliques e leitura assistiva quando inativo.
-**Ação**: Sempre gerencie o foco antes de alternar `aria-hidden` e pareie `aria-hidden` com o atributo `inert` em todos os diálogos modais e gavetas laterais da interface.
+---
+
+## 2026-10-22 — Otimização de Core Web Vitals na Landing Page (Cloudflare Web Analytics)
+
+### Lição 35: Otimização de LCP, INP e CLS em Páginas com Mídia Múltipla, WebGL e Modais
+**Contexto**: A análise de dados de campo (RUM - Real User Monitoring) coletados via Cloudflare Web Analytics na landing page pública revelou gargalos críticos de Core Web Vitals: LCP no P75 de 5.800 ms (com Element Render Delay de 4.370 ms e poster de vídeo gerando LCP de até 31.8s), INP com 21% de interações lentas (picos de 944 ms ao clicar em cards de vídeo destacados e 400 ms ao abrir modais) e CLS pontual em `#vantagens` (0.425) e `#ai-gateway` (0.134).
+**Aprendizado**:
+1. **Compressão Agressiva de Posters de Vídeo (WebP)**: O uso de imagens PNG de alta resolução (`og-image.png`, 304 KB) como `poster` de players de vídeo causa atrasos severos no LCP em conexões móveis. A conversão para WebP (`promo-poster.webp`, 52 KB) reduziu o peso em 83% com preservação visual impecável.
+2. **Priorização de Imagens no Viewport Superior (LCP)**: Logos ou imagens vetoriais no topo da página devem receber `fetchpriority="high"`, `<link rel="preload" as="image">` no `<head>` e dimensões explícitas (`width` e `height`) com `aspect-ratio` no CSS para que o navegador renderize o elemento imediatamente sem esperar reflows de CSS ou parsing completo de scripts.
+3. **Prevenção de CLS em Diagramas e Mídia Dinâmica**: Imagens e diagramas SVG com `loading="lazy"` empurram todo o conteúdo abaixo deles quando terminam de carregar se o container pai não reservar o espaço vertical. Declarar `min-height: clamp(...)` no container (`.diagram-frame`) e `aspect-ratio: 920 / 520` nas imagens elimina 100% dos saltos de layout em seções inferiores (`#ai-gateway` e `#vantagens`).
+4. **Isolamento de CPU/GPU e Grafo Three.js (INP)**: Ao abrir modais detalhados, o loop de animação do Three.js (`window.__brain.g`) DEVE ser pausado (`g.stop()`). Se o WebGL continuar renderizando a 60fps enquanto o JavaScript manipula centenas de nós DOM e syntax highlighting do modal, o Presentation Delay do navegador dispara para quase 1 segundo.
+5. **Reprodução sob Demanda de Mídia com `IntersectionObserver`**: Tags `<video>` com `preload="auto"` e `autoplay` disputam a banda de rede e os decodificadores de hardware simultaneamente no boot da página. A configuração correta é `preload="none"` combinada com um `IntersectionObserver` que aciona `.play()` apenas quando o card cruza o viewport e `.pause()` ao sair. Ao fechar modais, nunca chame `.play()` em todos os vídeos em lote; retome apenas os que estão visíveis na tela.
+**Ação**: Em páginas com WebGL e múltiplos cards de vídeo, sempre utilize `preload="none"`, `IntersectionObserver` para controle de reprodução, compressão WebP em posters, reserva explícita de `min-height`/`aspect-ratio` para evitar CLS e pausa do loop 3D durante exibição de modais.
+
 
 
 

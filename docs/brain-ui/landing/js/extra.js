@@ -4,6 +4,50 @@
     const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
     const DEMO_URL = '../demo/index.html';                         // ajuste se publicar em outro caminho
     const brain = window.__brain, g = brain && brain.g;
+    const getBrainGraph = () => (window.__brain && window.__brain.g) || g;
+
+    // ── Otimização de Performance Core Web Vitals (INP e CPU/GPU) ──
+    const pauseAllCardVideos = () => {
+        $$('.card-video-media').forEach(v => {
+            if (!v.paused) v.pause();
+        });
+    };
+
+    const resumeVisibleCardVideos = () => {
+        const modalOpen = document.body.style.overflow === 'hidden';
+        if (modalOpen) return;
+        $$('.card-video-media').forEach(v => {
+            const rect = v.getBoundingClientRect();
+            const inViewport = rect.top < window.innerHeight && rect.bottom > 0;
+            if (inViewport && v.paused) {
+                v.play().catch(() => { });
+            }
+        });
+    };
+
+    window.__pauseCardVideos = pauseAllCardVideos;
+    window.__resumeCardVideos = resumeVisibleCardVideos;
+
+    // IntersectionObserver inteligente: reproduz apenas vídeos visíveis na viewport
+    if ('IntersectionObserver' in window) {
+        const cardVideoObserver = new IntersectionObserver((entries) => {
+            const modalOpen = document.body.style.overflow === 'hidden';
+            entries.forEach(entry => {
+                const video = entry.target;
+                if (entry.isIntersecting) {
+                    if (!modalOpen && video.paused) {
+                        video.play().catch(() => { });
+                    }
+                } else {
+                    if (!video.paused) {
+                        video.pause();
+                    }
+                }
+            });
+        }, { threshold: 0.15 });
+
+        $$('.card-video-media').forEach(v => cardVideoObserver.observe(v));
+    }
 
     // ── Abas dos diagramas ──
     $$('.diag-tab').forEach(b => b.addEventListener('click', () => {
@@ -80,9 +124,10 @@
         if (modalFrame) modalFrame.classList.toggle('is-mobile-reels', isMobile);
         syncVideoSource(modalVideo);
 
-        // Pausa Three.js e vídeos em loop para liberar GPU
-        if (g) g.stop();
-        $$('.card-video-media').forEach(v => v.pause());
+        // Pausa Three.js e vídeos em loop para liberar 100% da CPU/GPU
+        const bg = getBrainGraph();
+        if (bg && bg.stop) bg.stop();
+        pauseAllCardVideos();
 
         if (syncTime && inlineVideo && !inlineVideo.paused) {
             modalVideo.currentTime = inlineVideo.currentTime;
@@ -120,9 +165,10 @@
         if (modalVideo) {
             modalVideo.pause();
         }
-        // Restaura Three.js e vídeos em loop
-        if (g) g.start();
-        $$('.card-video-media').forEach(v => v.play().catch(() => { }));
+        // Restaura Three.js e vídeos visíveis no viewport
+        const bg = getBrainGraph();
+        if (bg && bg.start) bg.start();
+        resumeVisibleCardVideos();
     };
 
     if (heroBtn) heroBtn.addEventListener('click', () => openModal(false, heroBtn));
@@ -168,8 +214,9 @@
         promo9x16TriggerBtn = (e && (e.currentTarget || e.target)) || document.activeElement;
 
         // 1. Pausa o grafo 3D Three.js e vídeos dos cards para liberar 100% da GPU para o player
-        if (g) g.stop();
-        $$('.card-video-media').forEach(v => v.pause());
+        const bg = getBrainGraph();
+        if (bg && bg.stop) bg.stop();
+        pauseAllCardVideos();
         if (modalVideo && !modalVideo.paused) modalVideo.pause();
         if (inlineVideo && !inlineVideo.paused) inlineVideo.pause();
 
@@ -224,9 +271,10 @@
             promo9x16Video.pause();
         }
 
-        // Restaura animação do grafo 3D e loops dos cards
-        if (g) g.start();
-        $$('.card-video-media').forEach(v => v.play().catch(() => { }));
+        // Restaura animação do grafo 3D e loops dos cards visíveis
+        const bg = getBrainGraph();
+        if (bg && bg.start) bg.start();
+        resumeVisibleCardVideos();
     };
 
     $$('.card-video-9x16-btn').forEach(btn => {
