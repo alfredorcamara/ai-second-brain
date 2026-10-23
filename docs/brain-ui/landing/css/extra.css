@@ -1914,9 +1914,7 @@ main .video-expand-btn {
 .promo-modal-9x16-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(4, 6, 14, 0.94);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(4, 6, 14, 0.96);
   contain: strict;
 }
 
@@ -1935,7 +1933,6 @@ main .video-expand-btn {
   transform: translateZ(0) scale(0.94) translateY(12px);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
-  will-change: transform;
 }
 
 .promo-modal-9x16.active .promo-modal-9x16-dialog {

@@ -213,6 +213,12 @@
 
         promo9x16TriggerBtn = (e && (e.currentTarget || e.target)) || document.activeElement;
 
+        // Título dinâmico baseado no card clicado
+        const titleEl = $('#promo-modal-9x16-title-text');
+        if (titleEl && promo9x16TriggerBtn && promo9x16TriggerBtn.dataset && promo9x16TriggerBtn.dataset.videoTitle) {
+            titleEl.textContent = promo9x16TriggerBtn.dataset.videoTitle;
+        }
+
         // 1. Pausa o grafo 3D Three.js e vídeos dos cards para liberar 100% da GPU para o player
         const bg = getBrainGraph();
         if (bg && bg.stop) bg.stop();
@@ -226,7 +232,6 @@
             if (!cur.endsWith(videoSrc)) {
                 promo9x16Video.src = videoSrc;
                 if (posterSrc) promo9x16Video.poster = posterSrc;
-                promo9x16Video.load();
             }
         }
 
@@ -240,6 +245,7 @@
         }
 
         if (promo9x16Video) {
+            promo9x16Video.currentTime = 0;
             const playPromise = promo9x16Video.play();
             if (playPromise !== undefined) {
                 playPromise.catch(() => {
@@ -255,7 +261,6 @@
         if (!promo9x16Modal) return;
 
         // Move/restaura foco para fora antes de setar aria-hidden="true" (WAI-ARIA)
-        // Evita a violação "Blocked aria-hidden on an element because its descendant retained focus"
         if (promo9x16TriggerBtn && typeof promo9x16TriggerBtn.focus === 'function' && !promo9x16Modal.contains(promo9x16TriggerBtn)) {
             promo9x16TriggerBtn.focus();
         } else if (document.activeElement && promo9x16Modal.contains(document.activeElement)) {
@@ -269,6 +274,8 @@
 
         if (promo9x16Video) {
             promo9x16Video.pause();
+            promo9x16Video.removeAttribute('src');
+            promo9x16Video.load(); // Libera 100% da memória de decodificação da GPU
         }
 
         // Restaura animação do grafo 3D e loops dos cards visíveis

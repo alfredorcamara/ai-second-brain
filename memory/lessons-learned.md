@@ -1,5 +1,15 @@
 # Lições Aprendidas
 
+## 2026-10-22 — Otimização de Vídeos Web em Modais: GOP (Keyframe Interval), Resolução e GPU
+
+### Lição 23: Travamento de Vídeo MP4 na Web por Intervalo Excessivo de Keyframes (GOP) e GPU Blur
+**Contexto**: O vídeo vertical promocional `MemoriaPersistente-9x16.mp4` e seu análogo `pergunte-cerebro-card-promo-9x16.mp4` travavam continuamente durante a reprodução no navegador, gerando picos de INP (312ms+) e engasgos visuais graves.
+**Aprendizado**:
+1. *Keyframe Interval / GOP em Vídeos Web*: Renderizações automáticas (como Remotion ou perfis padrão de exportação) frequentemente utilizam GOPs abertos de até 250 quadros (~8,3 segundos). No navegador, quando ocorrem micro-quedas de rede ou descarte de frames, o decodificador é forçado a reprocessar centenas de frames dependentes antes de renderizar o próximo quadro, congelando a tela. Fixar o GOP em 1.0 segundo (`-g 30 -keyint_min 30 -sc_threshold 0`) cria pontos de recuperação imediatos a cada 1s.
+2. *Superdimensionamento de Resolução*: Exibir um vídeo 1080x1920 (High Profile 5.0) dentro de um modal com largura máxima de 380px consome o triplo de decodificação de GPU desnecessariamente. Reduzir para 720x1280 (Main Profile 3.1) reduz a carga do decodificador em mais de 55% com nitidez idêntica em telas Retina.
+3. *Contenção de Renderização GPU (backdrop-filter)*: Aplicar `backdrop-filter: blur(10px)` no container do modal força o compositor da GPU a reprocessar o filtro de desfoque sobre a viewport a cada quadro do vídeo decodificado. Usar fundo com opacidade sem blur elimina o congelamento do compositor.
+**Ação**: Para qualquer vídeo HTML5 na web, sempre codifique com GOP de 1s (`-g fps`), Profile Main/3.1 com `faststart`, resolução proporcional ao container de exibição e evite `backdrop-filter` pesado sobrepondo elementos de vídeo ativo.
+
 ## 2026-10-19 — Redesign de Modais Densos com Zero Scroll & Injeção de Contexto de Origem (SPECS)
 
 ### Lição 19: Blindagem contra crescimento vertical ("Zero Scroll") em modais de onboarding

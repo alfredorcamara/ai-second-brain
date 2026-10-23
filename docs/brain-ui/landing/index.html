@@ -694,7 +694,17 @@
           <div class="card-video-body">
             <p>Contexto vital que sobrevive a fechamento de abas, reinicialização de IDEs, trocas de LLMs e mudanças na
               equipe.</p>
-            <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
+            <div class="card-footer-actions">
+              <div class="card-more-btn"><span>Ver arquitetura detalhada</span> <i>↗</i></div>
+              <button type="button" class="card-video-9x16-btn" id="btn-memoria-persistente-video-9x16"
+                data-video-src="assets/video/MemoriaPersistente-9x16.mp4"
+                data-video-poster="assets/video/synapse-poster.jpg"
+                data-video-title="Memória Persistente Real · Demo 9:16"
+                aria-label="Assistir demonstração rápida em vídeo 9:16">
+                <span class="btn-video-icon">▶</span>
+                <span>Vídeo Demo (9:16)</span>
+              </button>
+            </div>
           </div>
         </div>
         <div class="card card-video-featured rv" data-feature="session-capture" style="--card-accent: #10b981;"
@@ -894,6 +904,7 @@
               <button type="button" class="card-video-9x16-btn" id="btn-pergunte-cerebro-video-9x16"
                 data-video-src="assets/video/pergunte-cerebro-card-promo-9x16.mp4"
                 data-video-poster="assets/video/pergunte-cerebro-promo-poster.jpg"
+                data-video-title="Pergunte ao Cérebro · Demo 9:16"
                 aria-label="Assistir demonstração rápida em vídeo 9:16">
                 <span class="btn-video-icon">▶</span>
                 <span>Vídeo Demo (9:16)</span>
@@ -1331,14 +1342,14 @@
         <div class="promo-modal-9x16-title">
           <span class="video-live-dot"
             style="background: rgb(72, 102, 236); box-shadow: 0 0 10px rgb(72, 102, 236);"></span>
-          <span>Pergunte ao Cérebro · Demo 9:16</span>
+          <span id="promo-modal-9x16-title-text">Pergunte ao Cérebro · Demo 9:16</span>
         </div>
         <button class="promo-modal-9x16-close" id="promo-modal-9x16-close" aria-label="Fechar vídeo">✕</button>
       </div>
       <div class="promo-modal-9x16-body">
         <div class="promo-modal-9x16-frame">
-          <video id="promo-video-9x16-player" class="promo-video-9x16-player" controls preload="metadata" playsinline
-            src="assets/video/Reels-9x16.mp4" poster="assets/video/pergunte-cerebro-promo-poster.jpg">
+          <video id="promo-video-9x16-player" class="promo-video-9x16-player" controls preload="none" playsinline
+            poster="assets/video/pergunte-cerebro-promo-poster.jpg">
             Seu navegador não suporta reprodução de vídeo.
           </video>
         </div>
