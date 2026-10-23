@@ -1833,7 +1833,7 @@ main .video-expand-btn {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 6px 12px;
+  padding: 5px 13px 5px 5px; /* Ícone de play rente à borda esquerda da cápsula */
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
