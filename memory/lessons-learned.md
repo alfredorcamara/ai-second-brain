@@ -1,5 +1,12 @@
 # Lições Aprendidas
 
+## 2026-10-22 — Frame de vídeo congelado até trocar o foco do browser (starvation do compositor)
+
+### Lição 24: Vídeo em modal só atualiza o frame ao trocar o foco da janela
+**Contexto**: No localhost, o vídeo 9:16 no modal tinha áudio contínuo, mas a imagem travava e só avançava quando o usuário saía e voltava ao browser. Em tela cheia nunca travava.
+**Aprendizado**: Áudio contínuo + imagem parada indica que o *decodificador está saudável* e o **compositor não está apresentando frames** (starvation de GPU/thread de composição), não problema de arquivo. Trocar o foco força um novo ciclo de composição, por isso o frame "anda". A causa é a página de fundo continuar na árvore de composição: dezenas de `backdrop-filter: blur()` (nav, cards, FAQ, diagramas) e o canvas WebGL Three.js disputam a GPU com o vídeo. Backdrop opaco não resolve (o Chromium ainda compõe as camadas atrás). Tela cheia funciona porque desanexa o vídeo da página.
+**Ação**: Ao abrir um modal de vídeo, remova a página da composição (`body.modal-open > *:not(.modal) { visibility: hidden }`), pause WebGL e inicie o `play()` só após o fade-in do modal. Desative PiP/Remote Playback no `<video>` do modal. No servidor local, trate Range sufixo (`bytes=-N`) e destrua o stream no `close` da resposta.
+
 ## 2026-10-22 — Otimização de Vídeos Web em Modais: GOP (Keyframe Interval), Resolução e GPU
 
 ### Lição 23: Travamento de Vídeo MP4 na Web por Intervalo Excessivo de Keyframes (GOP) e GPU Blur

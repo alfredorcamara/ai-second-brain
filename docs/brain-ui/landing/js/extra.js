@@ -239,6 +239,7 @@
         promo9x16Modal.classList.add('active');
         promo9x16Modal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
+        document.body.classList.add('promo-modal-open');
 
         if (promo9x16Close) {
             promo9x16Close.focus();
@@ -248,7 +249,9 @@
             if (promo9x16Video.currentTime > 0) {
                 promo9x16Video.currentTime = 0;
             }
-            requestAnimationFrame(() => {
+            // Aguarda o fade-in do modal (0.25s) terminar para o decodificador não competir com a animação
+            setTimeout(() => {
+                if (!promo9x16Modal.classList.contains('active')) return;
                 const playPromise = promo9x16Video.play();
                 if (playPromise !== undefined) {
                     playPromise.catch(() => {
@@ -257,7 +260,7 @@
                         promo9x16Video.play().catch(() => { });
                     });
                 }
-            });
+            }, 270);
         }
     };
 
@@ -275,6 +278,7 @@
         promo9x16Modal.setAttribute('aria-hidden', 'true');
         promo9x16Modal.setAttribute('inert', '');
         document.body.style.overflow = '';
+        document.body.classList.remove('promo-modal-open');
 
         if (promo9x16Video) {
             promo9x16Video.pause();

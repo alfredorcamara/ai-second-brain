@@ -2438,10 +2438,18 @@ Projeto externo vinculado ao AI Second Brain.
         // Suporte a HTTP 206 Partial Content (Range Requests) - Essencial para reprodução fluida e sem travamentos de vídeo
         if (range && (ext === '.mp4' || ext === '.webm')) {
             const parts = range.replace(/bytes=/, '').split('-');
-            const start = parseInt(parts[0], 10);
-            const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+            let start, end;
+            if (parts[0] === '') {
+                // Range sufixo (bytes=-N): últimos N bytes (Chromium usa para ler o moov/índice do MP4)
+                const suffix = parseInt(parts[1], 10);
+                start = Math.max(0, fileSize - (isNaN(suffix) ? 0 : suffix));
+                end = fileSize - 1;
+            } else {
+                start = parseInt(parts[0], 10);
+                end = parts[1] ? Math.min(parseInt(parts[1], 10), fileSize - 1) : fileSize - 1;
+            }
 
-            if (start >= fileSize || end >= fileSize || start > end) {
+            if (isNaN(start) || isNaN(end) || start >= fileSize || start > end) {
                 res.writeHead(416, {
                     'Content-Range': `bytes */${fileSize}`
                 });
@@ -2457,6 +2465,9 @@ Projeto externo vinculado ao AI Second Brain.
                 'Content-Type': mime,
                 'Cache-Control': 'public, max-age=3600'
             });
+            // Aborto de conexão (seek/pausa do vídeo): libera o stream imediatamente
+            res.on('close', () => fileStream.destroy());
+            fileStream.on('error', () => res.destroy());
             fileStream.pipe(res);
             return;
         }

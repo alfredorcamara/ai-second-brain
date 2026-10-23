@@ -39,7 +39,8 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
            - Remoção de transforms 3D residuais no modal ativo (`transform: none`) e no elemento de vídeo;
            - Backdrop opaco sólido (`#04060e`) ativando Occlusion Culling (GPU descarta renderização da página de fundo);
            - Desativação do `box-shadow` animado no `.video-live-dot` do modal e início de reprodução via `requestAnimationFrame`.
-      5. *Validação*: `npm run doctor` executado com 100% de sucesso (33 scripts íntegros, links validados, 0 links ou assets quebrados).
+      5. *Frame congelado até trocar o foco do browser (localhost)*: áudio contínuo com imagem parada = compositor sem apresentar frames (não é decodificação). Correção: `body.promo-modal-open` + `visibility:hidden` nos irmãos do modal (remove ~30 `backdrop-filter` e o canvas WebGL da composição), `play()` após o fade-in (270ms), `disablePictureInPicture`/`disableRemotePlayback` no player e hardening do Range/abort de stream em `server.js` (Range sufixo `bytes=-N`, `fileStream.destroy()` no `close`).
+      6. *Validação*: `npm run doctor` executado com 100% de sucesso (33 scripts íntegros, links validados, 0 links ou assets quebrados).
 
 - **Data**: 2026-10-21
   - **Agnosticismo de IA no Cockpit & Documentação da Solução (Universal AI Gateway BYOK)**:

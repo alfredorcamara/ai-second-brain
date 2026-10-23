@@ -1893,6 +1893,13 @@ main .video-expand-btn {
 }
 
 /* ── Modal de Vídeo Vertical 9:16 (Reels / Shorts) ── */
+
+/* Com o modal aberto, a página inteira sai da composição (visibility:hidden não pinta nem compõe).
+   Isso remove dezenas de backdrop-filter e o canvas WebGL do compositor, que antes disputavam
+   a GPU/thread de composição com o vídeo e faziam o frame só atualizar ao trocar o foco do browser. */
+body.promo-modal-open > *:not(.promo-modal-9x16):not(script):not(style):not(link) {
+  visibility: hidden !important;
+}
 .promo-modal-9x16 {
   position: fixed;
   inset: 0;
