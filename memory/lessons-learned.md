@@ -1,5 +1,12 @@
 # Lições Aprendidas
 
+## 2026-10-22 — Reabrir o mesmo vídeo no modal não tocava
+
+### Lição 25: `currentSrc` fica obsoleto após `removeAttribute('src')` + `load()`
+**Contexto**: Ao fechar o modal 9:16 o player tinha o `src` removido (para liberar o decodificador). Reabrir o mesmo vídeo não tocava; abrir o outro vídeo funcionava.
+**Aprendizado**: Após `removeAttribute('src')` + `load()`, o `video.currentSrc` pode manter a URL anterior. A checagem `currentSrc.endsWith(src)` concluiu que o vídeo já estava carregado, não reatribuiu o `src` e o `play()` rodou em um player sem fonte. Com outro vídeo a comparação falhava e o `src` era definido.
+**Ação**: Para decidir se reatribui a fonte, compare com `getAttribute('src')` (null após remover), nunca com `currentSrc`. Teste sempre o ciclo abrir → fechar → reabrir o mesmo item.
+
 ## 2026-10-22 — Frame de vídeo congelado até trocar o foco do browser (starvation do compositor)
 
 ### Lição 24: Vídeo em modal só atualiza o frame ao trocar o foco da janela

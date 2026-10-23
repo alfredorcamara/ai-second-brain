@@ -226,12 +226,13 @@
         if (modalVideo && !modalVideo.paused) modalVideo.pause();
         if (inlineVideo && !inlineVideo.paused) inlineVideo.pause();
 
-        // 2. Garante source e poster corretos sem forçar reload desnecessário
+        // 2. Garante source e poster corretos.
+        // Usa o atributo src real (null após o closePromo9x16 remover a fonte); currentSrc fica obsoleto
+        // após removeAttribute('src') + load() e fazia o mesmo vídeo não ser recarregado ao reabrir.
         if (promo9x16Video && videoSrc) {
-            const cur = promo9x16Video.currentSrc || promo9x16Video.src || '';
-            if (!cur.endsWith(videoSrc)) {
+            if (posterSrc) promo9x16Video.poster = posterSrc;
+            if (promo9x16Video.getAttribute('src') !== videoSrc) {
                 promo9x16Video.src = videoSrc;
-                if (posterSrc) promo9x16Video.poster = posterSrc;
             }
         }
 

@@ -41,7 +41,8 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
            - Desativação do `box-shadow` animado no `.video-live-dot` do modal e início de reprodução via `requestAnimationFrame`.
       5. *Frame congelado até trocar o foco do browser (localhost)*: áudio contínuo com imagem parada = compositor sem apresentar frames (não é decodificação). Correção: `body.promo-modal-open` + `visibility:hidden` nos irmãos do modal (remove ~30 `backdrop-filter` e o canvas WebGL da composição), `play()` após o fade-in (270ms), `disablePictureInPicture`/`disableRemotePlayback` no player e hardening do Range/abort de stream em `server.js` (Range sufixo `bytes=-N`, `fileStream.destroy()` no `close`).
       6. *Refinamento Visual do Botão de Vídeo 9:16*: Texto simplificado de "Vídeo Demo (9:16)" para "Assista" (e "Watch" no dicionário i18n) e padding ajustado para `5px 13px 5px 5px`, aproximando o ícone circular de play da borda esquerda arredondada da cápsula.
-      7. *Validação*: `npm run doctor` executado com 100% de sucesso (33 scripts íntegros, links validados, 0 links ou assets quebrados).
+      7. *Reabrir o mesmo vídeo não tocava*: `currentSrc` ficava obsoleto após `removeAttribute('src')` + `load()` no fechamento, então a abertura não reatribuía o `src`. Corrigido comparando com `getAttribute('src')` e sempre atualizando o poster (`extra.js`).
+      8. *Validação*: `npm run doctor` executado com 100% de sucesso (33 scripts íntegros, links validados, 0 links ou assets quebrados).
 
 - **Data**: 2026-10-21
   - **Agnosticismo de IA no Cockpit & Documentação da Solução (Universal AI Gateway BYOK)**:
