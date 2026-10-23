@@ -245,15 +245,19 @@
         }
 
         if (promo9x16Video) {
-            promo9x16Video.currentTime = 0;
-            const playPromise = promo9x16Video.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(() => {
-                    // Se o navegador bloquear áudio no autoplay, muta e retenta
-                    promo9x16Video.muted = true;
-                    promo9x16Video.play().catch(() => { });
-                });
+            if (promo9x16Video.currentTime > 0) {
+                promo9x16Video.currentTime = 0;
             }
+            requestAnimationFrame(() => {
+                const playPromise = promo9x16Video.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(() => {
+                        // Se o navegador bloquear áudio no autoplay, muta e retenta
+                        promo9x16Video.muted = true;
+                        promo9x16Video.play().catch(() => { });
+                    });
+                }
+            });
         }
     };
 

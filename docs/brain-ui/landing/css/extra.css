@@ -1903,7 +1903,8 @@ main .video-expand-btn {
   padding: 16px;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  isolation: isolate;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .promo-modal-9x16.active {
@@ -1911,32 +1912,35 @@ main .video-expand-btn {
   pointer-events: auto;
 }
 
+/* Backdrop 100% opaco ativa Occlusion Culling no Chromium: GPU descarta renderização da página de fundo */
 .promo-modal-9x16-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(4, 6, 14, 0.96);
+  background: #04060e;
+  opacity: 0.98;
   contain: strict;
 }
 
+/* Dialog: largura 360px garante proporção 9:16 com altura inteira de 640px (sem subpixel rounding).
+   Sem overflow:hidden no dialog pai para NÃO desabilitar o Hardware Overlay do decodificador de vídeo. */
 .promo-modal-9x16-dialog {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 380px;
+  max-width: 360px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  background: rgba(11, 15, 28, 0.98);
+  background: #0b0f1c;
   border: 1px solid rgba(72, 102, 236, 0.45);
   border-radius: 20px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9), 0 0 45px rgba(72, 102, 236, 0.28);
-  transform: translateZ(0) scale(0.94) translateY(12px);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 24px rgba(72, 102, 236, 0.25);
+  transform: translateY(10px);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .promo-modal-9x16.active .promo-modal-9x16-dialog {
-  transform: translateZ(0) scale(1) translateY(0);
+  transform: none; /* Sem transformativo ativo: permite DirectComposition overlay 1:1 */
 }
 
 .promo-modal-9x16-header {
@@ -1944,7 +1948,9 @@ main .video-expand-btn {
   align-items: center;
   justify-content: space-between;
   padding: 13px 18px;
-  background: rgba(17, 23, 40, 0.95);
+  background: rgba(17, 23, 40, 0.98);
+  border-top-left-radius: 19px;
+  border-top-right-radius: 19px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   flex-shrink: 0;
 }
@@ -1957,6 +1963,12 @@ main .video-expand-btn {
   font-weight: 600;
   color: #fff;
   letter-spacing: 0.02em;
+}
+
+/* Ponto estático sem animação contínua de box-shadow para não invalidar paint a cada frame do vídeo */
+.promo-modal-9x16-header .video-live-dot {
+  animation: none;
+  box-shadow: 0 0 8px rgba(72, 102, 236, 0.8);
 }
 
 .promo-modal-9x16-close {
@@ -1988,7 +2000,6 @@ main .video-expand-btn {
   justify-content: center;
   flex: 1;
   min-height: 0;
-  overflow: hidden;
 }
 
 .promo-modal-9x16-frame {
@@ -1999,21 +2010,26 @@ main .video-expand-btn {
   align-items: center;
   justify-content: center;
   background: #000;
+  contain: paint;
 }
 
+/* O elemento de vídeo puro retangular sem transform 3D:
+   Permite que o Chromium promova a superfície para DirectComposition Hardware Overlay,
+   reproduzindo exatamente com a mesma fluidez nativa da tela cheia. */
 .promo-video-9x16-player {
   width: 100%;
   height: 100%;
   object-fit: contain;
   background: #000;
   display: block;
-  transform: translateZ(0);
   outline: none;
 }
 
 .promo-modal-9x16-footer {
   padding: 11px 16px;
-  background: rgba(17, 23, 40, 0.92);
+  background: rgba(17, 23, 40, 0.98);
+  border-bottom-left-radius: 19px;
+  border-bottom-right-radius: 19px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
