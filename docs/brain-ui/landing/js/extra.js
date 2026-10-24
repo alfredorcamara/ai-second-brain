@@ -314,6 +314,14 @@
     window.openPromoVideo9x16 = openPromo9x16;
     window.closePromoVideo9x16 = closePromo9x16;
 
+    // ── Contato privado: monta o mailto em runtime (anti-scraper; endereço não fica em texto no HTML) ──
+    const contactEmail = $('#contact-email');
+    if (contactEmail && contactEmail.dataset.user && contactEmail.dataset.domain) {
+        const addr = `${contactEmail.dataset.user}@${contactEmail.dataset.domain}`;
+        contactEmail.href = `mailto:${addr}?subject=${encodeURIComponent('Contato — AI Second Brain')}`;
+        contactEmail.title = addr;
+    }
+
     // Sincronização dinâmica universal de versão (Localhost e GitHub Pages)
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     const versionUrl = isLocal

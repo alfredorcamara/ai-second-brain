@@ -1,0 +1,28 @@
+title: "🙌 "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Conte como você usa o AI Second Brain! / Tell us how you use AI Second Brain!
+        Pode escrever em português ou inglês. / Write in English or Portuguese.
+  - type: textarea
+    id: what
+    attributes:
+      label: "O que você construiu ou como usa? / What did you build or how do you use it?"
+    validations:
+      required: true
+  - type: input
+    id: agent
+    attributes:
+      label: "Qual agente de IA você usa? / Which AI agent do you use?"
+      placeholder: "Ex.: Claude, Cursor, Copilot, Antigravity..."
+    validations:
+      required: false
+  - type: textarea
+    id: media
+    attributes:
+      label: "Print, vídeo ou link (opcional) / Screenshot, video or link (optional)"
+      description: "Você pode arrastar imagens para cá. / You can drag images here."
+    validations:
+      required: false

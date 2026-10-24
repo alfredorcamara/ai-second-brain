@@ -1,0 +1,28 @@
+title: "🙏 "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Antes de perguntar, veja o FAQ da landing e o README. / Before asking, check the landing FAQ and README.
+        Pode escrever em português ou inglês. / Write in English or Portuguese.
+        Encontrou um bug reproduzível? Abra uma Issue. / Found a reproducible bug? Open an Issue.
+  - type: textarea
+    id: question
+    attributes:
+      label: "Qual é a sua dúvida? / What is your question?"
+    validations:
+      required: true
+  - type: textarea
+    id: tried
+    attributes:
+      label: "O que você já tentou? / What have you tried?"
+    validations:
+      required: false
+  - type: input
+    id: env
+    attributes:
+      label: "Ambiente (SO e versão do Node) / Environment (OS and Node version)"
+      placeholder: "Ex.: Windows 11, Node 20"
+    validations:
+      required: false

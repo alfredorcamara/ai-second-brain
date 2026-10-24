@@ -1040,3 +1040,7 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
   - **Grafo Neural 3D (Three.js)**: Grafo orbital onde o projeto é o Sol Central conectado a seus arquivos locais e satélites de governança.
   - **Grafo Global com Clusters Galácticos**: Projetos agrupados em clusters orbitais interligados por regras comuns.
   - **APIs de Ciclo de Vida**: Endpoints backend para diagnóstico de memória, arquivamento seguro em `.archive/`, exportação de backup (.md e .json) e desvinculação não destrutiva.
+
+## Landing — canais de contato (2026-10-24)
+- Decisão: sem formulário de contato; canal principal = GitHub Issues/PRs; dúvidas = GitHub Discussions; contato privado discreto (e-mail ofuscado via JS + LinkedIn) na seção #comunidade. Formulário completo adiado até haver volume fora do GitHub.
+- Arquivos: landing/index.html, js/extra.js, js/i18n.dict.js, css/extra.css.

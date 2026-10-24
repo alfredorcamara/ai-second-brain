@@ -2651,3 +2651,11 @@ body.promo-modal-open > *:not(.promo-modal-9x16):not(script):not(style):not(link
   content-visibility: auto;
   contain-intrinsic-size: 1px 750px;
 }
+
+/* ── Contato privado discreto (seção comunidade) ── */
+.contact-private{display:flex;flex-wrap:wrap;gap:8px 10px;justify-content:center;align-items:center;margin:18px 0 0;font-size:13.5px;color:var(--mut)}
+.contact-private a{color:var(--fg-dim);text-decoration:none;border-bottom:1px dashed var(--line-strong);padding-bottom:1px;transition:color .25s,border-color .25s}
+.contact-private a:hover,.contact-private a:focus-visible{color:var(--gold2);border-bottom-color:var(--gold)}
+.contact-private a:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
+.contact-private .contact-sep{opacity:.5}
+main .contact-private{pointer-events:auto}

@@ -1,0 +1,28 @@
+title: "💡 "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por compartilhar sua ideia! / Thanks for sharing your idea!
+        Pode escrever em português ou inglês. / Write in English or Portuguese.
+  - type: textarea
+    id: problem
+    attributes:
+      label: "Qual problema isso resolve? / What problem does it solve?"
+      placeholder: "Descreva a dor ou a necessidade. / Describe the pain point or need."
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: "Como você imagina a solução? / How do you imagine the solution?"
+      placeholder: "Uma ideia geral já ajuda. / A rough idea is enough."
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Alternativas que você considerou (opcional) / Alternatives considered (optional)"
+    validations:
+      required: false
