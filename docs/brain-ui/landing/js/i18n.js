@@ -35,7 +35,7 @@
         document.documentElement.lang = en ? 'en' : 'pt-BR';
         const t = document.querySelector('title');
         if (en) { t.dataset.o = t.dataset.o || t.textContent; t.textContent = D[norm(t.dataset.o)] || t.dataset.o; } else if (t.dataset.o) t.textContent = t.dataset.o;
-        const m = document.querySelector('meta[name="description"]'); if (m) { m.dataset.o = m.dataset.o || m.content; m.content = en ? 'Persistent Markdown memory for AI agents, with an interactive 3D neural graph. Open source, agnostic, no lock-in.' : m.dataset.o; }
+        const m = document.querySelector('meta[name="description"]'); if (m) { m.dataset.o = m.dataset.o || m.content; m.content = en ? 'Persistent Markdown memory for AI agents, with an interactive 3D neural graph. Source-available, agnostic, no lock-in.' : m.dataset.o; }
         walk(document.body, en);
         const b = document.getElementById('lang-btn'); if (b) b.textContent = en ? 'PT' : 'EN';
         window.dispatchEvent(new CustomEvent('langchange', { detail: lang }));
