@@ -1,6 +1,6 @@
 {
   "name": "ai-second-brain",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Seu segundo cérebro para desenvolvimento com IA. Organiza conhecimento, decisões, memória e governança para todos os seus projetos.",
   "main": "server.js",
   "scripts": {
@@ -24,5 +24,5 @@
     "governance"
   ],
   "author": "Alfredo R. Câmara",
-  "license": "MIT"
+  "license": "FSL-1.1-MIT"
 }

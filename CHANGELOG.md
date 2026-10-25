@@ -7,6 +7,27 @@ e este projeto adere ao [Versionamento Semântico (SemVer)](https://semver.org/l
 
 ---
 
+## [1.4.1] — 2026-10-25
+
+### ⚖️ Governança & Licenciamento
+- **Transição para Functional Source License (FSL-1.1-MIT)**:
+  - Adotada a licença `FSL-1.1-MIT` (Source-Available / Fair-Code) garantindo que o software permaneça gratuito e aberto para desenvolvedores, pesquisa, estudos e uso produtivo interno, com vedação explícita à exploração comercial concorrente desautorizada por terceiros.
+  - Período de proteção comercial estabelecido em **4 anos** a partir do lançamento de cada versão, convertendo-se automaticamente em MIT permissivo após esse prazo.
+  - Registro formal da **ADR-G012** em `decisions/GLOBAL_DECISIONS.md`.
+- **Adoção de Contrato de Licença de Colaborador (CLA)**:
+  - Criação do `CLA.md` e do guia de colaboração `CONTRIBUTING.md`, resguardando a propriedade intelectual e garantindo a soberania do autor para manutenção e evolução do ecossistema.
+
+### 🎨 Design & UI/UX (Landing Page)
+- **Refinamento dos Cards do Catálogo Dinâmico**:
+  - Adicionado rótulo informativo sutil `Exemplos` acima dos modelos recomendados.
+  - Adoção de nomes comerciais legíveis (ex.: `Llama 3.3 70B`, `DeepSeek R1 (70B)`, `Gemini 2.5 Flash`) em substituição aos IDs brutos de API, eliminando quebras indesejadas de linha.
+  - Reestruturação em contêineres dedicados (`.profile-example-row`) com espaçamento vertical confortável e tipografia mono ajustada.
+- **Seção Comunidade**:
+  - Badge aprimorado para `COLABORAÇÃO & COMUNIDADE` e título refinado para `Construído com você.` (com paridade integral em inglês no dicionário `i18n.dict.js`).
+  - Rodapé atualizado para refletir a nova licença `FSL-1.1-MIT`.
+
+---
+
 ## [1.4.0] — 2026-10-21
 
 ### 🚀 Adicionado & Aprimorado

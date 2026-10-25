@@ -196,4 +196,5 @@ AI_SECOND_BRAIN/
 ## Autor & Licença
 
 Criado e mantido com paixão por **Alfredo R. Câmara** ([@alfredorcamara](https://github.com/alfredorcamara)).  
-Distribuído sob licença **MIT**. 100% Livre e Open Source.
+Distribuído sob licença **[FSL-1.1-MIT](LICENSE)** (*Functional Source License — Source-Available / Fair-Code*).  
+Livre e gratuito para uso pessoal, pesquisa, estudo e uso produtivo interno. Para uso comercial concorrente ou parcerias, consulte o [LICENSE](LICENSE) e o [CLA](CLA.md).

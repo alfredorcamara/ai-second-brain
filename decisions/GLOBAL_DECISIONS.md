@@ -102,6 +102,17 @@
   5. **Controle Auditivo e Acessibilidade**: O modal pausa a reprodução automaticamente ao ser fechado (via botão ✕, clique no backdrop ou tecla ESC), prevenindo ruídos ou reproduções fantasmas em segundo plano.
 - **Motivo**: Aumenta a conversão de novos usuários e a clareza do produto sem redundância cognitiva com as seções analíticas e sem degradar o tempo de carregamento da página.
 - **Detalhes**: Ver `docs/brain-ui/landing/index.html`, `docs/brain-ui/landing/css/extra.css`, `docs/brain-ui/landing/js/extra.js` e `docs/brain-ui/landing/js/i18n.dict.js`.
+ 
+## ADR-G012: Transição de Licenciamento para FSL-1.1-MIT (Source-Available) e Adoção de CLA
+- **Status**: Aceita
+- **Data**: 2026-10-25
+- **Descrição**: Transição do modelo de licenciamento do repositório da licença permissiva MIT para a **Functional Source License, Version 1.1 (FSL-1.1-MIT)**, acompanhada da formalização de um **Contributor License Agreement (CLA)**:
+  1. **Proteção Comercial Sem Barreiras de Adoção**: O código permanece 100% público, auditável e gratuito para desenvolvedores, pesquisadores, estudantes e empresas que utilizam o produto internamente.
+  2. **Bloqueio de Exploração Concorrente Desautorizada**: É expressamente vedado a terceiros empacotar ou revender o software como produto ou serviço comercial concorrente sem prévia autorização e acordo comercial com o autor.
+  3. **Conversão Temporária para MIT (4 anos)**: Cada versão publicada sob a FSL converte-se automaticamente em MIT permissivo 4 anos após o lançamento, assegurando previsibilidade e compromisso com o ecossistema de software.
+  4. **Preservação de Direitos via CLA (`CLA.md`)**: Contribuições externas via Pull Request concedem ao mantenedor e detentor original dos direitos autorais (Alfredo R. Câmara) licença ampla de distribuição, sublicenciamento e eventual monetização, evitando fragmentação de direitos de propriedade intelectual.
+- **Motivo**: Proteger o esforço intelectual e de engenharia contra exploração predatória por terceiros mantendo a comunidade livre para usar e aprender.
+- **Detalhes**: Ver `LICENSE`, `CLA.md`, `CONTRIBUTING.md` e `package.json`.
 
 
 

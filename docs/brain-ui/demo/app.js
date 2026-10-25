@@ -12461,14 +12461,14 @@ async function initSystemVersionCheck() {
         // Fallback silencioso
     }
     applyVersionToUI({
-        version: '1.4.0',
+        version: '1.4.1',
         updateAvailable: false,
         behindCommits: 0
     });
 }
 
 function applyVersionToUI(data) {
-    const ver = data?.version || data?.installedVersion || '1.4.0';
+    const ver = data?.version || data?.installedVersion || '1.4.1';
     try { localStorage.setItem('ai_second_brain_system_version', ver); } catch (_) { }
     const hasUpdate = Boolean(data?.updateAvailable);
 
