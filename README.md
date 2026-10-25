@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/brain-ui/assets/Banner%20futurista%20do%20AI%20Second%20Brain.webp" alt="AI Second Brain Banner" width="100%" />
+</p>
+
 # AI Second Brain
 
 > **O Sistema Operacional de Memória Viva e Governança para Agentes de IA.**  
@@ -198,3 +202,28 @@ AI_SECOND_BRAIN/
 Criado e mantido com paixão por **Alfredo R. Câmara** ([@alfredorcamara](https://github.com/alfredorcamara)).  
 Distribuído sob licença **[FSL-1.1-MIT](LICENSE)** (*Functional Source License — Source-Available / Fair-Code*).  
 Livre e gratuito para uso pessoal, pesquisa, estudo e uso produtivo interno. Para uso comercial concorrente ou parcerias, consulte o [LICENSE](LICENSE) e o [CLA](CLA.md).
+
+<br>
+
+<p align="center">
+  <img src="docs/brain-ui/assets/ai-second-brain-logo-animado.svg" alt="AI Second Brain Logo" width="220" />
+</p>
+
+<p align="center">
+  <em>Transformando agentes de IA em engenheiros de software sêniores com memória viva e governança contínua.</em>
+</p>
+
+<p align="center">
+  <a href="https://cursor.com"><img src="https://img.shields.io/badge/Cursor-Compatível-000000?style=flat-square&logo=cursor&logoColor=white" alt="Cursor"></a>
+  <a href="https://claude.ai"><img src="https://img.shields.io/badge/Claude%20Code-Compatível-D97706?style=flat-square&logo=anthropic&logoColor=white" alt="Claude"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Google%20Antigravity-Nativo-4285F4?style=flat-square&logo=google&logoColor=white" alt="Antigravity"></a>
+  <a href="https://codeium.com/windsurf"><img src="https://img.shields.io/badge/Windsurf-Compatível-0ea5e9?style=flat-square&logo=windsurf&logoColor=white" alt="Windsurf"></a>
+  <a href="https://github.com/features/copilot"><img src="https://img.shields.io/badge/GitHub%20Copilot-Compatível-181717?style=flat-square&logo=githubcopilot&logoColor=white" alt="Copilot"></a>
+</p>
+
+<p align="center">
+  <a href="https://alfredorcamara.github.io/ai-second-brain/">🌐 Landing Page</a> ·
+  <a href="https://github.com/alfredorcamara/ai-second-brain/issues">🐛 Reportar Problema</a> ·
+  <a href="https://github.com/alfredorcamara/ai-second-brain/discussions">💡 Discussões</a> ·
+  <a href="#ai-second-brain">⬆ Voltar ao Topo</a>
+</p>
