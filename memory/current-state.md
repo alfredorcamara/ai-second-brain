@@ -20,6 +20,18 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 | `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway, Research Engine, Session Capture, Brain Search, Otimização de Vídeo) |
 
 ## Sessões Recentes
+- **Data**: 2026-10-25
+  - **Instrumentação de Métricas de Conversão & Captura de UTMs na Landing Page (`docs/brain-ui/landing/`)**:
+    - **Demanda**: Solucionar o "ponto cego" entre o tráfego da Cloudflare e as métricas do GitHub (views, clones e stars), medindo a intenção real dos visitantes da landing page através de eventos qualificados e atribuição de campanhas (UTMs).
+    - **Solução Implementada**:
+      1. *Módulo de Telemetria Resiliente (`docs/brain-ui/landing/js/analytics.js`)*: Criado motor sem dependências e sem cookies intrusivos que unifica o rastreamento via Event Bus (`window.trackBrainEvent(eventName, payload)`), com suporte a Cloudflare Zaraz, GA4, Plausible, Umami e dispatch de `CustomEvent` no DOM.
+      2. *Captura & Propagação de UTMs*: Leitura automática de `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content` e `initial_referrer` persistidos em `sessionStorage`. Enriquecimento automático de links de saída para o repositório GitHub com o parâmetro `?ref=landing_${utm_source}`, permitindo rastreabilidade direta na aba *Traffic / Referring Sites* do GitHub.
+      3. *Event Delegation nos Pontos Críticos do Funil*:
+         - **Fundo de Funil (Alta Intenção)**: `click_github_cta` (Hero, Navbar, Rodapé), `click_github_release` (pill v1.4.1) e `copy_install_command` (cópia do comando `git clone`).
+         - **Meio de Funil (Experimentação & Demonstração)**: `demo_interact` (carregamento inline do cockpit e abertura em tela cheia) e `video_play` (pitch 16:9, reels 9:16 e expansão).
+         - **Topo de Funil (Engajamento & Objeções)**: `problem_tab_toggle` (comparador com/sem memória), `feature_card_click` (cards Quickstart e superpoderes), `faq_question_expand` (dúvidas expandidas no FAQ), `language_toggle` (PT/EN) e `graph_3d_explore` (modo imersivo).
+      4. *Validação & Integridade*: Integrado com `defer` em `docs/brain-ui/landing/index.html`. `npm run doctor` executado com 100% de sucesso (34 scripts verificados, 0 links quebrados).
+
 - **Data**: 2026-10-22
   - **Otimização de Core Web Vitals na Landing Page (LCP, INP e CLS via Cloudflare Analytics)**:
     - **Diagnóstico & Causa Raiz**:
