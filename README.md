@@ -11,9 +11,9 @@
 
 ## 🌐 Conheça a Landing Page & Demo Online
 
-- 🚀 **Landing Page Oficial com Grafo 3D**: [https://alfredorcamara.github.io/ai-second-brain/](https://alfredorcamara.github.io/ai-second-brain/)  
+- 🚀 **Landing Page Oficial com Grafo 3D**: [https://alfredorcamara.github.io/ai-second-brain-site/](https://alfredorcamara.github.io/ai-second-brain-site/)  
   *(Acesse a apresentação visual interativa, explore o grafo neural 3D em tempo real e teste a demo pública).*
-- 💻 **Acesso Local Offline**: Abra diretamente no navegador o arquivo [`docs/brain-ui/landing/index.html`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/docs/brain-ui/landing/index.html).
+- 💻 **Acesso Local Offline**: Abra diretamente no navegador o arquivo [`docs/brain-ui/index.html`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/docs/brain-ui/index.html).
 
 ---
 
@@ -222,7 +222,7 @@ Livre e gratuito para uso pessoal, pesquisa, estudo e uso produtivo interno. Par
 </p>
 
 <p align="center">
-  <a href="https://alfredorcamara.github.io/ai-second-brain/">🌐 Landing Page</a> ·
+  <a href="https://alfredorcamara.github.io/ai-second-brain-site/">🌐 Landing Page</a> ·
   <a href="https://github.com/alfredorcamara/ai-second-brain/issues">🐛 Reportar Problema</a> ·
   <a href="https://github.com/alfredorcamara/ai-second-brain/discussions">💡 Discussões</a> ·
   <a href="#ai-second-brain">⬆ Voltar ao Topo</a>
