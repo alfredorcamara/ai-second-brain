@@ -428,7 +428,7 @@ function checkGitUpdateStatus() {
         for (const target of uiVersionFiles) {
             if (fs.existsSync(target.path)) {
                 const content = fs.readFileSync(target.path, 'utf-8');
-                if (!content.includes(`v${localVersion}`) && !content.includes(`version: '${localVersion}'`)) {
+                if (!content.includes('Redirecionando') && !content.includes(`v${localVersion}`) && !content.includes(`version: '${localVersion}'`)) {
                     console.log(`   ⚠️  Alerta: ${target.label} difere de package.json (v${localVersion})!`);
                     allSynced = false;
                 }

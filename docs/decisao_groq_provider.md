@@ -49,12 +49,12 @@ Utilizar a **API do Groq** (https://groq.com) como motor de IA para:
 
 | Arquivo | O que faz |
 |---------|-----------|
-| [.env](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/.env) | Armazena `GROQ_API_KEY` e configurações |
-| [.gitignore](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/.gitignore) | Protege `.env` de ser commitado |
+| [.env](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/.env) | Armazena `GROQ_API_KEY` e configurações |
+| [.gitignore](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/.gitignore) | Protege `.env` de ser commitado |
 
 ## Integração com o Server.js
 
-A API do Groq é compatível com o formato OpenAI. A integração no [server.js](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/server.js) será via `fetch` nativo do Node.js (sem dependências externas):
+A API do Groq é compatível com o formato OpenAI. A integração no [server.js](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/server.js) será via `fetch` nativo do Node.js (sem dependências externas):
 
 ```javascript
 // Exemplo de chamada — Refinamento de Prompt

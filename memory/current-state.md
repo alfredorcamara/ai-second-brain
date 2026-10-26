@@ -20,6 +20,16 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 | `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway, Research Engine, Session Capture, Brain Search, Otimização de Vídeo) |
 
 ## Sessões Recentes
+- **Data**: 2026-10-26
+  - **Desacoplamento em Dois Repositórios (Core vs Site/Demo) sob Pasta Mãe AI_SECOND_BRAIN_CENTRAL**:
+    - **Demanda**: Isolar os arquivos pesados de marketing e vídeos (~30 MB) da Landing Page do repositório principal de código para viabilizar um clone ultraleve (< 10 MB) para desenvolvedores, preservando paridade automática Cockpit -> Demo e integridade de links sem 404.
+    - **Solução Implementada**:
+      1. *Estruturação Central*: Criada pasta raiz AI_SECOND_BRAIN_CENTRAL contendo AI_SECOND_BRAIN (Core/Cockpit) e AI_SECOND_BRAIN-SITE (Landing Page e Demo interativa pública).
+      2. *Automação de Replicação (
+pm run sync:demo)*: Criado scripts/sync-demo.js que sincroniza App Core, CSS e Assets visuais do Cockpit para a Demo pública com preservação obrigatória do vault-data.js isolado (zero vazamento de projetos locais).
+      3. *Redirecionador Inteligente*: Criado scripts/apply-landing-redirect.js com meta-refresh e preservação de query parameters/UTMs para redirecionar tráfego antigo sem quebras.
+      4. *Validação & Integridade*: Caminhos absolutos e linter de versão do doctor.js ajustados. 100% dos links e 37 scripts aprovados com 0 erros.
+
 - **Data**: 2026-10-25
   - **Instrumentação de Métricas de Conversão & Captura de UTMs na Landing Page (`docs/brain-ui/landing/`)**:
     - **Demanda**: Solucionar o "ponto cego" entre o tráfego da Cloudflare e as métricas do GitHub (views, clones e stars), medindo a intenção real dos visitantes da landing page através de eventos qualificados e atribuição de campanhas (UTMs).

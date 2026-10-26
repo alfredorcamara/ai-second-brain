@@ -65,12 +65,12 @@ graph TD
     AIRouting -->|Apenas Redação Aberta| LLMCall["IA aciona: IGenerativeAIProvider (LLM)"]
 ```
 
-1. **Padrão Aberto Universal ([`AGENTS.md`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/AGENTS.md))**:
+1. **Padrão Aberto Universal ([`AGENTS.md`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/AGENTS.md))**:
    Lido nativamente por Claude Code, Cursor, Windsurf, Cline e agentes modernos. Contém a **Regra Absoluta nº 1**:
    > *"Prioridade Determinística: NUNCA utilize LLM quando código determinístico ou regras de negócio resolverem."*
-2. **Skill de Triagem ([`.agents/skills/ai-decision-gate/SKILL.md`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/.agents/skills/ai-decision-gate/SKILL.md))**:
+2. **Skill de Triagem ([`.agents/skills/ai-decision-gate/SKILL.md`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/.agents/skills/ai-decision-gate/SKILL.md))**:
    Fornece o algoritmo de triagem em 5 passos para a IA classificar qualquer fluxo em: Determinístico (A), Classificação/Decisão (B/C), Geração Aberta (D/E) ou Execução (F/G).
-3. **Regra de Decisão com IA ([`.agents/rules/01-ai-decision.md`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/.agents/rules/01-ai-decision.md))**:
+3. **Regra de Decisão com IA ([`.agents/rules/01-ai-decision.md`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/.agents/rules/01-ai-decision.md))**:
    Define expressamente como infração arquitetural:
    - ❌ *Usar LLM para tarefas determinísticas.*
    - ❌ *Chamar IA generativa para cada evento/job em loop.*
@@ -84,11 +84,11 @@ Para a promessa ser 100% cumprida, o desenvolvedor deve estar ciente do contexto
 
 | Cenário de Trabalho | O que acontece na IDE? | Como a promessa é garantida? |
 | :--- | :--- | :--- |
-| **Cenário A: AI Second Brain como Cockpit Central** *(Recomendado)* | A pasta raiz `AI_SECOND_BRAIN` está aberta na IDE. O dev edita projetos satélites via pasta `projects/<nome>/`. | **100% Automático**. O Claude / Cursor lê o [`AGENTS.md`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/AGENTS.md) da raiz e aplica o Decision Gate em qualquer prompt. |
+| **Cenário A: AI Second Brain como Cockpit Central** *(Recomendado)* | A pasta raiz `AI_SECOND_BRAIN` está aberta na IDE. O dev edita projetos satélites via pasta `projects/<nome>/`. | **100% Automático**. O Claude / Cursor lê o [`AGENTS.md`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/AGENTS.md) da raiz e aplica o Decision Gate em qualquer prompt. |
 | **Cenário B: Repositório Aberto Isoladamente em Outra Janela** | O dev abre apenas `C:\Projetos\SaaS\MeuProjeto` em uma nova janela isolada do editor. | **Requer a Ponte de Governança**. A nova janela não lê arquivos de pastas externas sem uma ponte. |
 
 #### Como criar a "Ponte de Governança" no Cenário B:
-Basta que o repositório do projeto tenha na raiz um arquivo apontando para a governança central (conforme especificado na [seção 3 do Manual](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/COMO_UTILIZAR_O_PROJETO.md)):
+Basta que o repositório do projeto tenha na raiz um arquivo apontando para a governança central (conforme especificado na [seção 3 do Manual](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/docs/COMO_UTILIZAR_O_PROJETO.md)):
 
 *Para Cursor (`.cursorrules`), Claude Code (`CLAUDE.md`) ou Agentes Universais (`AGENTS.md`):*
 ```markdown
@@ -324,12 +324,12 @@ public class RefundService
 O AI Second Brain **pratica o que prescreve**. Esse motor exato já está implementado e rodando em produção dentro deste repositório:
 
 ### 1. O Motor Canônico:
-- Arquivo: [`scripts/decision-provider.js`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/scripts/decision-provider.js)
+- Arquivo: [`scripts/decision-provider.js`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/scripts/decision-provider.js)
 - Classe: `RulesDecisionProvider` implementando `IDecisionProvider`.
 - Latência: **0ms**, CPU pura síncrona (`decideSync`), 100% offline.
 
 ### 2. O Caso Real no "Prompt Vivo" do Quickstart Studio:
-No módulo [`scripts/quickstart-grill.js`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/scripts/quickstart-grill.js), quando o desenvolvedor digita no chat web uma alteração em seus contratos de governança:
+No módulo [`scripts/quickstart-grill.js`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/scripts/quickstart-grill.js), quando o desenvolvedor digita no chat web uma alteração em seus contratos de governança:
 
 1. **Detecção de Ambiguidade Técnica sem Chamar LLM**:
    Se o desenvolvedor digitar algo vago como:  
@@ -416,5 +416,5 @@ Antes de considerar uma feature com IA pronta para homologação ou produção, 
 ---
 
 > 💡 **Conclusão**:  
-> A promessa **"AI Decision Gate & Motor JEV"** não é uma peça de marketing decorativa. Trata-se de uma **disciplina de engenharia concreta**, documentada nos contratos universais (`AGENTS.md`) e sustentada por código aberto e executável em [`scripts/decision-provider.js`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/scripts/decision-provider.js).  
+> A promessa **"AI Decision Gate & Motor JEV"** não é uma peça de marketing decorativa. Trata-se de uma **disciplina de engenharia concreta**, documentada nos contratos universais (`AGENTS.md`) e sustentada por código aberto e executável em [`scripts/decision-provider.js`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/scripts/decision-provider.js).  
 > Qualquer desenvolvedor que clonar o projeto tem à sua disposição a estrutura exata para economizar milhares de tokens e construir softwares mais rápidos, baratos e confiáveis.

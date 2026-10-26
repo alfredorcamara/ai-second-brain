@@ -13,7 +13,8 @@
     "project:link": "node scripts/link-project.js",
     "build:demo": "python docs/brain-ui/demo/tools/build_demo_vault.py",
     "version:sync": "node scripts/sync-version.js",
-    "sync:version": "node scripts/sync-version.js"
+    "sync:version": "node scripts/sync-version.js",
+    "sync:demo": "node scripts/sync-demo.js"
   },
   "keywords": [
     "ai",

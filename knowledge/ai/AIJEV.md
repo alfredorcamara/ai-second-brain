@@ -28,7 +28,7 @@ AIJev/Jev é uma **camada de decisão estruturada** para software:
 
 ## Implementação Canônica Nativa no AI Second Brain (`RulesDecisionProvider`)
 
-O AI Second Brain inclui uma implementação canônica e nativa em Node.js localizada em [`scripts/decision-provider.js`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/scripts/decision-provider.js).
+O AI Second Brain inclui uma implementação canônica e nativa em Node.js localizada em [`scripts/decision-provider.js`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/scripts/decision-provider.js).
 
 Ela executa com **latência de 0ms, custo zero de tokens e 100% offline**, servindo como provedor padrão de alta performance:
 
@@ -88,5 +88,5 @@ var result = await _decisionProvider.DecideAsync(request, ct);
 
 ## 📖 Guia de Implementação e FAQ para Desenvolvedores
 Para um guia completo sobre como a IA da sua IDE (Claude Code, Cursor, Antigravity) observa essas regras e o passo a passo com código para implementar no seu projeto, consulte:
-- [Guia Técnico & FAQ de Engenharia: AI Decision Gate & Motor JEV](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/GUIA_TECNICO_AI_DECISION_GATE_JEV.md)
+- [Guia Técnico & FAQ de Engenharia: AI Decision Gate & Motor JEV](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/docs/GUIA_TECNICO_AI_DECISION_GATE_JEV.md)
 

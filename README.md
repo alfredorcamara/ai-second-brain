@@ -13,7 +13,7 @@
 
 - 🚀 **Landing Page Oficial com Grafo 3D**: [https://alfredorcamara.github.io/ai-second-brain/](https://alfredorcamara.github.io/ai-second-brain/)  
   *(Acesse a apresentação visual interativa, explore o grafo neural 3D em tempo real e teste a demo pública).*
-- 💻 **Acesso Local Offline**: Abra diretamente no navegador o arquivo [`docs/brain-ui/landing/index.html`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/brain-ui/landing/index.html).
+- 💻 **Acesso Local Offline**: Abra diretamente no navegador o arquivo [`docs/brain-ui/landing/index.html`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/docs/brain-ui/landing/index.html).
 
 ---
 
@@ -162,9 +162,9 @@ AI_SECOND_BRAIN/
 
 ## 📖 Documentação Aprofundada
 
-- 📘 **[Manual de Uso Completo (docs/COMO_UTILIZAR_O_PROJETO.md)](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/COMO_UTILIZAR_O_PROJETO.md)**: Guia passo a passo com fluxo visual e conversacional para o dia a dia.
-- 🧠 **[Análise de Mercado e Valor (docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md)](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md)**: Por que a governança de contexto é o diferencial competitivo em times assistidos por IA.
-- 🔬 **[Motor de Pesquisa do Research Lab (docs/RESEARCH_LAB.md)](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/RESEARCH_LAB.md)**: Arquitetura de pesquisa autônoma, decomposição de temas e refinamento contínuo com IA.
+- 📘 **[Manual de Uso Completo (docs/COMO_UTILIZAR_O_PROJETO.md)](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/docs/COMO_UTILIZAR_O_PROJETO.md)**: Guia passo a passo com fluxo visual e conversacional para o dia a dia.
+- 🧠 **[Análise de Mercado e Valor (docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md)](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md)**: Por que a governança de contexto é o diferencial competitivo em times assistidos por IA.
+- 🔬 **[Motor de Pesquisa do Research Lab (docs/RESEARCH_LAB.md)](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/docs/RESEARCH_LAB.md)**: Arquitetura de pesquisa autônoma, decomposição de temas e refinamento contínuo com IA.
 
 ---
 
