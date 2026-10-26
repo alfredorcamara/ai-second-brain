@@ -417,11 +417,10 @@ function checkGitUpdateStatus() {
         console.log(`   Registro de melhorias e notas de release: CHANGELOG.md`);
 
         const uiVersionFiles = [
-            { path: path.join(ROOT_DIR, 'docs', 'brain-ui', 'landing', 'index.html'), label: 'Landing Page (docs/brain-ui/landing/index.html)' },
             { path: path.join(ROOT_DIR, 'docs', 'brain-ui', 'index.html'), label: 'Cockpit Visual (docs/brain-ui/index.html)' },
-            { path: path.join(ROOT_DIR, 'docs', 'brain-ui', 'demo', 'index.html'), label: 'Cockpit Demo (docs/brain-ui/demo/index.html)' },
             { path: path.join(ROOT_DIR, 'docs', 'brain-ui', 'app.js'), label: 'App Core (docs/brain-ui/app.js)' },
-            { path: path.join(ROOT_DIR, 'docs', 'brain-ui', 'demo', 'app.js'), label: 'Demo App Core (docs/brain-ui/demo/app.js)' }
+            { path: path.resolve(ROOT_DIR, '..', 'AI_SECOND_BRAIN-SITE', 'demo', 'index.html'), label: 'Demo Publica (AI_SECOND_BRAIN-SITE/demo/index.html)' },
+            { path: path.resolve(ROOT_DIR, '..', 'AI_SECOND_BRAIN-SITE', 'demo', 'app.js'), label: 'Demo App Core (AI_SECOND_BRAIN-SITE/demo/app.js)' }
         ];
 
         let allSynced = true;
