@@ -20,6 +20,17 @@ O AI Second Brain está estruturado como uma plataforma universal de governança
 | `scripts/` | Utilitários de infraestrutura e clientes IA nativos | ⚡ Zero-deps (Scan, AI Gateway, Research Engine, Session Capture, Brain Search, Otimização de Vídeo) |
 
 ## Sessões Recentes
+- **Data**: 2026-10-28
+  - **Estratégia de Engajamento Comunitário & Apoio Open Source (v1.4.2)**:
+    - **Demanda**: Solucionar o descompasso entre o alto volume de clones (mais de 219 cloners únicos em 14 dias) e a baixa conversão de estrelas no GitHub (~4 estrelas), decorrente de ~97% dos usuários clonarem e rodarem localmente sem abrir a página do repositório no navegador.
+    - **Solução Implementada**:
+      1. *Cockpit Toast Inteligente (`#starFeedbackToast`)*: Notificação não-bloqueante no canto inferior direito disparada no maior momento de valor (ao concluir o Quickstart Studio) e como fallback na 3ª sessão, com persistência no `localStorage` (opções "Dar Estrela" e "Já dei" silenciam para sempre; "Depois" agenda lembrete após 14 dias).
+      2. *Link Fixo na Sidebar*: Botão dourado translúcido (`⭐ Apoiar no GitHub`) no rodapé da barra lateral abaixo do badge de versão.
+      3. *Terminal Onboarding (`server.js`)*: Inclusão de link amigável no banner do console ao rodar `npm start` / `start-brain.bat`.
+      4. *Landing Page & Analytics*: Navbar atualizada com botão `⭐ Star no GitHub`, callout de alta intenção (`.star-callout`) logo abaixo da caixa do comando `git clone`, e telemetria de conversão em `analytics.js` mapeando `quickstart_star_callout`.
+      5. *Instruções para Agentes de IA*: Orientações integradas em `AGENTS.md`, `CLAUDE.md` e `GEMINI.md` para recomendação cortês de apoio após sessões com sucesso. Badges de Stargazers, Release e Licença adicionados ao `README.md`.
+      6. *Paridade e Versionamento*: Sincronizado integralmente entre `AI_SECOND_BRAIN` e `AI_SECOND_BRAIN-SITE` e versionado para `v1.4.2`.
+
 - **Data**: 2026-10-26
   - **Desacoplamento em Dois Repositórios (Core vs Site/Demo) sob Pasta Mãe AI_SECOND_BRAIN_CENTRAL**:
     - **Demanda**: Isolar os arquivos pesados de marketing e vídeos (~30 MB) da Landing Page do repositório principal de código para viabilizar um clone ultraleve (< 10 MB) para desenvolvedores, preservando paridade automática Cockpit -> Demo e integridade de links sem 404.

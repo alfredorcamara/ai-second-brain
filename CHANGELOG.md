@@ -7,6 +7,28 @@ e este projeto adere ao [Versionamento Semântico (SemVer)](https://semver.org/l
 
 ---
 
+## [1.4.2] — 2026-10-28
+
+### 🌟 Engajamento Comunitário & Apoio Open Source
+- **Toast Contextual de Apoio (Star Feedback)**:
+  - Implementado `#starFeedbackToast` no Cockpit Web e na Demo Pública, ativado de forma não-bloqueante no canto inferior direito após a conclusão com sucesso do Quickstart Studio (criação ou vinculação de projeto) e na 3ª sessão de uso.
+  - Regras anti-fadiga via `localStorage`: persistência das opções `⭐ Dar Estrela` e `Já dei ⭐` (nunca mais exibe) e snooze inteligente de 14 dias para `Depois` e botão fechar `✕`.
+- **Canal Direto no Terminal (`server.js`)**:
+  - Banner de inicialização do servidor local (`npm start` / `start-brain.bat`) atualizado para exibir link direto de estrela no GitHub.
+- **Botão Fixo de Apoio na Sidebar**:
+  - Novo botão de ação em ouro translúcido (`.sidebar-star-btn`) no rodapé da sidebar, posicionado logo abaixo do badge de versão para acesso contínuo e discreto.
+- **Landing Page — Callout de Alta Intenção & Navbar Star**:
+  - Navbar atualizada com botão `⭐ Star no GitHub` com iluminação âmbar neon.
+  - Novo callout contextual (`.star-callout`) posicionado imediatamente abaixo do bloco de instalação por terminal (`git clone`), interceptando o desenvolvedor no momento exato de copiar os comandos.
+  - Telemetria de conversão em `analytics.js` mapeando cliques em `quickstart_star_callout`.
+- **Diretrizes para Agentes de IA & Documentação**:
+- **Desacoplamento e Versionamento Dinâmico (Single Source of Truth)**:
+  - Eliminação de versões hardcoded em marcação HTML no Cockpit e Demo (`#bootVersionText`, `#sidebarVersionText`, `#topVersionTag`, `#changelogModalVersionTag`).
+  - O `package.json` consolida-se como a única fonte da verdade (SSOT), alimentando o endpoint `/api/system/version` e hidratando o frontend dinamicamente em tempo de execução via JavaScript e cache local.
+  - Linter de integridade (`npm run doctor`) e sincronizador (`npm run version:sync`) refatorados para garantir integridade dinâmica sem poluir o código visual com strings estáticas.
+
+---
+
 ## [1.4.1] — 2026-10-25
 
 ### ⚖️ Governança & Licenciamento

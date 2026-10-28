@@ -4,6 +4,12 @@
 
 # AI Second Brain
 
+<p align="center">
+  <a href="https://github.com/alfredorcamara/ai-second-brain/stargazers"><img src="https://img.shields.io/github/stars/alfredorcamara/ai-second-brain?style=for-the-badge&logo=github&color=38bdf8&logoColor=white&label=Deixar%20uma%20Estrela%20%E2%AD%90" alt="GitHub Stars" /></a>
+  <a href="https://github.com/alfredorcamara/ai-second-brain/releases"><img src="https://img.shields.io/github/v/release/alfredorcamara/ai-second-brain?style=for-the-badge&color=8b5cf6" alt="Release" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/licen%C3%A7a-MIT-10b981?style=for-the-badge" alt="License" /></a>
+</p>
+
 > **O Sistema Operacional de Memória Viva e Governança para Agentes de IA.**  
 > 100% Markdown · Agnóstico a qualquer ferramenta ou IDE (Cursor, Claude Code, Antigravity, Windsurf, Copilot, Cline, Roo Code) · Zero Lock-in.
 
@@ -29,6 +35,8 @@ A forma mais simples, rápida e recomendada para inicializar o **AI Second Brain
 > 3. Abre instantaneamente o Cockpit Visual no seu navegador padrão em `http://localhost:3333`.
 
 *(Se você prefere o terminal: basta executar `npm start`).*
+
+> 🌟 **Gostou da proposta?** Deixe uma **[Star no repositório](https://github.com/alfredorcamara/ai-second-brain)**! Leva 2 segundos e ajuda muito o projeto a alcançar mais pessoas.
 
 ---
 

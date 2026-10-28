@@ -169,7 +169,7 @@ async function handleRequest(req, res) {
                 hasGit = entries.includes('.git');
                 hasPackageJson = entries.includes('package.json');
                 hasCsproj = entries.some(e => e.endsWith('.csproj'));
-            } catch (e) {}
+            } catch (e) { }
 
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({
@@ -363,7 +363,7 @@ Thumbs.db
                         const { execSync } = require('child_process');
                         execSync('git init', { cwd: targetFolder, timeout: 5000, stdio: 'ignore' });
                         gitInitialized = true;
-                    } catch (_) {}
+                    } catch (_) { }
                 }
             }
 
@@ -407,8 +407,8 @@ Thumbs.db
             console.error('❌ [Quickstart Grill] Erro ao gerar perguntas:', err.message);
             const status = err.statusCode === 429 || err.quotaExceeded ? 429 : (err.statusCode || 500);
             res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
-            res.end(JSON.stringify({ 
-                success: false, 
+            res.end(JSON.stringify({
+                success: false,
                 error: err.message,
                 statusCode: status,
                 quotaExceeded: status === 429 || !!err.quotaExceeded,
@@ -434,8 +434,8 @@ Thumbs.db
             console.error('❌ [Quickstart Grill] Erro ao validar respostas:', err.message);
             const status = err.statusCode === 429 || err.quotaExceeded ? 429 : (err.statusCode || 500);
             res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
-            res.end(JSON.stringify({ 
-                success: false, 
+            res.end(JSON.stringify({
+                success: false,
                 error: err.message,
                 statusCode: status,
                 quotaExceeded: status === 429 || !!err.quotaExceeded,
@@ -463,8 +463,8 @@ Thumbs.db
             console.error('❌ [Quickstart Grill] Erro ao gerar rascunho:', err.message);
             const status = err.statusCode === 429 || err.quotaExceeded ? 429 : (err.statusCode || 500);
             res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
-            res.end(JSON.stringify({ 
-                success: false, 
+            res.end(JSON.stringify({
+                success: false,
                 error: err.message,
                 statusCode: status,
                 quotaExceeded: status === 429 || !!err.quotaExceeded,
@@ -490,8 +490,8 @@ Thumbs.db
             console.error('❌ [Quickstart Grill] Erro ao refinar contratos:', err.message);
             const status = err.statusCode === 429 || err.quotaExceeded ? 429 : (err.statusCode || 500);
             res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
-            res.end(JSON.stringify({ 
-                success: false, 
+            res.end(JSON.stringify({
+                success: false,
                 error: err.message,
                 statusCode: status,
                 quotaExceeded: status === 429 || !!err.quotaExceeded,
@@ -566,7 +566,7 @@ Thumbs.db
                     res.end(JSON.stringify({ error: `Já existe um projeto ou vínculo com o nome '${safeName}'.` }));
                     return;
                 }
-            } catch (e) {}
+            } catch (e) { }
 
             // Cria junção NTFS (Windows) ou symlink dir (Linux/Mac)
             const isWindows = process.platform === 'win32';
@@ -650,7 +650,7 @@ Projeto externo vinculado ao AI Second Brain.
                     isJunction = true;
                     realPath = fs.readlinkSync(projectDir);
                 }
-            } catch (e) {}
+            } catch (e) { }
 
             // Lê arquivos principais de governança e outros contratos dinamicamente
             const projectMdPath = path.join(projectDir, 'PROJECT.md');
@@ -691,7 +691,7 @@ Projeto externo vinculado ao AI Second Brain.
                             path: `projects/${projectName}/${filename}`,
                             exists: true
                         });
-                    } catch (e) {}
+                    } catch (e) { }
                 }
             }
 
@@ -713,10 +713,10 @@ Projeto externo vinculado ao AI Second Brain.
                                 path: `projects/${projectName}/${entry}`,
                                 exists: true
                             });
-                        } catch (e) {}
+                        } catch (e) { }
                     }
                 }
-            } catch (e) {}
+            } catch (e) { }
 
             // 3. Identifica contratos recomendados que AINDA NÃO EXISTEM
             const missingContracts = [];
@@ -746,7 +746,7 @@ Projeto externo vinculado ao AI Second Brain.
                             decisions.push({ name: df, size: stat.size, mtime: stat.mtime });
                         }
                     }
-                } catch (e) {}
+                } catch (e) { }
             }
 
             // Memória / Sessões
@@ -762,7 +762,7 @@ Projeto externo vinculado ao AI Second Brain.
                             sessions.push({ name: sf, size: stat.size, mtime: stat.mtime });
                         }
                     }
-                } catch (e) {}
+                } catch (e) { }
             }
 
             // Arquivos arquivados
@@ -771,7 +771,7 @@ Projeto externo vinculado ao AI Second Brain.
             if (fs.existsSync(archiveDir)) {
                 try {
                     archivedCount = fs.readdirSync(archiveDir).length;
-                } catch (e) {}
+                } catch (e) { }
             }
 
             // Soma tamanho das decisões e sessões ao total de governança
@@ -794,7 +794,7 @@ Projeto externo vinculado ao AI Second Brain.
                     }
                 };
                 countFiles(projectDir);
-            } catch (e) {}
+            } catch (e) { }
 
             // Extração de metadados do PROJECT.md
             let stack = 'Não especificada';
@@ -935,7 +935,7 @@ Projeto externo vinculado ao AI Second Brain.
                     } else if (item.name.endsWith('.md') || item.name.endsWith('.json')) {
                         try {
                             backupData.files[rel] = fs.readFileSync(full, 'utf-8');
-                        } catch (e) {}
+                        } catch (e) { }
                     }
                 }
             };
@@ -1038,7 +1038,7 @@ Projeto externo vinculado ao AI Second Brain.
             res.end(JSON.stringify({
                 success: true,
                 wasJunction,
-                message: wasJunction 
+                message: wasJunction
                     ? `Vínculo com '${projectName}' desfeito com sucesso! Seus arquivos originais foram mantidos intactos.`
                     : `Projeto '${projectName}' desvinculado e arquivado com sucesso.`
             }));
@@ -1444,7 +1444,7 @@ Projeto externo vinculado ao AI Second Brain.
                 const pkg = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf-8'));
                 if (pkg.version) version = pkg.version;
                 if (pkg.name) name = pkg.name;
-            } catch (_) {}
+            } catch (_) { }
 
             let updateAvailable = false;
             let behindCommits = 0;
@@ -1461,7 +1461,7 @@ Projeto externo vinculado ao AI Second Brain.
                         statusText = `Há ${behindCommits} atualização(ões) no repositório remoto.`;
                     }
                 }
-            } catch (_) {}
+            } catch (_) { }
 
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({
@@ -1496,7 +1496,7 @@ Projeto externo vinculado ao AI Second Brain.
             try {
                 const pkg = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf-8'));
                 if (pkg.version) version = pkg.version;
-            } catch (_) {}
+            } catch (_) { }
 
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({
@@ -1643,9 +1643,9 @@ Projeto externo vinculado ao AI Second Brain.
             console.error('❌ [Research Lab] Erro no refinamento:', err.message);
             const status = err.statusCode === 429 || err.quotaExceeded ? 429 : (err.statusCode || 500);
             res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
-            res.end(JSON.stringify({ 
+            res.end(JSON.stringify({
                 success: false,
-                error: err.message, 
+                error: err.message,
                 quotaExceeded: status === 429 || !!err.quotaExceeded,
                 isRateLimit: status === 429 || !!err.isRateLimit,
                 statusCode: status,
@@ -1707,9 +1707,9 @@ Projeto externo vinculado ao AI Second Brain.
             console.error('❌ [Research Lab] Erro na decomposição:', err.message);
             const status = err.statusCode === 429 || err.quotaExceeded ? 429 : (err.statusCode || 500);
             res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
-            res.end(JSON.stringify({ 
+            res.end(JSON.stringify({
                 success: false,
-                error: err.message, 
+                error: err.message,
                 quotaExceeded: status === 429 || !!err.quotaExceeded,
                 isRateLimit: status === 429 || !!err.isRateLimit,
                 statusCode: status,
@@ -1899,7 +1899,7 @@ Projeto externo vinculado ao AI Second Brain.
                         if (fs.existsSync(metaPath)) {
                             try {
                                 meta = { ...meta, ...JSON.parse(fs.readFileSync(metaPath, 'utf-8')) };
-                            } catch (e) {}
+                            } catch (e) { }
                         }
 
                         // Count files in research folder
@@ -1912,10 +1912,10 @@ Projeto externo vinculado ao AI Second Brain.
                                     fileCount++;
                                     try {
                                         totalSize += fs.statSync(path.join(researchPath, f)).size;
-                                    } catch (e) {}
+                                    } catch (e) { }
                                 }
                             }
-                        } catch (e) {}
+                        } catch (e) { }
 
                         let knowledgeFiles = [];
                         let actionableFiles = [];
@@ -1924,19 +1924,19 @@ Projeto externo vinculado ao AI Second Brain.
                             if (fs.existsSync(kDir)) {
                                 knowledgeFiles = fs.readdirSync(kDir).filter(f => f.endsWith('.md'));
                                 for (const kf of knowledgeFiles) {
-                                    try { totalSize += fs.statSync(path.join(kDir, kf)).size; } catch (e) {}
+                                    try { totalSize += fs.statSync(path.join(kDir, kf)).size; } catch (e) { }
                                 }
                             }
-                        } catch (e) {}
+                        } catch (e) { }
                         try {
                             const aDir = path.join(researchPath, 'actionable');
                             if (fs.existsSync(aDir)) {
                                 actionableFiles = fs.readdirSync(aDir).filter(f => f.endsWith('.md'));
                                 for (const af of actionableFiles) {
-                                    try { totalSize += fs.statSync(path.join(aDir, af)).size; } catch (e) {}
+                                    try { totalSize += fs.statSync(path.join(aDir, af)).size; } catch (e) { }
                                 }
                             }
-                        } catch (e) {}
+                        } catch (e) { }
 
                         researches.push({
                             slug: entry.name,
@@ -2151,7 +2151,7 @@ Projeto externo vinculado ao AI Second Brain.
             console.error('❌ [Research Lab] Erro na execução da pesquisa:', err.message);
             const status = err.statusCode === 429 || err.quotaExceeded ? 429 : (err.statusCode || 500);
             res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
-            res.end(JSON.stringify({ 
+            res.end(JSON.stringify({
                 success: false,
                 error: err.message,
                 statusCode: status,
@@ -2219,7 +2219,7 @@ Projeto externo vinculado ao AI Second Brain.
                     }
                     meta.lastUpdated = new Date().toISOString();
                     fs.writeFileSync(metaPath, JSON.stringify(meta, null, 2), 'utf-8');
-                } catch(e) {}
+                } catch (e) { }
             }
 
             // Atualiza OVERVIEW.md se existir (remove linhas que referenciam o arquivo)
@@ -2231,7 +2231,7 @@ Projeto externo vinculado ao AI Second Brain.
                     const lines = ovContent.split('\n');
                     const filtered = lines.filter(line => !line.includes(`(${relPath})`) && !line.includes(`(${filename})`));
                     fs.writeFileSync(overviewPath, filtered.join('\n'), 'utf-8');
-                } catch(e) {}
+                } catch (e) { }
             }
 
             // Atualiza snapshot do Vault
@@ -2244,7 +2244,7 @@ Projeto externo vinculado ao AI Second Brain.
 
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({ success: true, message: `Arquivo '${path.basename(relPath)}' excluído com sucesso.` }));
-        } catch(err) {
+        } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({ error: err.message }));
         }
@@ -2277,7 +2277,7 @@ Projeto externo vinculado ao AI Second Brain.
 
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({ success: true, message: `Pesquisa '${researchSlug}' excluída com sucesso.` }));
-        } catch(err) {
+        } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({ error: err.message }));
         }
@@ -2304,7 +2304,7 @@ Projeto externo vinculado ao AI Second Brain.
             const metaPath = path.join(researchDir, '_meta.json');
             let meta = {};
             if (fs.existsSync(metaPath)) {
-                try { meta = JSON.parse(fs.readFileSync(metaPath, 'utf-8')); } catch(e) {}
+                try { meta = JSON.parse(fs.readFileSync(metaPath, 'utf-8')); } catch (e) { }
             }
 
             meta.subtopics = subtopics;
@@ -2321,7 +2321,7 @@ Projeto externo vinculado ao AI Second Brain.
 
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({ success: true, subtopics }));
-        } catch(err) {
+        } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({ error: err.message }));
         }
@@ -2352,7 +2352,7 @@ Projeto externo vinculado ao AI Second Brain.
                     try {
                         fs.unlinkSync(path.join(knowledgeDir, f));
                         deletedCount++;
-                    } catch(e) {}
+                    } catch (e) { }
                 }
             }
 
@@ -2362,7 +2362,7 @@ Projeto externo vinculado ao AI Second Brain.
                     try {
                         fs.unlinkSync(path.join(actionableDir, f));
                         deletedCount++;
-                    } catch(e) {}
+                    } catch (e) { }
                 }
             }
 
@@ -2376,7 +2376,7 @@ Projeto externo vinculado ao AI Second Brain.
                     meta.status = 'ready';
                     meta.lastUpdated = new Date().toISOString();
                     fs.writeFileSync(metaPath, JSON.stringify(meta, null, 2), 'utf-8');
-                } catch(e) {}
+                } catch (e) { }
             }
 
             // Atualiza OVERVIEW.md se existir
@@ -2387,7 +2387,7 @@ Projeto externo vinculado ao AI Second Brain.
                     const topic = meta.topic || researchSlug;
                     const cleanOverview = `# 🔬 Laboratório de Pesquisa: ${topic}\n\n> Status: 🟡 Pronto para Pesquisa (0 arquivos gerados)\n\n## 📋 Definição da Pesquisa\n${meta.definition || ''}\n\n## 📑 Índice de Documentos\n\n_Nenhum documento gerado ainda._\n`;
                     fs.writeFileSync(overviewPath, cleanOverview, 'utf-8');
-                } catch(e) {}
+                } catch (e) { }
             }
 
             // Atualiza snapshot do Vault
@@ -2400,7 +2400,7 @@ Projeto externo vinculado ao AI Second Brain.
 
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({ success: true, message: `Todos os ${deletedCount} arquivos foram excluídos com sucesso.`, deletedCount }));
-        } catch(err) {
+        } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({ error: err.message }));
         }
@@ -2537,6 +2537,7 @@ function startServer(port, maxAttempts = 10) {
         console.log(`   AI SECOND BRAIN — SERVIDOR AO VIVO EM EXECUÇÃO`);
         console.log(`   🔗 URL: ${url}`);
         console.log('   📂 Varrendo todos os arquivos e subpastas em tempo real');
+        console.log('   ⭐ Apoie no GitHub: https://github.com/alfredorcamara/ai-second-brain');
         console.log('═══════════════════════════════════════════════════════════\n');
         setupWatcher();
         openBrowser(url);

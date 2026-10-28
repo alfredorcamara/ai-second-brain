@@ -16152,3 +16152,193 @@ body::-webkit-scrollbar-thumb:hover {
     border-top: 1px solid rgba(255, 255, 255, 0.06);
     background: rgba(0, 0, 0, 0.2);
 }
+
+/* ── Sidebar Star Button ──────────────────────────── */
+.sidebar-star-btn {
+    margin-top: 8px;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    background: rgba(234, 179, 8, 0.06);
+    border: 1px solid rgba(234, 179, 8, 0.22);
+    border-radius: 8px;
+    color: #fde047;
+    font-size: 11px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+}
+
+.sidebar-star-btn:hover {
+    background: rgba(234, 179, 8, 0.16);
+    border-color: rgba(234, 179, 8, 0.5);
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(234, 179, 8, 0.2);
+}
+
+/* ── Star Feedback Toast (Cockpit) ─────────────────── */
+.star-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: min(390px, calc(100vw - 32px));
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(234, 179, 8, 0.35);
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 25px rgba(234, 179, 8, 0.12);
+    z-index: 99999;
+    animation: slideUpToast 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+@keyframes slideUpToast {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.star-toast.closing {
+    animation: fadeOutToast 0.25s forwards cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeOutToast {
+    to {
+        opacity: 0;
+        transform: translateY(12px) scale(0.97);
+    }
+}
+
+.star-toast-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-tertiary, #94a3b8);
+    font-size: 13px;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+}
+
+.star-toast-close:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.star-toast-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding-right: 18px;
+}
+
+.star-toast-icon {
+    font-size: 26px;
+    line-height: 1;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.6));
+    animation: starPulse 2.5s infinite ease-in-out;
+}
+
+@keyframes starPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15) rotate(4deg); }
+}
+
+.star-toast-text {
+    flex: 1;
+}
+
+.star-toast-title {
+    margin: 0 0 4px 0;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #f8fafc;
+    letter-spacing: -0.2px;
+}
+
+.star-toast-desc {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.45;
+    color: #94a3b8;
+}
+
+.star-toast-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 2px;
+}
+
+.btn-star-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+    color: #0b0f19 !important;
+    font-weight: 700;
+    font-size: 11.5px;
+    padding: 6px 13px;
+    border-radius: 7px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(234, 179, 8, 0.3);
+    transition: all 0.2s ease;
+}
+
+.btn-star-action:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(234, 179, 8, 0.5);
+    background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
+}
+
+.btn-star-ghost {
+    background: rgba(255, 255, 255, 0.06);
+    color: #cbd5e1;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 6px 11px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-star-ghost:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.22);
+}
+
+.btn-star-text {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    font-size: 11.5px;
+    padding: 6px 8px;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.btn-star-text:hover {
+    color: #94a3b8;
+}

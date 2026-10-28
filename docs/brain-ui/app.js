@@ -6314,6 +6314,11 @@ function renderQuickstartSuccess(info) {
             refreshApp();
         });
     }
+
+    // Dispara convite gentil e discreto de Star no momento de sucesso
+    if (typeof checkAndTriggerStarToast === 'function') {
+        checkAndTriggerStarToast(1500);
+    }
 }
 
 // ═══════════════════════════════════════════════════
@@ -12460,15 +12465,21 @@ async function initSystemVersionCheck() {
     } catch (e) {
         // Fallback silencioso
     }
-    applyVersionToUI({
-        version: '1.4.1',
-        updateAvailable: false,
-        behindCommits: 0
-    });
+
+    const cached = localStorage.getItem('ai_second_brain_system_version');
+    if (cached) {
+        applyVersionToUI({
+            version: cached,
+            updateAvailable: false,
+            behindCommits: 0
+        });
+    }
 }
 
 function applyVersionToUI(data) {
-    const ver = data?.version || data?.installedVersion || '1.4.1';
+    const rawVer = data?.version || data?.installedVersion || localStorage.getItem('ai_second_brain_system_version');
+    if (!rawVer) return;
+    const ver = String(rawVer).replace(/^v/i, '').trim();
     try { localStorage.setItem('ai_second_brain_system_version', ver); } catch (_) { }
     const hasUpdate = Boolean(data?.updateAvailable);
 
@@ -12761,19 +12772,82 @@ window.renderChangelogMarkdown = renderChangelogMarkdown;
 window.renderChangelogFallback = renderChangelogFallback;
 
 // Carrega status da IA e versão automaticamente após carregar a interface
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        loadAiGatewayStatus();
-        initQsContractZoomControls();
-        initEditorZoomControls();
-        initSystemVersionCheck();
-    });
-} else {
+function initAppBootHooks() {
     loadAiGatewayStatus();
     initQsContractZoomControls();
     initEditorZoomControls();
     initSystemVersionCheck();
+
+    // Rastreia sessões para convite contextual na 3ª sessão caso ainda não tenha avaliado
+    try {
+        const count = Number(localStorage.getItem('asb_session_count') || 0) + 1;
+        localStorage.setItem('asb_session_count', String(count));
+        if (count >= 3) {
+            checkAndTriggerStarToast(3500);
+        }
+    } catch (e) {}
 }
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAppBootHooks);
+} else {
+    initAppBootHooks();
+}
+
+// ═══════════════════════════════════════════════════
+// GITHUB STAR FEEDBACK TOAST CONTROLLER
+// ═══════════════════════════════════════════════════
+function checkAndTriggerStarToast(delayMs = 1200) {
+    try {
+        const action = localStorage.getItem('asb_star_action');
+        if (action === 'given' || action === 'already') {
+            return;
+        }
+        const dismissedUntil = localStorage.getItem('asb_star_dismissed_until');
+        if (dismissedUntil && Number(dismissedUntil) > Date.now()) {
+            return;
+        }
+
+        setTimeout(() => {
+            const toast = document.getElementById('starFeedbackToast');
+            if (toast) {
+                toast.classList.remove('closing');
+                toast.style.display = 'flex';
+            }
+        }, delayMs);
+    } catch (e) {
+        // localStorage indisponível ou bloqueado
+    }
+}
+
+function dismissStarToast(mode = 'later') {
+    const toast = document.getElementById('starFeedbackToast');
+    if (!toast) return;
+
+    toast.classList.add('closing');
+    setTimeout(() => {
+        toast.style.display = 'none';
+        toast.classList.remove('closing');
+    }, 240);
+
+    try {
+        if (mode === 'later') {
+            // Relembra apenas após 14 dias
+            localStorage.setItem('asb_star_dismissed_until', String(Date.now() + 14 * 86400000));
+        }
+    } catch (e) {}
+}
+
+function onStarToastAction(actionType) {
+    try {
+        localStorage.setItem('asb_star_action', actionType);
+    } catch (e) {}
+    dismissStarToast('done');
+}
+
+window.checkAndTriggerStarToast = checkAndTriggerStarToast;
+window.dismissStarToast = dismissStarToast;
+window.onStarToastAction = onStarToastAction;
 
 
 

@@ -416,37 +416,43 @@ function checkGitUpdateStatus() {
         console.log(`📦 Versão do AI Second Brain: v${localVersion}`);
         console.log(`   Registro de melhorias e notas de release: CHANGELOG.md`);
 
-        const uiVersionFiles = [
-            { path: path.join(ROOT_DIR, 'docs', 'brain-ui', 'index.html'), label: 'Cockpit Visual (docs/brain-ui/index.html)' },
-            { path: path.join(ROOT_DIR, 'docs', 'brain-ui', 'app.js'), label: 'App Core (docs/brain-ui/app.js)' },
-            { path: path.resolve(ROOT_DIR, '..', 'AI_SECOND_BRAIN-SITE', 'demo', 'index.html'), label: 'Demo Publica (AI_SECOND_BRAIN-SITE/demo/index.html)' },
-            { path: path.resolve(ROOT_DIR, '..', 'AI_SECOND_BRAIN-SITE', 'demo', 'app.js'), label: 'Demo App Core (AI_SECOND_BRAIN-SITE/demo/app.js)' }
+        const siteDirCandidates = [
+            path.resolve(ROOT_DIR, '..', 'AI_SECOND_BRAIN-SITE'),
+            path.resolve(ROOT_DIR, '..', 'ai-second-brain-site')
         ];
+        const siteDir = siteDirCandidates.find(d => fs.existsSync(d));
 
         let allSynced = true;
-        for (const target of uiVersionFiles) {
-            if (fs.existsSync(target.path)) {
-                const content = fs.readFileSync(target.path, 'utf-8');
-                if (!content.includes('Redirecionando') && !content.includes(`v${localVersion}`) && !content.includes(`version: '${localVersion}'`)) {
-                    console.log(`   ⚠️  Alerta: ${target.label} difere de package.json (v${localVersion})!`);
+
+        // Valida que o Cockpit possui os placeholders dinâmicos (sem strings hardcoded)
+        const cockpitHtmlPath = path.join(ROOT_DIR, 'docs', 'brain-ui', 'index.html');
+        if (fs.existsSync(cockpitHtmlPath)) {
+            const html = fs.readFileSync(cockpitHtmlPath, 'utf-8');
+            const requiredIds = ['bootVersionText', 'sidebarVersionText', 'topVersionTag', 'changelogModalVersionTag'];
+            const missing = requiredIds.filter(id => !html.includes(`id="${id}"`));
+            if (missing.length > 0) {
+                console.log(`   ⚠️  Alerta: Cockpit HTML sem placeholders dinâmicos: ${missing.join(', ')}`);
+                allSynced = false;
+            }
+        }
+
+        // Valida que a landing page pública (estática) está sincronizada com a versão atual
+        if (siteDir) {
+            const landingPath = path.join(siteDir, 'index.html');
+            if (fs.existsSync(landingPath)) {
+                const landing = fs.readFileSync(landingPath, 'utf-8');
+                if (!landing.includes(`v${localVersion}`)) {
+                    console.log(`   ⚠️  Alerta: Landing Page (${path.basename(siteDir)}/index.html) não referencia v${localVersion}`);
                     allSynced = false;
                 }
             }
         }
+
         if (allSynced) {
-            console.log(`   ✓ Todas as interfaces (Landing, Cockpit, Demo e App) 100% sincronizadas com v${localVersion}`);
+            console.log(`   ✓ Versionamento dinâmico íntegro (Fonte Única: package.json v${localVersion})`);
+            console.log(`   ✓ Cockpit e Demo 100% desacoplados de versão hardcoded no HTML.`);
         } else {
-            if (process.argv.includes('--fix')) {
-                console.log(`   🛠️  Aplicando correção automática via sync-version...`);
-                try {
-                    const { syncVersion } = require('./sync-version');
-                    syncVersion(localVersion);
-                } catch (e) {
-                    console.error('Falha na autocorreção:', e.message);
-                }
-            } else {
-                console.log(`   💡 Dica: Execute 'npm run version:sync' para sincronizar automaticamente todas as interfaces!`);
-            }
+            console.log(`   💡 Dica: Execute 'npm run version:sync' para sincronizar a release nas interfaces públicas.`);
         }
         console.log('');
 
