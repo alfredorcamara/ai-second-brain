@@ -16,6 +16,8 @@ const { scanVault } = require('./scripts/scan-vault');
 const groq = require('./scripts/groq-client');
 const aiGateway = require('./scripts/ai-gateway');
 const researchEngine = require('./scripts/research-engine');
+const i18nCli = require('./scripts/i18n-cli');
+const localeDocsManager = require('./scripts/locale-docs-manager');
 
 const INITIAL_PORT = parseInt(process.env.PORT, 10) || 3333;
 
@@ -39,12 +41,17 @@ const MIME_TYPES = {
 
 // SSE Clients for live file changes
 const sseClients = new Set();
+let cachedVaultJson = null;
+let lastBroadcastLang = i18nCli.getLang();
 
 
 function updateSnapshotIfConfigured(vault) {
-    if (process.env.PERSIST_LOCAL_SNAPSHOT === 'true') {
+    cachedVaultJson = vault ? JSON.stringify(vault) : null;
+    if (process.env.PERSIST_LOCAL_SNAPSHOT === 'true' && vault) {
         try {
-            updateSnapshotIfConfigured(vault);
+            const outputPath = path.join(UI_DIR, 'vault-data.js');
+            const jsContent = `// ═══════════════════════════════════════════════════\n// AI SECOND BRAIN — Dynamic Vault Snapshot\n// Auto-generated: ${new Date().toISOString()}\n// ═══════════════════════════════════════════════════\n\nwindow.VAULT_SNAPSHOT = ${JSON.stringify(vault, null, 2)};\n`;
+            fs.writeFileSync(outputPath, jsContent, 'utf-8');
         } catch (e) {
             console.warn('⚠️ Falha ao salvar snapshot local:', e.message);
         }
@@ -52,6 +59,11 @@ function updateSnapshotIfConfigured(vault) {
 }
 
 function broadcastEvent(type, data) {
+    if (type === 'vault-updated') {
+        cachedVaultJson = null;
+    } else if (type === 'language-changed' && data && data.language) {
+        lastBroadcastLang = data.language;
+    }
     const message = `event: ${type}\ndata: ${JSON.stringify(data)}\n\n`;
     for (const res of sseClients) {
         try {
@@ -65,20 +77,36 @@ function broadcastEvent(type, data) {
 // Watch workspace for changes in markdown files
 let debounceTimer = null;
 let watcherActive = false;
+let suppressWatcherUntil = 0;
 
 function setupWatcher() {
     if (watcherActive) return;
     try {
         fs.watch(ROOT_DIR, { recursive: true }, (eventType, filename) => {
             if (!filename) return;
-            if (filename.includes('node_modules') || filename.includes('.git')) return;
-            // Dispara se for arquivo Markdown ou alteração estrutural em pastas vitais ou configs
-            if (filename.endsWith('.md') || filename.includes('projects') || filename.includes('knowledge') || filename.includes('decisions') || filename.includes('memory') || filename.includes('config')) {
+            if (Date.now() < suppressWatcherUntil) return;
+            const norm = filename.replace(/\\/g, '/');
+            if (norm.includes('node_modules') || norm.includes('.git') || norm.startsWith('docs/brain-ui/') || norm.startsWith('.locales/') || norm.includes('/.locales/')) return;
+
+            if (norm.endsWith('brain.config.json')) {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    const currentLang = i18nCli.getLang();
+                    if (currentLang !== lastBroadcastLang) {
+                        lastBroadcastLang = currentLang;
+                        broadcastEvent('language-changed', { language: currentLang, time: Date.now() });
+                    }
+                }, 200);
+                return;
+            }
+
+            // Dispara se for arquivo Markdown ou alteração estrutural em pastas vitais ou project-statuses.json
+            if (norm.endsWith('.md') || norm.includes('project-statuses.json') || norm.startsWith('projects/') || norm.startsWith('knowledge/') || norm.startsWith('decisions/') || norm.startsWith('memory/')) {
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(() => {
                     console.log(`⚡ [Watcher] Alteração detectada no Vault (${eventType}): ${filename}`);
                     broadcastEvent('vault-updated', { file: filename, eventType, time: Date.now() });
-                }, 250);
+                }, 300);
             }
         });
         watcherActive = true;
@@ -578,7 +606,7 @@ Thumbs.db
             const today = new Date().toISOString().split('T')[0];
 
             if (!fs.existsSync(projectMdPath)) {
-                const starterProjectMd = `# ${safeName}
+                const starterProjectMd = i18nCli.tr(`# ${safeName}
 
 ## Visão Geral
 Projeto externo vinculado ao AI Second Brain.
@@ -591,18 +619,37 @@ Projeto externo vinculado ao AI Second Brain.
 
 ## Links & Documentação
 - Estado Atual: [CURRENT_STATE.md](CURRENT_STATE.md)
-`;
+`, `# ${safeName}
+
+## Overview
+External repository linked to AI Second Brain.
+
+## General Information
+- **Type**: Brownfield / External Repository
+- **Original Location**: \`${targetAbsolutePath}\`
+- **Status**: 🟢 Active / Linked
+- **Linked Date**: ${today}
+
+## Links & Documentation
+- Current State: [CURRENT_STATE.md](CURRENT_STATE.md)
+`);
                 fs.writeFileSync(projectMdPath, starterProjectMd, 'utf-8');
             }
 
             if (!fs.existsSync(currentStateMdPath)) {
-                const starterCurrentStateMd = `# ${safeName} — Estado Atual
+                const starterCurrentStateMd = i18nCli.tr(`# ${safeName} — Estado Atual
 
 > Última atualização: ${today}
 
 ## Status: 🟢 Ativo / Vinculado ao AI Second Brain
 - Repositório conectado e pronto para desenvolvimento com IA.
-`;
+`, `# ${safeName} — Current State
+
+> Last updated: ${today}
+
+## Status: 🟢 Active / Linked to AI Second Brain
+- Repository connected and ready for AI development.
+`);
                 fs.writeFileSync(currentStateMdPath, starterCurrentStateMd, 'utf-8');
             }
 
@@ -1052,11 +1099,14 @@ Projeto externo vinculado ao AI Second Brain.
     // API: Dynamic Vault Scan
     if (pathname === '/api/vault') {
         try {
-            delete require.cache[require.resolve('./scripts/scan-vault')];
-            const { scanVault } = require('./scripts/scan-vault');
-            const vault = scanVault(ROOT_DIR);
+            if (!cachedVaultJson) {
+                delete require.cache[require.resolve('./scripts/scan-vault')];
+                const { scanVault } = require('./scripts/scan-vault');
+                const vault = scanVault(ROOT_DIR);
+                cachedVaultJson = JSON.stringify(vault);
+            }
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-            res.end(JSON.stringify(vault));
+            res.end(cachedVaultJson);
         } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: err.message }));
@@ -1210,19 +1260,28 @@ Projeto externo vinculado ao AI Second Brain.
             const engineKey = (body.engineKey || 'universal').trim();
             const engine = body.engine || {};
 
+            const configPath = path.join(ROOT_DIR, 'brain.config.json');
+            let existing = {};
+            try {
+                if (fs.existsSync(configPath)) {
+                    existing = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+                }
+            } catch (_) {}
+
             const configData = {
+                ...existing,
                 activeEngine: engineKey,
                 engineName: engine.name || engineKey.toUpperCase(),
                 label: engine.label || engineKey,
                 icon: engine.icon || '🌐',
                 bridgeFile: engine.bridgeFile || 'UNIVERSAL',
-                updatedAt: new Date().toISOString()
+                updatedAt: existing.activeEngine === engineKey && existing.updatedAt ? existing.updatedAt : new Date().toISOString()
             };
 
-            const configPath = path.join(ROOT_DIR, 'brain.config.json');
-            fs.writeFileSync(configPath, JSON.stringify(configData, null, 2), 'utf-8');
-
-            broadcastEvent('engine-changed', configData);
+            if (existing.activeEngine !== engineKey) {
+                fs.writeFileSync(configPath, JSON.stringify(configData, null, 2), 'utf-8');
+                broadcastEvent('engine-changed', configData);
+            }
 
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({ success: true, config: configData }));
@@ -1233,21 +1292,118 @@ Projeto externo vinculado ao AI Second Brain.
         return;
     }
 
-    // API: Obter Motor de IA Atual gravado no disco
+    // API: Obter Motor de IA Atual gravado no disco (e idioma do sistema/config)
     if (pathname === '/api/engine/current' && req.method === 'GET') {
         try {
             const configPath = path.join(ROOT_DIR, 'brain.config.json');
+            let parsed = { activeEngine: 'antigravity' };
             if (fs.existsSync(configPath)) {
-                const configContent = fs.readFileSync(configPath, 'utf-8');
-                res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-                res.end(configContent);
-            } else {
-                res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-                res.end(JSON.stringify({ activeEngine: 'antigravity' }));
+                try {
+                    parsed = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+                } catch (_) {}
             }
+            parsed.resolvedLanguage = i18nCli.getLang();
+            parsed.systemLanguage = i18nCli.detectSystemLang();
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify(parsed));
         } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({ error: err.message }));
+        }
+        return;
+    }
+
+    // API: Obter ou Alterar Idioma (Sincronização Cockpit ⇄ CLI via brain.config.json)
+    if (pathname === '/api/config/language') {
+        if (req.method === 'GET') {
+            let explicitLanguage = null;
+            try {
+                const cfgPath = path.join(ROOT_DIR, 'brain.config.json');
+                if (fs.existsSync(cfgPath)) {
+                    const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf-8'));
+                    if (cfg && (cfg.language === 'en' || cfg.language === 'pt')) {
+                        explicitLanguage = cfg.language;
+                    }
+                }
+            } catch (_) {}
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({
+                language: i18nCli.getLang(),
+                explicitLanguage,
+                systemLanguage: i18nCli.detectSystemLang()
+            }));
+            return;
+        }
+        if (req.method === 'POST') {
+            try {
+                const body = await readJsonBody(req);
+                const lang = (body.language || 'pt').toLowerCase().trim();
+                const updated = i18nCli.setLang(lang === 'en' ? 'en' : (lang === 'auto' ? 'auto' : 'pt'));
+                const resolved = i18nCli.getLang();
+
+                // Troca determinística dos 58 documentos de fábrica a partir de .locales/
+                let swapResult = { targetLang: resolved, swappedCount: 0, customCachedCount: 0, customizedCount: 0, customizedFiles: [] };
+                try {
+                    suppressWatcherUntil = Date.now() + 1200;
+                    swapResult = localeDocsManager.inspectAndSwapLanguage(ROOT_DIR, resolved);
+                    if (swapResult.swappedCount > 0 || swapResult.customCachedCount > 0) {
+                        cachedVaultJson = null;
+                        broadcastEvent('vault-updated', { reason: 'language-swap', language: resolved, time: Date.now() });
+                    }
+                } catch (swapErr) {
+                    console.warn('⚠️ [locales] Falha ao inspecionar/trocar documentos de idioma:', swapErr.message);
+                }
+
+                broadcastEvent('language-changed', { language: resolved, config: updated, swapResult });
+                res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({
+                    success: true,
+                    language: resolved,
+                    config: updated,
+                    swapResult,
+                    aiStatus: aiGateway.getStatus()
+                }));
+            } catch (err) {
+                res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: err.message }));
+            }
+            return;
+        }
+    }
+
+    // API: Resolver arquivos customizados na troca de idioma (manter, traduzir via IA, ou restaurar fábrica)
+    if (pathname === '/api/locales/resolve-custom' && req.method === 'POST') {
+        try {
+            const body = await readJsonBody(req);
+            const { targetLang, action, files } = body;
+            if (!targetLang || !action) {
+                res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: 'targetLang e action são obrigatórios.' }));
+                return;
+            }
+
+            suppressWatcherUntil = Date.now() + 2000;
+            const result = await localeDocsManager.resolveCustomizedFiles(ROOT_DIR, {
+                targetLang,
+                action,
+                files,
+                aiGateway,
+                onProgress: (p) => broadcastEvent('locale-translate-progress', p)
+            });
+
+            cachedVaultJson = null;
+            broadcastEvent('vault-updated', { reason: 'custom-resolved', action, targetLang, time: Date.now() });
+
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ success: true, result }));
+        } catch (err) {
+            console.error('❌ [locales] Erro ao resolver arquivos customizados:', err.message);
+            res.writeHead(err.statusCode || 500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({
+                error: err.message,
+                code: err.code || 'LOCALE_RESOLVE_ERROR',
+                aiConfigured: !err.code || err.code !== 'AI_NOT_CONFIGURED'
+            }));
         }
         return;
     }
@@ -1451,9 +1607,12 @@ Projeto externo vinculado ao AI Second Brain.
             let statusText = 'Atualizado';
 
             try {
-                const { execSync } = require('child_process');
                 if (fs.existsSync(path.join(ROOT_DIR, '.git'))) {
-                    const gitStatus = execSync('git status -uno', { cwd: ROOT_DIR, encoding: 'utf-8', timeout: 2500 });
+                    const gitStatus = await new Promise((resolve) => {
+                        exec('git status -uno', { cwd: ROOT_DIR, encoding: 'utf-8', timeout: 2500 }, (err, stdout) => {
+                            resolve(err ? '' : (stdout || ''));
+                        });
+                    });
                     if (/behind/i.test(gitStatus)) {
                         updateAvailable = true;
                         const match = gitStatus.match(/behind\s+.*by\s+(\d+)\s+commit/i);
@@ -2511,33 +2670,51 @@ function startServer(port, maxAttempts = 10) {
             const checkReq = http.get(`http://localhost:${port}/api/vault`, (res) => {
                 if (res.statusCode === 200) {
                     console.log('\n🧠 ═══════════════════════════════════════════════════════');
-                    console.log(`   🟢 O AI SECOND BRAIN JÁ ESTÁ EM EXECUÇÃO NA PORTA ${port}!`);
+                    console.log(i18nCli.tr(
+                        `   🟢 O AI SECOND BRAIN JÁ ESTÁ EM EXECUÇÃO NA PORTA ${port}!`,
+                        `   🟢 AI SECOND BRAIN IS ALREADY RUNNING ON PORT ${port}!`
+                    ));
                     console.log(`   🔗 URL: http://localhost:${port}`);
                     console.log('═══════════════════════════════════════════════════════════\n');
                     openBrowser(`http://localhost:${port}`);
                     return;
                 }
                 // Port busy with something else, try next port
-                console.log(`⚠️ Porta ${port} ocupada. Tentando porta ${port + 1}...`);
+                console.log(i18nCli.tr(
+                    `⚠️ Porta ${port} ocupada. Tentando porta ${port + 1}...`,
+                    `⚠️ Port ${port} busy. Trying port ${port + 1}...`
+                ));
                 startServer(port + 1, maxAttempts - 1);
             });
 
             checkReq.on('error', () => {
-                console.log(`⚠️ Porta ${port} em uso (soquete fechando). Tentando porta ${port + 1}...`);
+                console.log(i18nCli.tr(
+                    `⚠️ Porta ${port} em uso (soquete fechando). Tentando porta ${port + 1}...`,
+                    `⚠️ Port ${port} in use (socket closing). Trying port ${port + 1}...`
+                ));
                 startServer(port + 1, maxAttempts - 1);
             });
         } else {
-            console.error('❌ Erro no servidor:', err);
+            console.error(i18nCli.tr('❌ Erro no servidor:', '❌ Server error:'), err);
         }
     });
 
     server.listen(port, () => {
         const url = `http://localhost:${port}`;
         console.log('\n🧠 ═══════════════════════════════════════════════════════');
-        console.log(`   AI SECOND BRAIN — SERVIDOR AO VIVO EM EXECUÇÃO`);
+        console.log(i18nCli.tr(
+            `   AI SECOND BRAIN — SERVIDOR AO VIVO EM EXECUÇÃO`,
+            `   AI SECOND BRAIN — LIVE SERVER RUNNING`
+        ));
         console.log(`   🔗 URL: ${url}`);
-        console.log('   📂 Varrendo todos os arquivos e subpastas em tempo real');
-        console.log('   ⭐ Apoie no GitHub: https://github.com/alfredorcamara/ai-second-brain');
+        console.log(i18nCli.tr(
+            '   📂 Varrendo todos os arquivos e subpastas em tempo real',
+            '   📂 Scanning all files and subfolders in real time'
+        ));
+        console.log(i18nCli.tr(
+            '   ⭐ Apoie no GitHub: https://github.com/alfredorcamara/ai-second-brain',
+            '   ⭐ Star on GitHub: https://github.com/alfredorcamara/ai-second-brain'
+        ));
         console.log('═══════════════════════════════════════════════════════════\n');
         setupWatcher();
         openBrowser(url);

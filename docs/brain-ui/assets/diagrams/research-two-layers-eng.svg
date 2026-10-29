@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 520" width="920" height="520">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0d1a"/>
+      <stop offset="50%" stop-color="#070a14"/>
+      <stop offset="100%" stop-color="#04060b"/>
+    </linearGradient>
+
+    <filter id="cardShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+
+    <pattern id="gridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.03)" stroke-width="1"/>
+    </pattern>
+
+    <style>
+      .pulse-blue {
+        stroke-dasharray: 6, 12;
+        animation: flowDash 2.2s linear infinite;
+      }
+      .pulse-emerald {
+        stroke-dasharray: 6, 12;
+        animation: flowDash 2.2s linear infinite;
+      }
+      .pulse-purple {
+        stroke-dasharray: 6, 12;
+        animation: flowDash 2.6s linear infinite;
+      }
+      @keyframes flowDash { to { stroke-dashoffset: -36; } }
+      .rotate-gear {
+        animation: spin 16s linear infinite;
+        transform-origin: 390px 240px;
+      }
+      @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    </style>
+  </defs>
+
+  <rect width="100%" height="100%" fill="url(#bgGrad)" rx="16"/>
+  <rect width="100%" height="100%" fill="url(#gridPattern)" rx="16"/>
+
+  <!-- Connecting Paths -->
+  <!-- Input to Engine -->
+  <line x1="210" y1="240" x2="310" y2="240" stroke="#818cf8" stroke-width="2.5" class="pulse-purple"/>
+
+  <!-- Engine to Knowledge (Up Right) -->
+  <path d="M 470 240 Q 530 150 600 150" fill="none" stroke="#38bdf8" stroke-width="2.5" class="pulse-blue"/>
+
+  <!-- Engine to Actionable (Down Right) -->
+  <path d="M 470 240 Q 530 330 600 330" fill="none" stroke="#34d399" stroke-width="2.5" class="pulse-emerald"/>
+
+  <!-- Knowledge and Actionable to Synthesis Box -->
+  <path d="M 830 150 Q 860 150 860 210" fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.6"/>
+  <path d="M 830 330 Q 860 330 860 270" fill="none" stroke="#34d399" stroke-width="2" opacity="0.6"/>
+  <line x1="860" y1="240" x2="880" y2="240" stroke="#c084fc" stroke-width="2"/>
+
+  <!-- 1. INPUT CARD -->
+  <g transform="translate(40, 185)">
+    <rect width="170" height="110" rx="14" fill="#0f1424" stroke="#818cf8" stroke-width="1.8" filter="url(#cardShadow)"/>
+    <rect x="15" y="15" width="85" height="20" rx="10" fill="rgba(129, 140, 248, 0.2)"/>
+    <text x="57" y="29" font-family="system-ui, sans-serif" font-size="9.5" font-weight="800" fill="#a5b4fc" text-anchor="middle">LIVE PROMPT</text>
+    <text x="15" y="55" font-family="system-ui, sans-serif" font-size="13" font-weight="800" fill="#ffffff">Research Topic</text>
+    <text x="15" y="72" font-family="system-ui, sans-serif" font-size="10.5" fill="#94a3b8">AI Refinement</text>
+    <text x="15" y="88" font-family="system-ui, sans-serif" font-size="10" fill="#64748b">Versioning v1, v2...</text>
+  </g>
+
+  <!-- 2. CENTRAL ENGINE: Research Engine (AI Gateway) -->
+  <g transform="translate(290, 160)">
+    <rect width="200" height="160" rx="18" fill="#121832" stroke="#818cf8" stroke-width="2" filter="url(#cardShadow)"/>
+    <circle cx="100" cy="50" r="30" fill="rgba(99, 102, 241, 0.15)"/>
+    <text x="100" y="58" font-size="28" text-anchor="middle">🔬</text>
+    <text x="100" y="98" font-family="system-ui, sans-serif" font-size="13.5" font-weight="800" fill="#ffffff" text-anchor="middle">RESEARCH ENGINE</text>
+    <text x="100" y="115" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">Universal AI Gateway</text>
+    
+    <!-- Engine Features -->
+    <rect x="20" y="126" width="160" height="22" rx="6" fill="rgba(255,255,255,0.06)"/>
+    <text x="100" y="141" font-family="system-ui, sans-serif" font-size="9.5" fill="#a5b4fc" text-anchor="middle">Decomposition &amp; TPM Resilience</text>
+  </g>
+
+  <!-- 3. LAYER 1: KNOWLEDGE (BLUE) -->
+  <g transform="translate(580, 85)">
+    <rect width="260" height="130" rx="16" fill="#091c2b" stroke="#38bdf8" stroke-width="2" filter="url(#cardShadow)"/>
+    
+    <!-- Header -->
+    <circle cx="35" cy="35" r="18" fill="rgba(56, 189, 248, 0.25)"/>
+    <text x="35" y="42" font-size="18" text-anchor="middle">📘</text>
+    <text x="65" y="32" font-family="system-ui, sans-serif" font-size="14" font-weight="800" fill="#38bdf8">LAYER 1: KNOWLEDGE</text>
+    <text x="65" y="48" font-family="system-ui, sans-serif" font-size="11" fill="#94a3b8">Fundamentals &amp; Conceptual Patterns</text>
+    
+    <!-- Bullet points -->
+    <text x="25" y="78" font-family="system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">● Technical theory, architecture &amp; concepts</text>
+    <text x="25" y="96" font-family="system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">● Trade-offs and comparative analyses</text>
+    <text x="25" y="114" font-family="system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">● Designed for understanding &amp; decisions</text>
+  </g>
+
+  <!-- 4. LAYER 2: ACTIONABLE (EMERALD) -->
+  <g transform="translate(580, 265)">
+    <rect width="260" height="130" rx="16" fill="#0c221a" stroke="#34d399" stroke-width="2" filter="url(#cardShadow)"/>
+    
+    <!-- Header -->
+    <circle cx="35" cy="35" r="18" fill="rgba(52, 211, 153, 0.25)"/>
+    <text x="35" y="42" font-size="18" text-anchor="middle">🛠️</text>
+    <text x="65" y="32" font-family="system-ui, sans-serif" font-size="14" font-weight="800" fill="#34d399">LAYER 2: ACTIONABLE</text>
+    <text x="65" y="48" font-family="system-ui, sans-serif" font-size="11" fill="#94a3b8">Implementation &amp; Real Code</text>
+    
+    <!-- Bullet points -->
+    <text x="25" y="78" font-family="system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">● Prisma, SQL Server schemas &amp; DDLs</text>
+    <text x="25" y="96" font-family="system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">● Algorithms in Node / TypeScript / Python</text>
+    <text x="25" y="114" font-family="system-ui, sans-serif" font-size="10.5" fill="#e2e8f0">● Unit tests and practical specifications</text>
+  </g>
+
+  <!-- 5. FOOTER SUMMARY BADGE -->
+  <g transform="translate(230, 440)">
+    <rect width="460" height="42" rx="10" fill="#151b32" stroke="rgba(255,255,255,0.1)"/>
+    <text x="230" y="26" font-family="system-ui, sans-serif" font-size="11.5" font-weight="600" fill="#c7d2fe" text-anchor="middle">
+      📄 Consolidated OVERVIEW.md + _meta.json indexed on disk + Catalog in Editor
+    </text>
+  </g>
+</svg>
+

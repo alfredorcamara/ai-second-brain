@@ -1,6 +1,6 @@
 {
   "name": "ai-second-brain",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "description": "Seu segundo cérebro para desenvolvimento com IA. Organiza conhecimento, decisões, memória e governança para todos os seus projetos.",
   "main": "server.js",
   "scripts": {
@@ -14,7 +14,10 @@
     "build:demo": "python ../AI_SECOND_BRAIN-SITE/demo/tools/build_demo_vault.py",
     "version:sync": "node scripts/sync-version.js",
     "sync:version": "node scripts/sync-version.js",
-    "sync:demo": "node scripts/sync-demo.js"
+    "sync:demo": "node scripts/sync-demo.js",
+    "lang:en": "node scripts/i18n-cli.js en",
+    "lang:pt": "node scripts/i18n-cli.js pt",
+    "lang:auto": "node scripts/i18n-cli.js auto"
   },
   "keywords": [
     "ai",

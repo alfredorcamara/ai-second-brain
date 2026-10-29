@@ -33,6 +33,11 @@ Você opera dentro do **AI Second Brain**, um sistema estruturado que organiza c
 3. **Consulta Obrigatória à Memória**: SEMPRE consulte o `LESSONS_LEARNED.md` do projeto e `memory/lessons-learned.md` antes de arquitetar código ou integrações de IA.
 4. **ADRs Obrigatórios**: Toda mudança arquitetural significativa deve gerar um novo arquivo em `projects/<nome>/DECISIONS/`.
 5. **Prioridade Determinística**: NUNCA utilize LLM quando código determinístico ou regras de negócio resolverem.
+6. **Taxonomia Estrita de Documentos**: SEMPRE consulte onde cada arquivo deve residir antes de criá-lo:
+   - `docs/` (raiz): Exclusivo para manuais e guias oficiais úteis a quem baixar a solução (ex: `COMO_UTILIZAR_O_PROJETO.md`, `GUIA_PRATICO.md`, `SOLUCAO_AI_SECOND_BRAIN.md`).
+   - `docs/internals/`: Todos os documentos de construção da ferramenta, relatórios de usabilidade (Dev Journey), planos de sprint, rascunhos e debates de engenharia entre Alfredo e a IA (esta pasta é ignorada pelo `scan-vault.js` e `doctor.js`).
+   - `decisions/GLOBAL_DECISIONS.md`: Registro oficial consolidado das decisões arquiteturais globais (ADRs).
+   - `projects/<nome>/`: Documentação estritamente isolada de cada projeto do desenvolvedor.
 
 ---
 

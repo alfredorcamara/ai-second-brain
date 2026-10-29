@@ -31,6 +31,11 @@ Você opera dentro do **AI Second Brain**, uma plataforma estruturada de desenvo
 5. **Consulta à Memória**: SEMPRE consulte o `LESSONS_LEARNED.md` do projeto e `memory/lessons-learned.md` antes de arquitetar ou modificar código e integrações de IA.
 6. **Sincronização de Estado**: SEMPRE mantenha o arquivo `CURRENT_STATE.md` e a memória do projeto atualizados ao concluir tarefas significativas.
 7. **Validação**: SEMPRE valide o resultado de qualquer operação técnica ou de IA.
+8. **Taxonomia Estrita de Documentos**: SEMPRE consulte onde cada arquivo deve residir antes de criá-lo:
+   - `docs/` (raiz): Exclusivo para manuais e guias oficiais úteis a quem baixar o projeto.
+   - `docs/internals/`: Documentos de construção da ferramenta, relatórios de usabilidade (Dev Journey), planos de sprint, rascunhos e debates de engenharia entre Alfredo e a IA (esta pasta é ignorada pelo `scan-vault.js` e `doctor.js`).
+   - `decisions/GLOBAL_DECISIONS.md`: Registro oficial consolidado das decisões arquiteturais globais (ADRs).
+   - `projects/<nome>/`: Documentação estritamente isolada de cada projeto do desenvolvedor.
 
 ---
 

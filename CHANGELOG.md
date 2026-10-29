@@ -7,6 +7,38 @@ e este projeto adere ao [Versionamento Semântico (SemVer)](https://semver.org/l
 
 ---
 
+## [1.5.0] — 2026-10-29
+
+### 🌐 Internacionalização & Suporte Multilíngue Completo (PT / EN)
+- **Cofre Bilíngue de Fábrica (`.locales/pt/` e `.locales/en/`)**:
+  - Implementação de paridade integral (100% de cobertura) para os 44 arquivos canônicos do framework (regras, skills, agentes, guias de produto, decisões, memória inicial e templates).
+  - Conteúdo em inglês técnico genuíno, fluente e revisado, preservando todas as referências cruzadas e links internos.
+- **Motor CLI de Alternância Instantânea (`npm run lang:en` e `npm run lang:pt`)**:
+  - Novo orquestrador CLI (`scripts/i18n-cli.js` e `scripts/locale-docs-manager.js`) capaz de alternar todos os 44 documentos do framework em menos de 30ms com validação atômica.
+  - Preservação inteligente de arquivos modificados pelo usuário com sistema de backup (`.locales/backups/`) e isolamento de customizações (`.locales/user-custom/`).
+- **Suporte Dinâmico no Cockpit Visual e Demo Pública**:
+  - Seletor de idioma interativo em tempo real (PT 🇧🇷 / EN 🇺🇸) sem recarregar a página, com tradução completa da interface e do cofre de documentos.
+  - Conjunto completo de diagramas arquiteturais renderizados em inglês (`*-eng.svg`).
+
+### 📁 Nova Taxonomia Estrita de Documentação & Blindagem de Entrega
+- **Sanitização da Raiz de `docs/`**:
+  - A raiz de `docs/` agora abriga exclusivamente os 6 guias oficiais essenciais voltados para o desenvolvedor final (`COMO_UTILIZAR_O_PROJETO.md`, `GUIA_PRATICO.md`, `GUIA_TECNICO_AI_DECISION_GATE_JEV.md`, `RESEARCH_LAB.md`, `SOLUCAO_AI_SECOND_BRAIN.md`, `VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md`).
+- **Isolamento Seguro de Engenharia Interna (`docs/internals/`)**:
+  - Relatórios de usabilidade (Dev Journey), planos de sprint, análises de refinamento de prompt e debates internos movidos para `docs/internals/`, completamente invisíveis ao Cockpit e às IAs.
+  - Registro formal da **ADR-G013** em `decisions/GLOBAL_DECISIONS.md` documentando a arquitetura do motor multilíngue e o isolamento de documentação.
+- **Proteção de Distribuição via `.gitattributes`**:
+  - Adicionada diretiva `export-ignore` para que qualquer download de release do GitHub ou pacote ZIP exclua automaticamente pastas de construção interna (`docs/internals/`, `memory/sessions/`, etc.), garantindo uma entrega limpa e focada no desenvolvedor.
+
+### 🧠 Saneamento de Memória Inicial (Starter Kit Puro)
+- **Memória de Sessão e Estado do Dev Limpas**:
+  - `memory/current-state.md` e `memory/lessons-learned.md` sanitizados para templates prontos (~30 linhas) para receber o contexto do novo desenvolvedor.
+  - Todo o histórico de sessões anteriores de desenvolvimento da ferramenta arquivado de forma segura em `memory/sessions/` e `memory/archive/`.
+
+### 🛡️ Governança e Contratos de IA Atualizados
+- Atualizadas as regras globais e contratuais (`.agents/rules/00-core.md`, `.agents/rules/04-documentation.md`, `GEMINI.md`, `AGENTS.md`, `CLAUDE.md`) com o novo Princípio 9 (Taxonomia de Documentação) e diretrizes de resposta no idioma configurado em `brain.config.json`.
+
+---
+
 ## [1.4.2] — 2026-10-28
 
 ### 🌟 Engajamento Comunitário & Apoio Open Source

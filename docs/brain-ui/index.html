@@ -175,6 +175,16 @@
                             📂 Conectar Pasta
                         </button>
                     </div>
+                    <!-- Seletor Bilingue (PT ⇄ EN) com detecção automática de máquina -->
+                    <button id="btnCockpitLang" class="btn-cockpit-lang" type="button"
+                        onclick="window.COCKPIT_I18N && window.COCKPIT_I18N.toggle()"
+                        title="Alternar idioma / Switch language (PT ⇄ EN)"
+                        aria-label="Alternar idioma / Switch language" data-no-i18n>
+                        <span class="lang-globe">🌐</span>
+                        <span class="lang-opt active" data-lang-opt="pt">PT</span>
+                        <span class="lang-sep">|</span>
+                        <span class="lang-opt" data-lang-opt="en">EN</span>
+                    </button>
                     <button id="viewToggle" class="view-toggle" title="Alternar visualização">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="3" />
@@ -4012,6 +4022,164 @@
         </div>
     </div>
 
+    <!-- Modal: Governança & Proteção de Customizações (Bilingual Engine) -->
+    <div id="localeProtectionModal" class="editor-modal-backdrop locale-modal-backdrop" style="display:none;"
+        onclick="if(event.target === this) closeLocaleProtectionModal()">
+        <div class="locale-modal-box" role="dialog" aria-modal="true" aria-labelledby="localeProtectionTitle">
+            <!-- Header -->
+            <div class="locale-modal-header">
+                <div class="locale-header-left">
+                    <span class="locale-header-icon">🛡️</span>
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <h3 id="localeProtectionTitle" class="locale-modal-title">Governança & Proteção de Customizações</h3>
+                            <span class="locale-version-tag">Cofre .locales · Proteção Atômica</span>
+                        </div>
+                        <p class="locale-modal-subtitle" id="localeProtectionSubtitle">
+                            Arquivos padrão sincronizados. Suas customizações foram detectadas e protegidas contra perda.
+                        </p>
+                    </div>
+                </div>
+                <button type="button" class="locale-close-btn" onclick="closeLocaleProtectionModal()" title="Fechar (Esc)">✕</button>
+            </div>
+
+            <!-- Metrics Strip -->
+            <div class="locale-metrics-strip">
+                <div class="locale-metric-chip success">
+                    <span class="chip-dot"></span>
+                    <span id="localeMetricSwappedCount">56</span>&nbsp;<span id="localeMetricSwappedLabel">de fábrica sincronizados (0ms)</span>
+                </div>
+                <div class="locale-metric-chip warning">
+                    <span class="chip-dot warning"></span>
+                    <span id="localeMetricCustomCount">2</span>&nbsp;<span id="localeMetricCustomLabel">customizações detectadas</span>
+                </div>
+                <div class="locale-metric-chip ai" id="localeAiProviderBadge">
+                    <span class="chip-icon">✨</span>
+                    <span id="localeAiProviderText">AI Gateway: Verificando...</span>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="locale-modal-body">
+                <!-- Info Message -->
+                <div class="locale-info-banner">
+                    <div class="locale-banner-icon">💡</div>
+                    <div class="locale-banner-text">
+                        <strong id="localeBannerTitle">Arquivos com regras personalizadas identificados</strong>
+                        <p id="localeBannerDesc">
+                            Identificamos que você editou os arquivos listados abaixo. Para preservar suas regras de negócio e evitar sobreescrita acidental, escolha o que deseja fazer:
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Custom Files List Container -->
+                <div class="locale-files-section">
+                    <div class="locale-files-header">
+                        <span class="locale-files-title" id="localeFilesHeaderTitle">Arquivos Customizados Sob Proteção:</span>
+                        <div class="locale-files-actions">
+                            <button type="button" class="btn-text-small" onclick="toggleAllLocaleFiles(true)" id="btnLocaleSelectAll">Selecionar Todos</button>
+                            <span>&middot;</span>
+                            <button type="button" class="btn-text-small" onclick="toggleAllLocaleFiles(false)" id="btnLocaleDeselectAll">Desmarcar</button>
+                        </div>
+                    </div>
+                    <div class="locale-files-list" id="localeCustomFilesList">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+
+                <!-- Action Cards (3 Options) -->
+                <div class="locale-options-grid">
+                    <!-- Option 1: Keep (Default) -->
+                    <label class="locale-option-card selected" id="localeCardKeep" onclick="selectLocaleAction('keep')">
+                        <input type="radio" name="localeActionRadio" value="keep" checked class="locale-radio">
+                        <div class="card-radio-mark"></div>
+                        <div class="card-content">
+                            <div class="card-title-row">
+                                <span class="card-icon">🛡️</span>
+                                <span class="card-title" id="localeCardKeepTitle">Manter Customizações Intactas</span>
+                                <span class="card-badge recommended" id="localeCardKeepBadge">Recomendado · Risco Zero</span>
+                            </div>
+                            <p class="card-desc" id="localeCardKeepDesc">
+                                Preserva seus arquivos customizados exatamente como estão no disco. Os outros documentos padrão do framework continuam alternados normalmente.
+                            </p>
+                        </div>
+                    </label>
+
+                    <!-- Option 2: Translate with AI -->
+                    <label class="locale-option-card" id="localeCardTranslate" onclick="selectLocaleAction('translate')">
+                        <input type="radio" name="localeActionRadio" value="translate" class="locale-radio">
+                        <div class="card-radio-mark"></div>
+                        <div class="card-content">
+                            <div class="card-title-row">
+                                <span class="card-icon">✨</span>
+                                <span class="card-title" id="localeCardTranslateTitle">Traduzir com IA via AI Gateway</span>
+                                <span class="card-badge ai" id="localeCardTranslateBadge">Backup Atômico + Cache Bilíngue</span>
+                            </div>
+                            <p class="card-desc" id="localeCardTranslateDesc">
+                                Utiliza seu modelo de IA conectado para traduzir o conteúdo preservando a formatação Markdown, tabelas e links de governança. Salva backup prévio em <code>.locales/backups/</code> e armazena o par em cache para que futuras trocas sejam instantâneas e sem custo.
+                            </p>
+                            <div class="card-ai-status-hint" id="localeCardAiHint" style="display:none;"></div>
+                        </div>
+                    </label>
+
+                    <!-- Option 3: Restore Factory -->
+                    <label class="locale-option-card" id="localeCardOverwrite" onclick="selectLocaleAction('overwrite')">
+                        <input type="radio" name="localeActionRadio" value="overwrite" class="locale-radio">
+                        <div class="card-radio-mark"></div>
+                        <div class="card-content">
+                            <div class="card-title-row">
+                                <span class="card-icon">🔄</span>
+                                <span class="card-title" id="localeCardOverwriteTitle">Restaurar Versão Padrão de Fábrica</span>
+                                <span class="card-badge neutral" id="localeCardOverwriteBadge">Backup no Disco</span>
+                            </div>
+                            <p class="card-desc" id="localeCardOverwriteDesc">
+                                Substitui suas customizações pelo template oficial do framework no idioma de destino. Uma cópia de segurança completa das suas alterações será salva em <code>.locales/backups/</code>.
+                            </p>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Live Progress Container (Visible during AI translation or resolution) -->
+                <div class="locale-progress-wrap" id="localeProgressWrap" style="display:none;">
+                    <div class="locale-progress-header">
+                        <div class="locale-progress-title">
+                            <span class="spinner-dot"></span>
+                            <span id="localeProgressStepText">Processando tradução neural...</span>
+                        </div>
+                        <span class="locale-progress-percent" id="localeProgressPercentText">0%</span>
+                    </div>
+                    <div class="locale-progress-bar-bg">
+                        <div class="locale-progress-bar-fill" id="localeProgressBarFill" style="width: 0%;"></div>
+                    </div>
+                    <div class="locale-progress-files" id="localeProgressFilesList"></div>
+                </div>
+
+                <!-- Error / Notice Box -->
+                <div class="locale-error-box" id="localeErrorBox" style="display:none;">
+                    <div class="error-icon">⚠️</div>
+                    <div class="error-content" id="localeErrorContent"></div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="locale-modal-footer">
+                <div class="locale-footer-left">
+                    <span class="safe-badge" id="localeSafeBadgeText">🔒 Proteção de Integridade Ativa</span>
+                    <span class="footer-hint" id="localeFooterHint">Backups atômicos gravados em <code>.locales/backups/</code></span>
+                </div>
+                <div class="locale-footer-right">
+                    <button type="button" class="btn btn-secondary" onclick="closeLocaleProtectionModal()" id="btnLocaleCancel">
+                        Manter Intacto e Fechar
+                    </button>
+                    <button type="button" class="btn btn-primary btn-locale-confirm" id="btnLocaleConfirm" onclick="executeLocaleResolution()">
+                        <span id="btnLocaleConfirmIcon">🛡️</span>
+                        <span id="btnLocaleConfirmText">Confirmar Escolha</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast de Apoio / Star Feedback (Discreto, não bloqueante) -->
     <div id="starFeedbackToast" class="star-toast" style="display: none;" role="dialog" aria-label="Apoiar com estrela no GitHub">
         <button class="star-toast-close" onclick="dismissStarToast('later')" title="Fechar (lembrar mais tarde)">✕</button>
@@ -4039,9 +4207,11 @@
     <script src="OrbitControls.js"></script>
     <script src="marked.min.js"></script>
     <script src="vault-data.js"></script>
+    <script src="vault-locales.js"></script>
     <script src="vault.js"></script>
     <script src="graph-hierarchy.js"></script>
     <script src="neuron-graph.js"></script>
+    <script src="cockpit-i18n.js"></script>
     <script src="app.js"></script>
 </body>
 

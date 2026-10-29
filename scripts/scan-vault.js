@@ -102,7 +102,7 @@ function scanVault(rootDir = ROOT_DIR, options = {}) {
     const { includeProjects = true } = options;
     const files = [];
     const visitedDirs = new Set();
-    const ignoredFolders = new Set(['node_modules', '.git', 'bin', 'obj', 'dist', 'build', 'vendor', '.vs', '.vscode']);
+    const ignoredFolders = new Set(['node_modules', '.git', 'bin', 'obj', 'dist', 'build', 'vendor', '.vs', '.vscode', 'internals', '.internals']);
 
     function walk(currentDir) {
         try {
@@ -130,6 +130,11 @@ function scanVault(rootDir = ROOT_DIR, options = {}) {
 
             // Se includeProjects for falso, não entra em subpastas de projects/ (apenas processa projects/README.md)
             if (!includeProjects && relPathFromRoot.startsWith('projects/') && !relPathFromRoot.endsWith('README.md') && (entry.isDirectory() || entry.isSymbolicLink())) {
+                continue;
+            }
+
+            // Ignora pastas de arquivo/histórico de sessões do Segundo Cérebro (mantém memória operacional limpa)
+            if (relPathFromRoot.startsWith('memory/sessions') || relPathFromRoot.startsWith('memory/archive')) {
                 continue;
             }
 
@@ -561,21 +566,28 @@ function scanVault(rootDir = ROOT_DIR, options = {}) {
         }
     });
 
-    // Detect Cross-file and Inter-project links
-    files.forEach(f => {
-        files.forEach(target => {
-            if (f.id === target.id) return;
-            const targetName = path.basename(target.path, '.md').toLowerCase();
-            const targetRel = target.path.toLowerCase();
+    // Detect Cross-file and Inter-project links (precomputed lowercase for O(N) string allocation)
+    const linkMeta = files.map(f => ({
+        id: f.id,
+        outgoingLinks: f.outgoingLinks,
+        contentLower: f.content.toLowerCase(),
+        targetName: path.basename(f.path, '.md').toLowerCase(),
+        targetRel: f.path.toLowerCase()
+    }));
 
-            const isLinked = f.outgoingLinks.some(l => l.includes(targetName) || l.includes(targetRel));
-            const isMentioned = f.content.toLowerCase().includes(targetName) && targetName.length > 5;
+    for (let i = 0; i < linkMeta.length; i++) {
+        const f = linkMeta[i];
+        for (let j = 0; j < linkMeta.length; j++) {
+            if (i === j) continue;
+            const target = linkMeta[j];
+            const isLinked = f.outgoingLinks.some(l => l.includes(target.targetName) || l.includes(target.targetRel));
+            const isMentioned = target.targetName.length > 5 && f.contentLower.includes(target.targetName);
 
             if (isLinked || isMentioned) {
                 graphEdges.push({ from: f.id, to: target.id });
             }
-        });
-    });
+        }
+    }
 
     // Conecta automaticamente os projetos às regras essenciais de governança
     projectSubHubs.forEach((pHubId, projName) => {

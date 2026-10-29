@@ -65,7 +65,7 @@
   4. **Prompt Bootstrap de Início de Sessão em 1 Clique**: Botão "Copiar Prompt para Agente" gera e copia para o clipboard uma instrução parametrizada contendo o caminho do projeto, contratos e regras absolutas para alimentar qualquer agente de IA sem amnésia.
   5. **Feedback Visual Ativo de Inferência com Mensagens Rotativas**: O modal de Session Capture exibe etapas sincronizadas e animação contínua durante o tempo de resposta da IA, eliminando a sensação de travamento e aumentando a previsibilidade operacional.
 - **Motivo**: Reduz drasticamente o atrito entre o Cockpit Visual do Second Brain e o fluxo real de codificação na IDE, garantindo que o desenvolvedor comece e feche sessões com velocidade máxima.
-- **Detalhes**: Ver `server.js`, `docs/brain-ui/app.js`, `docs/brain-ui/demo/app.js` e `docs/relatorio_usabilidade_dev_journey.md`.
+- **Detalhes**: Ver `server.js`, `docs/brain-ui/app.js`, `docs/brain-ui/demo/app.js` e `docs/internals/relatorio_usabilidade_dev_journey.md`.
 
 ## ADR-G009: Motor de Decisão JEV Nativo (RulesDecisionProvider) e Refinamento Cirúrgico com Clarificação Humana
 - **Status**: Aceita
@@ -77,7 +77,7 @@
   4. **Explicabilidade Numérica e Auditoria**: Toda decisão retorna `ruleId`, `confidence` numérica (0.0 a 1.0) e `rationale` em linguagem natural.
   5. **Auto-Switch de Aba com Destaque Visual & Botão Desfazer (Undo)**: A interface web transiciona automaticamente para a aba do documento alterado com animação `.tab-flash-active` e oferece botão `↺ Desfazer` persistido em `previousGrillDraft`.
 - **Motivo**: Garante precisão cirúrgica na governança dos contratos, respeita o princípio de *Zero Fabricação*, evita desperdício de tokens e previne que solicitações parciais corrompam a arquitetura do software.
-- **Detalhes**: Ver `scripts/decision-provider.js`, `scripts/quickstart-grill.js`, `server.js`, `docs/brain-ui/app.js`, `knowledge/ai/AIJEV.md` e `docs/plano_trabalho_prompt_vivo_cirurgico.md`.
+- **Detalhes**: Ver `scripts/decision-provider.js`, `scripts/quickstart-grill.js`, `server.js`, `docs/brain-ui/app.js`, `knowledge/ai/AIJEV.md` e `docs/internals/plano_trabalho_prompt_vivo_cirurgico.md`.
 
 ## ADR-G010: Resiliência em Rate Limits de Provedores de IA, AbortController e Modal Informativo de Cota (BYOK)
 - **Status**: Aceita
@@ -113,6 +113,16 @@
   4. **Preservação de Direitos via CLA (`CLA.md`)**: Contribuições externas via Pull Request concedem ao mantenedor e detentor original dos direitos autorais (Alfredo R. Câmara) licença ampla de distribuição, sublicenciamento e eventual monetização, evitando fragmentação de direitos de propriedade intelectual.
 - **Motivo**: Proteger o esforço intelectual e de engenharia contra exploração predatória por terceiros mantendo a comunidade livre para usar e aprender.
 - **Detalhes**: Ver `LICENSE`, `CLA.md`, `CONTRIBUTING.md` e `package.json`.
+
+## ADR-G013: Motor Bilíngue com Cofre `.locales/` e Proteção Inteligente de Customizações
+- **Status**: Aceita
+- **Data**: 2026-10-29
+- **Descrição**: Implementação de um motor de alternância instantânea entre Português e Inglês para os 44 documentos oficiais de inicialização da plataforma através de um cofre protegido `.locales/`:
+  1. **Zero Poluição do Grafo 3D e IDEs**: Os arquivos de fábrica residem em `.locales/pt/` e `.locales/en/` (ignorados pelo `scan-vault.js` e `doctor.js`), mantendo os nomes canônicos nas pastas de origem sem duplicar nós no visualizador.
+  2. **Troca Determinística (JEV First)**: Arquivos inalterados pelo usuário são substituídos instantaneamente em <30ms a custo zero de tokens via hash SHA-256 normalizado.
+  3. **Proteção de Customizações do Usuário**: Se o desenvolvedor editar um documento de regras ou memória, o sistema detecta a customização e abre o modal de proteção, permitindo manter o arquivo original, restaurar o padrão de fábrica com backup ou traduzir com o AI Gateway (BYOK) mantendo paridade em `.locales/user-custom/`.
+- **Motivo**: Permitir que desenvolvedores de qualquer país utilizem o framework na língua desejada sem poluir o repositório e sem correr risco de perda de regras personalizadas.
+- **Detalhes**: Ver `docs/internals/ADR_ARQUITETURA_DOCUMENTOS_MULTILINGUA.md`.
 
 
 

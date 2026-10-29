@@ -18,6 +18,11 @@
 6. **Zero Fabrication** — NUNCA invente contexto que não existe na documentação do projeto. Não gere arquivos, lore, telas ou especificações especulativas para preencher lacunas. Se algo não existe, declare expressamente como não definido.
 7. **Zero Hardcoded Models** — NUNCA crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API do provedor em tempo real.
 8. **Lessons Aware** — SEMPRE consulte `memory/lessons-learned.md` antes de arquitetar ou modificar integrações de IA e código.
+9. **Document Taxonomy Aware** — SEMPRE consulte e respeite onde cada documento deve residir antes de criá-lo:
+   - `docs/` (raiz): Exclusivo para manuais e guias oficiais úteis a quem baixar a solução (ex: `COMO_UTILIZAR_O_PROJETO.md`, `GUIA_PRATICO.md`, `SOLUCAO_AI_SECOND_BRAIN.md`).
+   - `docs/internals/`: Todos os documentos de construção da ferramenta, relatórios de usabilidade (Dev Journey), planos de sprint, rascunhos e debates de engenharia entre Alfredo e a IA (esta pasta é ignorada pelo `scan-vault.js` e `doctor.js`).
+   - `decisions/GLOBAL_DECISIONS.md`: Registro oficial consolidado das decisões arquiteturais globais (ADRs).
+   - `projects/<nome>/`: Documentação estritamente isolada de cada projeto do desenvolvedor.
 
 
 ## Fluxo de Trabalho Obrigatório

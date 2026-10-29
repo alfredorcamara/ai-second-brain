@@ -1,0 +1,17 @@
+# ════════════════════════════════════════════════════════════
+# AI SECOND BRAIN — Git Attributes & Release Export Rules
+# ════════════════════════════════════════════════════════════
+
+# 1. Normalização de Quebras de Linha para Integridade Multiplataforma
+* text=auto eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 2. Exclusão de Artefatos Internos em Downloads de Release / ZIP do GitHub
+# Quem baixar o ZIP pelo GitHub Releases ou "Download ZIP" NÃO receberá estas pastas:
+docs/internals/ export-ignore
+memory/sessions/ export-ignore
+memory/archive/ export-ignore
+.locales/backups/ export-ignore
+.locales/user-custom/ export-ignore
+

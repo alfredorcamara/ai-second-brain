@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 500" width="920" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0d1a"/>
+      <stop offset="50%" stop-color="#070a14"/>
+      <stop offset="100%" stop-color="#04060b"/>
+    </linearGradient>
+
+    <filter id="cardShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+
+    <pattern id="gridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.03)" stroke-width="1"/>
+    </pattern>
+
+    <style>
+      .pulse-line-green {
+        stroke-dasharray: 6, 12;
+        animation: flowGreen 2s linear infinite;
+      }
+      .pulse-line-indigo {
+        stroke-dasharray: 6, 12;
+        animation: flowIndigo 2.5s linear infinite;
+      }
+      .pulse-line-amber {
+        stroke-dasharray: 6, 12;
+        animation: flowAmber 3s linear infinite;
+      }
+      @keyframes flowGreen { to { stroke-dashoffset: -36; } }
+      @keyframes flowIndigo { to { stroke-dashoffset: -36; } }
+      @keyframes flowAmber { to { stroke-dashoffset: -36; } }
+      .glowing-node {
+        animation: nodePulse 3s ease-in-out infinite;
+      }
+      @keyframes nodePulse {
+        0%, 100% { filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.3)); }
+        50% { filter: drop-shadow(0 0 16px rgba(99, 102, 241, 0.6)); }
+      }
+    </style>
+  </defs>
+
+  <rect width="100%" height="100%" fill="url(#bgGrad)" rx="16"/>
+  <rect width="100%" height="100%" fill="url(#gridPattern)" rx="16"/>
+
+  <!-- Connecting Lines -->
+  <!-- 1 -> 2 (Down) -->
+  <line x1="230" y1="95" x2="230" y2="155" stroke="#818cf8" stroke-width="2.5" class="pulse-line-indigo"/>
+  <!-- 2 -> Deterministic (Right) -->
+  <path d="M 340 195 L 600 195" stroke="#34d399" stroke-width="2.5" class="pulse-line-green"/>
+  <!-- 2 -> 3 (Down) -->
+  <line x1="230" y1="235" x2="230" y2="295" stroke="#818cf8" stroke-width="2.5" class="pulse-line-indigo"/>
+  <!-- 3 -> AIJev (Right) -->
+  <path d="M 340 335 L 600 335" stroke="#38bdf8" stroke-width="2.5" class="pulse-line-indigo"/>
+  <!-- 3 -> 4 (Down) -->
+  <line x1="230" y1="375" x2="230" y2="415" stroke="#f472b6" stroke-width="2.5" class="pulse-line-amber"/>
+  <!-- 4 -> LLM (Right) -->
+  <path d="M 340 450 L 600 450" stroke="#f472b6" stroke-width="2.5" class="pulse-line-amber"/>
+
+  <!-- STEP 1: Incoming Task -->
+  <g transform="translate(120, 35)">
+    <rect width="220" height="60" rx="12" fill="#131930" stroke="#818cf8" stroke-width="2" filter="url(#cardShadow)" class="glowing-node"/>
+    <text x="110" y="27" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#a5b4fc" text-anchor="middle" letter-spacing="1">TRIGGER / PROMPT</text>
+    <text x="110" y="47" font-family="system-ui, sans-serif" font-size="14" font-weight="800" fill="#ffffff" text-anchor="middle">🎯 NEW TASK</text>
+  </g>
+
+  <!-- STEP 2: Gateway Gate 1 (Deterministic Check) -->
+  <g transform="translate(120, 155)">
+    <rect width="220" height="80" rx="14" fill="#0f172a" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <text x="110" y="30" font-family="system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#94a3b8" text-anchor="middle">EVALUATION 1</text>
+    <text x="110" y="50" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#f8fafc" text-anchor="middle">IS IT DETERMINISTIC?</text>
+    <text x="110" y="67" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">Zero semantic ambiguity</text>
+  </g>
+  <!-- Yes Badge 1 -->
+  <g transform="translate(425, 182)">
+    <rect width="90" height="26" rx="13" fill="#06130e" stroke="#34d399" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <text x="45" y="17" font-family="system-ui, sans-serif" font-size="11" font-weight="800" fill="#34d399" text-anchor="middle">YES ➔</text>
+  </g>
+  <!-- Deterministic Result Card -->
+  <g transform="translate(600, 155)">
+    <rect width="285" height="80" rx="14" fill="#0c1f17" stroke="#34d399" stroke-width="2" filter="url(#cardShadow)"/>
+    <circle cx="35" cy="40" r="18" fill="rgba(52, 211, 153, 0.2)"/>
+    <text x="35" y="46" font-size="18" text-anchor="middle">⚡</text>
+    <text x="65" y="34" font-family="system-ui, sans-serif" font-size="13.5" font-weight="800" fill="#34d399">PURE CODE / RULE</text>
+    <text x="65" y="52" font-family="system-ui, sans-serif" font-size="11" fill="#cbd5e1">Script, strict logic, or regex</text>
+    <text x="65" y="67" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#10b981">● Latency: 0ms | Cost: $0 | Error: 0%</text>
+  </g>
+
+  <!-- STEP 3: Gateway Gate 2 (AIJev Check) -->
+  <g transform="translate(120, 295)">
+    <rect width="220" height="80" rx="14" fill="#0f172a" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <text x="110" y="30" font-family="system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#94a3b8" text-anchor="middle">EVALUATION 2</text>
+    <text x="110" y="50" font-family="system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#f8fafc" text-anchor="middle">IS IT CLASSIFICATION / DECISION?</text>
+    <text x="110" y="67" font-family="system-ui, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">Choice among finite paths</text>
+  </g>
+  <!-- Yes Badge 2 -->
+  <g transform="translate(425, 322)">
+    <rect width="90" height="26" rx="13" fill="#05121c" stroke="#38bdf8" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <text x="45" y="17" font-family="system-ui, sans-serif" font-size="11" font-weight="800" fill="#38bdf8" text-anchor="middle">YES ➔</text>
+  </g>
+  <!-- AIJev Result Card -->
+  <g transform="translate(600, 295)">
+    <rect width="285" height="80" rx="14" fill="#091c29" stroke="#38bdf8" stroke-width="2" filter="url(#cardShadow)"/>
+    <circle cx="35" cy="40" r="18" fill="rgba(56, 189, 248, 0.2)"/>
+    <text x="35" y="46" font-size="18" text-anchor="middle">⚖️</text>
+    <text x="65" y="34" font-family="system-ui, sans-serif" font-size="13.5" font-weight="800" fill="#38bdf8">AIJEV / JEV RULE</text>
+    <text x="65" y="52" font-family="system-ui, sans-serif" font-size="11" fill="#cbd5e1">Declarative decision engine</text>
+    <text x="65" y="67" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#0284c7">● Latency: ~1ms | Cost: $0 | Auditable</text>
+  </g>
+
+  <!-- STEP 4: Generative Check -->
+  <g transform="translate(120, 415)">
+    <rect width="220" height="70" rx="14" fill="#1b1226" stroke="#f472b6" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <text x="110" y="28" font-family="system-ui, sans-serif" font-size="10.5" font-weight="700" fill="#f472b6" text-anchor="middle">NON-DETERMINISTIC</text>
+    <text x="110" y="49" font-family="system-ui, sans-serif" font-size="11.5" font-weight="700" fill="#ffffff" text-anchor="middle">NEEDS CODE / TEXT GENERATION?</text>
+  </g>
+  <!-- Yes Badge 3 -->
+  <g transform="translate(425, 437)">
+    <rect width="90" height="26" rx="13" fill="#130815" stroke="#f472b6" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <text x="45" y="17" font-family="system-ui, sans-serif" font-size="11" font-weight="800" fill="#f472b6" text-anchor="middle">YES ➔</text>
+  </g>
+  <!-- LLM Result Card -->
+  <g transform="translate(600, 410)">
+    <rect width="285" height="80" rx="14" fill="#20101d" stroke="#f472b6" stroke-width="2" filter="url(#cardShadow)"/>
+    <circle cx="35" cy="40" r="18" fill="rgba(244, 114, 182, 0.2)"/>
+    <text x="35" y="46" font-size="18" text-anchor="middle">🤖</text>
+    <text x="65" y="34" font-family="system-ui, sans-serif" font-size="13.5" font-weight="800" fill="#f472b6">GOVERNED LLM</text>
+    <text x="65" y="52" font-family="system-ui, sans-serif" font-size="11" fill="#cbd5e1">Universal AI Gateway + Validation</text>
+    <text x="65" y="67" font-family="system-ui, sans-serif" font-size="9" font-weight="700" fill="#ec4899">● Conscious usage: Only where it adds real value</text>
+  </g>
+</svg>
+

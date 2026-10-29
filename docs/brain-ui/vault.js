@@ -42,33 +42,40 @@ class VaultManager {
             return;
         }
 
-        // 3. Fallback para Snapshot embutido
-        this._loadSnapshot();
+        // 3. Fallback para Snapshot embutido (evita recarregar se já carregado no construtor)
+        if (!this.data || this.mode !== 'snapshot') {
+            this._loadSnapshot();
+        }
         if (isLocal) {
             this._startLiveServerAutoReconnect();
         }
     }
 
     async _tryLiveServer(retryCount = 0) {
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '::1';
+        let timeoutId = null;
         try {
-            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '::1';
-            const timeoutMs = isLocal ? 7000 : 1500;
+            const timeoutMs = isLocal ? 15000 : 2000;
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+            timeoutId = setTimeout(() => controller.abort(new DOMException('Vault connection timeout', 'TimeoutError')), timeoutMs);
             const res = await fetch('/api/vault', { signal: controller.signal });
             clearTimeout(timeoutId);
 
             if (res.ok) {
                 const vaultData = await res.json();
                 this.mode = 'live';
+                if (this._reconnectTimer) {
+                    clearInterval(this._reconnectTimer);
+                    this._reconnectTimer = null;
+                }
                 this._setData(vaultData);
                 this._setupSSE();
                 console.log('🟢 [Vault] Conectado ao Servidor Ao Vivo (/api/vault)');
                 return true;
             }
         } catch (e) {
+            if (timeoutId) clearTimeout(timeoutId);
             // Se estiver no localhost e falhar na primeira tentativa (ex: servidor ainda subindo), tenta novamente
-            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '::1';
             if (isLocal && retryCount < 2) {
                 await new Promise(r => setTimeout(r, 800));
                 return await this._tryLiveServer(retryCount + 1);
@@ -78,30 +85,38 @@ class VaultManager {
     }
 
     _startLiveServerAutoReconnect() {
-        if (this._reconnectTimer) return;
+        if (this._reconnectTimer || this.mode === 'live') return;
         let attempts = 0;
+        this._reconnectInFlight = false;
         this._reconnectTimer = setInterval(async () => {
-            attempts++;
-            if (attempts > 12 || this.mode === 'live') {
+            if (this.mode === 'live' || attempts > 12) {
                 clearInterval(this._reconnectTimer);
                 this._reconnectTimer = null;
                 return;
             }
+            if (this._reconnectInFlight) return;
+            this._reconnectInFlight = true;
+            attempts++;
             try {
                 const res = await fetch('/api/vault');
-                if (res.ok) {
-                    clearInterval(this._reconnectTimer);
-                    this._reconnectTimer = null;
-                    const vaultData = await res.json();
+                if (res.ok && this.mode !== 'live') {
                     this.mode = 'live';
+                    if (this._reconnectTimer) {
+                        clearInterval(this._reconnectTimer);
+                        this._reconnectTimer = null;
+                    }
+                    const vaultData = await res.json();
                     try { localStorage.removeItem('ai_second_brain_custom_vault'); } catch (e) {}
                     this._setData(vaultData);
                     this._setupSSE();
                     console.log('🟢 [Vault] Servidor Ao Vivo detectado! Conexão migrada para o disco.');
                     if (this.onVaultUpdated) this.onVaultUpdated({ reason: 'live-server-reconnected' });
                 }
-            } catch (e) {}
-        }, 1500);
+            } catch (e) {
+            } finally {
+                this._reconnectInFlight = false;
+            }
+        }, 2000);
     }
 
     clearFolderCache() {
@@ -113,11 +128,16 @@ class VaultManager {
         if (this.eventSource) return;
         try {
             this.eventSource = new EventSource('/api/events');
-            this.eventSource.addEventListener('vault-updated', async (event) => {
-                const info = JSON.parse(event.data);
-                console.log('⚡ [Vault] Evento recebido: arquivo alterado', info);
-                await this.refresh();
-                if (this.onVaultUpdated) this.onVaultUpdated(info);
+            this.eventSource.addEventListener('vault-updated', (event) => {
+                let info = {};
+                try { info = JSON.parse(event.data); } catch (e) {}
+                if (this._sseUpdateTimer) clearTimeout(this._sseUpdateTimer);
+                this._sseUpdateTimer = setTimeout(async () => {
+                    this._sseUpdateTimer = null;
+                    console.log('⚡ [Vault] Evento recebido: arquivo alterado', info);
+                    await this.refresh();
+                    if (this.onVaultUpdated) this.onVaultUpdated(info);
+                }, 250);
             });
             this.eventSource.addEventListener('research-progress', (event) => {
                 try {
@@ -135,6 +155,22 @@ class VaultManager {
                     }
                 } catch (e) {}
             });
+            this.eventSource.addEventListener('locale-translate-progress', (event) => {
+                try {
+                    const info = JSON.parse(event.data);
+                    if (typeof handleLocaleTranslateProgress === 'function') {
+                        handleLocaleTranslateProgress(info);
+                    }
+                } catch (e) {}
+            });
+            this.eventSource.addEventListener('language-changed', (event) => {
+                try {
+                    const info = JSON.parse(event.data);
+                    if (info && info.language && window.COCKPIT_I18N && window.COCKPIT_I18N.lang !== info.language) {
+                        window.COCKPIT_I18N.set(info.language, { syncServer: false });
+                    }
+                } catch (e) {}
+            });
         } catch (e) {
             console.warn('[Vault] SSE não suportado:', e);
         }
@@ -142,15 +178,21 @@ class VaultManager {
 
     async refresh() {
         if (this.mode === 'live') {
-            try {
-                const res = await fetch('/api/vault');
-                if (res.ok) {
-                    const vaultData = await res.json();
-                    this._setData(vaultData);
+            if (this._refreshPromise) return this._refreshPromise;
+            this._refreshPromise = (async () => {
+                try {
+                    const res = await fetch('/api/vault');
+                    if (res.ok) {
+                        const vaultData = await res.json();
+                        this._setData(vaultData);
+                    }
+                } catch (e) {
+                    console.error('[Vault] Erro ao atualizar do servidor:', e);
+                } finally {
+                    this._refreshPromise = null;
                 }
-            } catch (e) {
-                console.error('[Vault] Erro ao atualizar do servidor:', e);
-            }
+            })();
+            return this._refreshPromise;
         }
     }
 
@@ -203,6 +245,27 @@ class VaultManager {
         this._updateStatusBadge();
     }
 
+    applyLocales(lang) {
+        if (!window.VAULT_LOCALES || !window.VAULT_LOCALES[lang] || !this.data || !this.data.files) return 0;
+        const localeDocs = window.VAULT_LOCALES[lang];
+        let count = 0;
+        for (const file of this.data.files) {
+            const normPath = file.path.replace(/\\/g, '/');
+            if (localeDocs[normPath]) {
+                file.title = localeDocs[normPath].title;
+                file.content = localeDocs[normPath].content;
+                count++;
+            }
+        }
+        if (count > 0) {
+            this._setData(this.data);
+            if (typeof this.onVaultUpdated === 'function') {
+                this.onVaultUpdated({ reason: 'locales-applied', language: lang, count });
+            }
+        }
+        return count;
+    }
+
     _updateStatusBadge() {
         const badge = document.getElementById('vaultStatusBadge');
         if (!badge) return;
@@ -226,6 +289,9 @@ class VaultManager {
                 badge.innerHTML = `<span class="status-dot snapshot"></span> Snapshot (${this.filesByPath.size / 3 | 0} docs)`;
                 badge.title = 'Visualizando snapshot local dos arquivos. Inicie "start-brain.bat" para modo ao vivo.';
             }
+        }
+        if (window.COCKPIT_I18N && typeof window.COCKPIT_I18N.translateElement === 'function') {
+            window.COCKPIT_I18N.translateElement(badge);
         }
     }
 

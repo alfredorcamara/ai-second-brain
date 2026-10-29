@@ -92,6 +92,11 @@ NOVA TAREFA
 8. **SEMPRE** valide o resultado de qualquer operação de IA.
 9. **SEMPRE** atualize a memória após implementações significativas.
 10. **SEMPRE** registre decisões arquiteturais relevantes.
+11. **SEMPRE consulte onde cada documento deve residir antes de criá-lo**:
+    - `docs/` (raiz): Exclusivo para manuais e guias oficiais úteis para quem baixar o projeto (ex: `COMO_UTILIZAR_O_PROJETO.md`, `GUIA_PRATICO.md`, `SOLUCAO_AI_SECOND_BRAIN.md`). NUNCA coloque relatórios de testes internos, sprints, debates ou rascunhos aqui.
+    - `docs/internals/`: Documentos de construção da ferramenta, relatórios de usabilidade (Dev Journey), planos de sprint, rascunhos e debates de engenharia entre Alfredo e a IA (esta pasta é ignorada pelo `scan-vault.js` e `doctor.js`).
+    - `decisions/GLOBAL_DECISIONS.md`: Registro oficial consolidado das decisões arquiteturais globais (ADRs).
+    - `projects/<nome>/`: Documentação estritamente isolada de cada projeto do desenvolvedor.
 
 ---
 

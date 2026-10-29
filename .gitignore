@@ -55,3 +55,7 @@ yarn-error.log*
 scratch/
 __pycache__/
 *.py[cod]
+
+# Locale Engine: Backups & Local User Customizations (Keep factory .locales/pt and .locales/en committed)
+.locales/backups/
+.locales/user-custom/

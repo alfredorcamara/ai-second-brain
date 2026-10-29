@@ -12,6 +12,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { tr } = require('./i18n-cli');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 
@@ -43,7 +44,7 @@ function getAllMarkdownFiles(dir, visited = new Set()) {
         return results;
     }
 
-    const ignoredFolders = new Set(['node_modules', '.git', 'bin', 'obj', 'dist', 'build', 'vendor', '.vs', '.vscode', 'backups', '.archive']);
+    const ignoredFolders = new Set(['node_modules', '.git', 'bin', 'obj', 'dist', 'build', 'vendor', '.vs', '.vscode', 'backups', '.archive', 'internals', '.internals']);
 
     for (const entry of entries) {
         const name = entry.name;
@@ -105,7 +106,10 @@ function checkMarkdownLinks(filePath) {
                     type: 'BROKEN_LINK',
                     target: linkRaw,
                     resolved: targetPath,
-                    message: `Link absoluto 'file:///' aponta para arquivo inexistente`
+                    message: tr(
+                        `Link absoluto 'file:///' aponta para arquivo inexistente`,
+                        `Absolute 'file:///' link points to a non-existent file`
+                    )
                 });
             }
             continue;
@@ -133,7 +137,10 @@ function checkMarkdownLinks(filePath) {
                     file: relSource,
                     type: 'MISSING_EXTENSION',
                     target: linkRaw,
-                    message: `Link sem extensão .md funcionaria como ${linkRaw}.md`
+                    message: tr(
+                        `Link sem extensão .md funcionaria como ${linkRaw}.md`,
+                        `Link without .md extension would resolve as ${linkRaw}.md`
+                    )
                 });
                 continue;
             }
@@ -143,7 +150,10 @@ function checkMarkdownLinks(filePath) {
                 type: 'BROKEN_LINK',
                 target: linkRaw,
                 resolved: normalizePath(path.relative(ROOT_DIR, resolvedTarget)),
-                message: `Arquivo ou diretório de destino não existe`
+                message: tr(
+                    `Arquivo ou diretório de destino não existe`,
+                    `Target file or directory does not exist`
+                )
             });
         }
     }
@@ -186,7 +196,10 @@ function checkProjects() {
                     file: `projects/${proj}`,
                     type: 'CONTRACT_VIOLATION',
                     target: req,
-                    message: `Projeto não possui o arquivo obrigatório '${req}'`
+                    message: tr(
+                        `Projeto não possui o arquivo obrigatório '${req}'`,
+                        `Project is missing required contract file '${req}'`
+                    )
                 });
             }
         }
@@ -212,7 +225,10 @@ function checkProjects() {
                                 type: 'PROJECT_BROKEN_LINK',
                                 target: ref,
                                 resolved: normalizePath(path.relative(ROOT_DIR, resolvedPath)),
-                                message: `Item listado em '## Links' não existe no projeto`
+                                message: tr(
+                                    `Item listado em '## Links' não existe no projeto`,
+                                    `Item listed in '## Links' does not exist in project`
+                                )
                             });
                         }
                     }
@@ -227,10 +243,6 @@ function checkKnowledgeIndex() {
     const indexPath = path.join(ROOT_DIR, 'knowledge', 'global', 'INDEX.md');
     if (!fs.existsSync(indexPath)) return;
 
-    const content = fs.readFileSync(indexPath, 'utf-8');
-    // Encontra menções a arquivos em knowledge/
-    const matches = content.matchAll(/(?:├──|└──|\│\s+├──|\│\s+└──)\s+([a-zA-Z0-9_\-\.\/]+)/g);
-    
     // Valida pastas e arquivos fundamentais de knowledge
     const coreKnowledgeFiles = [
         'knowledge/global/INDEX.md',
@@ -249,7 +261,10 @@ function checkKnowledgeIndex() {
                 file: 'knowledge/global/INDEX.md',
                 type: 'KNOWLEDGE_INDEX_GAP',
                 target: kf,
-                message: `Arquivo de knowledge catalogado no índice não existe no disco`
+                message: tr(
+                    `Arquivo de knowledge catalogado no índice não existe no disco`,
+                    `Cataloged knowledge file does not exist on disk`
+                )
             });
         }
     }
@@ -273,7 +288,10 @@ function checkDecisions() {
                             file: path.join(dir, entry.name),
                             type: 'DUPLICATE_ADR_NUMBER',
                             target: entry.name,
-                            message: `Número de ADR duplicado (${num}) em ${scope}`
+                            message: tr(
+                                `Número de ADR duplicado (${num}) em ${scope}`,
+                                `Duplicate ADR number (${num}) in ${scope}`
+                            )
                         });
                     } else {
                         adrMap.set(key, entry.name);
@@ -356,11 +374,17 @@ function checkJavaScriptSyntax() {
 // 7. Execução Principal
 function runDoctor() {
     console.log('\n🩺 ════════════════════════════════════════════════════════════');
-    console.log('   AI SECOND BRAIN — DOCTOR & LINTER DE INTEGRIDADE');
+    console.log(tr(
+        '   AI SECOND BRAIN — DOCTOR & LINTER DE INTEGRIDADE',
+        '   AI SECOND BRAIN — DOCTOR & INTEGRITY LINTER'
+    ));
     console.log('════════════════════════════════════════════════════════════\n');
 
     const files = getAllMarkdownFiles(ROOT_DIR);
-    console.log(`🔍 Analisando ${files.length} arquivos Markdown do workspace...`);
+    console.log(tr(
+        `🔍 Analisando ${files.length} arquivos Markdown do workspace...`,
+        `🔍 Analyzing ${files.length} workspace Markdown files...`
+    ));
 
     for (const f of files) {
         checkMarkdownLinks(f);
@@ -371,15 +395,27 @@ function runDoctor() {
     checkDecisions();
     checkJavaScriptSyntax();
 
-    console.log(`📁 ${checkedProjectsCount} projetos ativos validados.`);
-    console.log(`🔗 ${checkedLinksCount} links e referências verificados em ${checkedFilesCount} arquivos.`);
-    console.log(`⚡ ${checkedJsCount} scripts JavaScript validados com sintaxe íntegra.\n`);
+    console.log(tr(
+        `📁 ${checkedProjectsCount} projetos ativos validados.`,
+        `📁 ${checkedProjectsCount} active projects validated.`
+    ));
+    console.log(tr(
+        `🔗 ${checkedLinksCount} links e referências verificados em ${checkedFilesCount} arquivos.`,
+        `🔗 ${checkedLinksCount} links and references verified across ${checkedFilesCount} files.`
+    ));
+    console.log(tr(
+        `⚡ ${checkedJsCount} scripts JavaScript validados com sintaxe íntegra.\n`,
+        `⚡ ${checkedJsCount} JavaScript scripts validated with clean syntax.\n`
+    ));
 
     if (warnings.length > 0) {
-        console.log(`⚠️  ${warnings.length} AVISO(S):`);
+        console.log(tr(
+            `⚠️  ${warnings.length} AVISO(S):`,
+            `⚠️  ${warnings.length} WARNING(S):`
+        ));
         warnings.forEach((w, idx) => {
-            console.log(`   ${idx + 1}. [${w.type}] em ${w.file}`);
-            console.log(`      Alvo: ${w.target}`);
+            console.log(`   ${idx + 1}. [${w.type}] ${tr('em', 'in')} ${w.file}`);
+            console.log(`      ${tr('Alvo', 'Target')}: ${w.target}`);
             console.log(`      Info: ${w.message}\n`);
         });
     }
@@ -387,19 +423,31 @@ function runDoctor() {
     checkGitUpdateStatus();
 
     if (errors.length > 0) {
-        console.log(`❌  ${errors.length} ERRO(S) DE INTEGRIDADE DETECTADOS:`);
+        console.log(tr(
+            `❌  ${errors.length} ERRO(S) DE INTEGRIDADE DETECTADOS:`,
+            `❌  ${errors.length} INTEGRITY ERROR(S) DETECTED:`
+        ));
         errors.forEach((err, idx) => {
-            console.log(`   ${idx + 1}. [${err.type}] em ${err.file}`);
-            console.log(`      Destino: ${err.target}`);
-            if (err.resolved) console.log(`      Caminho esperado: ${err.resolved}`);
-            console.log(`      Detalhe: ${err.message}\n`);
+            console.log(`   ${idx + 1}. [${err.type}] ${tr('em', 'in')} ${err.file}`);
+            console.log(`      ${tr('Destino', 'Target')}: ${err.target}`);
+            if (err.resolved) console.log(`      ${tr('Caminho esperado', 'Expected path')}: ${err.resolved}`);
+            console.log(`      ${tr('Detalhe', 'Detail')}: ${err.message}\n`);
         });
 
-        console.log('💡 Sugestão: Ajuste os caminhos ou crie os arquivos pendentes.');
+        console.log(tr(
+            '💡 Sugestão: Ajuste os caminhos ou crie os arquivos pendentes.',
+            '💡 Suggestion: Fix the paths or create the missing files.'
+        ));
         return false;
     } else {
-        console.log('🎉 SAÚDE EXCELENTE! 100% DOS LINKS, PROJETOS E BASES DE CONHECIMENTO VÁLIDOS.');
-        console.log('   O AI Second Brain está livre de links quebrados ou violações de contrato.\n');
+        console.log(tr(
+            '🎉 SAÚDE EXCELENTE! 100% DOS LINKS, PROJETOS E BASES DE CONHECIMENTO VÁLIDOS.',
+            '🎉 EXCELLENT HEALTH! 100% OF LINKS, PROJECTS, AND KNOWLEDGE BASES ARE VALID.'
+        ));
+        console.log(tr(
+            '   O AI Second Brain está livre de links quebrados ou violações de contrato.\n',
+            '   AI Second Brain is free of broken links or contract violations.\n'
+        ));
         return true;
     }
 }
@@ -413,8 +461,14 @@ function checkGitUpdateStatus() {
             if (pkg.version) localVersion = pkg.version;
         } catch (_) {}
 
-        console.log(`📦 Versão do AI Second Brain: v${localVersion}`);
-        console.log(`   Registro de melhorias e notas de release: CHANGELOG.md`);
+        console.log(tr(
+            `📦 Versão do AI Second Brain: v${localVersion}`,
+            `📦 AI Second Brain Version: v${localVersion}`
+        ));
+        console.log(tr(
+            `   Registro de melhorias e notas de release: CHANGELOG.md`,
+            `   Release notes and changelog: CHANGELOG.md`
+        ));
 
         const siteDirCandidates = [
             path.resolve(ROOT_DIR, '..', 'AI_SECOND_BRAIN-SITE'),
@@ -431,7 +485,10 @@ function checkGitUpdateStatus() {
             const requiredIds = ['bootVersionText', 'sidebarVersionText', 'topVersionTag', 'changelogModalVersionTag'];
             const missing = requiredIds.filter(id => !html.includes(`id="${id}"`));
             if (missing.length > 0) {
-                console.log(`   ⚠️  Alerta: Cockpit HTML sem placeholders dinâmicos: ${missing.join(', ')}`);
+                console.log(tr(
+                    `   ⚠️  Alerta: Cockpit HTML sem placeholders dinâmicos: ${missing.join(', ')}`,
+                    `   ⚠️  Alert: Cockpit HTML missing dynamic placeholders: ${missing.join(', ')}`
+                ));
                 allSynced = false;
             }
         }
@@ -442,17 +499,29 @@ function checkGitUpdateStatus() {
             if (fs.existsSync(landingPath)) {
                 const landing = fs.readFileSync(landingPath, 'utf-8');
                 if (!landing.includes(`v${localVersion}`)) {
-                    console.log(`   ⚠️  Alerta: Landing Page (${path.basename(siteDir)}/index.html) não referencia v${localVersion}`);
+                    console.log(tr(
+                        `   ⚠️  Alerta: Landing Page (${path.basename(siteDir)}/index.html) não referencia v${localVersion}`,
+                        `   ⚠️  Alert: Landing Page (${path.basename(siteDir)}/index.html) does not reference v${localVersion}`
+                    ));
                     allSynced = false;
                 }
             }
         }
 
         if (allSynced) {
-            console.log(`   ✓ Versionamento dinâmico íntegro (Fonte Única: package.json v${localVersion})`);
-            console.log(`   ✓ Cockpit e Demo 100% desacoplados de versão hardcoded no HTML.`);
+            console.log(tr(
+                `   ✓ Versionamento dinâmico íntegro (Fonte Única: package.json v${localVersion})`,
+                `   ✓ Dynamic versioning healthy (Single Source of Truth: package.json v${localVersion})`
+            ));
+            console.log(tr(
+                `   ✓ Cockpit e Demo 100% desacoplados de versão hardcoded no HTML.`,
+                `   ✓ Cockpit and Demo 100% decoupled from hardcoded HTML versions.`
+            ));
         } else {
-            console.log(`   💡 Dica: Execute 'npm run version:sync' para sincronizar a release nas interfaces públicas.`);
+            console.log(tr(
+                `   💡 Dica: Execute 'npm run version:sync' para sincronizar a release nas interfaces públicas.`,
+                `   💡 Tip: Run 'npm run version:sync' to synchronize the release across public interfaces.`
+            ));
         }
         console.log('');
 
@@ -462,9 +531,18 @@ function checkGitUpdateStatus() {
         if (/behind/i.test(status)) {
             const match = status.match(/behind\s+.*by\s+(\d+)\s+commit/i);
             const count = match ? match[1] : '';
-            console.log(`💡 NOVIDADES DISPONÍVEIS NO REPOSITÓRIO REMOTO! ${count ? `(${count} commit(s) atrás)` : ''}`);
-            console.log('   Execute `git pull origin main` para baixar as últimas melhorias e motores de IA.');
-            console.log('   Detalhes das atualizações em: https://github.com/alfredorcamara/ai-second-brain/releases\n');
+            console.log(tr(
+                `💡 NOVIDADES DISPONÍVEIS NO REPOSITÓRIO REMOTO! ${count ? `(${count} commit(s) atrás)` : ''}`,
+                `💡 UPDATES AVAILABLE ON REMOTE REPOSITORY! ${count ? `(${count} commit(s) behind)` : ''}`
+            ));
+            console.log(tr(
+                '   Execute `git pull origin main` para baixar as últimas melhorias e motores de IA.',
+                '   Run `git pull origin main` to download the latest improvements and AI engines.'
+            ));
+            console.log(tr(
+                '   Detalhes das atualizações em: https://github.com/alfredorcamara/ai-second-brain/releases\n',
+                '   Update details at: https://github.com/alfredorcamara/ai-second-brain/releases\n'
+            ));
         }
     } catch (_) {}
 }
