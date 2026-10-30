@@ -23,7 +23,7 @@
 
 - 🚀 **Landing Page Oficial com Grafo 3D**: [https://alfredorcamara.github.io/ai-second-brain-site/](https://alfredorcamara.github.io/ai-second-brain-site/)  
   *(Acesse a apresentação visual interativa, explore o grafo neural 3D em tempo real e teste a demo pública).*
-- 💻 **Acesso Local Offline**: Abra diretamente no navegador o arquivo [`docs/brain-ui/index.html`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/docs/brain-ui/index.html).
+- 💻 **Acesso Local Offline**: Abra diretamente no navegador o arquivo `docs/brain-ui/index.html`.
 
 ---
 
@@ -39,6 +39,12 @@ A forma mais simples, rápida e recomendada para inicializar o **AI Second Brain
 > 3. Abre instantaneamente o Cockpit Visual no seu navegador padrão em `http://localhost:3333`.
 
 *(Se você prefere o terminal: basta executar `npm start`).*
+
+> 🌐 **Escolhendo o idioma na inicialização:**  
+> - **Português**: execute `npm run lang:pt` ou inicie direto com `node server.js --pt` (ou `start-brain.bat --pt`).  
+> - **Inglês**: execute `npm run lang:en` (define o idioma e sincroniza os documentos) ou inicie direto com `node server.js --en` (ou `start-brain.bat --en`).  
+> - **Automático**: `npm run lang:auto` detecta o idioma nativo do seu sistema operacional.  
+> - *(Você também pode alternar a qualquer momento pelo botão **PT / EN** no cabeçalho do Cockpit)*.
 
 > 🌟 **Gostou da proposta?** Deixe uma **[Star no repositório](https://github.com/alfredorcamara/ai-second-brain)**! Leva 2 segundos e ajuda muito o projeto a alcançar mais pessoas.
 
@@ -163,20 +169,24 @@ AI_SECOND_BRAIN/
 | Comando | Descrição |
 |---|---|
 | `start-brain.bat` *(ou `npm start`)* | **Forma mais rápida:** Sincroniza o cofre, inicia o servidor e abre o Cockpit no navegador |
+| `start-brain.bat --en` *(ou `--pt`)* | Inicia o servidor diretamente forçando o idioma selecionado (English / Português) |
 | `npm run project:new <nome>` | Cria um novo projeto assistido por IA com contratos de governança |
 | `npm run project:link <nome> <caminho>` | Vincula um repositório Git existente no seu PC via junção NTFS sem duplicar arquivos |
 | `npm run doctor` *(ou `npm run check`)* | Executa o linter de integridade: valida links Markdown, contratos de projetos e **sintaxe de 100% dos scripts JS** |
 | `npm run version:sync` | Sincroniza automaticamente a versão do `package.json` em todas as interfaces HTML, apps e dicionários |
 | `npm run scan` | Força a re-varredura do cofre e atualiza o snapshot estático para visualização offline |
-| `npm run build:demo` | Reconstrói o cofre ilustrativo curado para a demonstração pública da web |
+| `npm run sync:demo` | Sincroniza os assets visuais e o cofre curado diretamente para o repositório do site público |
+| `npm run lang:pt` | Define o idioma para Português e sincroniza todos os documentos do framework em <30ms |
+| `npm run lang:en` | Define o idioma para Inglês e sincroniza todos os documentos do framework em <30ms |
+| `npm run lang:auto` | Restaura a detecção automática de idioma baseada no Sistema Operacional |
 
 ---
 
 ## 📖 Documentação Aprofundada
 
-- 📘 **[Manual de Uso Completo (docs/COMO_UTILIZAR_O_PROJETO.md)](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/docs/COMO_UTILIZAR_O_PROJETO.md)**: Guia passo a passo com fluxo visual e conversacional para o dia a dia.
-- 🧠 **[Análise de Mercado e Valor (docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md)](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md)**: Por que a governança de contexto é o diferencial competitivo em times assistidos por IA.
-- 🔬 **[Motor de Pesquisa do Research Lab (docs/RESEARCH_LAB.md)](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/docs/RESEARCH_LAB.md)**: Arquitetura de pesquisa autônoma, decomposição de temas e refinamento contínuo com IA.
+- 📘 **[Manual de Uso Completo (docs/COMO_UTILIZAR_O_PROJETO.md)](docs/COMO_UTILIZAR_O_PROJETO.md)**: Guia passo a passo com fluxo visual e conversacional para o dia a dia.
+- 🧠 **[Análise de Mercado e Valor (docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md)](docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md)**: Por que a governança de contexto é o diferencial competitivo em times assistidos por IA.
+- 🔬 **[Motor de Pesquisa do Research Lab (docs/RESEARCH_LAB.md)](docs/RESEARCH_LAB.md)**: Arquitetura de pesquisa autônoma, decomposição de temas e refinamento contínuo com IA.
 
 ---
 

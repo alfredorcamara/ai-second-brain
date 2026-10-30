@@ -6,5 +6,5 @@ echo   AI Second Brain — Live Server (PT / EN)
 echo   Iniciando servidor dinamico / Starting dynamic server
 echo ========================================================
 echo.
-node server.js
+node server.js %*
 pause

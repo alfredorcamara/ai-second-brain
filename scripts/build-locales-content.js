@@ -1256,7 +1256,7 @@ AI_SECOND_BRAIN/
 
 - 🚀 **Official Landing Page with 3D Graph**: [https://alfredorcamara.github.io/ai-second-brain-site/](https://alfredorcamara.github.io/ai-second-brain-site/)  
   *(Explore the interactive presentation, navigate the real-time 3D neural graph, and test the public demo).*
-- 💻 **Local Offline Access**: Open [\`docs/brain-ui/index.html\`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/docs/brain-ui/index.html) directly in your browser.
+- 💻 **Local Offline Access**: Open \`docs/brain-ui/index.html\` directly in your browser.
 
 ---
 
@@ -1272,6 +1272,12 @@ The simplest, fastest, and recommended way to start **AI Second Brain** on your 
 > 3. Instantly opens the Visual Cockpit in your default browser at \`http://localhost:3333\`.
 
 *(If you prefer the command line: simply run \`npm start\`).*
+
+> 🌐 **Choosing your language on startup:**  
+> - **English**: run \`npm run lang:en\` (sets default language and swaps documents) or start directly with \`node server.js --en\` (or \`start-brain.bat --en\`).  
+> - **Portuguese**: run \`npm run lang:pt\` or start directly with \`node server.js --pt\` (or \`start-brain.bat --pt\`).  
+> - **Automatic**: \`npm run lang:auto\` enables automatic detection based on your Operating System locale.  
+> - *(You can also switch anytime via the **PT / EN** toggle button in the Cockpit header)*.
 
 > 🌟 **Enjoying the project?** Please consider leaving a **[Star on GitHub](https://github.com/alfredorcamara/ai-second-brain)**! It takes 2 seconds and helps more developers discover the framework.
 
@@ -1396,22 +1402,24 @@ AI_SECOND_BRAIN/
 | Command | Description |
 |---|---|
 | \`start-brain.bat\` *(or \`npm start\`)* | **Fastest way:** Syncs vault, starts server, and opens Cockpit in browser |
+| \`start-brain.bat --en\` *(or \`--pt\`)* | Starts server directly forcing the selected language (English / Portuguese) |
 | \`npm run project:new <name>\` | Creates a new AI-assisted project with governance contracts |
 | \`npm run project:link <name> <path>\` | Links an existing repository on your disk via NTFS junction without file duplication |
 | \`npm run doctor\` *(or \`npm run check\`)* | Runs integrity linter: validates Markdown links, project contracts, and **100% of JS scripts syntax** |
 | \`npm run version:sync\` | Automatically synchronizes \`package.json\` version across HTML UI, apps, and dictionaries |
 | \`npm run scan\` | Forces vault re-scan and updates static snapshot for offline viewing |
-| \`npm run sync:demo\` | Synchronizes Cockpit visual assets directly to the public web demo |
-| \`npm run lang:en\` | Sets active language to English and swaps all 58 framework documents to English |
-| \`npm run lang:pt\` | Sets active language to Portuguese and synchronizes all 58 framework documents to Portuguese |
+| \`npm run sync:demo\` | Synchronizes Cockpit visual assets and curated vault directly to public demo repository |
+| \`npm run lang:en\` | Sets active language to English and swaps all framework documents to English in <30ms |
+| \`npm run lang:pt\` | Sets active language to Portuguese and synchronizes all framework documents to Portuguese in <30ms |
+| \`npm run lang:auto\` | Restores automatic language detection based on Operating System locale |
 
 ---
 
 ## 📖 In-Depth Guides
 
-- 📘 **[Practical Guide (docs/COMO_UTILIZAR_O_PROJETO.md)](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/docs/COMO_UTILIZAR_O_PROJETO.md)**: Step-by-step practical manual for day-to-day operation.
-- 🧠 **[Market & Strategic Analysis (docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md)](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md)**: Why context governance is the primary competitive edge for AI-assisted teams.
-- 🔬 **[Autonomous Research Lab Engine (docs/RESEARCH_LAB.md)](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/docs/RESEARCH_LAB.md)**: Architecture of autonomous research, topic decomposition, and continuous synthesis.
+- 📘 **[Practical Guide (docs/COMO_UTILIZAR_O_PROJETO.md)](docs/COMO_UTILIZAR_O_PROJETO.md)**: Step-by-step practical manual for day-to-day operation.
+- 🧠 **[Market & Strategic Analysis (docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md)](docs/VALOR_E_RELEVANCIA_DO_SEGUNDO_CEREBRO.md)**: Why context governance is the primary competitive edge for AI-assisted teams.
+- 🔬 **[Autonomous Research Lab Engine (docs/RESEARCH_LAB.md)](docs/RESEARCH_LAB.md)**: Architecture of autonomous research, topic decomposition, and continuous synthesis.
 
 ---
 
