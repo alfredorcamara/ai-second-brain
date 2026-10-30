@@ -1232,7 +1232,7 @@ AI_SECOND_BRAIN/
 `,
 
     'README.md': `<p align="center">
-  <img src="docs/brain-ui/assets/Banner%20futurista%20do%20AI%20Second%20Brain.webp" alt="AI Second Brain Banner" width="100%" />
+  <img src="https://raw.githubusercontent.com/alfredorcamara/ai-second-brain/main/docs/brain-ui/assets/Banner%20futurista%20do%20AI%20Second%20Brain.webp" alt="AI Second Brain Banner" width="100%" />
 </p>
 
 # AI Second Brain
@@ -1240,7 +1240,7 @@ AI_SECOND_BRAIN/
 <p align="center">
   <a href="https://github.com/alfredorcamara/ai-second-brain/stargazers"><img src="https://img.shields.io/github/stars/alfredorcamara/ai-second-brain?style=for-the-badge&logo=github&color=38bdf8&logoColor=white&label=Star%20on%20GitHub%20%E2%AD%90" alt="GitHub Stars" /></a>
   <a href="https://github.com/alfredorcamara/ai-second-brain/releases"><img src="https://img.shields.io/github/v/release/alfredorcamara/ai-second-brain?style=for-the-badge&color=8b5cf6" alt="Release" /></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-10b981?style=for-the-badge" alt="License" /></a>
+  <a href="https://github.com/alfredorcamara/ai-second-brain/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-10b981?style=for-the-badge" alt="License" /></a>
 </p>
 
 <p align="center">
@@ -1453,7 +1453,7 @@ Free for personal use, research, learning, and internal development. For commerc
 <br>
 
 <p align="center">
-  <img src="docs/brain-ui/assets/ai-second-brain-logo-animado.svg" alt="AI Second Brain Logo" width="220" />
+  <img src="https://raw.githubusercontent.com/alfredorcamara/ai-second-brain/main/docs/brain-ui/assets/ai-second-brain-logo-animado.svg" alt="AI Second Brain Logo" width="220" />
 </p>
 
 <p align="center">
