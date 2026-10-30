@@ -1243,6 +1243,10 @@ AI_SECOND_BRAIN/
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-10b981?style=for-the-badge" alt="License" /></a>
 </p>
 
+<p align="center">
+  🌐 <a href="../../README.md">Português</a> &nbsp;|&nbsp; <b>English</b>
+</p>
+
 > **The Living Memory and Governance Operating System for AI Coding Agents.**  
 > 100% Markdown · Tool & IDE Agnostic (Cursor, Claude Code, Antigravity, Windsurf, Copilot, Cline, Roo Code) · Zero Lock-in.
 

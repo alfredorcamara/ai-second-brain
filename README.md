@@ -10,6 +10,10 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/licen%C3%A7a-MIT-10b981?style=for-the-badge" alt="License" /></a>
 </p>
 
+<p align="center">
+  🌐 <b>Português</b> &nbsp;|&nbsp; <a href=".locales/en/README.md">English</a>
+</p>
+
 > **O Sistema Operacional de Memória Viva e Governança para Agentes de IA.**  
 > 100% Markdown · Agnóstico a qualquer ferramenta ou IDE (Cursor, Claude Code, Antigravity, Windsurf, Copilot, Cline, Roo Code) · Zero Lock-in.
 
