@@ -202,9 +202,10 @@ Todo novo arquivo de artigo `.html` criado nas pastas `blog/pt/` ou `blog/en/` D
     </div>
   </footer>
 
-  <!-- 5. SCRIPTS INTERATIVOS E I18N -->
+  <!-- 5. SCRIPTS INTERATIVOS, I18N E DADOS DO AUTOR -->
   <script src="../../js/i18n.dict.js"></script>
   <script src="../../js/i18n.js"></script>
+  <script src="../author.js"></script>
   <script>/* Canvas de partículas, IntersectionObserver, Contadores, Clipboard */</script>
 </body>
 </html>
@@ -285,6 +286,12 @@ No título principal de todo artigo (`<h1 class="article-title">`), a palavra-ch
   * `<em>0 ms e custo zero</em>: as tarefas que você não deveria mandar para uma IA`
   * `Document rot: o risco que pode <em>matar qualquer segundo cérebro</em> e as 3 defesas que adotei`
   * `Research Lab: a documentação técnica que <em>se escreve sozinha</em>`
+
+### 4.8. Centralização dos Dados do Autor (`author.json` + `author.js`)
+Para evitar a necessidade de editar dezenas de arquivos HTML ao atualizar a biografia do criador, os dados residem centralizados em:
+* **`AI_SECOND_BRAIN-SITE/blog/author.json`**: Fonte da verdade em formato estruturado (nome, links, bio em PT e EN).
+* **`AI_SECOND_BRAIN-SITE/blog/author.js`**: Loader leve que expõe `window.AUTHOR_DATA` e hidrata automaticamente em tempo de execução os elementos `<p class="author-bio" data-author-bio>`. Funciona 100% livre de bloqueios de CORS tanto na web (GitHub Pages) quanto ao abrir localmente via `file:///`.
+* **`AI_SECOND_BRAIN-SITE/blog/sync-author.js`**: Script utilitário executável via `node AI_SECOND_BRAIN-SITE/blog/sync-author.js` para propagar atualizações de `author.json` diretamente para `author.js` e para o HTML estático de todos os 16 artigos (assegurando SEO impecável e zero layout shift).
 
 ---
 
