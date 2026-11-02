@@ -19,18 +19,19 @@ Todos os artigos do blog do **AI Second Brain** seguem um modelo **híbrido e bi
 
 ---
 
-## 2. Mapa dos 8 Artigos Canônicos (Mapeamento PT ⇄ EN)
+## 2. Mapa dos 9 Artigos Canônicos (Mapeamento PT ⇄ EN)
 
 | # | Artigo em Português (`blog/pt/`) | Artigo em Inglês (`blog/en/`) |
 |---|---|---|
-| 1 | `zero-ms-custo-zero.html` | `zero-ms-and-zero-cost.html` |
-| 2 | `quando-nao-usar-llm.html` | `when-not-to-use-llms.html` |
-| 3 | `por-que-vibe-coding-morre.html` | `why-vibe-coding-dies.html` |
-| 4 | `document-rot-risco-segundo-cerebro.html` | `document-rot-second-brain.html` |
-| 5 | `seu-agente-de-ia-tem-amnesia.html` | `does-your-ai-agent-have-amnesia.html` |
-| 6 | `conhecimento-e-acao-duas-camadas.html` | `knowledge-and-action-two-layers.html` |
-| 7 | `pesquisa-com-ia-que-retoma-de-onde-parou.html` | `resilient-ai-research-resuming-jobs.html` |
-| 8 | `research-lab-documentacao-tecnica.html` | `research-lab-self-writing-documentation.html` |
+| 1 | `adrs-para-agentes-de-ia.html` | `adrs-for-ai-agents.html` |
+| 2 | `zero-ms-custo-zero.html` | `zero-ms-and-zero-cost.html` |
+| 3 | `quando-nao-usar-llm.html` | `when-not-to-use-llms.html` |
+| 4 | `por-que-vibe-coding-morre.html` | `why-vibe-coding-dies.html` |
+| 5 | `document-rot-risco-segundo-cerebro.html` | `document-rot-second-brain.html` |
+| 6 | `seu-agente-de-ia-tem-amnesia.html` | `does-your-ai-agent-have-amnesia.html` |
+| 7 | `conhecimento-e-acao-duas-camadas.html` | `knowledge-and-action-two-layers.html` |
+| 8 | `pesquisa-com-ia-que-retoma-de-onde-parou.html` | `resilient-ai-research-resuming-jobs.html` |
+| 9 | `research-lab-documentacao-tecnica.html` | `research-lab-self-writing-documentation.html` |
 | Hub | `index.html` | `index.html` |
 
 ---
