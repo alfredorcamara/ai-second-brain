@@ -50,17 +50,25 @@ Todo novo arquivo de artigo `.html` criado nas pastas `blog/pt/` ou `blog/en/` D
   <link rel="icon" href="../../assets/favicon.svg">
 
   <!-- Links canônicos e alternados recíprocos OBRIGATÓRIOS -->
-  <link rel="canonical" href="https://alfredorcamara.github.io/ai-second-brain/blog/pt/[slug-pt].html">
-  <link rel="alternate" hreflang="pt-BR" href="https://alfredorcamara.github.io/ai-second-brain/blog/pt/[slug-pt].html">
-  <link rel="alternate" hreflang="en" href="https://alfredorcamara.github.io/ai-second-brain/blog/en/[slug-en].html">
+  <link rel="canonical" href="https://alfredorcamara.github.io/ai-second-brain-site/blog/pt/[slug-pt].html">
+  <link rel="alternate" hreflang="pt-BR" href="https://alfredorcamara.github.io/ai-second-brain-site/blog/pt/[slug-pt].html">
+  <link rel="alternate" hreflang="en" href="https://alfredorcamara.github.io/ai-second-brain-site/blog/en/[slug-en].html">
   <meta name="theme-color" content="#03060f">
 
-  <!-- OpenGraph e Twitter Cards -->
+  <!-- OpenGraph / Social Meta Tags (OBRIGATÓRIO) -->
   <meta property="og:type" content="article">
+  <meta property="og:title" content="[Título persuasivo do artigo]">
+  <meta property="og:description" content="[Descrição concisa e instigante de 1-2 linhas]">
+  <meta property="og:image" content="https://alfredorcamara.github.io/ai-second-brain-site/assets/banner-grafo-3d.webp">
+  <meta property="og:url" content="https://alfredorcamara.github.io/ai-second-brain-site/blog/pt/[slug-pt].html">
   <meta property="og:site_name" content="AI Second Brain">
-  <meta property="og:title" content="...">
-  <meta property="og:description" content="...">
-  <meta property="og:image" content="../assets/og-image.png">
+  <meta property="og:locale" content="pt_BR"> <!-- no EN: en_US -->
+
+  <!-- Twitter Cards (OBRIGATÓRIO) -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="[Título direto para Twitter/X]">
+  <meta name="twitter:description" content="[Descrição concisa para Twitter/X]">
+  <meta name="twitter:image" content="https://alfredorcamara.github.io/ai-second-brain-site/assets/banner-grafo-3d.webp">
 
   <!-- Fontes Google: Outfit, Playfair Display, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -293,12 +301,27 @@ Para evitar a necessidade de editar dezenas de arquivos HTML ao atualizar a biog
 * **`AI_SECOND_BRAIN-SITE/blog/author.js`**: Loader leve que expõe `window.AUTHOR_DATA` e hidrata automaticamente em tempo de execução os elementos `<p class="author-bio" data-author-bio>`. Funciona 100% livre de bloqueios de CORS tanto na web (GitHub Pages) quanto ao abrir localmente via `file:///`.
 * **`AI_SECOND_BRAIN-SITE/blog/sync-author.js`**: Script utilitário executável via `node AI_SECOND_BRAIN-SITE/blog/sync-author.js` para propagar atualizações de `author.json` diretamente para `author.js` e para o HTML estático de todos os 16 artigos (assegurando SEO impecável e zero layout shift).
 
+### 4.9. Metatags Sociais Obrigatórias (Open Graph & Twitter Cards)
+Todo artigo gerado DEVE conter o bloco completo de metadados sociais para garantir que, ao ser compartilhado no LinkedIn, X/Twitter, Facebook ou WhatsApp, exiba automaticamente seu título, resumo e imagem de capa oficial:
+* **`og:type`**: Sempre `"article"`.
+* **`og:title` & `twitter:title`**: Título instigante e direto.
+* **`og:description` & `twitter:description`**: Resumo magnético de 1 a 2 frases.
+* **`og:image` & `twitter:image`**: **URL absoluta obrigatória** apontando para o banner oficial:  
+  `https://alfredorcamara.github.io/ai-second-brain-site/assets/banner-grafo-3d.webp`
+* **`og:url`**: URL canônica completa do artigo.
+* **`og:site_name`**: `"AI Second Brain"`.
+* **`og:locale`**: `"pt_BR"` para artigos na pasta `blog/pt/` e `"en_US"` para artigos na pasta `blog/en/`.
+* **`twitter:card`**: Sempre `"summary_large_image"`.
+* **Script Utilitário de Lote:** O script `AI_SECOND_BRAIN-SITE/blog/update-og-meta.js` audita e sincroniza em lote as metatags de todos os artigos e hubs. O gerador de artigos do AI Second Brain deve incorporar essas tags nativamente na geração de cada novo artigo.
+
 ---
 
 ## 5. Lições Aprendidas & O Que NUNCA Fazer (Anti-Patterns)
 
 | Anti-Pattern (O que NUNCA fazer) | Efeito Indesejado | Solução Canônica Obrigatória |
 | :--- | :--- | :--- |
+| ❌ Usar URLs relativas em `og:image` (ex.: `../assets/og-image.png`) | Redes sociais (LinkedIn, Twitter, WhatsApp) não carregam imagens relativas e o card fica sem capa. | Usar sempre URL absoluta: `https://alfredorcamara.github.io/ai-second-brain-site/assets/banner-grafo-3d.webp`. |
+| ❌ Omitir `og:url` ou `og:locale` | Prejudica a prévia no LinkedIn e pode forçar idioma errado na pré-visualização. | Incluir sempre `og:url` absoluto e `og:locale` correspondente (`pt_BR` ou `en_US`). |
 | ❌ Deixar o título sem termo em destaque com `<em>` | Título monocromático, sem hierarquia visual e perde o gancho de curiosidade. | Envolver a palavra-chave mais impactante em `<em>`, recebendo `#e8b84b`. |
 | ❌ Misturar arquivos PT e EN na mesma pasta `blog/` | Quebra o roteamento por idioma e polui URLs. | Colocar artigos PT em `blog/pt/` e artigos EN em `blog/en/`. |
 | ❌ Usar caminhos relativos de 1 nível (`../assets/`) dentro de subpastas de idioma | Quebra imagens, folhas de estilo e scripts (`404 Not Found`). | Em `blog/pt/` e `blog/en/`, use sempre 2 níveis: `../../assets/`, `../../css/`, `../blog.css`. |
