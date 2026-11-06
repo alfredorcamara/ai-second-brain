@@ -19,21 +19,23 @@ Todos os artigos do blog do **AI Second Brain** seguem um modelo **híbrido e bi
 
 ---
 
-## 2. Mapa dos 11 Artigos Canônicos (Mapeamento PT ⇄ EN)
+## 2. Mapa dos 13 Artigos Canônicos (Mapeamento PT ⇄ EN)
 
 | # | Artigo em Português (`blog/pt/`) | Artigo em Inglês (`blog/en/`) |
 |---|---|---|
-| 1 | `como-gerencio-varios-projetos-com-agentes-de-ia.html` | `how-i-manage-multiple-projects-with-ai-agents.html` |
-| 2 | `hub-central-ou-cursorrules-por-repositorio.html` | `central-hub-or-cursorrules-per-repository.html` |
-| 3 | `adrs-para-agentes-de-ia.html` | `adrs-for-ai-agents.html` |
-| 4 | `zero-ms-custo-zero.html` | `zero-ms-and-zero-cost.html` |
-| 5 | `quando-nao-usar-llm.html` | `when-not-to-use-llms.html` |
-| 6 | `por-que-vibe-coding-morre.html` | `why-vibe-coding-dies.html` |
-| 7 | `document-rot-risco-segundo-cerebro.html` | `document-rot-second-brain.html` |
-| 8 | `seu-agente-de-ia-tem-amnesia.html` | `does-your-ai-agent-have-amnesia.html` |
-| 9 | `conhecimento-e-acao-duas-camadas.html` | `knowledge-and-action-two-layers.html` |
-| 10 | `pesquisa-com-ia-que-retoma-de-onde-parou.html` | `resilient-ai-research-resuming-jobs.html` |
-| 11 | `research-lab-documentacao-tecnica.html` | `research-lab-self-writing-documentation.html` |
+| 1 | `um-cerebro-varios-repositorios-governanca-comum.html` | `one-brain-many-repositories-shared-governance.html` |
+| 2 | `quando-a-ia-limpa-o-codigo-e-desfaz-a-otimizacao.html` | `when-ai-cleans-up-your-code-and-undoes-your-optimization.html` |
+| 3 | `como-gerencio-varios-projetos-com-agentes-de-ia.html` | `how-i-manage-multiple-projects-with-ai-agents.html` |
+| 4 | `hub-central-ou-cursorrules-por-repositorio.html` | `central-hub-or-cursorrules-per-repository.html` |
+| 5 | `adrs-para-agentes-de-ia.html` | `adrs-for-ai-agents.html` |
+| 6 | `zero-ms-custo-zero.html` | `zero-ms-and-zero-cost.html` |
+| 7 | `quando-nao-usar-llm.html` | `when-not-to-use-llms.html` |
+| 8 | `por-que-vibe-coding-morre.html` | `why-vibe-coding-dies.html` |
+| 9 | `document-rot-risco-segundo-cerebro.html` | `document-rot-second-brain.html` |
+| 10 | `seu-agente-de-ia-tem-amnesia.html` | `does-your-ai-agent-have-amnesia.html` |
+| 11 | `conhecimento-e-acao-duas-camadas.html` | `knowledge-and-action-two-layers.html` |
+| 12 | `pesquisa-com-ia-que-retoma-de-onde-parou.html` | `resilient-ai-research-resuming-jobs.html` |
+| 13 | `research-lab-documentacao-tecnica.html` | `research-lab-self-writing-documentation.html` |
 | Hub | `index.html` | `index.html` |
 
 ---
