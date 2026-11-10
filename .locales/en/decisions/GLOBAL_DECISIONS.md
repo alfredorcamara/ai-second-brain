@@ -97,7 +97,7 @@
 - **Description**: Integration of audiovisual assets (promotional video / pitch) into the public landing page via a non-competing hybrid design:
   1. **High-Impact Hero Trigger (Approach A)**: `[ ▷ Watch Pitch (1 min) ]` button placed next to top CTAs, opening the pitch video inside a cinematic Lightbox Modal on demand without visually conflicting with the 3D Neural Planet.
   2. **Dedicated "In Action" Section (Approach B)**: Dark luxury cockpit block `#video-showcase` positioned right before the interactive Demo, acting as a guided walkthrough for vertical browsers.
-  3. **Dynamic Responsive Adaptation (Approach C)**: Native switching between desktop (`Promo-16x9.mp4`, 16:9 widescreen) and mobile (`Reels-9x16.mp4`, 9:16 vertical).
+  3. **Dynamic Responsive and Bilingual Adaptation (Approach C)**: Native switching between desktop (`ai-second-brain-overview-16x9-pt.mp4` / `ai-second-brain-overview-16x9-en.mp4`, 16:9 widescreen) and mobile (`ai-second-brain-overview-9x16-pt.mp4` / `ai-second-brain-overview-9x16-en.mp4`, 9:16 vertical) with dynamic language switching.
   4. **Strict Lazy Loading & Performance**: Adoption of `preload="none"` on both players, ensuring ~29 MB of media does not degrade First Contentful Paint (FCP) or Lighthouse scores.
   5. **Audio Control & Accessibility**: Modal automatically pauses playback on close (via ✕ button, backdrop click, or ESC key), eliminating ghost background audio.
 - **Rationale**: Increases conversion and product comprehension without cognitive clutter or page speed penalties.

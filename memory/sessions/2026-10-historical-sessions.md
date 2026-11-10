@@ -1,6 +1,35 @@
 # Histórico de Sessões da Plataforma — AI Second Brain
 
 ## Sessões Recentes
+- **Data**: 2026-11-10
+  - **Reestruturação Audiovisual, Otimização WebP e Suporte Multilíngue Dinâmico (PT/EN) na Landing Page**:
+    - **Demanda**: 
+      1. Isolar e organizar todas as mídias específicas dos cards (vídeos de card, vídeos de modal e capas) em uma subpasta dedicada `assets/video/Card/`.
+      2. Substituir vídeos de demonstração e pitch legados monolíngues (`Promo-16x9.mp4`, `Reels-9x16.mp4`, `MemoriaPersistente-9x16.mp4` e `pergunte-cerebro-card-promo-9x16.mp4`) por versões oficiais bilíngues (PT e EN) de alta qualidade.
+      3. Converter todas as capas de vídeo JPG para o formato moderno `.webp` com alta taxa de compressão e qualidade visual, descartando os arquivos `.jpg` obsoletos.
+      4. Implementar alternância dinâmica em runtime de vídeos e capas nos players inline, modais lightbox e botões verticais 9:16 conforme o idioma selecionado (Português/Inglês).
+      5. Corrigir internacionalização de badges ("✦ Demonstração Prática" -> "✦ Hands-on Demo").
+      6. Limpar e atualizar 100% das referências obsoletas em documentações, ADRs, scripts e arquivos históricos, e expurgar os arquivos de mídia legados do repositório.
+    - **Solução Implementada**:
+      1. *Organização em Subpasta `assets/video/Card/`*: Migrados 27 arquivos de mídia (9 vídeos curtos de card `-card.mp4`, 9 vídeos expandidos de modal `-modal.mp4` e 9 pôsteres `-poster.jpg`) para `AI_SECOND_BRAIN-SITE/assets/video/Card/`, com atualização integral de caminhos em `index.html`, `features-modal.js` e documentação técnica.
+      2. *Otimização e Conversão WebP Universal*:
+         - Capas 16:9 Overview: gerados `ai-second-brain-overview-16x9-pt.webp` (35.0 KB) e `ai-second-brain-overview-16x9-en.webp` (32.6 KB).
+         - Capas 9:16 Overview Mobile: gerados `ai-second-brain-overview-9x16-pt.webp` (49.6 KB) e `ai-second-brain-overview-9x16-en.webp` (48.0 KB).
+         - Capas 9:16 Pergunte ao Cérebro: gerados `nao-e-um-jogo-30s-9x16-pt.webp` (89.9 KB) e `nao-e-um-jogo-30s-9x16-en.webp` (90.3 KB).
+         - Todos os arquivos `.jpg` correspondentes foram excluídos do workspace.
+      3. *Motor Dinâmico Multilíngue de Mídia (`extra.js`)*:
+         - Função `updateOverviewVideoLanguage(lang)` e `updateCardVideoButtonsLanguage(lang)` ouvindo o evento `langchange` e atuando no boot inicial.
+         - Alternância em runtime para os players `#inline-video-player`, `#modal-video-player`, `#promo-video-9x16-player` e botões `.card-video-9x16-btn`.
+         - Adaptação responsiva de pôster: telas mobile (<=768px) recebem automaticamente capas 9:16 na orientação correta.
+      4. *Limpeza e Governança de Código*:
+         - Excluídos fisicamente via `git rm`: `Promo-16x9.mp4`, `Reels-9x16.mp4`, `MemoriaPersistente-9x16.mp4`, `pergunte-cerebro-card-promo-9x16.mp4` e `pergunte-cerebro-promo-poster.jpg`.
+         - Atualizada ADR-G011 em `decisions/GLOBAL_DECISIONS.md`, `.locales/pt/decisions/GLOBAL_DECISIONS.md` e `.locales/en/decisions/GLOBAL_DECISIONS.md`.
+         - Atualizada lista `SYSTEM_VIDEO_EXCLUSIONS` em `scripts/optimize_card_videos.py`.
+         - Dicionário `i18n.dict.js` enriquecido com `"✦ Demonstração Prática": "✦ Hands-on Demo"`.
+      5. *Sincronização e Validação*:
+         - Cofres `vault-data.js` e `vault-locales.js` regenerados via `scan-vault.js` e `locale-docs-manager.js`.
+         - 0 ocorrências residuais de arquivos legados em ambos os repositórios.
+
 - **Data**: 2026-10-28
   - **Estratégia de Engajamento Comunitário & Apoio Open Source (v1.4.2)**:
     - **Demanda**: Solucionar o descompasso entre o alto volume de clones (mais de 219 cloners únicos em 14 dias) e a baixa conversão de estrelas no GitHub (~4 estrelas), decorrente de ~97% dos usuários clonarem e rodarem localmente sem abrir a página do repositório no navegador.
@@ -43,7 +72,7 @@ pm run sync:demo)*: Criado scripts/sync-demo.js que sincroniza App Core, CSS e A
       1. *LCP*: Geração de poster WebP de alta eficiência (`promo-poster.webp`, 52 KB, redução de 83% no payload) para os players de vídeo inline e lightbox; inclusão de `<link rel="preload" as="image">` com `fetchpriority="high"` e dimensões explícitas `width="165" height="90"` no logo da navbar; e adição de `defer` em todos os scripts JavaScript para desbloquear a primeira pintura do DOM.
       2. *INP*: Integração de `IntersectionObserver` inteligente para os 9 cards de vídeo, garantindo que apenas cards visíveis no viewport sejam reproduzidos; pausa do grafo Three.js (`window.__brain.g.stop()`) e de todos os vídeos de fundo ao abrir qualquer modal técnico ou de vídeo; e retomada cirúrgica apenas dos vídeos que estão dentro da viewport ao fechar modais.
       3. *CLS*: Definição de `min-height: clamp(260px, 50vw, 540px)` no `.diagram-frame` e `aspect-ratio: 920 / 520` nos diagramas `.diag` da seção `#arquitetura`, eliminando saltos de layout nas seções inferiores; `aspect-ratio: 1208 / 658` no `.brand-brain-img`; `contain: layout paint` em `.card-video-header` e `contain: strict` em `.card-video-media-wrap`; e `content-visibility: auto` nas seções `#demo` e `#faq`.
-      4. *Eliminação de Travamento em Vídeos Verticais 9:16 (`MemoriaPersistente-9x16.mp4` e `pergunte-cerebro-card-promo-9x16.mp4`)*:
+      4. *Eliminação de Travamento em Vídeos Verticais 9:16 (`memoria-persistente-9x16-*.mp4` e `nao-e-um-jogo-30s-9x16-*.mp4`, legados `MemoriaPersistente-9x16.mp4` e `pergunte-cerebro-card-promo-9x16.mp4`)*:
          - **Causa Raiz Parte 1 (Vídeo)**: Remotion exportou com GOP aberto de 8.33s (apenas 6 keyframes em 34s) e perfil 1080x1920 High 5.0. No streaming web, a ausência de I-frames impedia a recuperação rápida do decodificador.
          - **Causa Raiz Parte 2 (Modal / Compositor GPU)**: O vídeo rodava 100% fluido em tela cheia porque o Chromium promovia o elemento para DirectComposition Hardware Overlay independente. No entanto, dentro do modal, a combinação de `overflow: hidden` + `border-radius: 20px` no container pai desqualificava o vídeo do overlay de hardware, forçando o Chromium a fazer rasterização Skia por software e mascaramento a cada frame. Além disso, `box-shadow` pulsante contínuo no cabeçalho invalidava o paint, a proporção 380px gerava altura fracionária (675.55px) e o backdrop semi-transparente impedia o Occlusion Culling.
          - **Correção**:
@@ -322,15 +351,15 @@ pm run sync:demo)*: Criado scripts/sync-demo.js que sincroniza App Core, CSS e A
       7. *Guia Técnico Universal e Procedimento Padrão (SOP)*: Atualizado `docs/GUIA_PADRONIZACAO_CARDS_VIDEO.md` com as diretrizes mandatórias de: (a) Duração máxima de 5 segundos (`-t 5`), e (b) Aplicação mandatória de compressão H.264 de alta precisão via FFmpeg (`libx264`, preset `slow`, `yuv420p`, `+faststart`).
       8. *Modal Dinâmico Multi-Vídeo (`features-modal.js`)*: Suporte a `headerVideoSrc` e `headerVideoPoster` individuais por feature, com troca dinâmica de fonte, preload sob demanda e pause automático ao fechar ou trocar de slide.
       9. *Compressão H.264 de Alta Precisão Universal em Todos os Vídeos da Pasta*:
-         - `Promo-16x9.mp4`: Reduzido de 29,17 MB para 12,46 MB (-57,3%) com 100% de aceleração por GPU (`yuv420p`, zero travamentos em tela cheia).
-         - `Reels-9x16.mp4`: Reduzido de 8,33 MB para 3,62 MB (-57,5%) com aceleração nativa mobile e áudio AAC 160k.
+         - `ai-second-brain-overview-16x9-pt.mp4 / ai-second-brain-overview-16x9-en.mp4`: Reduzido de 29,17 MB para 12,46 MB (-57,3%) com 100% de aceleração por GPU (`yuv420p`, zero travamentos em tela cheia).
+         - `ai-second-brain-overview-9x16-pt.mp4 / ai-second-brain-overview-9x16-en.mp4`: Reduzido de 8,33 MB para 3,62 MB (-57,5%) com aceleração nativa mobile e áudio AAC 160k.
          - `session-capture-card.mp4`: Reduzido para 160,2 KB (5.0s, alta precisão H.264).
          - `session-capture-modal.mp4`: Reduzido para 311,0 KB (5.0s, alta precisão H.264).
          - `synapse-card.mp4`: Reduzido para 117,1 KB (5.0s, alta precisão H.264).
          - `synapse-modal.mp4`: Reduzido para 345,8 KB (5.0s, alta precisão H.264).
          - `decision-gate-card.mp4`: 239,9 KB (5.0s).
          - `decision-gate-modal.mp4`: 536,8 KB (5.0s).
-         - **Economia Total do Catálogo de Vídeos**: **Mais de 26 MB eliminados** sem perda de qualidade visual. Original de Reels salvo em `Reels-9x16-original.mp4.bak`.
+         - **Economia Total do Catálogo de Vídeos**: **Mais de 26 MB eliminados** sem perda de qualidade visual. Original de Reels salvo em `ai-second-brain-overview-9x16-pt.mp4 (versão legada arquivada)`.
       10. *Automação via CLI em Python (`scripts/optimize_card_videos.py`)*: Criado utilitário Python de zero dependências externas para automatizar o processamento e padronização universal de vídeos (`-card.mp4`, `-modal.mp4` e `-poster.jpg`). Suporta:
           - Nome personalizado opcional passado diretamente como segundo argumento (`python scripts/optimize_card_videos.py "video.mp4" "prompt-bootstrap"`) ou via flag `-n`/`--name`.
           - Sanitização inteligente automática que remove extensões acidentais (`.mp4`) ou sufixos duplicados (`-modal`, `-card`, `-poster`).
@@ -366,7 +395,7 @@ pm run sync:demo)*: Criado scripts/sync-demo.js que sincroniza App Core, CSS e A
       1. *Gatilho no Hero*: Botão `Assistir Pitch (1 min)` ao lado do CTA principal com gradiente cyan/violet e efeito glassmorphic para visualização sem sair do topo.
       2. *Modal Lightbox Cinemático*: Abertura fluida com backdrop blur 16px, título emoldurado, parada automática de áudio/vídeo ao fechar (via botão ✕, clique fora ou tecla ESC).
       3. *Seção Dedicada "Em Ação" (`#video-showcase`)*: Card dark luxury em formato cockpit/terminal posicionado estrategicamente antes da Demo interativa, com indicador pulsante ao vivo e botão "Expandir".
-      4. *Adaptação Responsiva Dinâmica*: Alternância inteligente entre `Promo-16x9.mp4` (Desktop widescreen) e `Reels-9x16.mp4` (Mobile vertical nativo para smartphones).
+      4. *Adaptação Responsiva Dinâmica*: Alternância inteligente entre `ai-second-brain-overview-16x9-pt.mp4 / ai-second-brain-overview-16x9-en.mp4` (Desktop widescreen) e `ai-second-brain-overview-9x16-pt.mp4 / ai-second-brain-overview-9x16-en.mp4` (Mobile vertical nativo para smartphones).
       5. *Zero Impacto em Performance*: `preload="none"` em ambos os reprodutores, prevenindo o download imediato de ~29 MB no carregamento inicial da landing page.
       6. *Navegação & i18n*: Adicionado atalho `#video-showcase` ("Vídeo" / "Video") na barra de navegação e suporte bilíngue completo no dicionário `i18n.dict.js`.
   - **Resiliência a Falhas de IA, Tratamento de Quota / 429 e Modal Universal de Erro de IA (`#aiErrorModal`)**:

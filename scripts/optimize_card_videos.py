@@ -59,11 +59,18 @@ if sys.platform == "win32":
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
-LANDING_VIDEO_DIR = PROJECT_ROOT / "docs" / "brain-ui" / "landing" / "assets" / "video"
+LANDING_SITE_DIR = PROJECT_ROOT.parent / "AI_SECOND_BRAIN-SITE" / "assets" / "video"
+LANDING_VIDEO_DIR = LANDING_SITE_DIR if LANDING_SITE_DIR.exists() else (PROJECT_ROOT / "docs" / "brain-ui" / "landing" / "assets" / "video")
 
 SYSTEM_VIDEO_EXCLUSIONS = {
-    "promo-16x9.mp4",
-    "reels-9x16.mp4",
+    "ai-second-brain-overview-16x9-pt.mp4",
+    "ai-second-brain-overview-16x9-en.mp4",
+    "ai-second-brain-overview-9x16-pt.mp4",
+    "ai-second-brain-overview-9x16-en.mp4",
+    "memoria-persistente-9x16-pt.mp4",
+    "memoria-persistente-9x16-en.mp4",
+    "nao-e-um-jogo-30s-9x16-pt.mp4",
+    "nao-e-um-jogo-30s-9x16-en.mp4",
 }
 
 
@@ -130,19 +137,20 @@ def process_single_video(source_path: Path, output_dir: Path, custom_name: str =
     output_dir.mkdir(parents=True, exist_ok=True)
     base_name = sanitize_custom_name(custom_name) if custom_name else source_path.stem
 
-    card_file = output_dir / f"{base_name}-card.mp4"
-    modal_file = output_dir / f"{base_name}-modal.mp4"
-    poster_file = output_dir / f"{base_name}-poster.jpg"
+    card_dir = output_dir / "Card" if (output_dir / "Card").is_dir() else output_dir
+    card_file = card_dir / f"{base_name}-card.mp4"
+    modal_file = card_dir / f"{base_name}-modal.mp4"
+    poster_file = card_dir / f"{base_name}-poster.jpg"
 
     src_size = get_file_size_kb(source_path)
     print(f"\n🎬 Processando: '{source_path.name}'")
     print(f"   Origem:    {source_path} ({src_size:.1f} KB / {src_size/1024:.2f} MB)")
-    print(f"   Destino:   {output_dir}")
+    print(f"   Destino:   {card_dir}")
     print(f"   Nome Base: '{base_name}'")
     print(f"   Arquivos:  {card_file.name} | {modal_file.name} | {poster_file.name}")
 
     # 1. Vídeo do Card (400x224, 16:9, contraste + saturação)
-    card_tmp = output_dir / f"{base_name}-card.tmp.mp4"
+    card_tmp = card_dir / f"{base_name}-card.tmp.mp4"
     cmd_card = [
         "ffmpeg", "-y",
         "-ss", "00:00:00",
@@ -168,7 +176,7 @@ def process_single_video(source_path: Path, output_dir: Path, custom_name: str =
     print(f" Concluído! ({get_file_size_kb(card_file):.1f} KB)")
 
     # 2. Vídeo do Modal (800x250, crop panorâmico)
-    modal_tmp = output_dir / f"{base_name}-modal.tmp.mp4"
+    modal_tmp = card_dir / f"{base_name}-modal.tmp.mp4"
     cmd_modal = [
         "ffmpeg", "-y",
         "-ss", "00:00:00",
@@ -194,7 +202,7 @@ def process_single_video(source_path: Path, output_dir: Path, custom_name: str =
     print(f" Concluído! ({get_file_size_kb(modal_file):.1f} KB)")
 
     # 3. Poster Frame (400x224 aos 2s)
-    poster_tmp = output_dir / f"{base_name}-poster.tmp.jpg"
+    poster_tmp = card_dir / f"{base_name}-poster.tmp.jpg"
     cmd_poster = [
         "ffmpeg", "-y",
         "-i", str(card_file),

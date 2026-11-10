@@ -17,7 +17,7 @@
 ## 2026-10-22 — Otimização de Vídeos Web em Modais: GOP (Keyframe Interval), Resolução e GPU
 
 ### Lição 23: Travamento de Vídeo MP4 na Web por Intervalo Excessivo de Keyframes (GOP) e GPU Blur
-**Contexto**: O vídeo vertical promocional `MemoriaPersistente-9x16.mp4` e seu análogo `pergunte-cerebro-card-promo-9x16.mp4` travavam continuamente durante a reprodução no navegador, gerando picos de INP (312ms+) e engasgos visuais graves.
+**Contexto**: O vídeo vertical promocional de Memória Persistente (`memoria-persistente-9x16-pt.mp4` / `memoria-persistente-9x16-en.mp4`, legado `MemoriaPersistente-9x16.mp4`) e seu análogo do Card 09 (`nao-e-um-jogo-30s-9x16-pt.mp4` / `nao-e-um-jogo-30s-9x16-en.mp4`, legado `pergunte-cerebro-card-promo-9x16.mp4`) travavam continuamente durante a reprodução no navegador, gerando picos de INP (312ms+) e engasgos visuais graves.
 **Aprendizado**:
 1. *Keyframe Interval / GOP em Vídeos Web*: Renderizações automáticas (como Remotion ou perfis padrão de exportação) frequentemente utilizam GOPs abertos de até 250 quadros (~8,3 segundos). No navegador, quando ocorrem micro-quedas de rede ou descarte de frames, o decodificador é forçado a reprocessar centenas de frames dependentes antes de renderizar o próximo quadro, congelando a tela. Fixar o GOP em 1.0 segundo (`-g 30 -keyint_min 30 -sc_threshold 0`) cria pontos de recuperação imediatos a cada 1s.
 2. *Superdimensionamento de Resolução*: Exibir um vídeo 1080x1920 (High Profile 5.0) dentro de um modal com largura máxima de 380px consome o triplo de decodificação de GPU desnecessariamente. Reduzir para 720x1280 (Main Profile 3.1) reduz a carga do decodificador em mais de 55% com nitidez idêntica em telas Retina.

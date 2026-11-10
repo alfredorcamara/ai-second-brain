@@ -123,7 +123,7 @@ Caso prefira rodar os comandos individualmente no **PowerShell**, execute os 3 p
 * **Filtros**: Realce sutil de contraste (`1.25`), brilho (`+0.03`) e saturação (`1.35`) para o vídeo brilhar intensamente no tema escuro.
 * **Comando PowerShell**:
 ```powershell
-ffmpeg -y -ss 00:00:00 -i "caminho/do/video-origem.mp4" -t 5 -vf "scale=400:224,eq=contrast=1.25:brightness=0.03:saturation=1.35" -an -c:v libx264 -crf 27 -preset slow -movflags +faststart "docs/brain-ui/landing/assets/video/<nome>-card.mp4"
+ffmpeg -y -ss 00:00:00 -i "caminho/do/video-origem.mp4" -t 5 -vf "scale=400:224,eq=contrast=1.25:brightness=0.03:saturation=1.35" -an -c:v libx264 -crf 27 -preset slow -movflags +faststart "assets/video/Card/<nome>-card.mp4"
 ```
 * **Tamanho esperado**: **~90 KB a 180 KB**.
 
@@ -133,7 +133,7 @@ ffmpeg -y -ss 00:00:00 -i "caminho/do/video-origem.mp4" -t 5 -vf "scale=400:224,
 * **Crop inteligente**: Cortar verticalmente no centro da ação visual antes de escalar (`crop=in_w:in_w*(250/800):0:(in_h-(in_w*(250/800)))/2`).
 * **Comando PowerShell**:
 ```powershell
-ffmpeg -y -ss 00:00:00 -i "caminho/do/video-origem.mp4" -t 5 -vf "crop=in_w:in_w*(250/800):0:(in_h-(in_w*(250/800)))/2,scale=800:250,eq=contrast=1.22:brightness=0.03:saturation=1.3" -an -c:v libx264 -crf 26 -preset slow -movflags +faststart "docs/brain-ui/landing/assets/video/<nome>-modal.mp4"
+ffmpeg -y -ss 00:00:00 -i "caminho/do/video-origem.mp4" -t 5 -vf "crop=in_w:in_w*(250/800):0:(in_h-(in_w*(250/800)))/2,scale=800:250,eq=contrast=1.22:brightness=0.03:saturation=1.3" -an -c:v libx264 -crf 26 -preset slow -movflags +faststart "assets/video/Card/<nome>-modal.mp4"
 ```
 * **Tamanho esperado**: **~280 KB a 480 KB**.
 
@@ -141,7 +141,7 @@ ffmpeg -y -ss 00:00:00 -i "caminho/do/video-origem.mp4" -t 5 -vf "crop=in_w:in_w
 * **Dimensões**: `400x224` (evita tela preta ou flash antes do primeiro frame do vídeo carregar).
 * **Comando PowerShell**:
 ```powershell
-ffmpeg -y -i "docs/brain-ui/landing/assets/video/<nome>-card.mp4" -ss 00:00:02 -vframes 1 -q:v 3 "docs/brain-ui/landing/assets/video/<nome>-poster.jpg"
+ffmpeg -y -i "assets/video/Card/<nome>-card.mp4" -ss 00:00:02 -vframes 1 -q:v 3 "assets/video/Card/<nome>-poster.jpg"
 ```
 * **Tamanho esperado**: **~10 KB a 15 KB**.
 
@@ -149,15 +149,15 @@ ffmpeg -y -i "docs/brain-ui/landing/assets/video/<nome>-card.mp4" -ss 00:00:02 -
 
 ### ETAPA 2: Atualização do HTML (`index.html`)
 
-No arquivo `docs/brain-ui/landing/index.html`, localize o card alvo na seção `<section class="sec" id="vantagens">` através de `data-feature="<id-do-card>"` e substitua sua estrutura interna:
+No arquivo `index.html`, localize o card alvo na seção `<section class="sec" id="vantagens">` através de `data-feature="<id-do-card>"` e substitua sua estrutura interna:
 
 #### Código a Inserir no Card:
 ```html
 <div class="card card-video-featured rv" data-feature="<id-do-card>" tabindex="0" role="button" aria-haspopup="dialog" aria-label="Ver detalhes de <Nome do Card>">
   <div class="card-video-header">
     <div class="card-video-media-wrap">
-      <video class="card-video-media" autoplay loop muted playsinline preload="auto" poster="assets/video/<nome>-poster.jpg">
-        <source src="assets/video/<nome>-card.mp4" type="video/mp4">
+      <video class="card-video-media" autoplay loop muted playsinline preload="auto" poster="assets/video/Card/<nome>-poster.jpg">
+        <source src="assets/video/Card/<nome>-card.mp4" type="video/mp4">
       </video>
       <div class="card-video-header-overlay"></div>
     </div>
@@ -177,7 +177,7 @@ No arquivo `docs/brain-ui/landing/index.html`, localize o card alvo na seção `
 ```
 
 #### 2.1. Extensão Opcional: Ações Duplas no Rodapé (Botão de Vídeo Vertical 9:16)
-Quando o card dispuser de uma demonstração prática gravada em formato vertical 9:16 (como o **Card 09 "Pergunte ao Cérebro"** com `pergunte-cerebro-card-promo-9x16.mp4`), o rodapé `.card-video-body` utiliza o contêiner de ações duplas `.card-footer-actions`:
+Quando o card dispuser de uma demonstração prática gravada em formato vertical 9:16 (como o **Card 09 "Pergunte ao Cérebro"** com `nao-e-um-jogo-30s-9x16-pt.mp4` / `nao-e-um-jogo-30s-9x16-en.mp4`), o rodapé `.card-video-body` utiliza o contêiner de ações duplas `.card-footer-actions`:
 
 ```html
 <div class="card-footer-actions">
@@ -198,15 +198,15 @@ Quando o card dispuser de uma demonstração prática gravada em formato vertica
 
 ### ETAPA 3: Registro do Vídeo no Modal (`features-modal.js`)
 
-No arquivo `docs/brain-ui/landing/js/features-modal.js`, atualize a entrada do card correspondente no array `FEATURES_DATA`:
+No arquivo `js/features-modal.js`, atualize a entrada do card correspondente no array `FEATURES_DATA`:
 
 ```javascript
 {
   id: '<id-do-card>',
   color: '<cor-hex>',
   hasHeaderVideo: true,
-  headerVideoSrc: 'assets/video/<nome>-modal.mp4',
-  headerVideoPoster: 'assets/video/<nome>-poster.jpg',
+  headerVideoSrc: 'assets/video/Card/<nome>-modal.mp4',
+  headerVideoPoster: 'assets/video/Card/<nome>-poster.jpg',
   // ... restantes dos campos (badge, title, tagline, whatItIs, howItWorks, realFiles, metrics, codeSnippet)
 }
 ```
@@ -269,7 +269,7 @@ Para garantir que o cabeçalho fique limpo e com o botão de fechar no local cor
 ### ETAPA 4: Validação & Verificação
 
 1. **Testar Tamanho dos Arquivos**:
-   Execute `Get-ChildItem docs/brain-ui/landing/assets/video/` e confirme que a soma de `<nome>-card.mp4` + `<nome>-modal.mp4` não ultrapassa **550 KB**.
+   Execute `Get-ChildItem assets/video/Card/` e `Get-ChildItem assets/video/` e confirme que a soma de `<nome>-card.mp4` + `<nome>-modal.mp4` não ultrapassa **550 KB**.
 2. **Conferir no Navegador**:
    - O card na Bento Grid exibe o vídeo em loop claro, vibrante e nítido.
    - O texto do título está 100% legível por cima do vídeo, protegido pelo gradiente escuro de base.
