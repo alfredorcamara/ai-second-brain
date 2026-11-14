@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [1.5.1] — 2026-11-14
+
+### 🛡️ Interactive Modal Shielding & Stability (Zero Accidental Data Discard)
+- **Universal Static Backdrop**:
+  - Interactive modals containing forms and user input (`quickstartModal`, `fileEditorModal`, `aiSettingsModal`, `askBrainModal`, `sessionCaptureModal`, `researchModal`, `promptVivoModal`, `decomposeModal`, etc.) now feature Static Backdrop behavior.
+  - Inadvertently clicking the dark backdrop or dragging the cursor outside modal cards no longer closes the window or discards in-progress data.
+  - Added subtle pulse/shake visual feedback (`.modal-static-shake`) indicating the modal remains active and requires explicit action on buttons (`✕ Close`, `Cancel`, or finalization).
+- **Escape Key Shielding with Mandatory Confirmation**:
+  - Pressing `ESC` inside modals with in-progress work or filled fields now requires explicit confirmation before discarding data.
+  - In Quickstart Studio, `qsConfirmExitModal` guards onboarding progress; in the Expanded File/Specs Editor and AI Gateway, confirmation dialogs prevent unintended loss of typed descriptions, specs, or API keys.
+- **Form Enter Key Submission Prevention**:
+  - Implemented `setupQuickstartFormKeyguards()` for project creation and link forms (`qsFormNew` and `qsFormLink`), preventing accidental premature submissions on single-line inputs and advancing focus to description fields smoothly.
+
 ## [1.5.0] — 2026-10-29
 
 ### 🌐 Internationalization & Full Multilingual Support (PT / EN)

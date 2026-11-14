@@ -28,6 +28,10 @@
 - **Context**: Briefing documents or PRDs provided at project kickoff risked being forgotten after contract generation.
 - **Validated Pattern**: Saving copies of original briefings under the project's `SPECS/` directory ensures traceability and prevents the AI from asking redundant questions during technical interviews.
 
+### Lesson: Interactive Modal Shielding & Accidental Data Discard Prevention
+- **Context**: Modals hosting forms and editors (Quickstart, expanded project description, AI settings) closed unintentionally due to accidental backdrop clicks (e.g. wrist touching trackpad while typing), automatic form submission upon pressing `Enter`, or accidental `ESC` key hits.
+- **Validated Pattern**: Modals collecting user data MUST adopt Universal Static Backdrops (with subtle pulse/shake visual feedback on backdrop clicks) and never close without explicit user intent. The `ESC` key must verify active progress or dirty state and require confirmation prior to discarding any input. Form single-line inputs must prevent premature form submission on `Enter`.
+
 ---
 
 ## 🗄️ Specific Lessons Archive

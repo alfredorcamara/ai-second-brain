@@ -655,9 +655,7 @@ function resolveBrainConfirm(result) {
 
 function handleBrainConfirmBackdropClick(e) {
     if (e.target && e.target.id === 'brainConfirmModal') {
-        const inputWrap = document.getElementById('brainConfirmInputWrap');
-        const withInput = inputWrap && inputWrap.style.display !== 'none';
-        resolveBrainConfirm(withInput ? null : false);
+        triggerModalStaticFeedback(e.target);
     }
 }
 
@@ -2740,6 +2738,11 @@ function filterSidebar(query) {
 
 // ── Event Listeners ───────────────────────────────
 function setupEventListeners() {
+    // Blindagem de formulários do Quickstart contra submissão involuntária por Enter ao digitar
+    if (typeof setupQuickstartFormKeyguards === 'function') {
+        setupQuickstartFormKeyguards();
+    }
+
     // Sidebar toggle
     const sidebarToggle = document.getElementById('sidebarToggle');
     if (sidebarToggle) {
@@ -2937,6 +2940,36 @@ function setupEventListeners() {
                 return;
             }
 
+            const fileEditorModal = document.getElementById('fileEditorModal');
+            if (fileEditorModal && fileEditorModal.style.display !== 'none') {
+                if (typeof requestCloseFileEditor === 'function') {
+                    requestCloseFileEditor();
+                } else {
+                    closeFileEditor();
+                }
+                return;
+            }
+
+            const rlModal = document.getElementById('researchModal');
+            if (rlModal && rlModal.style.display !== 'none') {
+                const topicInput = document.getElementById('rlTopicInput');
+                if (topicInput && topicInput.value.trim().length > 0) {
+                    showBrainConfirm({
+                        title: 'Descartar pesquisa em andamento?',
+                        icon: '⚠️',
+                        message: 'Você possui um tema ou definição preenchida. Deseja realmente descartar?',
+                        okText: 'Descartar',
+                        cancelText: 'Continuar',
+                        type: 'warning'
+                    }).then(discard => {
+                        if (discard) closeResearchModal();
+                    });
+                } else {
+                    closeResearchModal();
+                }
+                return;
+            }
+
             const aiErrModal = document.getElementById('aiErrorModal');
             if (aiErrModal && aiErrModal.style.display !== 'none') {
                 closeAiErrorModal();
@@ -3017,6 +3050,9 @@ function openQuickstartWizard(defaultMode = null) {
         });
     }
 
+    // Protege os formulários do Quickstart contra submissão involuntária por Enter ao digitar
+    setupQuickstartFormKeyguards();
+
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 
@@ -3061,6 +3097,65 @@ function openQuickstartWizard(defaultMode = null) {
 
 let qsBackdropMouseDownTarget = null;
 
+/**
+ * Fornece feedback visual elegante (shake) quando o usuário clica no backdrop
+ * de um modal interativo protegido, garantindo que o modal nunca feche sem ação explícita.
+ */
+function triggerModalStaticFeedback(modalEl) {
+    if (!modalEl) return;
+    const card = modalEl.querySelector(
+        '.quickstart-modal-card, .editor-modal-card, .ai-settings-card, ' +
+        '.research-modal-card, .ask-brain-modal-card, .qs-val-modal-card, ' +
+        '.brain-dialog-card, .changelog-modal-box, .locale-modal-box, ' +
+        '.ai-welcome-card, .ai-quota-card, [role="dialog"]'
+    ) || modalEl.firstElementChild;
+    if (card) {
+        card.classList.remove('modal-static-shake');
+        void card.offsetWidth; // Força reflow para reiniciar animação
+        card.classList.add('modal-static-shake');
+        setTimeout(() => {
+            card.classList.remove('modal-static-shake');
+        }, 400);
+    }
+}
+window.triggerModalStaticFeedback = triggerModalStaticFeedback;
+
+/**
+ * Previne que pressionar a tecla Enter em campos de texto nos formulários do Quickstart
+ * submeta prematuramente os formulários enquanto o usuário digita.
+ */
+function setupQuickstartFormKeyguards() {
+    const formNew = document.getElementById('qsFormNew');
+    if (formNew && !formNew.dataset.enterGuarded) {
+        formNew.dataset.enterGuarded = 'true';
+        formNew.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.target && e.target.tagName === 'INPUT' && e.target.type !== 'submit') {
+                e.preventDefault();
+                if (e.target.id === 'qsNewName') {
+                    const desc = document.getElementById('qsNewDesc');
+                    if (desc) desc.focus();
+                }
+            }
+        });
+    }
+
+    const formLink = document.getElementById('qsFormLink');
+    if (formLink && !formLink.dataset.enterGuarded) {
+        formLink.dataset.enterGuarded = 'true';
+        formLink.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.target && e.target.tagName === 'INPUT' && e.target.type !== 'submit') {
+                e.preventDefault();
+                if (e.target.id === 'qsLinkPath') {
+                    if (typeof validatePathLive === 'function') validatePathLive();
+                    const linkName = document.getElementById('qsLinkName');
+                    if (linkName) linkName.focus();
+                }
+            }
+        });
+    }
+}
+window.setupQuickstartFormKeyguards = setupQuickstartFormKeyguards;
+
 function hasQuickstartProgress() {
     // 1. Se o usuário está no Passo 3 ("Conectado!"), os arquivos já foram
     // gravados com sucesso no disco pelo botão verde ("💾 Aprovar e Criar Projeto no Disco"). Não há risco de perda.
@@ -3080,6 +3175,12 @@ function hasQuickstartProgress() {
 
     const pathVal = document.getElementById('qsLinkPath')?.value?.trim();
     if (pathVal) return true;
+
+    const customStackVal = document.getElementById('qsNewStackCustom')?.value?.trim();
+    if (customStackVal) return true;
+
+    const pasteTextVal = document.getElementById('qsPasteTextarea')?.value?.trim();
+    if (pasteTextVal) return true;
 
     if (typeof attachedSpecsFiles !== 'undefined' && Array.isArray(attachedSpecsFiles) && attachedSpecsFiles.length > 0) return true;
     if (typeof currentGrillQuestions !== 'undefined' && Array.isArray(currentGrillQuestions) && currentGrillQuestions.length > 0) return true;
@@ -3161,9 +3262,10 @@ function closeQuickstartWizard(force = false) {
 }
 
 function handleModalBackdropClick(e) {
-    // Previne fechar o modal se o clique começou dentro de algum campo/card e soltou fora (ex: seleção de texto ou clique em campo adjacente)
-    if (e.target && e.target.id === 'quickstartModal' && qsBackdropMouseDownTarget && qsBackdropMouseDownTarget.id === 'quickstartModal') {
-        requestCloseQuickstartWizard();
+    // Backdrop estático: nunca fecha o modal de criação de projeto ao clicar fora.
+    // Oferece feedback visual de pulso/shake para indicar que o modal está ativo.
+    if (e.target && e.target.id === 'quickstartModal') {
+        triggerModalStaticFeedback(e.target);
     }
     qsBackdropMouseDownTarget = null;
 }
@@ -4501,7 +4603,7 @@ function docToContractKey(docName) {
 
 function handleClarificationModalBackdrop(e) {
     if (e && e.target && e.target.id === 'qsClarificationModal') {
-        closeClarificationModal();
+        triggerModalStaticFeedback(e.target);
     }
 }
 
@@ -6040,7 +6142,7 @@ function closeGrillValidationModal(focusInput = false) {
 
 function handleGrillValModalBackdrop(e) {
     if (e.target && e.target.id === 'qsGrillValidationModal') {
-        closeGrillValidationModal(true);
+        triggerModalStaticFeedback(e.target);
     }
 }
 
@@ -8343,9 +8445,84 @@ function closeFileEditor() {
     }
 }
 
+async function requestCloseFileEditor() {
+    const modal = document.getElementById('fileEditorModal');
+    if (!modal || modal.style.display === 'none') return;
+
+    if (isQuickstartDescEditorActive) {
+        const textarea = document.getElementById('editorTextarea');
+        const origDesc = document.getElementById('qsNewDesc')?.value || '';
+        const isDirty = textarea && textarea.value.trim() !== origDesc.trim();
+        if (isDirty) {
+            const discard = await showBrainConfirm({
+                title: 'Descartar alterações na descrição?',
+                icon: '⚠️',
+                message: 'Você possui alterações não aplicadas no editor de descrição. Deseja realmente descartar?',
+                okText: 'Descartar',
+                cancelText: 'Continuar Editando',
+                type: 'warning'
+            });
+            if (!discard) return;
+        }
+        closeExpandedDescEditor();
+        return;
+    }
+
+    if (isQuickstartSpecsEditorActive) {
+        const textarea = document.getElementById('editorTextarea');
+        const origSpecs = document.getElementById('qsPasteTextarea')?.value || '';
+        const isDirty = textarea && textarea.value.trim() !== origSpecs.trim();
+        if (isDirty) {
+            const discard = await showBrainConfirm({
+                title: 'Descartar alterações nas especificações?',
+                icon: '⚠️',
+                message: 'Você possui alterações não aplicadas nas especificações. Deseja realmente descartar?',
+                okText: 'Descartar',
+                cancelText: 'Continuar Editando',
+                type: 'warning'
+            });
+            if (!discard) return;
+        }
+        closeExpandedSpecsEditor();
+        return;
+    }
+
+    if (isQuickstartEditorActive) {
+        const discard = await showBrainConfirm({
+            title: 'Descartar edições do contrato?',
+            icon: '⚠️',
+            message: 'Deseja fechar o editor do contrato sem salvar as alterações?',
+            okText: 'Fechar sem salvar',
+            cancelText: 'Continuar Editando',
+            type: 'warning'
+        });
+        if (!discard) return;
+        closeExpandedContractModal();
+        return;
+    }
+
+    const discard = await showBrainConfirm({
+        title: 'Fechar editor de arquivo?',
+        icon: '⚠️',
+        message: 'Deseja fechar o editor? Alterações não salvas no disco serão descartadas.',
+        okText: 'Fechar sem salvar',
+        cancelText: 'Continuar Editando',
+        type: 'warning'
+    });
+    if (discard) {
+        modal.classList.remove('on-top');
+        modal.style.display = 'none';
+        const qsModal = document.getElementById('quickstartModal');
+        const isQsOpen = qsModal && qsModal.style.display !== 'none';
+        document.body.style.overflow = isQsOpen ? 'hidden' : '';
+    }
+}
+window.requestCloseFileEditor = requestCloseFileEditor;
+
 function handleEditorBackdropClick(e) {
+    // Backdrop estático: não fecha o editor ao clicar fora. Oferece feedback visual.
     if (e.target && e.target.id === 'fileEditorModal') {
-        closeFileEditor();
+        triggerModalStaticFeedback(e.target);
     }
 }
 
@@ -8767,7 +8944,7 @@ function closeResearchModal() {
 
 function handleResearchBackdropClick(e) {
     if (e.target && e.target.id === 'researchModal') {
-        closeResearchModal();
+        triggerModalStaticFeedback(e.target);
     }
 }
 
@@ -9086,7 +9263,7 @@ function closePromptVivoModal() {
 
 function handlePromptVivoBackdropClick(e) {
     if (e.target && e.target.id === 'promptVivoModal') {
-        closePromptVivoModal();
+        triggerModalStaticFeedback(e.target);
     }
 }
 
@@ -9990,7 +10167,7 @@ function closeDecomposeModal() {
 
 function handleDecomposeBackdropClick(e) {
     if (e.target && e.target.id === 'decomposeModal') {
-        closeDecomposeModal();
+        triggerModalStaticFeedback(e.target);
     }
 }
 
@@ -10584,7 +10761,7 @@ function closeAiSettingsModal() {
 
 function handleAiSettingsBackdropClick(e) {
     if (e.target && e.target.id === 'aiSettingsModal') {
-        closeAiSettingsModal();
+        triggerModalStaticFeedback(e.target);
     }
 }
 
@@ -11406,7 +11583,24 @@ document.addEventListener('keydown', (e) => {
             return;
         }
         if (settings && settings.style.display === 'flex') {
-            closeAiSettingsModal();
+            const keyInput = document.getElementById('aiApiKeyInput');
+            const customModel = document.getElementById('aiCustomModelInput');
+            const hasDraft = (keyInput && keyInput.value && keyInput.value.trim().length > 0) ||
+                             (customModel && customModel.value && customModel.value.trim().length > 0);
+            if (hasDraft) {
+                showBrainConfirm({
+                    title: 'Descartar alterações de IA?',
+                    icon: '⚠️',
+                    message: 'Você possui alterações não salvas nas configurações de IA. Deseja realmente descartar e fechar?',
+                    okText: 'Descartar',
+                    cancelText: 'Continuar Editando',
+                    type: 'warning'
+                }).then(discard => {
+                    if (discard) closeAiSettingsModal();
+                });
+            } else {
+                closeAiSettingsModal();
+            }
             return;
         }
         if (welcome && welcome.style.display === 'flex') {
@@ -11516,7 +11710,9 @@ async function closeSessionCaptureModal(force = false) {
 }
 
 function handleSessionCaptureBackdropClick(event) {
-    if (event.target && event.target.id === 'sessionCaptureModal') closeSessionCaptureModal();
+    if (event.target && event.target.id === 'sessionCaptureModal') {
+        triggerModalStaticFeedback(event.target);
+    }
 }
 
 async function generateSessionDraft(regenerate = false) {
@@ -11904,7 +12100,7 @@ function closeAskBrainModal() {
 
 function handleAskBrainBackdrop(e) {
     if (e.target && e.target.id === 'askBrainModal') {
-        closeAskBrainModal();
+        triggerModalStaticFeedback(e.target);
     }
 }
 
@@ -12433,7 +12629,21 @@ window.addEventListener('keydown', (e) => {
         }
         const modal = document.getElementById('askBrainModal');
         if (modal && modal.style.display === 'flex') {
-            closeAskBrainModal();
+            const queryInput = document.getElementById('askBrainQueryInput');
+            if (queryInput && queryInput.value.trim().length > 0) {
+                showBrainConfirm({
+                    title: 'Fechar Busca Cognitiva?',
+                    icon: '⚠️',
+                    message: 'Deseja fechar e descartar a consulta digitada?',
+                    okText: 'Descartar e Fechar',
+                    cancelText: 'Continuar',
+                    type: 'warning'
+                }).then(discard => {
+                    if (discard) closeAskBrainModal();
+                });
+            } else {
+                closeAskBrainModal();
+            }
         }
     }
 });

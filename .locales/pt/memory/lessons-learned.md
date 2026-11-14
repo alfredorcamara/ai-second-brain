@@ -28,6 +28,10 @@
 - **Contexto**: Documentos de briefing ou PRDs fornecidos no início do projeto corriam o risco de ser esquecidos após a geração dos contratos.
 - **Padrão Correto**: Salvar cópias de briefing em `SPECS/` do projeto garante rastreabilidade e impede que a IA faça perguntas redundantes durante sabatinas técnicas.
 
+### Lição: Blindagem de Modais Interativos e Prevenção de Descarte Acidental de Dados
+- **Contexto**: Modais com formulários e editores (Quickstart, descrição expandida, configurações de IA) fechavam involuntariamente por cliques acidentais no backdrop (ex: encostar no touchpad ao digitar), submissão automática por tecla `Enter` em inputs ou tecla `ESC`.
+- **Padrão Correto**: Modais com entrada de dados DEVEM adotar Backdrop Estático (com feedback visual sutil de pulso/shake ao clicar fora) e nunca fechar sem ação explícita do usuário. A tecla `ESC` deve checar por progresso ou modificações ativas e exigir confirmação prévia antes de qualquer descarte. Formulários devem prevenir submissão por `Enter` acidental em campos de texto.
+
 ---
 
 ## 🗄️ Arquivo de Lições Específicas

@@ -7,6 +7,19 @@ e este projeto adere ao [Versionamento Semântico (SemVer)](https://semver.org/l
 
 ---
 
+## [1.5.1] — 2026-11-14
+
+### 🛡️ Blindagem & Estabilidade de Modais Interativos (Zero Descarte Acidental)
+- **Backdrop Estático (Static Backdrop) Universal**:
+  - Modais interativos com formulários e entrada de dados do usuário (`quickstartModal`, `fileEditorModal`, `aiSettingsModal`, `askBrainModal`, `sessionCaptureModal`, `researchModal`, `promptVivoModal`, `decomposeModal`, etc.) agora possuem Backdrop Estático.
+  - Clicar acidentalmente no fundo escuro ou arrastar o cursor para fora da janela do modal não causa mais o fechamento nem perda de dados.
+  - Implementado feedback visual sutil de pulso/alerta (`.modal-static-shake`) indicando que o modal permanece ativo e exige ação nos botões explícitos (`✕ Fechar`, `Cancelar` ou finalização).
+- **Blindagem da Tecla ESC com Confirmação Mandatória**:
+  - Pressionar a tecla `ESC` em modais com trabalho em andamento ou campos preenchidos agora exige confirmação explícita do desenvolvedor antes de descartar dados.
+  - No Quickstart Studio, o modal `qsConfirmExitModal` protege o progresso de configuração; no Editor Expandido de Arquivos/Specs e no AI Gateway, diálogos de segurança impedem o descarte involuntário de especificações, descrições ou chaves de API digitadas.
+- **Prevenção de Submissão Prematura por Tecla Enter**:
+  - Implementada a rotina `setupQuickstartFormKeyguards()` aplicada a formulários de criação e vinculação de projetos (`qsFormNew` e `qsFormLink`), prevenindo o envio prematuro do formulário ao digitar campos de texto como nome do projeto (`qsNewName`) e avançando o foco suavemente para a descrição.
+
 ## [1.5.0] — 2026-10-29
 
 ### 🌐 Internacionalização & Suporte Multilíngue Completo (PT / EN)

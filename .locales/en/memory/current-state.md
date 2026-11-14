@@ -1,9 +1,9 @@
 # AI Second Brain — Current State
 
-> Last updated: 2026-10-29
+> Last updated: 2026-11-14
 
-## Framework Status: 🟢 Operational (v1.4.2)
-- **Visual Cockpit**: Executive dashboard, Markdown reader, and 3D Neural Graph (Three.js) with online/offline support.
+## Framework Status: 🟢 Operational (v1.5.1)
+- **Visual Cockpit**: Executive dashboard, Markdown reader, 3D Neural Graph (Three.js), and complete interactive modal shielding with static backdrops and ESC anti-discard protection.
 - **Bilingual Engine**: Instant dynamic switching between Portuguese and English backed by a protected `.locales/` vault.
 - **Universal AI Gateway (BYOK)**: Provider-agnostic support for Groq Cloud, OpenAI, Anthropic Claude, OpenRouter, and local Ollama.
 - **Autonomous Research Lab**: 2-layer decomposition (`knowledge/` and `actionable/`) with continuous refinement.
