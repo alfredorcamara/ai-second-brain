@@ -1239,7 +1239,7 @@ AI_SECOND_BRAIN/
 
 <p align="center">
   <a href="https://github.com/alfredorcamara/ai-second-brain/stargazers"><img src="https://img.shields.io/github/stars/alfredorcamara/ai-second-brain?style=for-the-badge&logo=github&color=38bdf8&logoColor=white&label=Star%20on%20GitHub%20%E2%AD%90" alt="GitHub Stars" /></a>
-  <a href="https://github.com/alfredorcamara/ai-second-brain/releases"><img src="https://img.shields.io/github/v/release/alfredorcamara/ai-second-brain?style=for-the-badge&color=8b5cf6" alt="Release" /></a>
+  <a href="https://github.com/alfredorcamara/ai-second-brain/releases"><img src="https://img.shields.io/github/v/tag/alfredorcamara/ai-second-brain?style=for-the-badge&color=8b5cf6" alt="Release" /></a>
   <a href="https://github.com/alfredorcamara/ai-second-brain/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-10b981?style=for-the-badge" alt="License" /></a>
 </p>
 
