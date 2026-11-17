@@ -9,13 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [1.5.4] — 2026-11-17
 
-### 🧭 Active Bridge Governance via System Architecture
+### 🧭 Active Bridge Governance via System Architecture & Update Detection
 - **Smart & Clean Bridge Generation on Project Creation (`scripts/bridge-templates.js`)**:
   - New projects (via Web Cockpit, Quickstart Grill, or CLI `project:new`) now exclusively generate the active AI bridge defined in **"System Architecture"** (`brain.config.json`), keeping the repository root clean and free from unused tool configs.
   - Complete support: GitHub Copilot (`.github/copilot-instructions.md`), Cursor AI (`.cursorrules`), Google Antigravity (`GEMINI.md`), Claude Code (`CLAUDE.md`), Windsurf (`.windsurfrules`), Cline (`.clinerules`), and Universal (`AGENTS.md`).
   - Full flexibility: developers can add or delete bridges anytime via Web Cockpit or CLI.
 - **Enhanced Visual Feedback in Quickstart Studio (`app.js`)**:
   - Wizard completion screen now clearly displays the active bridge generated, its icon, and the matching IDE.
+- **Real-Time Automatic GitHub Release Update Check (`server.js` and `app.js`)**:
+  - Added smart update detection via GitHub's official releases API (`/releases/latest`), featuring a 1-hour cache for zero latency and silent fallback for offline environments.
+  - Cockpit now proactively notifies developers via toast and highlights the sidebar badge (`Update ⚡`) whenever a new release is published, showing release notes and update instructions (`git pull origin main`).
 
 ## [1.5.3] — 2026-11-17
 
