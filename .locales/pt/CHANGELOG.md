@@ -18,12 +18,10 @@ e este projeto adere ao [Versionamento Semântico (SemVer)](https://semver.org/l
   - Campo configurável de **Prefixo dos caminhos nas pontes** (`📁 Prefixo dos caminhos nas pontes`) para adequação imediata a repositórios satélites (ex.: `docs/second-brain/` ou `./`).
   - Indexação automática de dotfiles de ponte (`.cursorrules`, `.windsurfrules`, `.clinerules`) e `.github/copilot-instructions.md` no `scan-vault.js`, remoção do botão duplicado no cabeçalho e inclusão de `LESSONS_LEARNED.md` em `KNOWN_CONTRACTS`.
 
-### 🛠️ Correções no Editor Integrado & Guia Oficial de Treinamento
+### 🛠️ Correções no Editor Integrado
 - **Rolagem e Zoom no Editor Integrado (`style.css` e `app.js`)**:
   - Corrigido o cálculo de altura (`height: 100%` com `min-height: 0` no `.editor-body` e ajuste de zoom via `font-size` no modo Escrever), eliminando o corte das linhas iniciais no topo e restaurando a rolagem natural com a roda do mouse.
   - Abertura do modo de edição posicionada sempre no início do documento (linha 1).
-- **Guia de Apresentação, Treinamento e Caso de Teste (`docs/treinamento/TREINAMENTO_AI_SECOND_BRAIN.md`)**:
-  - Adicionado manual completo de apresentação executiva, guia de operação diária com GitHub Copilot e roteiro prático de laboratório (*hands-on*).
 
 ## [1.5.1] — 2026-11-14
 

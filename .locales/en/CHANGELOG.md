@@ -18,12 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   - Configurable **Path prefix in bridges** (`📁 Path prefix in bridges`) for standalone satellite repositories (e.g. `docs/second-brain/` or `./`).
   - Automatic indexing of bridge dotfiles (`.cursorrules`, `.windsurfrules`, `.clinerules`) and `.github/copilot-instructions.md` in `scan-vault.js`, removal of duplicate header button, and addition of `LESSONS_LEARNED.md` to `KNOWN_CONTRACTS`.
 
-### 🛠️ Integrated Editor Fixes & Official Training Guide
+### 🛠️ Integrated Editor Fixes
 - **Integrated Editor Scroll & Zoom (`style.css` and `app.js`)**:
   - Fixed height calculation (`height: 100%` with `min-height: 0` on `.editor-body` and `font-size` zoom scaling in Write mode), eliminating top-line clipping and restoring natural mouse wheel scrolling.
   - Editor Write mode now always opens at line 1 (top of file).
-- **Presentation, Training & Lab Guide (`docs/treinamento/TREINAMENTO_AI_SECOND_BRAIN.md`)**:
-  - Added full training presentation guide, daily GitHub Copilot workflow reference, and hands-on lab test case.
 
 ## [1.5.1] — 2026-11-14
 
