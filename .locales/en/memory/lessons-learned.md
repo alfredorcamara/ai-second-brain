@@ -32,6 +32,10 @@
 - **Context**: Modals hosting forms and editors (Quickstart, expanded project description, AI settings) closed unintentionally due to accidental backdrop clicks (e.g. wrist touching trackpad while typing), automatic form submission upon pressing `Enter`, or accidental `ESC` key hits.
 - **Validated Pattern**: Modals collecting user data MUST adopt Universal Static Backdrops (with subtle pulse/shake visual feedback on backdrop clicks) and never close without explicit user intent. The `ESC` key must verify active progress or dirty state and require confirmation prior to discarding any input. Form single-line inputs must prevent premature form submission on `Enter`.
 
+### Lesson: AI Bridges as Static Routers (SSOT) vs. State Duplication
+- **Context**: Embedding project summaries (stack, status, and next-step snapshots) inside bridge files (`.cursorrules`, `copilot-instructions.md`, `CLAUDE.md`, etc.) causes silent drift when contracts are edited in the IDE and induces the "lazy LLM shortcut" (skipping reading `PROJECT.md` and `CURRENT_STATE.md`).
+- **Validated Pattern**: All 7 bridges must be generated from a single source (`scripts/bridge-templates.js`) with an identical governance body, acting strictly as **static routers and rule constitutions** (with a mandatory read gate pointing to the real contracts) without duplicating dynamic project state.
+
 ---
 
 ## 🗄️ Specific Lessons Archive

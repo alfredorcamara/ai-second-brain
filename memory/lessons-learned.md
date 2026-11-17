@@ -32,6 +32,10 @@
 - **Contexto**: Modais com formulários e editores (Quickstart, descrição expandida, configurações de IA) fechavam involuntariamente por cliques acidentais no backdrop (ex: encostar no touchpad ao digitar), submissão automática por tecla `Enter` em inputs ou tecla `ESC`.
 - **Padrão Correto**: Modais com entrada de dados DEVEM adotar Backdrop Estático (com feedback visual sutil de pulso/shake ao clicar fora) e nunca fechar sem ação explícita do usuário. A tecla `ESC` deve checar por progresso ou modificações ativas e exigir confirmação prévia antes de qualquer descarte. Formulários devem prevenir submissão por `Enter` acidental em campos de texto.
 
+### Lição: Pontes de IA como Roteadores Estáticos (SSOT) vs. Duplicação de Estado
+- **Contexto**: Embutir resumos (snapshots de stack, status e próximos passos) dentro dos arquivos de ponte (`.cursorrules`, `copilot-instructions.md`, `CLAUDE.md`, etc.) gera desatualização silenciosa (*drift*) quando os contratos são editados via IDE e induz o LLM ao "atalho preguiçoso" (deixar de abrir `PROJECT.md` e `CURRENT_STATE.md`).
+- **Padrão Correto**: Todas as 7 pontes devem ser geradas por uma fonte única (`scripts/bridge-templates.js`) com exatamente o mesmo corpo de regras, atuando exclusivamente como **roteadores e constituição estática** (bloqueio de leitura obrigatória dos contratos reais), sem duplicar dados dinâmicos do projeto.
+
 ---
 
 ## 🗄️ Arquivo de Lições Específicas

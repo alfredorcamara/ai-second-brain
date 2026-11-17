@@ -211,43 +211,8 @@ fs.writeFileSync(path.join(projectFolder, 'CURRENT_STATE.md'), currentStateMdCon
 fs.writeFileSync(path.join(projectFolder, 'ARCHITECTURE.md'), archMdContent, 'utf-8');
 fs.writeFileSync(path.join(projectFolder, 'LESSONS_LEARNED.md'), lessonsLearnedMdContent, 'utf-8');
 
-const bridgeContent = tr(`# Governança de IA — ${safeName}
-
-> Este projeto é governado pelo AI Second Brain.
-> Cérebro Central: \`${ROOT_DIR}\`
-
-## ANTES DE EXECUTAR QUALQUER TAREFA
-1. Consulte o estado atual em: [CURRENT_STATE.md](CURRENT_STATE.md)
-2. Consulte os requisitos e visão geral em: [PROJECT.md](PROJECT.md)
-3. Consulte as decisões arquiteturais em: DECISIONS/
-4. Consulte as lições aprendidas deste projeto em: [LESSONS_LEARNED.md](LESSONS_LEARNED.md)
-5. Consulte as lições aprendidas globais em: \`${path.join(ROOT_DIR, 'memory', 'lessons-learned.md')}\`
-6. REGRAS ABSOLUTAS:
-   - NUNCA crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API em tempo real.
-   - Sempre utilize código determinístico antes de recorrer a LLMs.
-   - NUNCA invente contexto ou regras especulativas sem solicitação expressa do desenvolvedor.
-`, `# AI Governance — ${safeName}
-
-> This project is governed by AI Second Brain.
-> Central Brain: \`${ROOT_DIR}\`
-
-## BEFORE EXECUTING ANY TASK
-1. Check current state in: [CURRENT_STATE.md](CURRENT_STATE.md)
-2. Check requirements and overview in: [PROJECT.md](PROJECT.md)
-3. Check architectural decisions in: DECISIONS/
-4. Check project-specific lessons learned in: [LESSONS_LEARNED.md](LESSONS_LEARNED.md)
-5. Check global lessons learned in: \`${path.join(ROOT_DIR, 'memory', 'lessons-learned.md')}\`
-6. ABSOLUTE RULES:
-   - NEVER hardcode AI model catalogs or static lists in code or HTML. Model catalogs must be 100% dynamic via real-time API.
-   - Always use deterministic code before calling LLMs.
-   - NEVER fabricate context or speculative rules without explicit developer instruction.
-`);
-
-// Injetar pontes agnósticas no projeto (para modo Cockpit ou Standalone)
-fs.writeFileSync(path.join(projectFolder, 'AGENTS.md'), bridgeContent, 'utf-8');
-fs.writeFileSync(path.join(projectFolder, 'GEMINI.md'), bridgeContent, 'utf-8');
-fs.writeFileSync(path.join(projectFolder, '.cursorrules'), bridgeContent, 'utf-8');
-fs.writeFileSync(path.join(projectFolder, 'CLAUDE.md'), bridgeContent, 'utf-8');
+const { writeBridges } = require('./bridge-templates');
+writeBridges({ projectDir: projectFolder, projectName: safeName, rootDir: ROOT_DIR });
 
 // Atualização automática do Snapshot do Dashboard
 try {

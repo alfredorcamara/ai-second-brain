@@ -330,22 +330,7 @@ ${description}
 `;
 
             // 5. Pontes Multi-IA (para modo Cockpit ou Standalone)
-            const bridgeContent = `# Governança de IA — ${safeName}
-
-> Este projeto é governado pelo AI Second Brain.
-> Cérebro Central: \`${ROOT_DIR}\`
-
-## ANTES DE EXECUTAR QUALQUER TAREFA
-1. Consulte o estado atual em: [CURRENT_STATE.md](CURRENT_STATE.md)
-2. Consulte os requisitos e visão geral em: [PROJECT.md](PROJECT.md)
-3. Consulte as decisões arquiteturais em: DECISIONS/
-4. Consulte as lições aprendidas deste projeto em: [LESSONS_LEARNED.md](LESSONS_LEARNED.md)
-5. Consulte as lições aprendidas globais em: \`${path.join(ROOT_DIR, 'memory', 'lessons-learned.md')}\`
-6. REGRAS ABSOLUTAS:
-   - NUNCA crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API em tempo real.
-   - Sempre utilize código determinístico antes de recorrer a LLMs.
-   - NUNCA invente contexto ou regras especulativas sem solicitação expressa do desenvolvedor.
-`;
+            const { writeBridges: writeProjectBridges } = require('./scripts/bridge-templates');
 
             // 6. .gitignore padrão do projeto
             const gitignoreContent = `# Dependências & Build
@@ -373,10 +358,7 @@ Thumbs.db
             fs.writeFileSync(path.join(targetFolder, 'CURRENT_STATE.md'), currentStateMd, 'utf-8');
             fs.writeFileSync(path.join(targetFolder, 'ARCHITECTURE.md'), archMd, 'utf-8');
             fs.writeFileSync(path.join(targetFolder, 'LESSONS_LEARNED.md'), lessonsLearnedMd, 'utf-8');
-            fs.writeFileSync(path.join(targetFolder, 'AGENTS.md'), bridgeContent, 'utf-8');
-            fs.writeFileSync(path.join(targetFolder, 'GEMINI.md'), bridgeContent, 'utf-8');
-            fs.writeFileSync(path.join(targetFolder, '.cursorrules'), bridgeContent, 'utf-8');
-            fs.writeFileSync(path.join(targetFolder, 'CLAUDE.md'), bridgeContent, 'utf-8');
+            writeProjectBridges({ projectDir: targetFolder, projectName: safeName, rootDir: ROOT_DIR });
             fs.writeFileSync(path.join(targetFolder, '.gitignore'), gitignoreContent, 'utf-8');
 
             // 7. git init opcional (se solicitado pelo usuário)
@@ -716,7 +698,8 @@ External repository linked to AI Second Brain.
             const KNOWN_CONTRACTS = {
                 'PROJECT.md': { title: 'Visão Geral & Requisitos', icon: '📄' },
                 'CURRENT_STATE.md': { title: 'Estado Atual & Roadmap', icon: '💾' },
-                'ARCHITECTURE.md': { title: 'Padrões & Design', icon: '🏗️' }
+                'ARCHITECTURE.md': { title: 'Padrões & Design', icon: '🏗️' },
+                'LESSONS_LEARNED.md': { title: 'Lições Aprendidas & Imunidade', icon: '🛡️' }
             };
 
             const governanceFiles = [];
@@ -742,28 +725,64 @@ External repository linked to AI Second Brain.
                 }
             }
 
-            // 2. Lê qualquer outro arquivo Markdown no diretório raiz do projeto
+            // 2. Lê qualquer outro arquivo Markdown no diretório raiz do projeto (exceto pontes)
+            const MD_BRIDGES = {
+                'CLAUDE.md': { key: 'claude', title: 'Ponte Claude Code', icon: '🤖' },
+                'GEMINI.md': { key: 'antigravity', title: 'Ponte Google Antigravity', icon: '🪐' },
+                'AGENTS.md': { key: 'agents', title: 'Ponte Universal (AGENTS.md)', icon: '🌐' }
+            };
             try {
                 const rootEntries = fs.readdirSync(projectDir);
                 for (const entry of rootEntries) {
                     if (entry.endsWith('.md') && !KNOWN_CONTRACTS[entry]) {
                         const fullP = path.join(projectDir, entry);
+                        const bridgeMeta = MD_BRIDGES[entry];
                         try {
                             const stat = fs.statSync(fullP);
                             totalGovBytes += stat.size;
                             governanceFiles.push({
                                 name: entry,
-                                title: entry.replace(/\.md$/i, ''),
-                                icon: '📋',
+                                title: bridgeMeta ? bridgeMeta.title : entry.replace(/\.md$/i, ''),
+                                icon: bridgeMeta ? bridgeMeta.icon : '📋',
                                 sizeKb: (stat.size / 1024).toFixed(1),
                                 mtime: stat.mtime,
                                 path: `projects/${projectName}/${entry}`,
-                                exists: true
+                                exists: true,
+                                isBridge: Boolean(bridgeMeta),
+                                bridgeKey: bridgeMeta ? bridgeMeta.key : null
                             });
                         } catch (e) { }
                     }
                 }
             } catch (e) { }
+
+            // 2b. Pontes de IA que não terminam em .md (dotfiles) ou ficam em subpasta (.github)
+            const BRIDGE_FILES = [
+                { key: 'cursor', rel: '.cursorrules', title: 'Ponte Cursor', icon: '⚡' },
+                { key: 'windsurf', rel: '.windsurfrules', title: 'Ponte Windsurf', icon: '🏄' },
+                { key: 'cline', rel: '.clinerules', title: 'Ponte Cline / Roo Code', icon: '🦾' },
+                { key: 'copilot', rel: '.github/copilot-instructions.md', title: 'Ponte GitHub Copilot', icon: '🐙' }
+            ];
+            for (const b of BRIDGE_FILES) {
+                const fullP = path.join(projectDir, b.rel);
+                if (fs.existsSync(fullP)) {
+                    try {
+                        const stat = fs.statSync(fullP);
+                        totalGovBytes += stat.size;
+                        governanceFiles.push({
+                            name: b.rel,
+                            title: b.title,
+                            icon: b.icon,
+                            sizeKb: (stat.size / 1024).toFixed(1),
+                            mtime: stat.mtime,
+                            path: `projects/${projectName}/${b.rel}`,
+                            exists: true,
+                            isBridge: true,
+                            bridgeKey: b.key
+                        });
+                    } catch (e) { }
+                }
+            }
 
             // 3. Identifica contratos recomendados que AINDA NÃO EXISTEM
             const missingContracts = [];
@@ -1207,6 +1226,55 @@ External repository linked to AI Second Brain.
     }
 
     // API: Salvar conteúdo de arquivo Markdown diretamente no disco
+    // API: Gerar ou remover pontes de IA padronizadas (mesmo corpo para todas as ferramentas)
+    const bridgesMatch = pathname.match(/^\/api\/projects\/([^/]+)\/bridges$/);
+    if (bridgesMatch && (req.method === 'POST' || req.method === 'DELETE')) {
+        try {
+            const projectName = decodeURIComponent(bridgesMatch[1]);
+            if (!/^[a-zA-Z0-9_\-]+$/.test(projectName)) {
+                res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: 'Nome de projeto inválido.' }));
+                return;
+            }
+            const projectDir = path.join(ROOT_DIR, 'projects', projectName);
+            if (!fs.existsSync(projectDir)) {
+                res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: 'Projeto não encontrado.' }));
+                return;
+            }
+            const body = await readJsonBody(req);
+            const bt = require('./scripts/bridge-templates');
+            const engine = (body.engine || 'universal').toString();
+            const tools = engine === 'universal' ? bt.ALL_KEYS : [engine];
+            if (!tools.every(k => bt.BRIDGES[k])) {
+                res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
+                res.end(JSON.stringify({ error: 'Ferramenta de IA desconhecida.' }));
+                return;
+            }
+            const isDelete = req.method === 'DELETE' || body.action === 'delete';
+            const result = isDelete
+                ? bt.deleteBridges({ projectDir, tools })
+                : bt.writeBridges({
+                    projectDir,
+                    projectName,
+                    rootDir: ROOT_DIR,
+                    tools,
+                    pathPrefix: body.pathPrefix,
+                    overwrite: body.overwrite !== false
+                });
+            delete require.cache[require.resolve('./scripts/scan-vault')];
+            const { scanVault } = require('./scripts/scan-vault');
+            updateSnapshotIfConfigured(scanVault(ROOT_DIR));
+            broadcastEvent('vault-updated', { project: projectName, type: isDelete ? 'bridges-deleted' : 'bridges-generated', time: Date.now() });
+            res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ success: true, ...result }));
+        } catch (err) {
+            res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+            res.end(JSON.stringify({ error: err.message }));
+        }
+        return;
+    }
+
     if ((pathname === '/api/file' || pathname === '/api/file/save') && req.method === 'POST') {
         try {
             const body = await readJsonBody(req);

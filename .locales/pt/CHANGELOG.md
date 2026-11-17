@@ -7,6 +7,24 @@ e este projeto adere ao [Versionamento Semântico (SemVer)](https://semver.org/l
 
 ---
 
+## [1.5.2] — 2026-11-17
+
+### 🔌 Padronização Universal de Pontes de IA (SSOT) & Gestão Completa no Cockpit
+- **Motor Único de Pontes (`scripts/bridge-templates.js`)**:
+  - Unificação integral da geração das 7 pontes de IA (`.github/copilot-instructions.md`, `.cursorrules`, `CLAUDE.md`, `GEMINI.md`, `.windsurfrules`, `.clinerules` e `AGENTS.md`) em todos os fluxos (`project:new`, `project:link`, Quickstart Grill e Cockpit Web).
+  - **Fonte Única de Verdade (SSOT)**: As pontes atuam estritamente como roteadores e constituição estática de regras (ordem obrigatória de leitura dos 5 contratos, bloqueio de leitura, zero fabricação, proteção de stack/arquitetura, ciclo de atualização da memória e cláusula de verificação de aderência), sem duplicar stack ou estado dinâmico para evitar *drift*.
+- **Gestão de Pontes no Cockpit Web (`/api/projects/:name/bridges`)**:
+  - Criação individual (`+`) e exclusão segura individual (`×` no chip ou `🗑️ Excluir` na lista de contratos) e em lote (`🌐 Todas as IDEs` e `🗑️ Limpar Todas`), preservando os contratos principais protegidos contra remoção acidental.
+  - Campo configurável de **Prefixo dos caminhos nas pontes** (`📁 Prefixo dos caminhos nas pontes`) para adequação imediata a repositórios satélites (ex.: `docs/second-brain/` ou `./`).
+  - Indexação automática de dotfiles de ponte (`.cursorrules`, `.windsurfrules`, `.clinerules`) e `.github/copilot-instructions.md` no `scan-vault.js`, remoção do botão duplicado no cabeçalho e inclusão de `LESSONS_LEARNED.md` em `KNOWN_CONTRACTS`.
+
+### 🛠️ Correções no Editor Integrado & Guia Oficial de Treinamento
+- **Rolagem e Zoom no Editor Integrado (`style.css` e `app.js`)**:
+  - Corrigido o cálculo de altura (`height: 100%` com `min-height: 0` no `.editor-body` e ajuste de zoom via `font-size` no modo Escrever), eliminando o corte das linhas iniciais no topo e restaurando a rolagem natural com a roda do mouse.
+  - Abertura do modo de edição posicionada sempre no início do documento (linha 1).
+- **Guia de Apresentação, Treinamento e Caso de Teste (`docs/treinamento/TREINAMENTO_AI_SECOND_BRAIN.md`)**:
+  - Adicionado manual completo de apresentação executiva, guia de operação diária com GitHub Copilot e roteiro prático de laboratório (*hands-on*).
+
 ## [1.5.1] — 2026-11-14
 
 ### 🛡️ Blindagem & Estabilidade de Modais Interativos (Zero Descarte Acidental)

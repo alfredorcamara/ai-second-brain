@@ -250,25 +250,33 @@ Se você fechar o AI Second Brain e abrir **apenas a pasta física original do s
   | **GitHub Copilot** | `.github/copilot-instructions.md` | Lidas pelo Copilot Chat no VS Code |
   | **Cline / Roo Code** | `.clinerules` | Injetado nas sessões do Cline |
 
-  **Exemplo de Conteúdo da Ponte (`AGENTS.md` / `GEMINI.md` / `CLAUDE.md` / `.cursorrules`):**
+  **Padrão SSOT das Pontes (`scripts/bridge-templates.js`):**
+  Todas as 7 pontes são geradas a partir de uma fonte única e compartilham **exatamente o mesmo corpo de regras**, mudando apenas o título da ferramenta. Por design (**Fonte Única de Verdade — SSOT**), a ponte atua exclusivamente como **roteador e constituição de regras (estática)**: ela **não** armazena cópia da stack nem do estado do projeto, evitando desatualização (*drift*) e obrigando a IA a ler os contratos reais:
   ```markdown
-  # Governança de IA — Projeto Conectado ao AI Second Brain
+  # Instruções para GitHub Copilot — MeuProjeto
   
-  > Este projeto é governado pelas regras e decisões do AI Second Brain.
-  > Cérebro Central: <caminho_absoluto_da_pasta_AI_SECOND_BRAIN>
+  > Projeto governado pelo **AI Second Brain**. Estas regras valem para TODA resposta e TODA alteração de código neste repositório.
+  > **Fonte Única de Verdade (SSOT):** Esta ponte define apenas o roteamento e as regras inegociáveis. Ela **não** armazena estado nem stack para evitar desatualização. É obrigatório ler os contratos abaixo antes de agir.
   
-  ## ANTES DE EXECUTAR QUALQUER TAREFA
-  1. Consulte o estado atual em: CURRENT_STATE.md
-  2. Consulte a visão geral e arquitetura em: PROJECT.md
-  3. Consulte as decisões arquiteturais em: DECISIONS/
-  4. Consulte as lições aprendidas em: <caminho_absoluto>/memory/lessons-learned.md
-  5. REGRAS ABSOLUTAS:
-     - NUNCA crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML.
-     - Sempre utilize código determinístico antes de recorrer a LLMs.
-     - NUNCA invente contexto ou regras especulativas sem solicitação expressa do desenvolvedor.
+  ## 1. Contratos de Leitura Obrigatória (nesta ordem)
+  1. `projects/MeuProjeto/PROJECT.md` — visão do produto, stack oficial e regras de negócio
+  2. `projects/MeuProjeto/ARCHITECTURE.md` — desenho de componentes, fluxos de dados e padrões
+  3. `projects/MeuProjeto/CURRENT_STATE.md` — estado atual, o que está pronto, em andamento e bloqueado
+  4. `projects/MeuProjeto/DECISIONS/` — decisões arquiteturais imutáveis (ADRs) vigentes
+  5. `projects/MeuProjeto/LESSONS_LEARNED.md` — erros e incidentes que não podem ser repetidos
+  6. Lições globais do framework: `memory/lessons-learned.md`
+  
+  ## 2. Regras Absolutas de Governança
+  - **Bloqueio de leitura:** NUNCA assuma a stack, proponha código ou altere a arquitetura sem antes ler `PROJECT.md`, `ARCHITECTURE.md` e `CURRENT_STATE.md`.
+  - **Zero fabricação:** NUNCA invente bibliotecas, telas, endpoints, tabelas ou regras de negócio que não estejam nos contratos ou no pedido explícito do desenvolvedor.
+  - **Transparência sobre lacunas:** Se uma informação não estiver documentada nos contratos, diga explicitamente: *"não consta nos contratos"* e pergunte antes de assumir.
+  - **Proteção de stack e arquitetura:** NUNCA proponha tecnologia fora da stack oficial nem altere a arquitetura sem antes sugerir o registro de um novo ADR em `DECISIONS/`.
+  - **Código determinístico primeiro (AI Decision Gate):** Prefira regras e código determinístico a chamadas de IA/LLM quando uma solução direta resolver.
+  - **Segurança:** NUNCA grave segredos, chaves de API, tokens ou senhas em código, logs ou documentação.
+  - **Catálogos dinâmicos:** NUNCA crie listas fixas (hardcoded) de modelos de IA; catálogos de modelos devem ser obtidos dinamicamente via API.
   ```
 
-> 💡 **Automação Nativa Total**: Ao executar `npm run project:link <nome> <caminho>`, o AI Second Brain cria a junção NTFS e **já gera automaticamente** as pontes contratuais (`AGENTS.md`, `GEMINI.md`, `.cursorrules`, `CLAUDE.md`) na raiz do seu repositório, garantindo conformidade imediata qualquer que seja a sua ferramenta de IA.
+> 💡 **Automação Nativa & Gestão pelo Cockpit**: Ao executar `npm run project:new <nome>` ou `npm run project:link <nome> <caminho>`, o AI Second Brain **já gera automaticamente todas as 7 pontes padronizadas** (`.github/copilot-instructions.md`, `.cursorrules`, `CLAUDE.md`, `GEMINI.md`, `.windsurfrules`, `.clinerules` e `AGENTS.md`). Pelo **Cockpit Web**, você pode criar (`+`) ou excluir (`×` / `🗑️ Excluir`) qualquer ponte individualmente, usar **`🌐 Todas as IDEs`** / **`🗑️ Limpar Todas`** em 1 clique e configurar o **`📁 Prefixo dos caminhos nas pontes`** (ex.: `docs/second-brain/` ou `./`).
 
 ---
 

@@ -192,77 +192,9 @@ External repository linked to AI Second Brain.
     }
 
     // Pontes de Governança Agnóstica (para desenvolvedores que abrirem a pasta em qualquer IDE/IA)
-    const bridgeContent = tr(`# Governança de IA — ${safeName}
-
-> Este repositório está vinculado ao AI Second Brain.
-> Cérebro Central: \`${ROOT_DIR}\`
-
-## ANTES DE EXECUTAR QUALQUER TAREFA
-1. Consulte o estado atual em: [CURRENT_STATE.md](CURRENT_STATE.md)
-2. Consulte os requisitos e visão geral em: [PROJECT.md](PROJECT.md)
-3. Consulte as decisões arquiteturais em: DECISIONS/ (se existente)
-4. Consulte as lições aprendidas deste projeto em: [LESSONS_LEARNED.md](LESSONS_LEARNED.md)
-5. Consulte as lições aprendidas globais em: \`${path.join(ROOT_DIR, 'memory', 'lessons-learned.md')}\`
-6. REGRAS ABSOLUTAS:
-   - NUNCA crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API em tempo real.
-   - Sempre utilize código determinístico antes de recorrer a LLMs.
-   - NUNCA invente contexto ou regras especulativas sem solicitação expressa do desenvolvedor.
-`, `# AI Governance — ${safeName}
-
-> This repository is linked to AI Second Brain.
-> Central Brain: \`${ROOT_DIR}\`
-
-## BEFORE EXECUTING ANY TASK
-1. Check current state in: [CURRENT_STATE.md](CURRENT_STATE.md)
-2. Check requirements and overview in: [PROJECT.md](PROJECT.md)
-3. Check architectural decisions in: DECISIONS/ (if any)
-4. Check project-specific lessons learned in: [LESSONS_LEARNED.md](LESSONS_LEARNED.md)
-5. Check global lessons learned in: \`${path.join(ROOT_DIR, 'memory', 'lessons-learned.md')}\`
-6. ABSOLUTE RULES:
-   - NEVER hardcode AI model catalogs or static lists in code or HTML. The model catalog must be 100% dynamic via real-time API.
-   - Always use deterministic code before calling LLMs.
-   - NEVER fabricate context or speculative rules without explicit developer instruction.
-`);
-
-    // 1. Padrão Aberto Universal (AGENTS.md)
-    const agentsMdPath = path.join(destLinkPath, 'AGENTS.md');
-    if (!fs.existsSync(agentsMdPath)) {
-        fs.writeFileSync(agentsMdPath, bridgeContent, 'utf-8');
-        console.log(tr(
-            `   + Criado: AGENTS.md (Ponte universal para qualquer agente de IA)`,
-            `   + Created: AGENTS.md (Universal bridge for any AI agent)`
-        ));
-    }
-
-    // 2. Google Antigravity (GEMINI.md)
-    const geminiMdPath = path.join(destLinkPath, 'GEMINI.md');
-    if (!fs.existsSync(geminiMdPath)) {
-        fs.writeFileSync(geminiMdPath, bridgeContent, 'utf-8');
-        console.log(tr(
-            `   + Criado: GEMINI.md (Ponte para Google Antigravity)`,
-            `   + Created: GEMINI.md (Bridge for Google Antigravity)`
-        ));
-    }
-
-    // 3. Cursor AI (.cursorrules)
-    const cursorRulesPath = path.join(destLinkPath, '.cursorrules');
-    if (!fs.existsSync(cursorRulesPath)) {
-        fs.writeFileSync(cursorRulesPath, bridgeContent, 'utf-8');
-        console.log(tr(
-            `   + Criado: .cursorrules (Ponte para Cursor AI)`,
-            `   + Created: .cursorrules (Bridge for Cursor AI)`
-        ));
-    }
-
-    // 4. Claude Code (CLAUDE.md)
-    const claudeMdPath = path.join(destLinkPath, 'CLAUDE.md');
-    if (!fs.existsSync(claudeMdPath)) {
-        fs.writeFileSync(claudeMdPath, bridgeContent, 'utf-8');
-        console.log(tr(
-            `   + Criado: CLAUDE.md (Ponte para Claude Code)`,
-            `   + Created: CLAUDE.md (Bridge for Claude Code)`
-        ));
-    }
+    const { writeBridges } = require('./bridge-templates');
+    const bridgeResult = writeBridges({ projectDir: destLinkPath, projectName: safeName, rootDir: ROOT_DIR });
+    bridgeResult.created.forEach(f => console.log(tr(`   + Criado: ${f} (Ponte de IA)`, `   + Created: ${f} (AI bridge)`)));
 }
 
 // 6. Atualização automática do Snapshot do Dashboard

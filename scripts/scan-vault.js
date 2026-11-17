@@ -122,7 +122,13 @@ function scanVault(rootDir = ROOT_DIR, options = {}) {
 
         for (const entry of entries) {
             const name = entry.name;
-            if (name.startsWith('.') && name !== '.agents') continue;
+            const relPathEarly = normalizePath(path.relative(rootDir, path.join(currentDir, name)));
+            const inProject = relPathEarly.startsWith('projects/');
+            // Pontes de IA (dotfiles) dentro de projects/<nome>/ precisam ser indexadas
+            const BRIDGE_DOTFILES = new Set(['.cursorrules', '.windsurfrules', '.clinerules']);
+            const isBridgeDotfile = inProject && BRIDGE_DOTFILES.has(name.toLowerCase());
+            const isGithubDir = inProject && entry.isDirectory() && name.toLowerCase() === '.github';
+            if (name.startsWith('.') && name !== '.agents' && !isBridgeDotfile && !isGithubDir) continue;
             if (ignoredFolders.has(name.toLowerCase())) continue;
 
             const fullPath = path.join(currentDir, name);
@@ -149,7 +155,7 @@ function scanVault(rootDir = ROOT_DIR, options = {}) {
 
             if (isDirectory) {
                 walk(fullPath);
-            } else if (name.toLowerCase().endsWith('.md')) {
+            } else if (name.toLowerCase().endsWith('.md') || isBridgeDotfile) {
                 try {
                     const relPath = normalizePath(path.relative(rootDir, fullPath));
                     const content = fs.readFileSync(fullPath, 'utf-8');

@@ -1221,37 +1221,7 @@ Strotegias alternativas avaliadas durante o onboarding.
 `;
 
     // 6. Pontes Multi-IA
-    const bridgeContent = tr(`# Governança de IA — ${safeName}
-
-> Este projeto é governado pelo AI Second Brain.
-> Cérebro Central: \`${rootDir}\`
-
-## ANTES DE EXECUTAR QUALQUER TAREFA
-1. Consulte o estado atual em: [CURRENT_STATE.md](CURRENT_STATE.md)
-2. Consulte os requisitos e visão geral em: [PROJECT.md](PROJECT.md)
-3. Consulte as decisões arquiteturais em: DECISIONS/
-4. Consulte as lições aprendidas deste projeto em: [LESSONS_LEARNED.md](LESSONS_LEARNED.md)
-5. Consulte as lições aprendidas globais em: \`${path.join(rootDir, 'memory', 'lessons-learned.md')}\`
-6. REGRAS ABSOLUTAS:
-   - NUNCA crie catálogos ou listas fixas/hardcoded de modelos de IA no código ou HTML. O catálogo deve ser 100% dinâmico via API em tempo real.
-   - Sempre utilize código determinístico antes de recorrer a LLMs.
-   - NUNCA invente contexto ou regras especulativas sem solicitação expressa do desenvolvedor.
-`, `# AI Governance — ${safeName}
-
-> This project is governed by AI Second Brain.
-> Central Brain: \`${rootDir}\`
-
-## BEFORE EXECUTING ANY TASK
-1. Check current state in: [CURRENT_STATE.md](CURRENT_STATE.md)
-2. Check requirements and overview in: [PROJECT.md](PROJECT.md)
-3. Check architectural decisions in: DECISIONS/
-4. Check project-specific lessons learned in: [LESSONS_LEARNED.md](LESSONS_LEARNED.md)
-5. Check global lessons learned in: \`${path.join(rootDir, 'memory', 'lessons-learned.md')}\`
-6. ABSOLUTE RULES:
-   - NEVER hardcode AI model catalogs or static lists in code or HTML. The model catalog must be 100% dynamic via real-time API.
-   - Always use deterministic code before calling LLMs.
-   - NEVER fabricate context or speculative rules without explicit developer instruction.
-`);
+    const { writeBridges } = require('./bridge-templates');
 
     // 7. .gitignore
     const gitignoreContent = `# Dependências & Build
@@ -1280,10 +1250,7 @@ Thumbs.db
     fs.writeFileSync(path.join(targetFolder, 'ARCHITECTURE.md'), archContent, 'utf-8');
     fs.writeFileSync(path.join(targetFolder, 'DECISIONS', 'ADR-0001-stack-inicial.md'), adrContent, 'utf-8');
     fs.writeFileSync(path.join(targetFolder, 'LESSONS_LEARNED.md'), lessonsContent, 'utf-8');
-    fs.writeFileSync(path.join(targetFolder, 'AGENTS.md'), bridgeContent, 'utf-8');
-    fs.writeFileSync(path.join(targetFolder, 'GEMINI.md'), bridgeContent, 'utf-8');
-    fs.writeFileSync(path.join(targetFolder, '.cursorrules'), bridgeContent, 'utf-8');
-    fs.writeFileSync(path.join(targetFolder, 'CLAUDE.md'), bridgeContent, 'utf-8');
+    writeBridges({ projectDir: targetFolder, projectName: safeName, rootDir: rootDir });
     fs.writeFileSync(path.join(targetFolder, '.gitignore'), gitignoreContent, 'utf-8');
 
     // 8. git init opcional

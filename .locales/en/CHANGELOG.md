@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [1.5.2] — 2026-11-17
+
+### 🔌 Universal AI Bridge Standardization (SSOT) & Full Cockpit Management
+- **Unified Bridge Engine (`scripts/bridge-templates.js`)**:
+  - Consolidated generation of all 7 AI bridges (`.github/copilot-instructions.md`, `.cursorrules`, `CLAUDE.md`, `GEMINI.md`, `.windsurfrules`, `.clinerules`, and `AGENTS.md`) across all workflows (`project:new`, `project:link`, Quickstart Grill, and Web Cockpit).
+  - **Single Source of Truth (SSOT)**: Bridges operate strictly as static routers and rule constitutions (mandatory 5-contract read order, read gate, zero fabrication, stack/architecture protection, memory update cycle, and adherence check), never duplicating dynamic stack or state to prevent drift.
+- **Cockpit Bridge Controls (`/api/projects/:name/bridges`)**:
+  - Individual creation (`+`), safe individual deletion (`×` on chips or `🗑️ Delete` in the contracts list), and batch actions (`🌐 All IDEs` and `🗑️ Clear All`), while keeping core contracts protected against accidental deletion.
+  - Configurable **Path prefix in bridges** (`📁 Path prefix in bridges`) for standalone satellite repositories (e.g. `docs/second-brain/` or `./`).
+  - Automatic indexing of bridge dotfiles (`.cursorrules`, `.windsurfrules`, `.clinerules`) and `.github/copilot-instructions.md` in `scan-vault.js`, removal of duplicate header button, and addition of `LESSONS_LEARNED.md` to `KNOWN_CONTRACTS`.
+
+### 🛠️ Integrated Editor Fixes & Official Training Guide
+- **Integrated Editor Scroll & Zoom (`style.css` and `app.js`)**:
+  - Fixed height calculation (`height: 100%` with `min-height: 0` on `.editor-body` and `font-size` zoom scaling in Write mode), eliminating top-line clipping and restoring natural mouse wheel scrolling.
+  - Editor Write mode now always opens at line 1 (top of file).
+- **Presentation, Training & Lab Guide (`docs/treinamento/TREINAMENTO_AI_SECOND_BRAIN.md`)**:
+  - Added full training presentation guide, daily GitHub Copilot workflow reference, and hands-on lab test case.
+
 ## [1.5.1] — 2026-11-14
 
 ### 🛡️ Interactive Modal Shielding & Stability (Zero Accidental Data Discard)

@@ -8565,6 +8565,7 @@ body {
 /* Body */
 .editor-body {
     flex: 1;
+    min-height: 0;
     position: relative;
     overflow: hidden;
     display: flex;
@@ -8573,20 +8574,19 @@ body {
 }
 
 .editor-textarea {
-    width: calc(100% / var(--editor-zoom, 0.8));
-    height: calc(100% / var(--editor-zoom, 0.8));
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
     background: transparent;
     border: none;
     outline: none;
     color: #e2e8f0;
     font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-    font-size: 13.5px;
+    font-size: calc(14px * var(--editor-zoom, 0.8));
     line-height: 1.6;
     padding: 20px 24px;
     resize: none;
     box-sizing: border-box;
-    zoom: var(--editor-zoom, 0.8);
-    transform-origin: top left;
 }
 
 /* ═══════════════════════════════════════════════════
@@ -8604,14 +8604,13 @@ body {
 }
 
 .editor-preview-pane {
-    width: calc(100% / var(--editor-zoom, 0.8));
-    height: calc(100% / var(--editor-zoom, 0.8));
+    width: 100%;
+    height: 100%;
     overflow-y: auto;
     padding: 36px 44px;
     box-sizing: border-box;
     background: #090a12;
     zoom: var(--editor-zoom, 0.8);
-    transform-origin: top left;
 }
 
 .doc-preview-inner {
@@ -10517,6 +10516,7 @@ body {
 .dec-modal-content::-webkit-scrollbar,
 .editor-modal-card::-webkit-scrollbar,
 .editor-preview-pane::-webkit-scrollbar,
+.editor-textarea::-webkit-scrollbar,
 .pv-timeline::-webkit-scrollbar,
 body::-webkit-scrollbar {
     width: 8px;
@@ -10528,6 +10528,7 @@ body::-webkit-scrollbar {
 .dec-modal-content::-webkit-scrollbar-track,
 .editor-modal-card::-webkit-scrollbar-track,
 .editor-preview-pane::-webkit-scrollbar-track,
+.editor-textarea::-webkit-scrollbar-track,
 .pv-timeline::-webkit-scrollbar-track,
 body::-webkit-scrollbar-track {
     background: rgba(12, 13, 22, 0.95);
@@ -10539,6 +10540,7 @@ body::-webkit-scrollbar-track {
 .dec-modal-content::-webkit-scrollbar-thumb,
 .editor-modal-card::-webkit-scrollbar-thumb,
 .editor-preview-pane::-webkit-scrollbar-thumb,
+.editor-textarea::-webkit-scrollbar-thumb,
 .pv-timeline::-webkit-scrollbar-thumb,
 body::-webkit-scrollbar-thumb {
     background: rgba(99, 102, 241, 0.3);
@@ -10551,6 +10553,7 @@ body::-webkit-scrollbar-thumb {
 .dec-modal-content::-webkit-scrollbar-thumb:hover,
 .editor-modal-card::-webkit-scrollbar-thumb:hover,
 .editor-preview-pane::-webkit-scrollbar-thumb:hover,
+.editor-textarea::-webkit-scrollbar-thumb:hover,
 .pv-timeline::-webkit-scrollbar-thumb:hover,
 body::-webkit-scrollbar-thumb:hover {
     background: rgba(99, 102, 241, 0.55);

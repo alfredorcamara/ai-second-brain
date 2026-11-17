@@ -1,9 +1,9 @@
 # Estado Atual do AI Second Brain
 
-> Última atualização: 2026-11-14
+> Última atualização: 2026-11-17
 
-## Status do Framework: 🟢 Operacional (v1.5.1)
-- **Cockpit Visual**: Dashboard executivo, visualizador Markdown, Grafo Neural 3D (Three.js) e blindagem completa de modais interativos com backdrop estático e proteção anti-descarte via ESC.
+## Status do Framework: 🟢 Operacional (v1.5.2)
+- **Cockpit Visual**: Dashboard executivo, visualizador Markdown, Grafo Neural 3D (Three.js), gestão completa de pontes de IA (criação/exclusão individual e em lote com SSOT) e blindagem de modais interativos com backdrop estático e proteção anti-descarte via ESC.
 - **Motor Multilíngue (Bilingual Engine)**: Alternância dinâmica instantânea entre Português e Inglês com cofre protegido em `.locales/`.
 - **Universal AI Gateway (BYOK)**: Suporte agnóstico a Groq Cloud, OpenAI, Anthropic Claude, OpenRouter e Ollama Local.
 - **Autonomous Research Lab**: Decomposição em 2 camadas (`knowledge/` e `actionable/`) com refinamento contínuo.

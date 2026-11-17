@@ -244,7 +244,7 @@ If you open only `C:\Projects\MyProject` in a separate window:
   | **GitHub Copilot** | `.github/copilot-instructions.md` | Read by Copilot Chat in VS Code |
   | **Cline / Roo Code** | `.clinerules` | Injected into Cline sessions |
 
-> 💡 **Native Automation**: Running `npm run project:link <name> <path>` creates the NTFS junction and **automatically generates** the contractual bridges (`AGENTS.md`, `GEMINI.md`, `.cursorrules`, `CLAUDE.md`) in your repository root.
+> 💡 **Native Automation & Cockpit Control (`scripts/bridge-templates.js`)**: Running `npm run project:new <name>` or `npm run project:link <name> <path>` **automatically generates all 7 standardized bridges** (`.github/copilot-instructions.md`, `.cursorrules`, `CLAUDE.md`, `GEMINI.md`, `.windsurfrules`, `.clinerules`, and `AGENTS.md`) with the exact same SSOT governance body (routing + non-negotiable rules, without duplicating project state). In the **Web Cockpit**, you can generate (`+`) or delete (`×` / `🗑️ Excluir`) individual bridges, run **`🌐 All IDEs`** or **`🗑️ Clear All`**, and configure the **`📁 Path prefix in bridges`** (e.g. `docs/second-brain/` or `./`).
 
 ---
 

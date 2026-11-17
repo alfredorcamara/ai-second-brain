@@ -397,7 +397,8 @@ function renderProjectBridgesChips(projectName) {
         { key: 'windsurf', file: '.windsurfrules', label: '.windsurfrules', icon: '🏄' },
         { key: 'antigravity', file: 'GEMINI.md', label: 'GEMINI.md', icon: '🪐' },
         { key: 'copilot', file: '.github/copilot-instructions.md', label: 'copilot-instructions.md', icon: '🐙' },
-        { key: 'cline', file: '.clinerules', label: '.clinerules', icon: '🦾' }
+        { key: 'cline', file: '.clinerules', label: '.clinerules', icon: '🦾' },
+        { key: 'agents', file: 'AGENTS.md', label: 'AGENTS.md', icon: '🌐' }
     ];
 
     return bridges.map(b => {
@@ -406,8 +407,9 @@ function renderProjectBridgesChips(projectName) {
 
         if (exists) {
             return `
-                <span class="pw-bridge-chip active" onclick="navigateTo('${fullPath}')" title="Ponte ativa! Clique para visualizar ${b.file}">
-                    ✓ ${b.icon} ${b.label}
+                <span class="pw-bridge-chip active" onclick="navigateTo('${fullPath}')" title="Ponte ativa! Clique para visualizar ${b.file}" style="display:inline-flex; align-items:center; gap:6px;">
+                    <span>✓ ${b.icon} ${b.label}</span>
+                    <span onclick="event.stopPropagation(); deleteAiBridge('${projectName}', '${b.key}', '${b.label}')" title="Excluir ponte ${b.file} do disco" style="margin-left:2px; padding:0 5px; border-radius:4px; color:#f87171; font-weight:700; cursor:pointer; background:rgba(248,113,113,0.14); line-height:1.3;">×</span>
                 </span>
             `;
         } else {
@@ -432,62 +434,18 @@ async function generateAiBridge(projectName, engineKey) {
 
     const engine = AI_ENGINES[engineKey] || AI_ENGINES[getSelectedAiEngine()] || AI_ENGINES.cursor;
 
-    const bridgeTemplates = {
-        cursor: {
-            filename: '.cursorrules',
-            content: `# Diretrizes para Cursor AI — ${projName}\n\n> Este projeto é governado pelo **AI Second Brain**.\n> Antes de implementar código ou alterar arquitetura, consulte os contratos oficiais:\n\n## Contratos de Governança Obrigatórios\n- 📄 **Visão & Stack**: \`projects/${projName}/PROJECT.md\`\n- 💾 **Estado Atual & Roadmap**: \`projects/${projName}/CURRENT_STATE.md\`\n- 🏗️ **Padrões de Arquitetura**: \`projects/${projName}/ARCHITECTURE.md\`\n- ⚖️ **Histórico de Decisões (ADRs)**: \`projects/${projName}/DECISIONS/\`\n\n## Regras Mandatórias para o Cursor\n1. Respeite os padrões de código e arquitetura definidos.\n2. NUNCA altere a arquitetura sem registrar um novo ADR em \`projects/${projName}/DECISIONS/\`.\n3. Mantenha \`CURRENT_STATE.md\` sincronizado com as tarefas concluídas.\n4. Se a tarefa envolver IA, avalie regras determinísticas antes de usar LLMs.\n`
-        },
-        claude: {
-            filename: 'CLAUDE.md',
-            content: `# Instruções para Claude Code — ${projName}\n\n> Projeto governado pelo **AI Second Brain**.\n\n## Contratos de Arquitetura & Contexto\n- Leia \`projects/${projName}/PROJECT.md\` para visão do produto e stack.\n- Leia \`projects/${projName}/CURRENT_STATE.md\` para ver o que está pronto e pendente.\n- Leia \`projects/${projName}/ARCHITECTURE.md\` antes de criar componentes.\n- Consulte \`projects/${projName}/DECISIONS/\` para decisões anteriores.\n\n## Diretrizes de Operação\n- Não invente regras que contradigam os contratos de arquitetura.\n- Registre novas decisões em \`projects/${projName}/DECISIONS/\`.\n- Atualize o estado atual ao término de cada sessão.\n`
-        },
-        windsurf: {
-            filename: '.windsurfrules',
-            content: `# Regras para Windsurf (Cascade) — ${projName}\n\n> Projeto governado pelo ecossistema AI Second Brain.\n\n## Referências Obrigatórias\n- \`projects/${projName}/PROJECT.md\`: Visão geral e stack.\n- \`projects/${projName}/CURRENT_STATE.md\`: Estado do ciclo e tarefas ativas.\n- \`projects/${projName}/ARCHITECTURE.md\`: Desenho de componentes e padrões.\n- \`projects/${projName}/DECISIONS/\`: Histórico formal de ADRs.\n`
-        },
-        antigravity: {
-            filename: 'GEMINI.md',
-            content: `# Instruções para Google Antigravity — ${projName}\n\n> Este projeto é governado pelo AI Second Brain.\n\n## Regras Mandatórias\n1. Consulte \`projects/${projName}/PROJECT.md\` e \`ARCHITECTURE.md\` antes de codificar.\n2. Siga as regras globais em \`.agents/rules/\`.\n3. Atualize \`projects/${projName}/CURRENT_STATE.md\` e registre decisões em \`DECISIONS/\`.\n`
-        },
-        copilot: {
-            filename: '.github/copilot-instructions.md',
-            content: `# Diretrizes para GitHub Copilot — ${projName}\n\n> Projeto governado pelo AI Second Brain.\n\n## Contratos de Arquitetura\n- Consulte os contratos \`PROJECT.md\`, \`CURRENT_STATE.md\` e \`ARCHITECTURE.md\` em \`projects/${projName}/\`.\n- Siga os padrões documentados e registre decisões em \`DECISIONS/\`.\n`
-        },
-        cline: {
-            filename: '.clinerules',
-            content: `# Diretrizes para Roo Code / Cline — ${projName}\n\n> Projeto governado pelo AI Second Brain.\n\n## Contratos Obrigatórios\n- Leia \`projects/${projName}/PROJECT.md\` e \`ARCHITECTURE.md\`.\n- Mantenha \`CURRENT_STATE.md\` atualizado.\n- Registre decisões em \`projects/${projName}/DECISIONS/\`.\n`
-        }
-    };
-
     try {
-        if (engineKey === 'universal') {
-            const list = ['cursor', 'claude', 'windsurf', 'antigravity', 'copilot', 'cline'];
-            for (const key of list) {
-                const b = bridgeTemplates[key];
-                await fetch('/api/file/save', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        path: `projects/${projName}/${b.filename}`,
-                        content: b.content
-                    })
-                });
-            }
-            showSecondBrainToast(`🌐 Todas as pontes de IA foram geradas com sucesso para <strong>${projName}</strong>!`);
-        } else {
-            const b = bridgeTemplates[engineKey] || bridgeTemplates.cursor;
-            await fetch('/api/file/save', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    path: `projects/${projName}/${b.filename}`,
-                    content: b.content
-                })
-            });
-            showSecondBrainToast(`✨ Ponte para <strong>${engine.label}</strong> (${b.filename}) gerada em ${projName}!`);
-        }
+        const pathPrefix = (localStorage.getItem('brainBridgePrefix') || '').trim();
+        const resp = await fetch('/api/projects/' + encodeURIComponent(projName) + '/bridges', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ engine: engineKey, pathPrefix, overwrite: true })
+        });
+        const data = await resp.json();
+        if (!resp.ok || data.error) throw new Error(data.error || 'Falha ao gerar ponte.');
+        const label = engineKey === 'universal' ? 'Todas as pontes de IA' : 'Ponte para <strong>' + (engine ? engine.label : engineKey) + '</strong>';
+        showSecondBrainToast('✨ ' + label + ' gerada(s) em <strong>' + projName + '</strong>: ' + data.created.join(', '));
 
-        // Recarrega o vault e o workspace
         if (window.VAULT) await window.VAULT.init();
         if (currentView === 'project-workspace') {
             await openProjectWorkspace(projName, 'overview');
@@ -497,6 +455,48 @@ async function generateAiBridge(projectName, engineKey) {
     }
 }
 window.generateAiBridge = generateAiBridge;
+
+async function deleteAiBridge(projectName, engineKey, displayLabel) {
+    const projName = projectName || (currentProjectData ? currentProjectData.name : currentProject);
+    if (!projName) return;
+
+    if (!isLocalEnvironment()) {
+        showOnlineDemoNotice('excluir arquivos de ponte de IA do disco local');
+        return;
+    }
+
+    const isAll = engineKey === 'universal';
+    const targetText = isAll ? 'todas as pontes de IA' : `a ponte <strong>${displayLabel || engineKey}</strong>`;
+    const confirmed = await showBrainConfirm({
+        title: isAll ? 'Remover Todas as Pontes de IA?' : 'Remover Ponte de IA?',
+        badge: 'HIGIENIZAÇÃO DE PONTES',
+        icon: '🗑️',
+        danger: true,
+        okText: isAll ? '🗑️ Remover Todas' : '🗑️ Excluir Ponte',
+        message: `Deseja remover ${targetText} do projeto <strong>${projName}</strong>?<br><br><span style="font-size:12px; color:#94a3b8;">Os contratos principais (PROJECT.md, ARCHITECTURE.md, CURRENT_STATE.md, DECISIONS) permanecerão intactos e você poderá recriar a ponte a qualquer momento em 1 clique.</span>`
+    });
+    if (!confirmed) return;
+
+    try {
+        const resp = await fetch('/api/projects/' + encodeURIComponent(projName) + '/bridges', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'delete', engine: engineKey })
+        });
+        const data = await resp.json();
+        if (!resp.ok || data.error) throw new Error(data.error || 'Falha ao remover ponte.');
+        const removedList = (data.deleted && data.deleted.length) ? data.deleted.join(', ') : (displayLabel || engineKey);
+        showSecondBrainToast('🗑️ Ponte(s) removida(s) de <strong>' + projName + '</strong>: ' + removedList);
+
+        if (window.VAULT) await window.VAULT.init();
+        if (currentView === 'project-workspace') {
+            await openProjectWorkspace(projName, 'overview');
+        }
+    } catch (err) {
+        alert('Erro ao remover ponte de IA: ' + err.message);
+    }
+}
+window.deleteAiBridge = deleteAiBridge;
 
 // ── Universal Brain Dialog System (Confirmations & Prompts) ────
 let _brainConfirmResolver = null;
@@ -4404,13 +4404,14 @@ function applyEditorZoom(zoomPercent) {
 
     if (previewPane) {
         previewPane.style.zoom = ratio;
-        previewPane.style.width = (100 / ratio) + '%';
-        previewPane.style.height = (100 / ratio) + '%';
+        previewPane.style.width = '100%';
+        previewPane.style.height = '100%';
     }
     if (textarea) {
-        textarea.style.zoom = ratio;
-        textarea.style.width = (100 / ratio) + '%';
-        textarea.style.height = (100 / ratio) + '%';
+        textarea.style.zoom = '';
+        textarea.style.fontSize = (14 * ratio).toFixed(1) + 'px';
+        textarea.style.width = '100%';
+        textarea.style.height = '100%';
     }
 
     try {
@@ -7064,7 +7065,8 @@ function renderProjectOverviewTab() {
                                     </div>
                                     <div class="pw-gov-chip-actions">
                                         <button type="button" class="btn-gov" onclick="navigateTo('${file.path}')">👁️ Ver</button>
-                                        <button type="button" class="btn-gov primary" onclick="openFileEditor('${file.path}', null, () => openProjectWorkspace('${d.name}', 'overview'))">✏️ Editar</button>
+                                        <button type="button" class="btn-gov primary" onclick="openFileEditor('${file.path}', null, () => openProjectWorkspace('${d.name}', 'overview'), 'write')">✏️ Editar</button>
+                                        ${file.isBridge ? `<button type="button" class="btn-gov" onclick="deleteAiBridge('${d.name}', '${file.bridgeKey}', '${file.name}')" title="Excluir arquivo de ponte do disco" style="color:#f87171; border-color:rgba(248,113,113,0.3);">🗑️ Excluir</button>` : ''}
                                     </div>
                                 </div>
                             `).join('')}
@@ -7125,7 +7127,7 @@ function renderProjectOverviewTab() {
                                         </div>
                                         <div class="pw-gov-chip-actions">
                                             <button type="button" class="btn-gov" onclick="navigateTo('projects/${d.name}/DECISIONS/${dec.name}')">👁️ Ver</button>
-                                            <button type="button" class="btn-gov primary" onclick="openFileEditor('projects/${d.name}/DECISIONS/${dec.name}', null, () => openProjectWorkspace('${d.name}', 'overview'))">✏️ Editar</button>
+                                            <button type="button" class="btn-gov primary" onclick="openFileEditor('projects/${d.name}/DECISIONS/${dec.name}', null, () => openProjectWorkspace('${d.name}', 'overview'), 'write')">✏️ Editar</button>
                                         </div>
                                     </div>
                                 `).join('')}
@@ -7147,17 +7149,23 @@ function renderProjectOverviewTab() {
                                     </span>
                                 </div>
                                 <div style="display:flex; gap:6px;">
-                                    <button type="button" class="btn-gov create" id="pwContextualBridgeBtn" onclick="generateAiBridge('${d.name}', getSelectedAiEngine())" style="font-size: 10px; padding: 4px 10px; background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;">
-                                        ⚡ Gerar Ponte (${AI_ENGINES[getSelectedAiEngine()] ? AI_ENGINES[getSelectedAiEngine()].label : 'Ativa'})
-                                    </button>
                                     <button type="button" class="btn-gov" onclick="generateAiBridge('${d.name}', 'universal')" style="font-size: 10px; padding: 4px 10px;" title="Gera arquivos de pontes para todas as IDEs suportadas simultaneamente">
                                         🌐 Todas as IDEs
+                                    </button>
+                                    <button type="button" class="btn-gov" onclick="deleteAiBridge('${d.name}', 'universal', 'todas as pontes de IA')" style="font-size: 10px; padding: 4px 10px; color:#f87171; border-color:rgba(248,113,113,0.3);" title="Remove todos os arquivos de ponte deste projeto (mantendo os contratos intactos)">
+                                        🗑️ Limpar Todas
                                     </button>
                                 </div>
                             </div>
                             <!-- Chips das pontes existentes no projeto -->
                             <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;" id="pwBridgesList">
                                 ${renderProjectBridgesChips(d.name)}
+                            </div>
+                            <div style="display:flex; align-items:center; gap:8px; margin-top:10px; flex-wrap:wrap;">
+                                <label for="pwBridgePrefix" style="font-size:10px; color: var(--text-tertiary);" title="Prefixo dos caminhos escritos dentro das pontes. Vazio = projects/${d.name}/ (dentro do Hub). Para o repositório de código, use por exemplo docs/second-brain/">
+                                    📁 Prefixo dos caminhos nas pontes:
+                                </label>
+                                <input type="text" id="pwBridgePrefix" placeholder="projects/${d.name}/ (padrão)" value="${(localStorage.getItem('brainBridgePrefix') || '').replace(/"/g, '&quot;')}" onchange="localStorage.setItem('brainBridgePrefix', this.value.trim())" style="flex:1; min-width:180px; font-size:11px; padding:4px 8px; background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.12); border-radius:6px; color: inherit;">
                             </div>
                         </div>
                     </div>
@@ -8280,7 +8288,14 @@ function switchEditorTab(tab) {
         if (statusText) statusText.innerHTML = (isQuickstartDescEditorActive || isQuickstartSpecsEditorActive)
             ? '<span class="status-dot" style="background:#6366f1"></span> Editando documento (Ctrl+S para concluir)'
             : '<span class="status-dot" style="background:#10b981"></span> Modo de Edição (Ctrl+S para salvar)';
-        textarea?.focus();
+        if (textarea) {
+            if (textarea.selectionStart === textarea.value.length && textarea.value.length > 0) {
+                textarea.setSelectionRange(0, 0);
+            }
+            textarea.focus({ preventScroll: true });
+            textarea.scrollTop = 0;
+            if (textarea.parentElement) textarea.parentElement.scrollTop = 0;
+        }
     } else {
         if (textarea) textarea.style.display = 'none';
         if (preview) {
