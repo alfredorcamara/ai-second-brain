@@ -10292,14 +10292,6 @@ async function confirmDeleteAllResearchFiles(slug, topic) {
 // ════════════════════════════════════════════════════════════
 
 const AI_PROVIDER_PRESETS = {
-    copilot: {
-        name: 'GitHub Copilot',
-        icon: '🐙',
-        tag: 'Conta GitHub · GPT-4o, Claude & Gemini',
-        placeholder: 'Token GitHub (ghp_...) ou deixe em branco se logado no Git...',
-        requiresKey: false,
-        baseUrl: 'https://api.githubcopilot.com'
-    },
     gemini: {
         name: 'Google Gemini',
         icon: '✨',
@@ -10840,13 +10832,9 @@ function onProviderSelectChange() {
     }
 
     if (keySubtitle) {
-        if (providerId === 'copilot') {
-            keySubtitle.innerHTML = `Detecta automaticamente seu login do GitHub via <code>git credential</code> local ou aceita um token pessoal (PAT).`;
-        } else {
-            keySubtitle.innerHTML = preset.requiresKey
-                ? `Sua chave é criptografada em repouso no <code>.env</code> local e usada apenas para processar suas pesquisas.`
-                : `O provedor <strong>${preset.name}</strong> roda localmente e não requer autenticação na nuvem.`;
-        }
+        keySubtitle.innerHTML = preset.requiresKey
+            ? `Sua chave é criptografada em repouso no <code>.env</code> local e usada apenas para processar suas pesquisas.`
+            : `O provedor <strong>${preset.name}</strong> roda localmente e não requer autenticação na nuvem.`;
     }
 
     // Exibe Base URL se Ollama ou Custom
