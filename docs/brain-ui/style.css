@@ -3186,6 +3186,35 @@ body {
     padding: 24px;
     animation: qsFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #818cf8 rgba(255, 255, 255, 0.06);
+}
+
+.quickstart-modal-backdrop::-webkit-scrollbar,
+.qs-body::-webkit-scrollbar {
+    width: 8px;
+    display: block;
+}
+
+.quickstart-modal-backdrop::-webkit-scrollbar-track,
+.qs-body::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.quickstart-modal-backdrop::-webkit-scrollbar-thumb,
+.qs-body::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #818cf8, #6366f1);
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.quickstart-modal-backdrop::-webkit-scrollbar-thumb:hover,
+.qs-body::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #a5b4fc, #818cf8);
+    box-shadow: 0 0 14px rgba(99, 102, 241, 0.8);
 }
 
 @keyframes qsFadeIn {
@@ -3241,34 +3270,94 @@ body {
 }
 
 /* Modal Card APENAS durante a Sabatina Técnica (#qsGrillQuestionsPane ativo): Rodapé 100% fixo e scrollbar exclusivo interno */
-.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])) {
+.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])):not(.is-loading-questions):not(:has(#qsGrillLoadingQuestions:not([style*="display: none"]))) {
     max-width: 920px;
     width: 92vw;
-    height: 90vh;
-    max-height: 840px;
-    min-height: 580px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])) .qs-body {
-    flex: 1;
-    min-height: 0;
-    max-height: none;
-    display: flex;
-    flex-direction: column;
+    height: 90vh !important;
+    max-height: 840px !important;
+    min-height: 500px !important;
+    display: flex !important;
+    flex-direction: column !important;
     overflow: hidden !important;
-    padding: 14px 28px 16px;
 }
 
-.qs-body:has(#qsGrillQuestionsPane:not([style*="display: none"])) #qsPaneStep2.active {
-    flex: 1;
-    min-height: 0;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])):not(.is-loading-questions):not(:has(#qsGrillLoadingQuestions:not([style*="display: none"]))) .qs-header {
+    padding: 16px 28px 10px !important;
+    flex-shrink: 0 !important;
+}
+
+.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])):not(.is-loading-questions):not(:has(#qsGrillLoadingQuestions:not([style*="display: none"]))) .qs-stepper {
+    padding: 6px 28px 10px !important;
+    flex-shrink: 0 !important;
+}
+
+.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])):not(.is-loading-questions):not(:has(#qsGrillLoadingQuestions:not([style*="display: none"]))) .qs-body {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    max-height: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    padding: 10px 24px 14px !important;
+}
+
+.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])):not(.is-loading-questions):not(:has(#qsGrillLoadingQuestions:not([style*="display: none"]))) #qsPaneStep2.active {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])):not(.is-loading-questions):not(:has(#qsGrillLoadingQuestions:not([style*="display: none"]))) #qsGrillQuestionsPane {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    gap: 8px !important;
+}
+
+.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])):not(.is-loading-questions):not(:has(#qsGrillLoadingQuestions:not([style*="display: none"]))) #qsGrillSummaryBanner {
+    flex-shrink: 0 !important;
+}
+
+.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])):not(.is-loading-questions):not(:has(#qsGrillLoadingQuestions:not([style*="display: none"]))) #qsGrillQuestionsContainer {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])):not(.is-loading-questions):not(:has(#qsGrillLoadingQuestions:not([style*="display: none"]))) #qsGrillProgressWrap {
+    flex-shrink: 0 !important;
+    margin-bottom: 6px !important;
+}
+
+.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])):not(.is-loading-questions):not(:has(#qsGrillLoadingQuestions:not([style*="display: none"]))) #qsGrillQuestionsList {
+    flex: 1 1 auto !important;
+    min-height: 80px !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    scroll-behavior: smooth !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: #818cf8 rgba(255, 255, 255, 0.08) !important;
+    padding-right: 6px !important;
+}
+
+.quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])):not(.is-loading-questions):not(:has(#qsGrillLoadingQuestions:not([style*="display: none"]))) .qs-grill-action-cards {
+    flex-shrink: 0 !important;
+    margin-top: auto !important;
+    padding-top: 10px !important;
+    padding-bottom: 2px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    position: relative !important;
+    z-index: 10 !important;
 }
 
 /* Quando a Sabatina está formulando as perguntas (estado de carregando / preparing questions):
@@ -3479,9 +3568,9 @@ body {
     z-index: 20;
 }
 
-/* Etapas 1, 2 e 3: Garantia absoluta de rolagem fluida e scrollbar quando a janela for redimensionada */
+/* Etapas 1, 2 (apenas formulário de dados) e 3: Garantia absoluta de rolagem fluida e scrollbar quando a janela for redimensionada */
 .quickstart-modal-card:has(#qsPaneStep3.active),
-.quickstart-modal-card:has(#qsPaneStep2.active),
+.quickstart-modal-card:has(#qsPaneStep2.active:has(#qsFormNew:not([style*="display: none"]))),
 .quickstart-modal-card:has(#qsPaneStep1.active) {
     height: auto !important;
     min-height: 0 !important;
@@ -3489,7 +3578,7 @@ body {
 }
 
 .quickstart-modal-card:has(#qsPaneStep3.active) .qs-body,
-.quickstart-modal-card:has(#qsPaneStep2.active) .qs-body,
+.quickstart-modal-card:has(#qsPaneStep2.active:has(#qsFormNew:not([style*="display: none"]))) .qs-body,
 .quickstart-modal-card:has(#qsPaneStep1.active) .qs-body {
     max-height: calc(92vh - 160px) !important;
     overflow-y: auto !important;
@@ -3498,10 +3587,40 @@ body {
 }
 
 #qsPaneStep3.active,
-#qsPaneStep2.active,
+#qsPaneStep2.active:has(#qsFormNew:not([style*="display: none"])),
 #qsPaneStep1.active {
     overflow: visible !important;
     height: auto !important;
+}
+
+/* Responsividade cirúrgica para laptops, telas menores ou alta escala (Windows 125%/150%) */
+@media (max-height: 760px) {
+    .quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])):not(.is-loading-questions) {
+        height: 96vh !important;
+        max-height: 96vh !important;
+        min-height: 460px !important;
+    }
+    .quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])) .qs-header {
+        padding: 10px 20px 6px !important;
+    }
+    .quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])) .qs-title {
+        font-size: 15px !important;
+    }
+    .quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])) .qs-subtitle {
+        display: none !important;
+    }
+    .quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])) .qs-stepper {
+        padding: 4px 20px 6px !important;
+    }
+    .quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])) .qs-grill-action-box {
+        padding: 8px 12px !important;
+    }
+    .quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])) .qs-grill-action-box .qs-mode-card-desc {
+        display: none !important;
+    }
+    .quickstart-modal-card:has(#qsPaneStep2.active #qsGrillQuestionsPane:not([style*="display: none"])) .qs-action-box-footer {
+        margin-top: 4px !important;
+    }
 }
 
 /* Modal Header */
