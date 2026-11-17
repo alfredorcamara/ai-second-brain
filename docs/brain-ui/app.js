@@ -12716,6 +12716,18 @@ async function initSystemVersionCheck() {
         if (res.ok) {
             const data = await res.json();
             applyVersionToUI(data);
+
+            if (data.updateAvailable) {
+                const targetVer = data.remoteVersion || 'update';
+                const notified = sessionStorage.getItem('ai_second_brain_update_notified_' + targetVer);
+                if (!notified) {
+                    sessionStorage.setItem('ai_second_brain_update_notified_' + targetVer, 'true');
+                    setTimeout(() => {
+                        const verLabel = data.remoteVersion ? `v${data.remoteVersion}` : 'mais recente';
+                        showSecondBrainToast(`🚀 <strong>Nova versão disponível (${verLabel})!</strong> <a href="#" onclick="openChangelogModal(); return false;" style="color:var(--accent); text-decoration:underline; font-weight:600; margin-left:6px;">Ver novidades e como atualizar →</a>`, 'info', 10000);
+                    }, 2500);
+                }
+            }
             return;
         }
     } catch (e) {

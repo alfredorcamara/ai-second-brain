@@ -1660,6 +1660,66 @@ External repository linked to AI Second Brain.
     }
 
     // API: System Version & Remote Update Check
+    let _lastReleaseCheck = 0;
+    let _cachedRemoteRelease = null;
+
+    function isVersionNewer(remoteVer, localVer) {
+        if (!remoteVer || !localVer) return false;
+        const r = String(remoteVer).replace(/^v/i, '').split('.').map(n => parseInt(n, 10) || 0);
+        const l = String(localVer).replace(/^v/i, '').split('.').map(n => parseInt(n, 10) || 0);
+        for (let i = 0; i < Math.max(r.length, l.length); i++) {
+            const rPart = r[i] || 0;
+            const lPart = l[i] || 0;
+            if (rPart > lPart) return true;
+            if (rPart < lPart) return false;
+        }
+        return false;
+    }
+
+    async function fetchLatestGitHubRelease() {
+        const now = Date.now();
+        // Cache em memória de 1 hora (3.600.000 ms) para zero lentidão
+        if (_cachedRemoteRelease && (now - _lastReleaseCheck < 3600000)) {
+            return _cachedRemoteRelease;
+        }
+        return new Promise((resolve) => {
+            const https = require('https');
+            const req = https.get('https://api.github.com/repos/alfredorcamara/ai-second-brain/releases/latest', {
+                headers: {
+                    'User-Agent': 'AI-Second-Brain-Cockpit',
+                    'Accept': 'application/vnd.github.v3+json'
+                },
+                timeout: 3000
+            }, (res) => {
+                if (res.statusCode !== 200) {
+                    res.resume();
+                    return resolve(null);
+                }
+                let data = '';
+                res.on('data', chunk => { data += chunk; });
+                res.on('end', () => {
+                    try {
+                        const json = JSON.parse(data);
+                        const tag = (json.tag_name || '').replace(/^v/i, '').trim();
+                        _cachedRemoteRelease = {
+                            tag,
+                            name: json.name || json.tag_name,
+                            url: json.html_url || 'https://github.com/alfredorcamara/ai-second-brain/releases',
+                            body: json.body || '',
+                            publishedAt: json.published_at
+                        };
+                        _lastReleaseCheck = now;
+                        resolve(_cachedRemoteRelease);
+                    } catch (_) {
+                        resolve(null);
+                    }
+                });
+            });
+            req.on('timeout', () => { req.destroy(); resolve(null); });
+            req.on('error', () => resolve(null));
+        });
+    }
+
     if (pathname === '/api/system/version' && req.method === 'GET') {
         try {
             let version = '0.0.0';
@@ -1673,33 +1733,55 @@ External repository linked to AI Second Brain.
             let updateAvailable = false;
             let behindCommits = 0;
             let statusText = 'Atualizado';
+            let remoteVersion = null;
+            let releaseUrl = 'https://github.com/alfredorcamara/ai-second-brain/releases';
+            let releaseName = null;
 
+            // 1. Checagem em tempo real via GitHub Releases API (com cache de 1h)
             try {
-                if (fs.existsSync(path.join(ROOT_DIR, '.git'))) {
-                    const gitStatus = await new Promise((resolve) => {
-                        exec('git status -uno', { cwd: ROOT_DIR, encoding: 'utf-8', timeout: 2500 }, (err, stdout) => {
-                            resolve(err ? '' : (stdout || ''));
-                        });
-                    });
-                    if (/behind/i.test(gitStatus)) {
+                const latestRelease = await fetchLatestGitHubRelease();
+                if (latestRelease && latestRelease.tag) {
+                    remoteVersion = latestRelease.tag;
+                    releaseUrl = latestRelease.url;
+                    releaseName = latestRelease.name;
+                    if (isVersionNewer(latestRelease.tag, version)) {
                         updateAvailable = true;
-                        const match = gitStatus.match(/behind\s+.*by\s+(\d+)\s+commit/i);
-                        behindCommits = match ? parseInt(match[1], 10) : 1;
-                        statusText = `Há ${behindCommits} atualização(ões) no repositório remoto.`;
+                        statusText = `Nova versão v${latestRelease.tag} disponível no GitHub!`;
                     }
                 }
-            } catch (_) { }
+            } catch (_) {}
+
+            // 2. Complemento via Git local (se não detectou nova release, verifica se há commits remotos)
+            if (!updateAvailable) {
+                try {
+                    if (fs.existsSync(path.join(ROOT_DIR, '.git'))) {
+                        const gitStatus = await new Promise((resolve) => {
+                            exec('git status -uno', { cwd: ROOT_DIR, encoding: 'utf-8', timeout: 2500 }, (err, stdout) => {
+                                resolve(err ? '' : (stdout || ''));
+                            });
+                        });
+                        if (/behind/i.test(gitStatus)) {
+                            updateAvailable = true;
+                            const match = gitStatus.match(/behind\s+.*by\s+(\d+)\s+commit/i);
+                            behindCommits = match ? parseInt(match[1], 10) : 1;
+                            statusText = `Há ${behindCommits} atualização(ões) no repositório remoto.`;
+                        }
+                    }
+                } catch (_) { }
+            }
 
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({
                 success: true,
                 version,
+                remoteVersion,
+                releaseName,
                 name,
                 updateAvailable,
                 behindCommits,
                 statusText,
                 changelogUrl: '/api/system/changelog',
-                releaseUrl: 'https://github.com/alfredorcamara/ai-second-brain/releases'
+                releaseUrl
             }));
         } catch (err) {
             res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
