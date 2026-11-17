@@ -338,7 +338,7 @@ flowchart TD
 | Natural language diagnosis of failed jobs | **LLM (Claude 3.5 Sonnet / Gemini 1.5 Pro)** | Open reasoning and stack trace contextualization. |
 | End-user customer support chatbot | **LLM with RAG via AI Gateway** | Conversational responses grounded in knowledge base. |
 
-> 💡 **Native Decision Engine**: AI Second Brain includes canonical \`RulesDecisionProvider\` in [\`scripts/decision-provider.js\`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/scripts/decision-provider.js) implementing \`IDecisionProvider\` with \`ruleId\`, numerical \`confidence\`, and natural language \`rationale\`.
+> 💡 **Native Decision Engine**: AI Second Brain includes canonical \`RulesDecisionProvider\` in [\`scripts/decision-provider.js\`](../scripts/decision-provider.js) implementing \`IDecisionProvider\` with \`ruleId\`, numerical \`confidence\`, and natural language \`rationale\`.
 
 ---
 

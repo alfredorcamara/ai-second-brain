@@ -57,6 +57,6 @@ interface IGenerativeProvider {
 ```
 
 > 💡 **Implementação no AI Second Brain**:
-> - Decisão e Classificação (JEV): [`scripts/decision-provider.js`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/scripts/decision-provider.js) (`RulesDecisionProvider`).
-> - Geração e Chat (BYOK): [`scripts/ai-gateway.js`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/scripts/ai-gateway.js) (`AIGatewayClient`).
+> - Decisão e Classificação (JEV): [`scripts/decision-provider.js`](../../scripts/decision-provider.js) (`RulesDecisionProvider`).
+> - Geração e Chat (BYOK): [`scripts/ai-gateway.js`](../../scripts/ai-gateway.js) (`AIGatewayClient`).
 

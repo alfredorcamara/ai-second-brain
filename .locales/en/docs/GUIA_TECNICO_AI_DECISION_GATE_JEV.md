@@ -65,12 +65,12 @@ graph TD
     AIRouting -->|Pure Open Text Synthesis| LLMCall["AI invokes: IGenerativeAIProvider (LLM)"]
 ```
 
-1. **Universal Open Standard ([`AGENTS.md`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/AGENTS.md))**:
+1. **Universal Open Standard ([`AGENTS.md`](../AGENTS.md))**:
    Read natively by Claude Code, Cursor, Windsurf, Cline, and modern agents. Contains **Absolute Rule #1**:
    > *"Deterministic Priority: NEVER use an LLM when deterministic code or business rules solve the problem."*
-2. **Triage Skill ([`.agents/skills/ai-decision-gate/SKILL.md`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/.agents/skills/ai-decision-gate/SKILL.md))**:
+2. **Triage Skill ([`.agents/skills/ai-decision-gate/SKILL.md`](../.agents/skills/ai-decision-gate/SKILL.md))**:
    Provides a 5-step triage algorithm for the AI to classify any flow: Deterministic (A), Classification/Decision (B/C), Open Generation (D/E), or Execution (F/G).
-3. **AI Decision Rule ([`.agents/rules/01-ai-decision.md`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/.agents/rules/01-ai-decision.md))**:
+3. **AI Decision Rule ([`.agents/rules/01-ai-decision.md`](../.agents/rules/01-ai-decision.md))**:
    Explicitly defines as an architectural violation:
    - ❌ *Using an LLM for deterministic tasks.*
    - ❌ *Calling generative AI on every event/job in a loop.*
@@ -84,11 +84,11 @@ For the promise to be 100% fulfilled, the developer must be aware of the workspa
 
 | Working Scenario | What Happens in the IDE? | How the Promise is Guaranteed |
 | :--- | :--- | :--- |
-| **Scenario A: AI Second Brain as Central Cockpit** *(Recommended)* | Root `AI_SECOND_BRAIN` folder is open in the IDE. Dev edits satellite code via `projects/<name>/`. | **100% Automatic**. Claude / Cursor reads root [`AGENTS.md`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/AGENTS.md) and enforces Decision Gate on every prompt. |
+| **Scenario A: AI Second Brain as Central Cockpit** *(Recommended)* | Root `AI_SECOND_BRAIN` folder is open in the IDE. Dev edits satellite code via `projects/<name>/`. | **100% Automatic**. Claude / Cursor reads root [`AGENTS.md`](../AGENTS.md) and enforces Decision Gate on every prompt. |
 | **Scenario B: Standalone Repo in Another Window** | Dev opens only `C:\Projects\SaaS\MyProject` in a separate editor window. | **Requires Governance Bridge**. The separate window cannot read external folders without a bridge file. |
 
 #### Creating the "Governance Bridge" for Scenario B:
-Place a root governance bridge file in the project repository (as specified in [Section 3 of the Manual](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/docs/COMO_UTILIZAR_O_PROJETO.md)):
+Place a root governance bridge file in the project repository (as specified in [Section 3 of the Manual](COMO_UTILIZAR_O_PROJETO.md)):
 
 *For Cursor (`.cursorrules`), Claude Code (`CLAUDE.md`), or Universal Agents (`AGENTS.md`):*
 ```markdown
@@ -324,12 +324,12 @@ public class RefundService
 AI Second Brain **practices what it preaches**. This exact engine runs in production inside this repository:
 
 ### 1. Canonical Engine:
-- File: [`scripts/decision-provider.js`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/scripts/decision-provider.js)
+- File: [`scripts/decision-provider.js`](../scripts/decision-provider.js)
 - Class: `RulesDecisionProvider` implementing `IDecisionProvider`.
 - Latency: **0ms**, pure synchronous CPU execution (`decideSync`), 100% offline.
 
 ### 2. Real Production Case in Quickstart Studio Live Prompt:
-In [`scripts/quickstart-grill.js`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/scripts/quickstart-grill.js), when the developer prompts changes to governance contracts:
+In [`scripts/quickstart-grill.js`](../scripts/quickstart-grill.js), when the developer prompts changes to governance contracts:
 
 1. **Ambiguity Detection Without Calling LLM**:
    If the developer types something vague like:  
@@ -416,5 +416,5 @@ Before declaring an AI-enabled feature ready for staging or production, verify:
 ---
 
 > 💡 **Conclusion**:  
-> The **"AI Decision Gate & JEV Engine"** promise is not decorative marketing. It is a **concrete engineering discipline**, formalized in universal contracts (`AGENTS.md`) and backed by executable code in [`scripts/decision-provider.js`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/scripts/decision-provider.js).  
+> The **"AI Decision Gate & JEV Engine"** promise is not decorative marketing. It is a **concrete engineering discipline**, formalized in universal contracts (`AGENTS.md`) and backed by executable code in [`scripts/decision-provider.js`](../scripts/decision-provider.js).  
 > Any developer cloning this repository has the exact scaffolding to save thousands of tokens and build faster, cheaper, and more reliable software.

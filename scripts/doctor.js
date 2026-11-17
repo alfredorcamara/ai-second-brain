@@ -77,9 +77,10 @@ function checkMarkdownLinks(filePath) {
     const relSource = normalizePath(path.relative(ROOT_DIR, filePath));
     checkedFilesCount++;
 
-    // Remove blocos de código multiline (```...```) e inline (`...`) para não validar exemplos de sintaxe
+    // Remove blocos de código multiline (```...```) e inline (`...`), preservando rótulos de links [`codigo`](url)
     const sanitizedContent = rawContent
         .replace(/```[\s\S]*?```/g, '')
+        .replace(/\[`([^`\]]+)`\]\((file:\/\/\/[^)]+)\)/g, '[$1]($2)')
         .replace(/`[^`\n]+`/g, '');
 
     const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
@@ -99,19 +100,16 @@ function checkMarkdownLinks(filePath) {
         if (targetPath.startsWith('file:///')) {
             targetPath = targetPath.replace('file:///', '');
             targetPath = decodeURIComponent(targetPath);
-            // Corrige caminho Windows c:/...
-            if (!fs.existsSync(targetPath)) {
-                errors.push({
-                    file: relSource,
-                    type: 'BROKEN_LINK',
-                    target: linkRaw,
-                    resolved: targetPath,
-                    message: tr(
-                        `Link absoluto 'file:///' aponta para arquivo inexistente`,
-                        `Absolute 'file:///' link points to a non-existent file`
-                    )
-                });
-            }
+            errors.push({
+                file: relSource,
+                type: 'HARDCODED_FILE_URL',
+                target: linkRaw,
+                resolved: targetPath,
+                message: tr(
+                    `Link absoluto 'file:///' proibido em documentos portáveis (use caminho relativo para funcionar em qualquer PC)`,
+                    `Absolute 'file:///' link forbidden in portable docs (use relative path so it works on any machine)`
+                )
+            });
             continue;
         }
 

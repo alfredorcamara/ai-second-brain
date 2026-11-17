@@ -383,7 +383,7 @@ flowchart TD
 | Diagnóstico detalhado em linguagem natural de por que um job falhou | **LLM (Claude 3.5 Sonnet / Gemini 1.5 Pro)** | Capacidade de raciocínio aberto e contextualização de stack traces. |
 | Chatbot de suporte ao usuário final | **LLM com RAG via AI Gateway** | Respostas conversacionais alimentadas pela base de conhecimento. |
 
-> 💡 **Motor de Decisão Nativo**: O AI Second Brain inclui a implementação canônica `RulesDecisionProvider` em [`scripts/decision-provider.js`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/scripts/decision-provider.js), que implementa `IDecisionProvider` com suporte a `ruleId`, `confidence` e `rationale` explicáveis.
+> 💡 **Motor de Decisão Nativo**: O AI Second Brain inclui a implementação canônica `RulesDecisionProvider` em [`scripts/decision-provider.js`](../scripts/decision-provider.js), que implementa `IDecisionProvider` com suporte a `ruleId`, `confidence` e `rationale` explicáveis.
 
 ---
 

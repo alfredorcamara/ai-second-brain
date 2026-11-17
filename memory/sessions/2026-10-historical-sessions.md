@@ -369,7 +369,7 @@ pm run sync:demo)*: Criado scripts/sync-demo.js que sincroniza App Core, CSS e A
   - **Guia Técnico Canônico & FAQ de Engenharia: AI Decision Gate & Motor JEV**:
     - **Demanda**: Criação de documento executivo e técnico exaustivo respondendo à dúvida do desenvolvedor sobre a observância do AI Decision Gate e Motor JEV por IAs em IDEs (Claude Code, Cursor, Antigravity, Windsurf) e o passo a passo prático para implementar o padrão na sua própria aplicação.
     - **Implementação**:
-      1. Criado documento canônico [`docs/GUIA_TECNICO_AI_DECISION_GATE_JEV.md`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/docs/GUIA_TECNICO_AI_DECISION_GATE_JEV.md) com 8 seções estruturadas:
+      1. Criado documento canônico [`docs/GUIA_TECNICO_AI_DECISION_GATE_JEV.md`](../../docs/GUIA_TECNICO_AI_DECISION_GATE_JEV.md) com 8 seções estruturadas:
          - *A Pergunta Real do Desenvolvedor*: Formulação explícita da dúvida e contexto.
          - *Mecanismo de Observância pelas IEs*: Explicação do contexto de sistema, injeção de governança (`AGENTS.md`, `GEMINI.md`, `.cursorrules`), e resolução para janelas satélites isoladas ("Ponte de Governança").
          - *Desmistificação do JEV*: Combate ao anti-padrão do LLM ingênuo, padrão Identificar -> Decidir -> Validar -> Opcionalmente Gerar.
@@ -377,7 +377,7 @@ pm run sync:demo)*: Criado scripts/sync-demo.js que sincroniza App Core, CSS e A
          - *Exemplo Real no Repositório*: Rastreamento do motor ativo em `scripts/decision-provider.js` e `scripts/quickstart-grill.js` (interceptação de `AMBIGUOUS_PAYMENTS` e `AMBIGUOUS_AUTH`).
          - *Catálogo de Prompts Prontos*: Instruções copiar-e-colar para orientar IAs de qualquer IDE a construir o gate.
          - *Business Case & Checklist*: Comparativo de ganhos (-70% tokens, 0ms latência) e checklist de conformidade.
-      2. Vinculada referência cruzada em [`knowledge/ai/AIJEV.md`](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN/knowledge/ai/AIJEV.md).
+      2. Vinculada referência cruzada em [`knowledge/ai/AIJEV.md`](../../knowledge/ai/AIJEV.md).
 - **Data**: 2026-10-16
   - **Cards Interativos de Superpoderes & Modal de Detalhamento Técnico na Landing Page**:
     - **Demanda**: Permitir ao usuário clicar em qualquer card da seção `#vantagens` ("Superpoderes do Sistema") para abrir um modal rico, profundo e 100% embasado na realidade técnica do que o projeto faz.

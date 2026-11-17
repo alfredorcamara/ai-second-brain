@@ -6,7 +6,7 @@ module.exports = {
     'docs/GUIA_PRATICO.md': `# AI Second Brain Practical Guide
 
 > 📖 **For the detailed step-by-step manual for new and legacy projects:**  
-> Consult the full official document at: **[COMO_UTILIZAR_O_PROJETO.md](file:///c:/Projetos/SaaS/Google%20Antigravity/Projetos/AI_SECOND_BRAIN_CENTRAL/AI_SECOND_BRAIN/docs/COMO_UTILIZAR_O_PROJETO.md)**
+> Consult the full official document at: **[COMO_UTILIZAR_O_PROJETO.md](COMO_UTILIZAR_O_PROJETO.md)**
 
 ## What is the Second Brain?
 
