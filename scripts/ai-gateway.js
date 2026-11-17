@@ -23,6 +23,30 @@ const completionCache = new Map();
 // Cache em memória de modelos descobertos dinamicamente por provedor (populado via testConnection em tempo real)
 const cachedModelsByProvider = {};
 
+// Cache em memória do token do GitHub obtido via Git Credential Manager local (quando não informado manualmente no .env)
+let cachedLocalGitHubToken = null;
+
+function resolveLocalGitHubToken() {
+    if (process.env.GITHUB_COPILOT_TOKEN) return process.env.GITHUB_COPILOT_TOKEN;
+    if (process.env.GITHUB_TOKEN) return process.env.GITHUB_TOKEN;
+    if (cachedLocalGitHubToken) return cachedLocalGitHubToken;
+    try {
+        const { execSync } = require('child_process');
+        const out = execSync('git credential fill', {
+            input: 'protocol=https\nhost=github.com\n\n',
+            encoding: 'utf-8',
+            timeout: 3000,
+            stdio: ['pipe', 'pipe', 'ignore']
+        });
+        const m = out.match(/^password=(.+)$/m);
+        if (m && m[1]) {
+            cachedLocalGitHubToken = m[1].trim();
+            return cachedLocalGitHubToken;
+        }
+    } catch (_) { }
+    return '';
+}
+
 // Memória de estado de erro recente de inferência (cota esgotada 429, auth 401, etc.)
 let lastGatewayError = null;
 
@@ -33,16 +57,13 @@ function extractRateLimitHeaders(headers, providerId) {
     if (!headers) return null;
     const info = { provider: providerId, timestamp: Date.now() };
 
-    // Anthropic headers
     if (headers['anthropic-ratelimit-tokens-remaining'] !== undefined) {
         info.tokensRemaining = parseInt(headers['anthropic-ratelimit-tokens-remaining'], 10);
         info.tokensLimit = parseInt(headers['anthropic-ratelimit-tokens-limit'], 10);
         info.requestsRemaining = parseInt(headers['anthropic-ratelimit-requests-remaining'], 10);
         info.requestsLimit = parseInt(headers['anthropic-ratelimit-requests-limit'], 10);
         info.resetTime = headers['anthropic-ratelimit-tokens-reset'] || headers['anthropic-ratelimit-requests-reset'];
-    }
-    // OpenAI & Groq standard headers
-    else if (headers['x-ratelimit-remaining-tokens'] !== undefined || headers['x-ratelimit-remaining-requests'] !== undefined) {
+    } else if (headers['x-ratelimit-remaining-tokens'] !== undefined || headers['x-ratelimit-remaining-requests'] !== undefined) {
         if (headers['x-ratelimit-remaining-tokens'] !== undefined) info.tokensRemaining = parseInt(headers['x-ratelimit-remaining-tokens'], 10);
         if (headers['x-ratelimit-limit-tokens'] !== undefined) info.tokensLimit = parseInt(headers['x-ratelimit-limit-tokens'], 10);
         if (headers['x-ratelimit-remaining-requests'] !== undefined) info.requestsRemaining = parseInt(headers['x-ratelimit-remaining-requests'], 10);
@@ -61,6 +82,14 @@ function extractRateLimitHeaders(headers, providerId) {
  * Provedores suportados e metadados
  */
 const PROVIDERS = {
+    copilot: {
+        id: 'copilot',
+        name: 'GitHub Copilot',
+        tag: 'Conta GitHub · GPT-4o, Claude & Gemini',
+        baseUrl: 'https://api.githubcopilot.com',
+        keyEnv: 'GITHUB_COPILOT_TOKEN',
+        requiresKey: false
+    },
     gemini: {
         id: 'gemini',
         name: 'Google Gemini',
@@ -162,10 +191,12 @@ function getConfig() {
     const providerId = (process.env.AI_PROVIDER || 'groq').toLowerCase();
     const provider = PROVIDERS[providerId] || PROVIDERS.groq;
 
-    // Chave pode vir de AI_API_KEY genérica ou da específica do provedor
-    const apiKey = process.env.AI_API_KEY || 
-                   process.env[provider.keyEnv] || 
-                   (providerId === 'groq' ? process.env.GROQ_API_KEY : '') || '';
+    // Chave pode vir de AI_API_KEY genérica, da específica do provedor ou do Git Credential Manager local (para GitHub Copilot)
+    const isCurrentProvider = (process.env.AI_PROVIDER || 'groq').toLowerCase() === providerId;
+    const apiKey = (provider.keyEnv ? process.env[provider.keyEnv] : '') || 
+                   (providerId === 'copilot' ? resolveLocalGitHubToken() : '') ||
+                   (providerId === 'groq' ? process.env.GROQ_API_KEY : '') ||
+                   (isCurrentProvider ? process.env.AI_API_KEY : '') || '';
 
     const model = process.env.AI_MODEL || 
                   (providerId === 'groq' ? process.env.GROQ_MODEL : '') || '';
@@ -180,7 +211,7 @@ function getConfig() {
     const rawMaxRetries = parseInt(process.env.AI_MAX_RETRIES, 10);
     const maxRetries = (!isNaN(rawMaxRetries) && rawMaxRetries >= 0 && rawMaxRetries <= 10) ? rawMaxRetries : 2;
 
-    const isConfigured = provider.requiresKey ? !!apiKey : true;
+    const isConfigured = (provider.requiresKey || providerId === 'copilot') ? !!apiKey : true;
     const models = (isConfigured || providerId === 'ollama') ? (cachedModelsByProvider[providerId] || []) : [];
 
     return {
@@ -363,10 +394,17 @@ async function testConnection({ provider, apiKey, baseUrl, model }) {
     const finalBaseUrl = ((p.id === 'ollama' || p.id === 'custom')
         ? (baseUrl || process.env.AI_BASE_URL || p.baseUrl)
         : p.baseUrl).replace(/\/+$/, '');
-    const finalKey = apiKey || (p.keyEnv ? process.env[p.keyEnv] : '') || process.env.AI_API_KEY || '';
+    const isCurrentSaved = (process.env.AI_PROVIDER || 'groq').toLowerCase() === p.id;
+    const finalKey = apiKey || 
+                     (p.keyEnv ? process.env[p.keyEnv] : '') || 
+                     (p.id === 'copilot' ? resolveLocalGitHubToken() : '') ||
+                     (p.id === 'groq' ? process.env.GROQ_API_KEY : '') ||
+                     (isCurrentSaved ? process.env.AI_API_KEY : '') || '';
 
-    if (p.requiresKey && !finalKey) {
-        const err = new Error(`Informe uma API Key para o provedor ${p.name}`);
+    if ((p.requiresKey || p.id === 'copilot') && !finalKey) {
+        const err = new Error(p.id === 'copilot'
+            ? 'Informe um Token do GitHub (ghp_...) ou autentique o Git no seu computador para usar o GitHub Copilot.'
+            : `Informe uma API Key para o provedor ${p.name}`);
         err.statusCode = 400;
         throw err;
     }
@@ -377,7 +415,12 @@ async function testConnection({ provider, apiKey, baseUrl, model }) {
     let fetchedModels = [];
     try {
         let modelsUrl = `${finalBaseUrl}/models`;
-        const headers = { 'User-Agent': 'AI-Second-Brain-Gateway/1.0' };
+        const headers = { 'User-Agent': p.id === 'copilot' ? 'GitHubCopilotChat/0.22.4' : 'AI-Second-Brain-Gateway/1.0' };
+        if (p.id === 'copilot') {
+            headers['Editor-Version'] = 'vscode/1.96.0';
+            headers['Copilot-Integration-Id'] = 'vscode-chat';
+            headers['Accept'] = 'application/json';
+        }
         if (finalKey) {
             if (p.id === 'anthropic') {
                 headers['x-api-key'] = finalKey;
@@ -428,8 +471,9 @@ async function testConnection({ provider, apiKey, baseUrl, model }) {
                 const rawId = m.id || m.name || '';
                 const id = rawId.replace(/^models\//, '');
                 const name = (m.display_name || m.displayName || m.name || id).replace(/^models\//, '');
-                const contextWindow = m.context_window || m.context_length || null;
-                const active = m.active !== false;
+                const contextWindow = m.context_window || m.context_length || m.capabilities?.limits?.max_context_window_tokens || null;
+                const isNonChat = m.capabilities?.type && m.capabilities.type !== 'chat';
+                const active = m.active !== false && !isNonChat;
                 return {
                     id,
                     name,
@@ -478,7 +522,7 @@ async function testConnection({ provider, apiKey, baseUrl, model }) {
 
                 // 6. Automação de desktop/hardware, robótica e protocolos de API fechada não-chat
                 if (lower.includes('robotics') || lower.includes('computer-use') || lower.includes('deep-research') ||
-                    lower.includes('customtools') || lower.startsWith('antigravity-preview') || lower === 'aqa') {
+                    lower.includes('customtools') || lower.startsWith('antigravity-preview') || lower.startsWith('copilot-search-') || lower === 'aqa') {
                     return false;
                 }
 
@@ -560,6 +604,11 @@ async function testConnection({ provider, apiKey, baseUrl, model }) {
             err.quotaExceeded = true;
             throw err;
         }
+        if (p.id !== 'custom') {
+            const err = new Error(modelsErr.message || `Falha ao conectar com o provedor ${p.name}.`);
+            err.statusCode = modelsErr.statusCode || 500;
+            throw err;
+        }
         // Alguns endpoints customizados não suportam GET /models
     }
 
@@ -591,8 +640,8 @@ async function testConnection({ provider, apiKey, baseUrl, model }) {
             }
             throw pingErr;
         }
-    } else if (!fetchedModels.length && p.requiresKey) {
-        throw new Error(`Nenhum modelo de chat compatível foi retornado pelo provedor ${p.name}. Verifique a API Key.`);
+    } else if (!fetchedModels.length && (p.requiresKey || p.id === 'copilot')) {
+        throw new Error(`Nenhum modelo de chat compatível foi retornado pelo provedor ${p.name}. Verifique a API Key ou Token.`);
     }
 
     const latencyMs = Date.now() - t0;
@@ -626,9 +675,14 @@ async function chatCompletion(messages, options = {}) {
     const providerId = (options.provider || config.provider || 'groq').toLowerCase();
     const provider = PROVIDERS[providerId] || PROVIDERS.groq;
 
-    const resolvedKey = options.apiKey || (provider.keyEnv ? process.env[provider.keyEnv] : '') || (config.provider === provider.id ? process.env.AI_API_KEY : '') || '';
+    const isCurrentProv = config.provider === provider.id;
+    const resolvedKey = options.apiKey || 
+                        (provider.keyEnv ? process.env[provider.keyEnv] : '') || 
+                        (provider.id === 'copilot' ? resolveLocalGitHubToken() : '') || 
+                        (provider.id === 'groq' ? process.env.GROQ_API_KEY : '') ||
+                        (isCurrentProv ? process.env.AI_API_KEY : '') || '';
 
-    if (provider.requiresKey && !resolvedKey) {
+    if ((provider.requiresKey || provider.id === 'copilot') && !resolvedKey) {
         const err = new Error(`Chave de API não configurada para ${provider.name}. Conecte seu provedor no AI Gateway.`);
         err.statusCode = 401;
         throw err;
@@ -729,8 +783,13 @@ async function chatCompletion(messages, options = {}) {
 
     const headers = {
         'Content-Type': 'application/json',
-        'User-Agent': 'AI-Second-Brain-Gateway/1.0'
+        'User-Agent': provider.id === 'copilot' ? 'GitHubCopilotChat/0.22.4' : 'AI-Second-Brain-Gateway/1.0'
     };
+    if (provider.id === 'copilot') {
+        headers['Editor-Version'] = 'vscode/1.96.0';
+        headers['Copilot-Integration-Id'] = 'vscode-chat';
+        headers['Accept'] = 'application/json';
+    }
     if (resolvedKey) {
         headers['Authorization'] = `Bearer ${resolvedKey}`;
     }

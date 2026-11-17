@@ -7,6 +7,16 @@ e este projeto adere ao [Versionamento Semântico (SemVer)](https://semver.org/l
 
 ---
 
+## [1.5.3] — 2026-11-17
+
+### 🐙 Integração Nativa do GitHub Copilot no AI Gateway
+- **Suporte Oficial ao Provedor GitHub Copilot (`scripts/ai-gateway.js`)**:
+  - Adicionado o provedor `copilot` no AI Gateway integrado ao ecossistema do Cockpit.
+  - **Zero Configuração / Detecção Automática**: O Gateway resolve automaticamente a credencial ativa do GitHub via `git credential fill` local (Git Credential Manager) ou variável `GITHUB_COPILOT_TOKEN` / `GITHUB_TOKEN`, dispensando a necessidade de cadastrar novas chaves se o desenvolvedor já estiver autenticado no Git.
+  - **Descoberta Dinâmica de Modelos (`https://api.githubcopilot.com/models`)**: Integração em tempo real que mapeia automaticamente os modelos de chat de ponta disponíveis na assinatura Copilot do usuário (GPT-4o, Claude Sonnet 3.5/5.5, Gemini 3.8 Flash, Claude Opus, etc.) com janela de contexto e categorização inteligente.
+  - **Headers e Protocolo Copilot Chat**: Configuração de headers estritos (`Editor-Version`, `Copilot-Integration-Id: vscode-chat`, `User-Agent: GitHubCopilotChat/0.22.4`) para inferência e chat completion nos recursos de Research Lab, Quickstart e Session Capture.
+  - **Seleção Visual no Cockpit (`docs/brain-ui/index.html` e `docs/brain-ui/app.js`)**: Opção no seletor de IA com feedback em tempo real e teste de conectividade.
+
 ## [1.5.2] — 2026-11-17
 
 ### 🔌 Padronização Universal de Pontes de IA (SSOT) & Gestão Completa no Cockpit
