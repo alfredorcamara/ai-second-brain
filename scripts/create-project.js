@@ -212,7 +212,7 @@ fs.writeFileSync(path.join(projectFolder, 'ARCHITECTURE.md'), archMdContent, 'ut
 fs.writeFileSync(path.join(projectFolder, 'LESSONS_LEARNED.md'), lessonsLearnedMdContent, 'utf-8');
 
 const { writeBridges } = require('./bridge-templates');
-writeBridges({ projectDir: projectFolder, projectName: safeName, rootDir: ROOT_DIR });
+const bridgeResult = writeBridges({ projectDir: projectFolder, projectName: safeName, rootDir: ROOT_DIR });
 
 // Atualização automática do Snapshot do Dashboard
 try {
@@ -235,10 +235,12 @@ console.log(tr(
     `   ├── 📄 LESSONS_LEARNED.md (Lições específicas do projeto)`,
     `   ├── 📄 LESSONS_LEARNED.md (Project-specific lessons learned)`
 ));
-console.log(tr(
-    `   ├── 📄 AGENTS.md / GEMINI.md / .cursorrules / CLAUDE.md (Pontes Multi-IA)`,
-    `   ├── 📄 AGENTS.md / GEMINI.md / .cursorrules / CLAUDE.md (Multi-AI Bridges)`
-));
+bridgeResult.created.forEach(f => {
+    console.log(tr(
+        `   ├── 📄 ${f} (Ponte de IA ativa)`,
+        `   ├── 📄 ${f} (Active AI Bridge)`
+    ));
+});
 console.log(`   ├── 📁 DECISIONS/`);
 console.log(`   └── 📁 MEMORY/sessions/`);
 console.log(tr('\n💡 Próximos Passos:', '\n💡 Next Steps:'));

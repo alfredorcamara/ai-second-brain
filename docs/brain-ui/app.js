@@ -6395,6 +6395,10 @@ function renderQuickstartSuccess(info) {
     }
 
     if (artifactsEl) {
+        const activeEngineKey = (typeof getSelectedAiEngine === 'function') ? getSelectedAiEngine() : 'copilot';
+        const activeEngine = (typeof AI_ENGINES !== 'undefined' && AI_ENGINES[activeEngineKey]) ? AI_ENGINES[activeEngineKey] : { icon: '🐙', label: 'GitHub Copilot', bridgeFile: '.github/copilot-instructions.md' };
+        const bridgeDisplayFile = (activeEngine.bridgeFile && activeEngine.bridgeFile !== 'UNIVERSAL') ? activeEngine.bridgeFile : 'AGENTS.md';
+
         artifactsEl.innerHTML = `
             <div class="qs-artifact-item">
                 <span class="qs-artifact-icon">📄</span>
@@ -6405,6 +6409,11 @@ function renderQuickstartSuccess(info) {
                 <span class="qs-artifact-icon">💾</span>
                 <span><code>projects/${info.name}/CURRENT_STATE.md</code></span>
                 <span class="qs-artifact-tag">Estado Atual</span>
+            </div>
+            <div class="qs-artifact-item">
+                <span class="qs-artifact-icon">${activeEngine.icon || '⚡'}</span>
+                <span><code>projects/${info.name}/${bridgeDisplayFile}</code></span>
+                <span class="qs-artifact-tag">Ponte de IA (${activeEngine.label || 'Ativa'})</span>
             </div>
             ${info.mode === 'new' ? `
             <div class="qs-artifact-item">

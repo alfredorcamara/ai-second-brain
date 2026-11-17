@@ -7,6 +7,27 @@ e este projeto adere ao [Versionamento Semântico (SemVer)](https://semver.org/l
 
 ---
 
+## [1.5.4] — 2026-11-17
+
+### 🧭 Governança Ativa de Pontes por Arquitetura do Sistema
+- **Geração Inteligente e Enxuta de Pontes na Criação de Projetos (`scripts/bridge-templates.js`)**:
+  - Novos projetos (via Cockpit Web, Sabatina Técnica Quickstart Grill ou CLI `project:new`) agora nascem exclusivamente com a ponte de IA configurada como padrão no card **"Arquitetura do Sistema"** (`brain.config.json`), eliminando a poluição da raiz com arquivos órfãos de ferramentas não utilizadas.
+  - Mapeamento dinâmico e suporte completo: GitHub Copilot (`.github/copilot-instructions.md`), Cursor AI (`.cursorrules`), Google Antigravity (`GEMINI.md`), Claude Code (`CLAUDE.md`), Windsurf (`.windsurfrules`), Cline (`.clinerules`) e Universal (`AGENTS.md`).
+  - Flexibilidade preservada: o desenvolvedor pode adicionar ou remover pontes adicionais a qualquer momento via Cockpit Web ou CLI.
+- **Feedback Visual Aprimorado no Quickstart Studio (`app.js`)**:
+  - O painel de conclusão do assistente de criação agora destaca visualmente a ponte gerada, seu ícone e a IDE correspondente.
+
+## [1.5.3] — 2026-11-17
+
+### 🎯 Usabilidade no Quickstart Studio & Resiliência Visual
+- **Sabatina Técnica com IA (Grill Studio) — Ações Fixadas & Scrollbar Fluida (`style.css`)**:
+  - Correção de cálculo de altura no modal para garantir que as caixas de ação do rodapé permaneçam 100% visíveis e sem cortes.
+  - Implementação de barra de rolagem inteligente com destaque neon/gradiente na lista de decisões arquiteturais.
+- **Resiliência de Diagramas Arquiteturais SVG**:
+  - Remoção de query strings de versão (`?v=...`) nas tags `<img>` dos diagramas que causavam falha de arquivo não encontrado no Windows.
+- **AI Gateway — Governança e Estabilidade de Provedores Oficiais**:
+  - Foco estrito em provedores de IA com APIs públicas e documentadas (Gemini, Groq, OpenAI, Claude, OpenRouter, Ollama e Custom).
+
 ## [1.5.2] — 2026-11-17
 
 ### 🔌 Padronização Universal de Pontes de IA (SSOT) & Gestão Completa no Cockpit

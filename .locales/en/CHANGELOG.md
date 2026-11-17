@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [1.5.4] — 2026-11-17
+
+### 🧭 Active Bridge Governance via System Architecture
+- **Smart & Clean Bridge Generation on Project Creation (`scripts/bridge-templates.js`)**:
+  - New projects (via Web Cockpit, Quickstart Grill, or CLI `project:new`) now exclusively generate the active AI bridge defined in **"System Architecture"** (`brain.config.json`), keeping the repository root clean and free from unused tool configs.
+  - Complete support: GitHub Copilot (`.github/copilot-instructions.md`), Cursor AI (`.cursorrules`), Google Antigravity (`GEMINI.md`), Claude Code (`CLAUDE.md`), Windsurf (`.windsurfrules`), Cline (`.clinerules`), and Universal (`AGENTS.md`).
+  - Full flexibility: developers can add or delete bridges anytime via Web Cockpit or CLI.
+- **Enhanced Visual Feedback in Quickstart Studio (`app.js`)**:
+  - Wizard completion screen now clearly displays the active bridge generated, its icon, and the matching IDE.
+
+## [1.5.3] — 2026-11-17
+
+### 🎯 Quickstart Studio Usability & Visual Resilience
+- **AI Technical Grill Studio — Fixed Action Footer & Fluid Scrollbar (`style.css`)**:
+  - Fixed modal height calculation to keep footer action boxes fully visible and anchored.
+  - Added smart scrollbar styling to architectural decisions list.
+- **Architectural Diagram SVG Resilience**:
+  - Removed query strings (`?v=...`) from documentation diagram images to avoid Windows file not found errors.
+- **AI Gateway — Official Provider Focus**:
+  - Strictly focused on official, documented AI providers (Gemini, Groq, OpenAI, Claude, OpenRouter, Ollama, Custom).
+
 ## [1.5.2] — 2026-11-17
 
 ### 🔌 Universal AI Bridge Standardization (SSOT) & Full Cockpit Management

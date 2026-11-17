@@ -7,6 +7,16 @@ e este projeto adere ao [Versionamento Semântico (SemVer)](https://semver.org/l
 
 ---
 
+## [1.5.4] — 2026-11-17
+
+### 🧭 Governança Ativa de Pontes por Arquitetura do Sistema
+- **Geração Inteligente e Enxuta de Pontes na Criação de Projetos (`scripts/bridge-templates.js`)**:
+  - Novos projetos (via Cockpit Web, Sabatina Técnica Quickstart Grill ou CLI `project:new`) agora nascem exclusivamente com a ponte de IA configurada como padrão no card **"Arquitetura do Sistema"** (`brain.config.json`), eliminando a poluição da raiz com arquivos órfãos de ferramentas não utilizadas.
+  - Mapeamento dinâmico e suporte completo: GitHub Copilot (`.github/copilot-instructions.md`), Cursor AI (`.cursorrules`), Google Antigravity (`GEMINI.md`), Claude Code (`CLAUDE.md`), Windsurf (`.windsurfrules`), Cline (`.clinerules`) e Universal (`AGENTS.md`).
+  - Flexibilidade preservada: o desenvolvedor pode adicionar ou remover pontes adicionais a qualquer momento via Cockpit Web ou CLI.
+- **Feedback Visual Aprimorado no Quickstart Studio (`app.js`)**:
+  - O painel de conclusão do assistente de criação agora destaca visualmente a ponte gerada, seu ícone e a IDE correspondente.
+
 ## [1.5.3] — 2026-11-17
 
 ### 🎯 Usabilidade no Quickstart Studio & Resiliência Visual

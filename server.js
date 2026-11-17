@@ -358,7 +358,7 @@ Thumbs.db
             fs.writeFileSync(path.join(targetFolder, 'CURRENT_STATE.md'), currentStateMd, 'utf-8');
             fs.writeFileSync(path.join(targetFolder, 'ARCHITECTURE.md'), archMd, 'utf-8');
             fs.writeFileSync(path.join(targetFolder, 'LESSONS_LEARNED.md'), lessonsLearnedMd, 'utf-8');
-            writeProjectBridges({ projectDir: targetFolder, projectName: safeName, rootDir: ROOT_DIR });
+            writeProjectBridges({ projectDir: targetFolder, projectName: safeName, rootDir: ROOT_DIR, tools: body.tools });
             fs.writeFileSync(path.join(targetFolder, '.gitignore'), gitignoreContent, 'utf-8');
 
             // 7. git init opcional (se solicitado pelo usuário)

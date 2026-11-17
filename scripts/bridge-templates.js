@@ -116,17 +116,58 @@ If the developer asks *"what do your project instructions say?"*, read the contr
 }
 
 /**
+ * Obtém a chave da ferramenta de IA ativa configurada em brain.config.json.
+ * Mapeia o motor selecionado na Arquitetura do Sistema para a chave correspondente em BRIDGES.
+ * @param {string} [rootDir] Diretório raiz do AI Second Brain
+ * @returns {string} Chave válida de BRIDGES (ex: 'copilot', 'cursor', 'antigravity', etc.)
+ */
+function getActiveBridgeKey(rootDir) {
+    const root = rootDir || path.resolve(__dirname, '..');
+    const configPath = path.join(root, 'brain.config.json');
+    try {
+        if (fs.existsSync(configPath)) {
+            const raw = fs.readFileSync(configPath, 'utf-8');
+            const data = JSON.parse(raw);
+            if (data && data.activeEngine) {
+                const key = String(data.activeEngine).trim().toLowerCase();
+                if (key === 'universal' || key === 'agents') return 'agents';
+                if (BRIDGES[key]) return key;
+            }
+        }
+    } catch (_) {}
+    return 'agents';
+}
+
+/**
+ * Retorna as ferramentas padrão para criação de novos projetos.
+ * Por padrão, retorna apenas a ponte correspondente ao motor de IA ativo na Arquitetura do Sistema.
+ * @param {string} [rootDir]
+ * @returns {string[]}
+ */
+function getDefaultBridgeTools(rootDir) {
+    const active = getActiveBridgeKey(rootDir);
+    return [active];
+}
+
+/**
  * Grava pontes no diretório do projeto.
  * @param {object} o
  * @param {string} o.projectDir   Pasta física do projeto (projects/<nome>)
  * @param {string} o.projectName
- * @param {string[]} [o.tools]    Chaves de BRIDGES (padrão: todas)
+ * @param {string} [o.rootDir]    Diretório raiz do AI Second Brain
+ * @param {string[]} [o.tools]    Chaves de BRIDGES (padrão: ponte do motor ativo na Arquitetura do Sistema)
  * @param {string} [o.pathPrefix] Prefixo dos caminhos dentro das pontes
  * @param {boolean} [o.overwrite] Sobrescrever existentes (padrão: false)
  * @returns {{created:string[], skipped:string[]}}
  */
 function writeBridges({ projectDir, projectName, rootDir, tools, pathPrefix, overwrite = false }) {
-    const keys = (tools && tools.length ? tools : ALL_KEYS).filter(k => BRIDGES[k]);
+    let effectiveTools;
+    if (tools && tools.length) {
+        effectiveTools = (tools.includes('--all') || tools.includes('all')) ? ALL_KEYS : tools;
+    } else {
+        effectiveTools = getDefaultBridgeTools(rootDir);
+    }
+    const keys = effectiveTools.filter(k => BRIDGES[k]);
     const created = [];
     const skipped = [];
     for (const key of keys) {
@@ -164,7 +205,16 @@ function deleteBridges({ projectDir, tools }) {
     return { deleted };
 }
 
-module.exports = { BRIDGES, ALL_KEYS, buildBridgeContent, writeBridges, deleteBridges, normalizePrefix };
+module.exports = {
+    BRIDGES,
+    ALL_KEYS,
+    buildBridgeContent,
+    writeBridges,
+    deleteBridges,
+    normalizePrefix,
+    getActiveBridgeKey,
+    getDefaultBridgeTools
+};
 
 if (require.main === module) {
     const rootDir = path.resolve(__dirname, '..');
@@ -179,7 +229,7 @@ if (require.main === module) {
     for (const name of names) {
         const dir = path.join(projectsRoot, name);
         if (!fs.existsSync(dir)) continue;
-        const res = writeBridges({ projectDir: dir, projectName: name, rootDir, pathPrefix: prefix, overwrite: true });
+        const res = writeBridges({ projectDir: dir, projectName: name, rootDir, pathPrefix: prefix, overwrite: true, tools: ALL_KEYS });
         console.log(`[bridges] ${name}: ${res.created.length} arquivos atualizados`);
     }
 }

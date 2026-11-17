@@ -1250,7 +1250,7 @@ Thumbs.db
     fs.writeFileSync(path.join(targetFolder, 'ARCHITECTURE.md'), archContent, 'utf-8');
     fs.writeFileSync(path.join(targetFolder, 'DECISIONS', 'ADR-0001-stack-inicial.md'), adrContent, 'utf-8');
     fs.writeFileSync(path.join(targetFolder, 'LESSONS_LEARNED.md'), lessonsContent, 'utf-8');
-    writeBridges({ projectDir: targetFolder, projectName: safeName, rootDir: rootDir });
+    writeBridges({ projectDir: targetFolder, projectName: safeName, rootDir: rootDir, tools: (projectInfo && projectInfo.tools) || (opts && opts.tools) });
     fs.writeFileSync(path.join(targetFolder, '.gitignore'), gitignoreContent, 'utf-8');
 
     // 8. git init opcional
