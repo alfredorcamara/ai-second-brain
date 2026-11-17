@@ -2644,13 +2644,21 @@ External repository linked to AI Second Brain.
     }
 
     if (!fs.existsSync(filePath)) {
-        let rootCandidate = path.join(ROOT_DIR, relativeFile);
-        if (fs.existsSync(rootCandidate) && rootCandidate.startsWith(ROOT_DIR)) {
-            if (fs.statSync(rootCandidate).isDirectory()) {
-                rootCandidate = path.join(rootCandidate, 'index.html');
+        if (pathname.startsWith('/brain-ui/')) {
+            const bCandidate = path.join(UI_DIR, pathname.replace(/^\/brain-ui\//, '/'));
+            if (fs.existsSync(bCandidate)) {
+                filePath = bCandidate;
             }
-            if (fs.existsSync(rootCandidate)) {
-                filePath = rootCandidate;
+        }
+        if (!fs.existsSync(filePath)) {
+            let rootCandidate = path.join(ROOT_DIR, relativeFile);
+            if (fs.existsSync(rootCandidate) && rootCandidate.startsWith(ROOT_DIR)) {
+                if (fs.statSync(rootCandidate).isDirectory()) {
+                    rootCandidate = path.join(rootCandidate, 'index.html');
+                }
+                if (fs.existsSync(rootCandidate)) {
+                    filePath = rootCandidate;
+                }
             }
         }
     }

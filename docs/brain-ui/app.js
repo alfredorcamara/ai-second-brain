@@ -1863,6 +1863,28 @@ function showView(view) {
     }
 }
 
+/**
+ * Recuperação resiliente de diagramas arquiteturais com fallbacks de caminho
+ * Garante que imagens SVG carreguem em qualquer ambiente: file:///, localhost, live-server ou subdiretórios
+ */
+function handleDiagramImgError(img, baseName) {
+    if (!img) return;
+    const isEn = (img.src && img.src.includes('-eng.svg')) || (window.currentLang === 'en');
+    const finalFile = isEn ? baseName.replace(/\.svg$/, '-eng.svg') : baseName;
+    const step = parseInt(img.dataset.retryStep || '0', 10);
+    const candidates = [
+        `assets/diagrams/${finalFile}`,
+        `docs/brain-ui/assets/diagrams/${finalFile}`,
+        `brain-ui/assets/diagrams/${finalFile}`,
+        `/assets/diagrams/${finalFile}`,
+        `./assets/diagrams/${finalFile}`
+    ];
+    if (step < candidates.length) {
+        img.dataset.retryStep = String(step + 1);
+        img.src = candidates[step];
+    }
+}
+
 function showSolutionDocs() {
     currentView = 'docs';
     document.getElementById('dashboardOverlay')?.classList.remove('active');
