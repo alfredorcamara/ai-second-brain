@@ -7963,12 +7963,26 @@ body {
    ═══════════════════════════════════════════════════ */
 
 .pw-vision-box {
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.03));
+    position: relative;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.09), rgba(139, 92, 246, 0.03));
     border: 1px solid rgba(99, 102, 241, 0.25);
     border-left: 4px solid var(--accent-primary);
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 14px 18px;
     margin-bottom: 16px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pw-vision-box:hover {
+    border-color: rgba(99, 102, 241, 0.42);
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.35);
+}
+
+.pw-vision-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
 }
 
 .pw-vision-title {
@@ -7977,13 +7991,84 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--accent-tertiary);
-    margin-bottom: 4px;
+    margin-bottom: 0;
+}
+
+.pw-vision-edit-btn {
+    opacity: 0;
+    background: rgba(99, 102, 241, 0.14);
+    border: 1px solid rgba(99, 102, 241, 0.32);
+    color: #c7d2fe;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: opacity 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+
+.pw-vision-box:hover .pw-vision-edit-btn,
+.pw-vision-edit-btn:focus-visible {
+    opacity: 1;
+}
+
+.pw-vision-edit-btn:hover {
+    background: rgba(99, 102, 241, 0.28);
+    color: #ffffff;
 }
 
 .pw-vision-text {
-    font-size: 14px;
-    line-height: 1.5;
-    color: #f1f5f9;
+    font-size: 13.5px;
+    line-height: 1.62;
+    color: #e2e8f0;
+}
+
+.pw-vision-lead {
+    color: #f8fafc;
+    font-size: 13.8px;
+    line-height: 1.62;
+}
+
+.pw-vision-tech {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 9px;
+    border-top: 1px dashed rgba(148, 163, 184, 0.16);
+    font-size: 12.8px;
+    line-height: 1.55;
+    color: #cbd5e1;
+}
+
+.pw-vision-tech-icon {
+    font-size: 13px;
+    line-height: 1.4;
+    flex-shrink: 0;
+    opacity: 0.85;
+}
+
+.pw-vision-highlight,
+.pw-vision-text strong,
+.pw-vision-text b {
+    color: #ffffff;
+    font-weight: 600;
+    background: rgba(99, 102, 241, 0.16);
+    border: 1px solid rgba(129, 140, 248, 0.28);
+    padding: 1px 6px;
+    border-radius: 5px;
+    font-size: 0.95em;
+}
+
+.pw-inline-code,
+.pw-vision-text code {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: #38bdf8;
+    background: rgba(14, 165, 233, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    padding: 1px 6px;
+    border-radius: 4px;
 }
 
 .pw-specs-grid {

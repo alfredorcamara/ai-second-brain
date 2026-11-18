@@ -1329,7 +1329,7 @@ function renderDashboardProjects() {
         const extractedDesc = extractProjectOverview(proj.content);
         const desc = extractedDesc ? rmCleanText(extractedDesc) : 'Projeto arquitetado e governado pelos contratos do AI Second Brain.';
 
-        const extractedStack = extractProjectStack(proj.content, archFile?.content);
+        const extractedStack = extractProjectStack(proj.content, archFile?.content, currentStateFile?.content);
         const stack = extractedStack || 'Livre';
 
         // Stack icon
@@ -6634,25 +6634,36 @@ async function saveOverviewQuickEdit() {
 
     let projectMd = currentProjectData.projectMd || `# ${currentProjectData.name}\n\n`;
 
-    // Atualiza ou insere Visão Geral
-    if (/##\s+Visão Geral/i.test(projectMd)) {
-        projectMd = projectMd.replace(/##\s+Visão Geral\s*\n+([^#]+)/i, `## Visão Geral\n${vision}\n\n`);
+    // Atualiza ou insere Visão Geral preservando tags legítimas (<strong>, <code>, etc.) do original
+    const origOverview = extractProjectOverview(projectMd);
+    const restoredVision = rmRestoreInlineTags(vision, origOverview);
+    if (vision && vision !== rmStripFormattingForInput(origOverview)) {
+        if (/##\s+(?:\d+\.\s*)?Vis[ãa]o Geral[^\r\n]*/i.test(projectMd)) {
+            projectMd = projectMd.replace(/(##\s+(?:\d+\.\s*)?Vis[ãa]o Geral[^\r\n]*\r?\n+)([^#]+)/i, `$1${restoredVision}\n\n`);
+        } else {
+            projectMd = projectMd.replace(/(#[^\n\r]+)/, `$1\n\n## Visão Geral\n${restoredVision}\n`);
+        }
+    }
+
+    // Garante seção Informações Gerais se Stack ou Status forem definidos e não houver marcador no PROJECT.md
+    if ((stack || status) && !/-\s+\*\*(?:Stack|Status)/i.test(projectMd) && !/##\s+Informações Gerais/i.test(projectMd)) {
+        const infoBlock = `\n\n## Informações Gerais${stack ? `\n- **Stack Tecnológica**: ${stack}` : ''}${status ? `\n- **Status**: ${status}` : ''}\n`;
+        projectMd = projectMd.replace(/(#[^\n\r]+)/, `$1${infoBlock}`);
     } else {
-        projectMd = projectMd.replace(/(#[^\n\r]+)/, `$1\n\n## Visão Geral\n${vision}\n`);
-    }
-
-    // Atualiza Stack
-    if (/-\s+\*\*Stack[^*]*\*\*:[^\n\r]*/i.test(projectMd)) {
-        projectMd = projectMd.replace(/-\s+\*\*Stack[^*]*\*\*:[^\n\r]*/i, `- **Stack**: ${stack}`);
-    } else if (/##\s+Informações Gerais/i.test(projectMd)) {
-        projectMd = projectMd.replace(/(##\s+Informações Gerais[^\n\r]*)/i, `$1\n- **Stack**: ${stack}`);
-    }
-
-    // Atualiza Status
-    if (/-\s+\*\*Status\*\*:[^\n\r]*/i.test(projectMd)) {
-        projectMd = projectMd.replace(/-\s+\*\*Status\*\*:[^\n\r]*/i, `- **Status**: ${status}`);
-    } else if (/##\s+Informações Gerais/i.test(projectMd)) {
-        projectMd = projectMd.replace(/(##\s+Informações Gerais[^\n\r]*)/i, `$1\n- **Status**: ${status}`);
+        if (stack) {
+            if (/-\s+\*\*Stack[^*]*\*\*:[^\n\r]*/i.test(projectMd)) {
+                projectMd = projectMd.replace(/-\s+\*\*Stack[^*]*\*\*:[^\n\r]*/i, `- **Stack Tecnológica**: ${stack}`);
+            } else if (/##\s+Informações Gerais/i.test(projectMd)) {
+                projectMd = projectMd.replace(/(##\s+Informações Gerais[^\n\r]*)/i, `$1\n- **Stack Tecnológica**: ${stack}`);
+            }
+        }
+        if (status) {
+            if (/-\s+\*\*Status\*\*:[^\n\r]*/i.test(projectMd)) {
+                projectMd = projectMd.replace(/-\s+\*\*Status\*\*:[^\n\r]*/i, `- **Status**: ${status}`);
+            } else if (/##\s+Informações Gerais/i.test(projectMd)) {
+                projectMd = projectMd.replace(/(##\s+Informações Gerais[^\n\r]*)/i, `$1\n- **Status**: ${status}`);
+            }
+        }
     }
 
     // Sincroniza Status no CURRENT_STATE.md
@@ -6738,6 +6749,8 @@ const RM_ITEM_RE = /^(\s*)(?:([-*+]|\d+[.)])\s+(?:\[([ xX~\-])\]\s+|([✅✔☑�
 
 function rmCleanText(t) {
     return String(t || '')
+        .replace(/<\s*br\s*\/?\s*>/gi, ' ')
+        .replace(/<\/?(?:strong|b|em|i|code|span|mark|u)\b[^>]*>/gi, '')
         .replace(/\*\*(.+?)\*\*/g, '$1')
         .replace(/__(.+?)__/g, '$1')
         .replace(/~~(.+?)~~/g, '$1')
@@ -6915,14 +6928,72 @@ function parseCurrentStateSections(md) {
     };
 }
 
-// Renderização segura (escapa HTML e converte `código` e **negrito** inline)
-function rmRenderText(text) {
+// Renderização segura: reconhece tags legítimas (<strong>, <b>, <em>, <i>, <code>, <br>) e Markdown inline,
+// escapando qualquer outra tag HTML para proteção contra XSS.
+function rmRenderText(text, opts = {}) {
+    let s = String(text || '');
+    s = s
+        .replace(/<\s*(?:strong|b)\b[^>]*>([\s\S]*?)<\s*\/\s*(?:strong|b)\s*>/gi, '\u0001B_OPEN\u0002$1\u0001B_CLOSE\u0002')
+        .replace(/<\s*(?:em|i)\b[^>]*>([\s\S]*?)<\s*\/\s*(?:em|i)\s*>/gi, '\u0001I_OPEN\u0002$1\u0001I_CLOSE\u0002')
+        .replace(/<\s*code\b[^>]*>([\s\S]*?)<\s*\/\s*code\s*>/gi, '\u0001C_OPEN\u0002$1\u0001C_CLOSE\u0002')
+        .replace(/<\s*br\s*\/?\s*>/gi, '\u0001BR\u0002');
+    s = s
+        .replace(/\*\*(.+?)\*\*/g, '\u0001B_OPEN\u0002$1\u0001B_CLOSE\u0002')
+        .replace(/__(.+?)__/g, '\u0001B_OPEN\u0002$1\u0001B_CLOSE\u0002')
+        .replace(/`([^`]+)`/g, '\u0001C_OPEN\u0002$1\u0001C_CLOSE\u0002')
+        .replace(/(^|[\s(])\*([^*]+?)\*(?=[\s).,;:!?]|$)/g, '$1\u0001I_OPEN\u0002$2\u0001I_CLOSE\u0002');
     const esc = (typeof escapeHtml === 'function')
-        ? escapeHtml(text)
-        : String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        ? escapeHtml(s)
+        : s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const boldAttr = opts.pillHighlight ? ' class="pw-vision-highlight"' : '';
     return esc
-        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-        .replace(/`([^`]+)`/g, '<code style="font-size:11px; padding:1px 5px; border-radius:4px; background:rgba(148,163,184,0.15);">$1</code>');
+        .replace(/\u0001B_OPEN\u0002([\s\S]*?)\u0001B_CLOSE\u0002/g, `<strong${boldAttr}>$1</strong>`)
+        .replace(/\u0001I_OPEN\u0002([\s\S]*?)\u0001I_CLOSE\u0002/g, '<em>$1</em>')
+        .replace(/\u0001C_OPEN\u0002([\s\S]*?)\u0001C_CLOSE\u0002/g, '<code class="pw-inline-code">$1</code>')
+        .replace(/\u0001BR\u0002/g, '<br>');
+}
+
+function rmRenderVisionHtml(text) {
+    const raw = String(text || '').trim();
+    if (!raw) return 'Projeto conectado e governado pelo AI Second Brain.';
+    const splitRe = /^([\s\S]+?\.)\s+((?:O\s+(?:produto|projeto|sistema|m[óo]dulo|servi[çc]o|aplicativo|backend)\s+)?(?:ser[áa]\s+|foi\s+|é\s+)?(?:desenvolvid[oa]|implementad[oa]|constru[íi]d[oa]|arquitetad[oa]|basead[oa])\b[\s\S]+)$/i;
+    const m = raw.match(splitRe);
+    if (m) {
+        const leadHtml = rmRenderText(m[1].trim(), { pillHighlight: true });
+        const techHtml = rmRenderText(m[2].trim(), { pillHighlight: true });
+        return `<div class="pw-vision-lead">${leadHtml}</div><div class="pw-vision-tech"><span class="pw-vision-tech-icon">⚙️</span><span>${techHtml}</span></div>`;
+    }
+    return `<div class="pw-vision-lead">${rmRenderText(raw, { pillHighlight: true })}</div>`;
+}
+
+// Remove tags HTML e marcadores Markdown apenas para exibição limpa dentro de <input>/<textarea>
+function rmStripFormattingForInput(text) {
+    return String(text || '')
+        .replace(/<\s*br\s*\/?\s*>/gi, '\n')
+        .replace(/<\/?(?:strong|b|em|i|code|span|mark|u)\b[^>]*>/gi, '')
+        .replace(/\*\*(.+?)\*\*/g, '$1')
+        .replace(/__(.+?)__/g, '$1')
+        .replace(/`([^`]+)`/g, '$1')
+        .trim();
+}
+
+// Reaplica tags inline originais (<strong/b/em/i/code>) nos termos que permaneceram no texto após edição rápida
+function rmRestoreInlineTags(editedPlain, originalRaw) {
+    let res = String(editedPlain || '');
+    const orig = String(originalRaw || '');
+    if (!res || !orig) return res;
+    const tagRe = /<(strong|b|em|i|code)\b[^>]*>([^<]+)<\/\1>/gi;
+    const seen = new Set();
+    let m;
+    while ((m = tagRe.exec(orig)) !== null) {
+        const tag = m[1];
+        const term = m[2].trim();
+        if (!term || seen.has(term)) continue;
+        seen.add(term);
+        const escTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        res = res.replace(new RegExp(`(?<!<[^>]*)${escTerm}`, 'g'), `<${tag}>${term}</${tag}>`);
+    }
+    return res;
 }
 
 function rmRenderGroupLabel(meta, idx) {
@@ -6937,6 +7008,7 @@ const META_PLACEHOLDER_RE = /^(n[ãa]o\s+(especificad[oa]|definid[oa]|informad[o
 
 function cleanMetaValue(val) {
     return String(val || '')
+        .replace(/<\/?(?:strong|b|em|i|code|span|mark|u)\b[^>]*>/gi, '')
         .replace(/\*\*(.+?)\*\*/g, '$1')
         .replace(/__(.+?)__/g, '$1')
         .replace(/`([^`]+)`/g, '$1')
@@ -6949,9 +7021,11 @@ function isValidMetaValue(val) {
     return Boolean(v && v.length <= 140 && !META_PLACEHOLDER_RE.test(v));
 }
 
-function extractProjectStack(projectMd, archMd) {
-    const p = String(projectMd || '');
-    const a = String(archMd || '');
+function extractProjectStack(projectMd, archMd, currentStateMd) {
+    const stripTags = s => String(s || '').replace(/<\/?(?:strong|b|em|i|code|span|mark|u)\b[^>]*>/gi, '');
+    const p = stripTags(projectMd);
+    const a = stripTags(archMd);
+    const c = stripTags(currentStateMd);
 
     const bulletPatterns = [
         /^\s*[-*+]\s+\*\*(?:Stack[^*:]*|Tech\s*Stack|Tecnologias?\s*Principa(?:l|is)|Linguagem\s*(?:\/\s*Framework)?)\*\*\s*:\s*([^\r\n]+)/im,
@@ -6985,8 +7059,12 @@ function extractProjectStack(projectMd, archMd) {
         if (parts.length) return parts.join(' · ');
     }
 
-    const proseMatch = p.match(/(?:desenvolvid[oa]|implementad[oa]|constru[íi]d[oa]|arquitetad[oa]|basead[oa])\s+(?:em|com|sobre)\s+([A-Za-z0-9_#\+\.\/\s\-]+?)(?:\.\s|\.\r?\n|,|\s+utilizando|\s+usando|\s+sobre|\s+com\s+banco|\s+seguindo|\r?\n|$)/i);
-    if (proseMatch && isValidMetaValue(proseMatch[1])) return cleanMetaValue(proseMatch[1]);
+    const proseMatch = p.match(/(?:desenvolvid[oa]|implementad[oa]|constru[íi]d[oa]|arquitetad[oa]|basead[oa])\s+(?:em|com|sobre)\s+([A-Za-z0-9_#\+\.\/\s\-]+?)(?:\.\s|\.\r?\n|,|\s+utilizando|\s+usando|\s+sobre|\s+com\s+banco|\s+seguindo|\s+e\s+expondo|\r?\n|$)/i);
+    if (proseMatch && isValidMetaValue(proseMatch[1])) return cleanMetaValue(proseMatch[1]).replace(/\s+com\s+/gi, ' / ');
+    if (c) {
+        const csMatch = c.match(/stack(?:\s+selecionada)?\s*(?::|\()\s*([^\r\n)]+)/i);
+        if (csMatch && isValidMetaValue(csMatch[1])) return cleanMetaValue(csMatch[1]);
+    }
 
     if (a) {
         for (const re of bulletPatterns) {
@@ -7311,7 +7389,12 @@ function renderProjectOverviewTab() {
 
     // Extrai a descrição da Visão Geral de forma resiliente (qualquer título ou parágrafo inicial)
     const extractedVision = extractProjectOverview(d.projectMd) || (d.description && !/^Projeto\s+(no|conectado)/i.test(d.description) ? d.description : '');
-    const visionText = extractedVision ? rmRenderText(extractedVision) : 'Projeto conectado e governado pelo AI Second Brain.';
+    const visionText = extractedVision ? rmRenderVisionHtml(extractedVision) : 'Projeto conectado e governado pelo AI Second Brain.';
+    const visionInputText = extractedVision ? escapeHtml(rmStripFormattingForInput(extractedVision)) : '';
+    const resolvedStack = (d.stack && !META_PLACEHOLDER_RE.test(d.stack)) ? d.stack : (extractProjectStack(d.projectMd, d.archMd, d.currentStateMd) || 'Não especificada');
+    d.stack = resolvedStack;
+    const topStackBadge = document.getElementById('pwStackBadge');
+    if (topStackBadge) topStackBadge.textContent = resolvedStack;
 
     // Extrai dados do CURRENT_STATE.md
     const { status: currentStatusText, definedItems, nextSteps, definedMeta, nextMeta } = parseCurrentStateSections(d.currentStateMd);
@@ -7371,7 +7454,7 @@ function renderProjectOverviewTab() {
                     <div class="pw-edit-form-wrap">
                         <div class="pw-form-group">
                             <label class="pw-form-label">Objetivo / Missão do Projeto</label>
-                            <textarea id="pwEditVision" class="pw-form-textarea" rows="4" placeholder="Descreva os objetivos principais deste projeto...">${visionText}</textarea>
+                            <textarea id="pwEditVision" class="pw-form-textarea" rows="4" placeholder="Descreva os objetivos principais deste projeto...">${visionInputText}</textarea>
                         </div>
 
                         <div class="pw-form-row">
@@ -7403,7 +7486,10 @@ function renderProjectOverviewTab() {
                 ` : `
                     <!-- Box da Visão Geral / Missão do Sistema -->
                     <div class="pw-vision-box">
-                        <div class="pw-vision-title">Objetivo do Projeto</div>
+                        <div class="pw-vision-header">
+                            <div class="pw-vision-title">Objetivo do Projeto</div>
+                            <button type="button" class="pw-vision-edit-btn" onclick="toggleOverviewQuickEdit(true)" title="Edição rápida do objetivo, stack e status">✏️ Editar</button>
+                        </div>
                         <div class="pw-vision-text">${visionText}</div>
                     </div>
 

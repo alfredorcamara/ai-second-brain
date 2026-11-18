@@ -864,7 +864,8 @@ External repository linked to AI Second Brain.
             } catch (e) { }
 
             // Extração resiliente de metadados do PROJECT.md e contratos de governança
-            const cleanMeta = (v) => String(v || '')
+            const stripTags = (v) => String(v || '').replace(/<\/?(?:strong|b|em|i|code|span|mark|u)\b[^>]*>/gi, '');
+            const cleanMeta = (v) => stripTags(v)
                 .replace(/\*\*(.+?)\*\*/g, '$1')
                 .replace(/__(.+?)__/g, '$1')
                 .replace(/`([^`]+)`/g, '$1')
@@ -884,15 +885,17 @@ External repository linked to AI Second Brain.
                 /^\s*\*\*(?:Stack[^*:]*|Tech\s*Stack|Tecnologias?\s*Principa(?:l|is)|Linguagem\s*(?:\/\s*Framework)?)\*\*\s*:\s*([^\r\n]+)/im,
                 /^\s*(?:Stack(?:\s+Tecnol[óo]gica|\s+Principal|\s+Inicial|\s+Oficial)?|Tech\s+Stack)\s*:\s*([^\r\n]+)/im,
                 /\|\s*\*?\*?(?:Stack[^|*:]*|Tech\s*Stack|Linguagem\s*(?:\/\s*Framework)?)\*?\*?\s*\|\s*([^|\r\n]+)\|/i,
-                /(?:desenvolvid[oa]|implementad[oa]|constru[íi]d[oa]|arquitetad[oa]|basead[oa])\s+(?:em|com|sobre)\s+([A-Za-z0-9_#\+\.\/\s\-]+?)(?:\.\s|\.\r?\n|,|\s+utilizando|\s+usando|\s+sobre|\s+com\s+banco|\s+seguindo|\r?\n|$)/i
+                /(?:desenvolvid[oa]|implementad[oa]|constru[íi]d[oa]|arquitetad[oa]|basead[oa])\s+(?:em|com|sobre)\s+([A-Za-z0-9_#\+\.\/\s\-]+?)(?:\.\s|\.\r?\n|,|\s+utilizando|\s+usando|\s+sobre|\s+com\s+banco|\s+seguindo|\s+e\s+expondo|\r?\n|$)/i,
+                /stack(?:\s+selecionada)?\s*(?::|\()\s*([^\r\n)]+)/i
             ];
-            for (const src of [projectMd, archMd]) {
+            for (const rawSrc of [projectMd, archMd, currentStateMd]) {
+                const src = stripTags(rawSrc);
                 if (!src) continue;
                 let found = false;
                 for (const re of stackPatterns) {
                     const m = src.match(re);
                     if (m && isValidMeta(m[1])) {
-                        stack = cleanMeta(m[1]);
+                        stack = cleanMeta(m[1]).replace(/\s+com\s+/gi, ' / ');
                         found = true;
                         break;
                     }

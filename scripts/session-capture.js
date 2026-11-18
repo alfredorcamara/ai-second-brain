@@ -129,6 +129,8 @@ const RM_ITEM_RE = /^(\s*)(?:([-*+]|\d+[.)])\s+(?:\[([ xX~\-])\]\s+|([✅✔☑�
 
 function rmCleanText(t) {
     return String(t || '')
+        .replace(/<\s*br\s*\/?\s*>/gi, ' ')
+        .replace(/<\/?(?:strong|b|em|i|code|span|mark|u)\b[^>]*>/gi, '')
         .replace(/\*\*(.+?)\*\*/g, '$1')
         .replace(/__(.+?)__/g, '$1')
         .replace(/~~(.+?)~~/g, '$1')

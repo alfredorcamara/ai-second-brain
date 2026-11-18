@@ -7,6 +7,18 @@ e este projeto adere ao [Versionamento Semântico (SemVer)](https://semver.org/l
 
 ---
 
+## [1.5.8] — 2026-11-17
+
+### 🎨 UX/UI do Objetivo do Projeto & Reconhecimento Seguro de Tags Inline
+- **Renderização Rica de Tags Legítimas (`<strong>`, `<b>`, `<em>`, `<i>`, `<code>`, `<br>`) no Card de Visão Geral (`app.js` e `style.css`)**:
+  - O card **Objetivo do Projeto** agora reconhece e renderiza tags HTML legítimas de formatação lado a lado com Markdown inline (mantendo proteção contra XSS e preservando o arquivo `.md` intacto no disco para visualização e edição).
+  - **Pílulas de Destaque Semântico (*Tech & Domain Highlights*)**: termos em negrito/código recebem realce visual de alto contraste para leitura dinâmica instantânea.
+  - **Hierarquia em 2 Camadas**: separação visual automática entre a **Proposta de Negócio** (lead principal) e o **Resumo Técnico/Arquitetural** (`⚙️`), com botão rápido `✏️ Editar` no hover do card.
+- **Input Limpo na Edição Rápida com Preservação de Tags no `.md`**:
+  - Ao abrir a **Edição Rápida**, o campo `<textarea>` exibe o texto limpo (sem poluição de tags `<strong>`), e ao salvar reaplica/preserva automaticamente as tags originais no `PROJECT.md`.
+- **Extração de Stack Resiliente a HTML Inline (`app.js` e `server.js`)**:
+  - Reconhece stacks escritas com tags `<strong>` em prosa (ex.: *"desenvolvido em `<strong>Node.js</strong>` com `<strong>TypeScript</strong>`"* ➔ `Node.js / TypeScript`) e fallback no `CURRENT_STATE.md`.
+
 ## [1.5.7] — 2026-11-17
 
 ### 🧠 Identificação Semântica Universal em Todo o Ecossistema
