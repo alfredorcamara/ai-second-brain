@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [1.5.6] — 2026-11-17
+
+### 🎯 Smart Active Roadmap & Non-Destructive CURRENT_STATE.md Editing
+- **Smart Roadmap Parser (`docs/brain-ui/app.js`)**:
+  - The **Active Roadmap** card now detects progress regardless of how `CURRENT_STATE.md` was written (by AI or developer): checkboxes anywhere (`- [x]` done / `- [ ]` pending) and sections identified by synonyms (`Next Steps`, `Roadmap`, `Milestone`, `Phase`, `Sprint`, `Backlog`, `To-do`, `In progress`, `Done`, `Completed`, and Portuguese equivalents).
+  - Subheadings such as *"Milestone 1 – Domain Foundations"* (heading or bold line) inherit the parent section classification and are shown as group labels in the card.
+  - Nested sub-items, code blocks, and unrelated sections (SLA, Risks, Policies) are ignored.
+- **Surgical, Non-Destructive Editing**:
+  - Completing, reopening, adding, or deleting steps from the Cockpit now changes only the affected lines (toggling `[x]`/`[ ]` in place), fully preserving the rest of the document — previously these actions rewrote the entire file and discarded AI-generated content.
+- **Project Goal**: Overview extraction now supports numbered headings (e.g. `## 1. Executive Overview`).
+
 ## [1.5.5] — 2026-11-17
 
 ### 🐛 Quickstart Grill Fixes & Resilient Tech Stack Detection

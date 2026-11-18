@@ -6723,68 +6723,233 @@ async function saveOverviewQuickEdit() {
 }
 
 // Helpers para Estado Atual & Roadmap
-function parseCurrentStateSections(md) {
-    const raw = md || '';
+// ─────────────────────────────────────────────────────────────────────────────
+// Parser inteligente e NÃO destrutivo do CURRENT_STATE.md.
+// Reconhece o roadmap independentemente de como foi escrito (pela IA ou pelo dev):
+//   • Checkboxes em qualquer lugar: "- [x]" = concluído, "- [ ]" = pendente.
+//   • Seções por sinônimos (qualquer nível de título ou linha em negrito):
+//       concluído → "O que já foi definido", "Concluído", "Entregue", "Feito", "Done"...
+//       pendente  → "Próximos Passos", "Roadmap", "Marco", "Fase", "Sprint", "Backlog",
+//                   "Pendências", "To-do", "Em andamento", "Next steps", "Milestones"...
+//   • Subtítulos (ex.: "Marco 1 – Fundamentos") herdam a classificação do título pai.
+//   • Itens aninhados (sub-bullets) e blocos de código são ignorados.
+// Todas as edições alteram APENAS as linhas afetadas, preservando o restante do documento.
+// ─────────────────────────────────────────────────────────────────────────────
+const RM_DONE_RE = /(j[áa]\s+(foi\s+)?(definid|feit|conclu|entreg|implement)|conclu[íi]d|finalizad|entregue|realizad|\bfeito|\bdone\b|completed|finished|achievements|implementad[oa]s)/i;
+const RM_NEXT_RE = /(pr[óo]xim|pendent|pend[êe]ncia|backlog|roadmap|to-?do|tarefa|next\s*steps?|em\s+andamento|in\s+progress|a\s+fazer|planejad|\bmarco|milestone|sprint|\bfase\b|\betapa|plano\s+de\s+(a[çc][ãa]o|implementa)|objetivos?\s+imediat|upcoming|planned)/i;
+const RM_ITEM_RE = /^(\s*)([-*+]|\d+[.)])\s+(?:\[([ xX~\-])\]\s+)?(.*\S)\s*$/;
 
-    // Status
-    let status = '🟢 Ativo / Em Desenvolvimento';
-    const statusMatch = raw.match(/##\s+Status:\s*([^\n\r]+)/i);
-    if (statusMatch && statusMatch[1]) status = statusMatch[1].trim();
-
-    // Defined items
-    let definedItems = [];
-    const definedMatch = raw.match(/##\s+O que já foi definido\s*\n+([\s\S]*?)(?=##|$)/i);
-    if (definedMatch && definedMatch[1]) {
-        definedItems = definedMatch[1]
-            .split('\n')
-            .map(line => line.trim())
-            .filter(line => line.startsWith('-') || line.startsWith('*'))
-            .map(line => line.replace(/^[-*]\s*(\[[ xX]\]\s*)?/, '').trim())
-            .filter(Boolean);
-    }
-
-    // Next steps
-    let nextSteps = [];
-    const nextStepsMatch = raw.match(/##\s+Próximos Passos\s*\n+([\s\S]*?)(?=##|$)/i);
-    if (nextStepsMatch && nextStepsMatch[1]) {
-        nextSteps = nextStepsMatch[1]
-            .split('\n')
-            .map(line => line.trim())
-            .filter(line => /^\d+\.|\*|-/.test(line))
-            .map(line => line.replace(/^(\d+\.|[-*])\s*/, '').trim())
-            .filter(Boolean);
-    }
-
-    return { status, definedItems, nextSteps };
+function rmCleanText(t) {
+    return String(t || '')
+        .replace(/\*\*(.+?)\*\*/g, '$1')
+        .replace(/__(.+?)__/g, '$1')
+        .replace(/~~(.+?)~~/g, '$1')
+        .trim();
 }
 
+function rmClassifyHeading(title) {
+    const t = rmCleanText(title).replace(/[#`]/g, '').trim();
+    if (/^status\b/i.test(t)) return 'ignore';
+    if (RM_DONE_RE.test(t)) return 'done';
+    if (RM_NEXT_RE.test(t)) return 'next';
+    return null;
+}
+
+function rmIndent(ws) {
+    return String(ws || '').replace(/\t/g, '    ').length;
+}
+
+function rmParseModel(md) {
+    const raw = md || '';
+    const eol = raw.includes('\r\n') ? '\r\n' : '\n';
+    const lines = raw.split(/\r?\n/);
+    const items = [];
+    const stack = []; // { level, cls, title }
+    let inFence = false;
+
+    const ctx = () => {
+        for (let i = stack.length - 1; i >= 0; i--) {
+            if (stack[i].cls) return stack[i].cls;
+        }
+        return null;
+    };
+    const group = () => (stack.length ? stack[stack.length - 1].title : '');
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        if (/^\s*(```|~~~)/.test(line)) { inFence = !inFence; continue; }
+        if (inFence) continue;
+
+        // Títulos Markdown (# .. ######) ou linha isolada em negrito (subtítulo implícito)
+        const h = line.match(/^(#{1,6})\s+(.+?)\s*#*\s*$/);
+        const b = !h && line.match(/^\s*\*\*([^*].*?)\*\*\s*:?\s*$/);
+        if (h || b) {
+            const level = h ? h[1].length : 7;
+            const title = rmCleanText(h ? h[2] : b[1]);
+            while (stack.length && stack[stack.length - 1].level >= level) stack.pop();
+            stack.push({ level, cls: rmClassifyHeading(title), title });
+            continue;
+        }
+
+        const m = line.match(RM_ITEM_RE);
+        if (!m) continue;
+        const indent = rmIndent(m[1]);
+        if (indent > 1) continue; // sub-itens (ex.: endpoints listados abaixo de uma tarefa)
+
+        const context = ctx();
+        if (context === 'ignore') continue;
+        const box = m[3];
+        const hasBox = box !== undefined;
+        if (!hasBox && context !== 'done' && context !== 'next') continue;
+
+        let done = hasBox ? /[xX]/.test(box) : context === 'done';
+
+        // Bloco do item: inclui linhas seguintes mais indentadas (sub-itens/continuações)
+        let end = i;
+        for (let j = i + 1; j < lines.length; j++) {
+            const l = lines[j];
+            if (!l.trim()) {
+                const nxt = lines.slice(j + 1).find(x => x.trim());
+                if (nxt !== undefined && rmIndent((nxt.match(/^\s*/) || [''])[0]) > indent) continue;
+                break;
+            }
+            if (rmIndent((l.match(/^\s*/) || [''])[0]) > indent) { end = j; continue; }
+            break;
+        }
+
+        items.push({
+            line: i,
+            end,
+            marker: m[2],
+            hasBox,
+            done,
+            text: rmCleanText(m[4]),
+            group: group(),
+            context
+        });
+    }
+
+    let status = '🟢 Ativo / Em Desenvolvimento';
+    const statusMatch = raw.match(/^#{1,6}\s+Status:\s*([^\r\n]+)/im) || raw.match(/^\s*[-*]\s+\*\*Status\*\*:\s*([^\r\n]+)/im);
+    if (statusMatch && statusMatch[1]) status = statusMatch[1].trim();
+
+    return { raw, eol, lines, items, status };
+}
+
+function parseCurrentStateSections(md) {
+    const model = rmParseModel(md);
+    const definedMeta = model.items.filter(it => it.done);
+    const nextMeta = model.items.filter(it => !it.done);
+    return {
+        status: model.status,
+        definedItems: definedMeta.map(it => it.text),
+        nextSteps: nextMeta.map(it => it.text),
+        definedMeta,
+        nextMeta
+    };
+}
+
+// Renderização segura (escapa HTML e converte `código` inline)
+function rmRenderText(text) {
+    const esc = (typeof escapeHtml === 'function')
+        ? escapeHtml(text)
+        : String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return esc.replace(/`([^`]+)`/g, '<code style="font-size:11px; padding:1px 5px; border-radius:4px; background:rgba(148,163,184,0.15);">$1</code>');
+}
+
+function rmRenderGroupLabel(meta, idx) {
+    const cur = meta[idx] && meta[idx].group;
+    const prev = idx > 0 ? meta[idx - 1].group : null;
+    if (!cur || cur === prev || /estado atual/i.test(cur)) return '';
+    return `<div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-tertiary); margin:10px 0 4px;">${rmRenderText(cur)}</div>`;
+}
+
+// ── Mutações cirúrgicas (preservam todo o restante do documento) ──
+function rmJoin(model, lines) {
+    return lines.join(model.eol);
+}
+
+function rmRemoveBlock(model, item) {
+    const lines = model.lines.slice();
+    lines.splice(item.line, item.end - item.line + 1);
+    return rmJoin(model, lines);
+}
+
+function rmToggleBox(model, item, done) {
+    const lines = model.lines.slice();
+    lines[item.line] = lines[item.line].replace(/\[([ xX~\-])\]/, done ? '[x]' : '[ ]');
+    return rmJoin(model, lines);
+}
+
+function rmInsertItem(md, kind, text, projectName) {
+    let base = md || '';
+    if (!base.trim()) {
+        base = `# ${projectName || 'Projeto'} — Estado Atual\n\n> Última atualização: ${new Date().toISOString().split('T')[0]}\n`;
+    }
+    const model = rmParseModel(base);
+    const lines = model.lines.slice();
+    const wantDone = kind === 'done';
+    const sameKind = model.items.filter(it => it.done === wantDone);
+
+    if (sameKind.length) {
+        const ref = sameKind[sameKind.length - 1];
+        const indentWs = (lines[ref.line].match(/^\s*/) || [''])[0];
+        let marker = ref.marker;
+        if (/^\d+/.test(marker)) {
+            const n = parseInt(marker, 10) + 1;
+            marker = `${n}${marker.replace(/^\d+/, '')}`;
+        }
+        const box = ref.hasBox ? (wantDone ? '[x] ' : '[ ] ') : '';
+        lines.splice(ref.end + 1, 0, `${indentWs}${marker} ${box}${text}`);
+        return rmJoin(model, lines);
+    }
+
+    // Procura uma seção compatível já existente (mesmo sem itens)
+    let headingIdx = -1;
+    let inFence = false;
+    for (let i = 0; i < lines.length; i++) {
+        if (/^\s*(```|~~~)/.test(lines[i])) { inFence = !inFence; continue; }
+        if (inFence) continue;
+        const h = lines[i].match(/^#{1,6}\s+(.+)$/);
+        if (h && rmClassifyHeading(h[1]) === (wantDone ? 'done' : 'next')) { headingIdx = i; break; }
+    }
+    const newLine = `- ${wantDone ? '[x]' : '[ ]'} ${text}`;
+    if (headingIdx >= 0) {
+        lines.splice(headingIdx + 1, 0, newLine);
+        return rmJoin(model, lines);
+    }
+
+    while (lines.length && !lines[lines.length - 1].trim()) lines.pop();
+    lines.push('', `## ${wantDone ? 'O que já foi definido' : 'Próximos Passos'}`, newLine, '');
+    return rmJoin(model, lines);
+}
+
+function rmSetStatus(md, newStatus, projectName) {
+    const model = rmParseModel(md || `# ${projectName || 'Projeto'} — Estado Atual\n`);
+    const lines = model.lines.slice();
+    const idx = lines.findIndex(l => /^#{1,6}\s+Status:/i.test(l));
+    if (idx >= 0) {
+        lines[idx] = lines[idx].replace(/(^#{1,6}\s+Status:\s*).*/i, `$1${newStatus}`);
+    } else {
+        const h1 = lines.findIndex(l => /^#\s+/.test(l));
+        lines.splice(h1 >= 0 ? h1 + 1 : 0, 0, '', `## Status: ${newStatus}`);
+    }
+    return rmJoin(model, lines);
+}
+
+// Mantido por compatibilidade (geração de um CURRENT_STATE.md novo do zero)
 function buildCurrentStateMarkdown(projectName, status, definedItems, nextSteps) {
     const today = new Date().toISOString().split('T')[0];
     let md = `# ${projectName} — Estado Atual\n\n`;
     md += `> Última atualização: ${today}\n\n`;
     md += `## Status: ${status}\n\n`;
-
     md += `## O que já foi definido\n`;
-    if (definedItems.length === 0) {
-        md += `- [x] Inicialização no AI Second Brain com governança ativa.\n`;
-    } else {
-        definedItems.forEach(item => {
-            md += `- [x] ${item}\n`;
-        });
-    }
-    md += `\n`;
-
-    md += `## Próximos Passos\n`;
-    if (nextSteps.length === 0) {
-        md += `1. Definir os próximos passos do projeto.\n`;
-    } else {
-        nextSteps.forEach((step, idx) => {
-            md += `${idx + 1}. ${step}\n`;
-        });
-    }
-    md += `\n`;
-
-    return md;
+    (definedItems.length ? definedItems : ['Inicialização no AI Second Brain com governança ativa.'])
+        .forEach(item => { md += `- [x] ${item}\n`; });
+    md += `\n## Próximos Passos\n`;
+    (nextSteps.length ? nextSteps : ['Definir os próximos passos do projeto.'])
+        .forEach(step => { md += `- [ ] ${step}\n`; });
+    return md + `\n`;
 }
 
 async function saveCurrentStateChanges(newMd, successMsg = '💾 Estado Atual atualizado no disco!') {
@@ -6810,8 +6975,7 @@ async function saveCurrentStateChanges(newMd, successMsg = '💾 Estado Atual at
 
 async function updateCurrentStateStatus(newStatus) {
     if (!currentProjectData) return;
-    const { definedItems, nextSteps } = parseCurrentStateSections(currentProjectData.currentStateMd);
-    const newMd = buildCurrentStateMarkdown(currentProjectData.name, newStatus, definedItems, nextSteps);
+    const newMd = rmSetStatus(currentProjectData.currentStateMd, newStatus, currentProjectData.name);
     currentProjectData.status = newStatus;
     const badgeStatus = document.getElementById('pwStatusBadge');
     if (badgeStatus) badgeStatus.textContent = newStatus;
@@ -6822,87 +6986,79 @@ async function addNewNextStep() {
     const input = document.getElementById('pwNewStepInput');
     const val = (input?.value || '').trim();
     if (!val || !currentProjectData) return;
-
-    const { status, definedItems, nextSteps } = parseCurrentStateSections(currentProjectData.currentStateMd);
-    nextSteps.push(val);
-    const newMd = buildCurrentStateMarkdown(currentProjectData.name, status, definedItems, nextSteps);
+    const newMd = rmInsertItem(currentProjectData.currentStateMd, 'next', val, currentProjectData.name);
     await saveCurrentStateChanges(newMd, '🎯 Novo próximo passo adicionado ao Roadmap!');
 }
 
 async function completeNextStep(index) {
     if (!currentProjectData) return;
-    const { status, definedItems, nextSteps } = parseCurrentStateSections(currentProjectData.currentStateMd);
-    if (index >= 0 && index < nextSteps.length) {
-        const item = nextSteps.splice(index, 1)[0];
-        definedItems.push(item);
-        const newMd = buildCurrentStateMarkdown(currentProjectData.name, status, definedItems, nextSteps);
-        await saveCurrentStateChanges(newMd, '🎉 Passo concluído e movido para "O que já foi definido"!');
+    const model = rmParseModel(currentProjectData.currentStateMd);
+    const item = model.items.filter(it => !it.done)[index];
+    if (!item) return;
+    let newMd;
+    if (item.hasBox) {
+        newMd = rmToggleBox(model, item, true);
+    } else {
+        newMd = rmInsertItem(rmRemoveBlock(model, item), 'done', item.text, currentProjectData.name);
     }
+    await saveCurrentStateChanges(newMd, '🎉 Passo concluído e movido para "O que já foi definido"!');
 }
 
 async function deleteNextStep(index) {
     if (!currentProjectData) return;
-    const { status, definedItems, nextSteps } = parseCurrentStateSections(currentProjectData.currentStateMd);
-    if (index >= 0 && index < nextSteps.length) {
-        const stepText = nextSteps[index];
-        const ok = await showBrainConfirm({
-            title: 'Excluir Próximo Passo',
-            badge: '🎯 ROADMAP &middot; EXCLUSÃO',
-            icon: '🗑️',
-            message: `Tem certeza que deseja remover este próximo passo do roadmap?<br><br><em>"${escapeHtml(stepText)}"</em>`,
-            confirmText: 'Excluir Passo',
-            cancelText: 'Cancelar',
-            danger: true
-        });
-        if (!ok) return;
-
-        nextSteps.splice(index, 1);
-        const newMd = buildCurrentStateMarkdown(currentProjectData.name, status, definedItems, nextSteps);
-        await saveCurrentStateChanges(newMd, '🗑️ Próximo passo removido.');
-    }
+    const model = rmParseModel(currentProjectData.currentStateMd);
+    const item = model.items.filter(it => !it.done)[index];
+    if (!item) return;
+    const ok = await showBrainConfirm({
+        title: 'Excluir Próximo Passo',
+        badge: '🎯 ROADMAP &middot; EXCLUSÃO',
+        icon: '🗑️',
+        message: `Tem certeza que deseja remover este próximo passo do roadmap?<br><br><em>"${escapeHtml(item.text)}"</em>`,
+        confirmText: 'Excluir Passo',
+        cancelText: 'Cancelar',
+        danger: true
+    });
+    if (!ok) return;
+    await saveCurrentStateChanges(rmRemoveBlock(model, item), '🗑️ Próximo passo removido.');
 }
 
 async function demoteDefinedItem(index) {
     if (!currentProjectData) return;
-    const { status, definedItems, nextSteps } = parseCurrentStateSections(currentProjectData.currentStateMd);
-    if (index >= 0 && index < definedItems.length) {
-        const item = definedItems.splice(index, 1)[0];
-        nextSteps.push(item);
-        const newMd = buildCurrentStateMarkdown(currentProjectData.name, status, definedItems, nextSteps);
-        await saveCurrentStateChanges(newMd, '↩️ Item retornado para Próximos Passos.');
+    const model = rmParseModel(currentProjectData.currentStateMd);
+    const item = model.items.filter(it => it.done)[index];
+    if (!item) return;
+    let newMd;
+    if (item.hasBox) {
+        newMd = rmToggleBox(model, item, false);
+    } else {
+        newMd = rmInsertItem(rmRemoveBlock(model, item), 'next', item.text, currentProjectData.name);
     }
+    await saveCurrentStateChanges(newMd, '↩️ Item retornado para Próximos Passos.');
 }
 
 async function deleteDefinedItem(index) {
     if (!currentProjectData) return;
-    const { status, definedItems, nextSteps } = parseCurrentStateSections(currentProjectData.currentStateMd);
-    if (index >= 0 && index < definedItems.length) {
-        const itemText = definedItems[index];
-        const ok = await showBrainConfirm({
-            title: 'Excluir Item Definido',
-            badge: '✓ CHECKLIST &middot; EXCLUSÃO',
-            icon: '🗑️',
-            message: `Tem certeza que deseja remover este item concluído?<br><br><em>"${escapeHtml(itemText)}"</em>`,
-            confirmText: 'Excluir Item',
-            cancelText: 'Cancelar',
-            danger: true
-        });
-        if (!ok) return;
-
-        definedItems.splice(index, 1);
-        const newMd = buildCurrentStateMarkdown(currentProjectData.name, status, definedItems, nextSteps);
-        await saveCurrentStateChanges(newMd, '🗑️ Item definido removido.');
-    }
+    const model = rmParseModel(currentProjectData.currentStateMd);
+    const item = model.items.filter(it => it.done)[index];
+    if (!item) return;
+    const ok = await showBrainConfirm({
+        title: 'Excluir Item Definido',
+        badge: '✓ CHECKLIST &middot; EXCLUSÃO',
+        icon: '🗑️',
+        message: `Tem certeza que deseja remover este item concluído?<br><br><em>"${escapeHtml(item.text)}"</em>`,
+        confirmText: 'Excluir Item',
+        cancelText: 'Cancelar',
+        danger: true
+    });
+    if (!ok) return;
+    await saveCurrentStateChanges(rmRemoveBlock(model, item), '🗑️ Item definido removido.');
 }
 
 async function addNewDefinedItem() {
     const input = document.getElementById('pwNewDefinedInput');
     const val = (input?.value || '').trim();
     if (!val || !currentProjectData) return;
-
-    const { status, definedItems, nextSteps } = parseCurrentStateSections(currentProjectData.currentStateMd);
-    definedItems.push(val);
-    const newMd = buildCurrentStateMarkdown(currentProjectData.name, status, definedItems, nextSteps);
+    const newMd = rmInsertItem(currentProjectData.currentStateMd, 'done', val, currentProjectData.name);
     await saveCurrentStateChanges(newMd, '✓ Marco adicionado aos itens definidos!');
 }
 
@@ -6954,13 +7110,13 @@ function renderProjectOverviewTab() {
 
     // Extrai a descrição da Visão Geral (removendo markdown cru repetitivo)
     let visionText = 'Projeto conectado e governado pelo AI Second Brain.';
-    const overviewMatch = (d.projectMd || '').match(/##\s+Visão Geral\s*\n+([^#]+)/i);
+    const overviewMatch = (d.projectMd || '').match(/#{2,6}\s+(?:\d+\.\s*)?Vis[ãa]o Geral[^\r\n]*\r?\n+([^#]+?)(?:\r?\n\s*\r?\n|$)/i);
     if (overviewMatch && overviewMatch[1]) {
         visionText = overviewMatch[1].trim();
     }
 
     // Extrai dados do CURRENT_STATE.md
-    const { status: currentStatusText, definedItems, nextSteps } = parseCurrentStateSections(d.currentStateMd);
+    const { status: currentStatusText, definedItems, nextSteps, definedMeta, nextMeta } = parseCurrentStateSections(d.currentStateMd);
     const activeProjectStatus = d.status || currentStatusText || '🟢 Em Planejamento / Ativo';
     const statusOptions = getProjectStatuses();
     const resolvedActiveStatus = resolveProjectStatus(activeProjectStatus, d.projectMd);
@@ -7223,9 +7379,10 @@ function renderProjectOverviewTab() {
                     </div>
                     <div class="pw-roadmap-list">
                         ${definedItems.map((item, idx) => `
+                            ${rmRenderGroupLabel(definedMeta, idx)}
                             <div class="pw-roadmap-item">
                                 <button type="button" class="pw-roadmap-check interactive" title="Clique para mover de volta para Próximos Passos" onclick="demoteDefinedItem(${idx})">✓</button>
-                                <span style="color:#e2e8f0; flex:1;">${item}</span>
+                                <span style="color:#e2e8f0; flex:1;">${rmRenderText(item)}</span>
                                 <button type="button" class="pw-item-del-btn" title="Excluir este item" onclick="deleteDefinedItem(${idx})">✕</button>
                             </div>
                         `).join('')}
@@ -7248,9 +7405,10 @@ function renderProjectOverviewTab() {
                         ${nextSteps.length === 0 ? `
                             <div style="font-size:12px; color:var(--text-tertiary); font-style:italic; padding:8px 0;">Nenhum próximo passo pendente. Parabéns! Adicione novos abaixo.</div>
                         ` : nextSteps.map((step, idx) => `
+                            ${rmRenderGroupLabel(nextMeta, idx)}
                             <div class="pw-roadmap-item" style="border-left: 2px solid #f59e0b;">
                                 <span class="pw-roadmap-step">${idx + 1}</span>
-                                <span style="color:#f8fafc; font-weight: 500; flex:1;">${step}</span>
+                                <span style="color:#f8fafc; font-weight: 500; flex:1;">${rmRenderText(step)}</span>
                                 <button type="button" class="btn-step-done" title="Concluir passo (move para 'O que já foi definido')" onclick="completeNextStep(${idx})">✓ Concluir</button>
                                 <button type="button" class="pw-item-del-btn" title="Excluir passo" onclick="deleteNextStep(${idx})">✕</button>
                             </div>

@@ -7,6 +7,17 @@ e este projeto adere ao [Versionamento Semântico (SemVer)](https://semver.org/l
 
 ---
 
+## [1.5.6] — 2026-11-17
+
+### 🎯 Roadmap Ativo Inteligente & Edição Não Destrutiva do CURRENT_STATE.md
+- **Parser Inteligente de Roadmap (`docs/brain-ui/app.js`)**:
+  - O card **Roadmap Ativo** agora reconhece o progresso independentemente de como o `CURRENT_STATE.md` foi escrito (pela IA ou pelo desenvolvedor): checkboxes em qualquer posição (`- [x]` concluído / `- [ ]` pendente) e seções identificadas por sinônimos (`Próximos Passos`, `Roadmap`, `Marco`, `Fase`, `Sprint`, `Backlog`, `Pendências`, `To-do`, `Em andamento`, `Concluído`, `Entregue`, `Done`, etc.).
+  - Subtítulos como *"Marco 1 – Fundamentos do Domínio"* (em título ou negrito) herdam a classificação da seção pai e são exibidos como rótulos de agrupamento no card.
+  - Sub-itens aninhados, blocos de código e seções não relacionadas (SLA, Riscos, Políticas) são ignorados.
+- **Edição Cirúrgica e Não Destrutiva**:
+  - Concluir, reabrir, adicionar ou excluir passos pelo Cockpit altera apenas as linhas afetadas (marcando `[x]`/`[ ]` no próprio local), preservando integralmente o restante do documento — antes, essas ações reescreviam o arquivo inteiro e descartavam o conteúdo gerado pela IA.
+- **Objetivo do Projeto**: extração da Visão Geral reconhece títulos numerados (ex.: `## 1. Visão Geral Executiva`).
+
 ## [1.5.5] — 2026-11-17
 
 ### 🐛 Correções no Quickstart Grill & Detecção Resiliente de Stack
