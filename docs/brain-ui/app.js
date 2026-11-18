@@ -1313,14 +1313,10 @@ function renderDashboardProjects() {
         const projFiles = files.filter(f => f.path.startsWith(projPrefix));
         const totalDocs = projFiles.length;
 
-        // Extrai status diretamente dos contratos PROJECT.md ou CURRENT_STATE.md
-        const statusMatch = (proj.content || '').match(/-\s+\*\*Status\*\*:\s*([^\r\n]+)/i);
+        // Extrai status, descrição e stack de forma resiliente dos contratos do projeto
         const currentStateFile = projFiles.find(f => f.path.toLowerCase().endsWith('/current_state.md'));
-        const stateStatusMatch = (currentStateFile?.content || '').match(/##\s+Status:\s*([^\r\n]+)/i);
-
-        const rawStatus = (statusMatch && statusMatch[1])
-            ? statusMatch[1].trim()
-            : ((stateStatusMatch && stateStatusMatch[1]) ? stateStatusMatch[1].trim() : '');
+        const archFile = projFiles.find(f => f.path.toLowerCase().endsWith('/architecture.md'));
+        const rawStatus = extractProjectStatus(proj.content, currentStateFile?.content);
 
         // Resolução determinística baseada na configuração JSON de status
         const resolved = resolveProjectStatus(rawStatus, proj.content);
@@ -1330,15 +1326,11 @@ function renderDashboardProjects() {
         const statusId = resolved.id;
         const statusFullText = resolved.fullText;
 
-        let desc = 'Projeto arquitetado e governado pelos contratos do AI Second Brain.';
-        const overviewMatch = (proj.content || '').match(/##\s+Visão Geral\s*\n+([^\n#]+)/i);
-        if (overviewMatch && overviewMatch[1]) {
-            desc = overviewMatch[1].trim();
-        }
+        const extractedDesc = extractProjectOverview(proj.content);
+        const desc = extractedDesc ? rmCleanText(extractedDesc) : 'Projeto arquitetado e governado pelos contratos do AI Second Brain.';
 
-        let stack = 'Livre';
-        const stackMatch = (proj.content || '').match(/-\s+\*\*Stack[^*]*\*\*:\s*([^\r\n]+)/i);
-        if (stackMatch && stackMatch[1]) stack = stackMatch[1].trim();
+        const extractedStack = extractProjectStack(proj.content, archFile?.content);
+        const stack = extractedStack || 'Livre';
 
         // Stack icon
         let stackIcon = '💻';
@@ -6722,22 +6714,27 @@ async function saveOverviewQuickEdit() {
     }
 }
 
-// Helpers para Estado Atual & Roadmap
+// Helpers para Estado Atual, Roadmap & Extração Inteligente de Metadados
 // ─────────────────────────────────────────────────────────────────────────────
-// Parser inteligente e NÃO destrutivo do CURRENT_STATE.md.
-// Reconhece o roadmap independentemente de como foi escrito (pela IA ou pelo dev):
-//   • Checkboxes em qualquer lugar: "- [x]" = concluído, "- [ ]" = pendente.
-//   • Seções por sinônimos (qualquer nível de título ou linha em negrito):
-//       concluído → "O que já foi definido", "Concluído", "Entregue", "Feito", "Done"...
+// Parser inteligente e NÃO destrutivo do CURRENT_STATE.md e PROJECT.md.
+// Reconhece o roadmap e metadados independentemente de como foram escritos:
+//   • Checkboxes em qualquer indentação: "- [x]" = concluído, "- [ ]" = pendente.
+//   • Marcadores com emoji: "✅ / ✔️ / ☑️" = concluído, "☐ / 🔲 / ⏳" = pendente.
+//   • Seções por sinônimos (qualquer nível de título, linha em negrito ou texto):
+//       concluído → "O que já foi definido", "O que já foi Formalizado e Especificado",
+//                   "Concluído", "Entregue", "Feito", "Done", "Completed"...
 //       pendente  → "Próximos Passos", "Roadmap", "Marco", "Fase", "Sprint", "Backlog",
 //                   "Pendências", "To-do", "Em andamento", "Next steps", "Milestones"...
-//   • Subtítulos (ex.: "Marco 1 – Fundamentos") herdam a classificação do título pai.
-//   • Itens aninhados (sub-bullets) e blocos de código são ignorados.
+//   • Subtítulos ou bullets de marco (ex.: "Marco 1 – Fundamentos") agrupam as tarefas.
+//   • Sub-bullets descritivos (ex.: rotas GET/POST abaixo de uma tarefa) e blocos de código
+//     são preservados no bloco do item pai sem virar tarefas duplicadas.
 // Todas as edições alteram APENAS as linhas afetadas, preservando o restante do documento.
 // ─────────────────────────────────────────────────────────────────────────────
-const RM_DONE_RE = /(j[áa]\s+(foi\s+)?(definid|feit|conclu|entreg|implement)|conclu[íi]d|finalizad|entregue|realizad|\bfeito|\bdone\b|completed|finished|achievements|implementad[oa]s)/i;
-const RM_NEXT_RE = /(pr[óo]xim|pendent|pend[êe]ncia|backlog|roadmap|to-?do|tarefa|next\s*steps?|em\s+andamento|in\s+progress|a\s+fazer|planejad|\bmarco|milestone|sprint|\bfase\b|\betapa|plano\s+de\s+(a[çc][ãa]o|implementa)|objetivos?\s+imediat|upcoming|planned)/i;
-const RM_ITEM_RE = /^(\s*)([-*+]|\d+[.)])\s+(?:\[([ xX~\-])\]\s+)?(.*\S)\s*$/;
+const RM_DONE_RE = /(j[áa]\s+(foi\s+|foram\s+)?(definid|feit|conclu|entreg|implement|formalizad|especificad|estabelecid|aprovad|fechad|decidid|arquitetad|modelad|consolidad)|o\s+que\s+(j[áa]\s+)?(temos|existe|fizemos|foi\s+feito)|conclu[íi]d|finalizad|entregue|realizad|formalizad|especificad|estabelecid|consolidad|\bfeito|\bdone\b|completed|finished|achievements|implementad[oa]s|delivered)/i;
+const RM_NEXT_RE = /(pr[óo]xim|pendent|pend[êe]ncia|backlog|roadmap|cronograma|to-?do|tarefa|next\s*steps?|em\s+andamento|in\s+progress|a\s+fazer|planejad|planejamento|\bmarco|milestone|sprint|\bfase\b|\betapa|plano\s+de\s+(a[çc][ãa]o|implementa|entrega|trabalho)|objetivos?\s+imediat|upcoming|planned|action\s+items?|entregas?\s+previst)/i;
+const RM_IGNORE_RE = /(^status\b|requisito|n[ãa]o[- ]funciona|\bsla\b|acordo\s+de\s+n[íi]vel|pol[íi]tica\s+de|diretriz|risco|bloqueio|impedimento|observa[çc]|refer[êe]ncia|restri[çc]|premissa)/i;
+const RM_MILESTONE_LINE_RE = /^(?:marco|milestone|fase|phase|sprint|etapa)\s+\d+\b/i;
+const RM_ITEM_RE = /^(\s*)(?:([-*+]|\d+[.)])\s+(?:\[([ xX~\-])\]\s+|([✅✔☑️☐🔲⏳])\s+)?|\[([ xX~\-])\]\s+|([☐🔲])\s+)(.*\S)\s*$/;
 
 function rmCleanText(t) {
     return String(t || '')
@@ -6748,15 +6745,39 @@ function rmCleanText(t) {
 }
 
 function rmClassifyHeading(title) {
-    const t = rmCleanText(title).replace(/[#`]/g, '').trim();
+    const t = rmCleanText(title).replace(/^[#|>\s]+|[#`]+$/g, '').trim();
     if (/^status\b/i.test(t)) return 'ignore';
     if (RM_DONE_RE.test(t)) return 'done';
     if (RM_NEXT_RE.test(t)) return 'next';
+    if (RM_IGNORE_RE.test(t)) return 'ignore';
     return null;
 }
 
 function rmIndent(ws) {
     return String(ws || '').replace(/\t/g, '    ').length;
+}
+
+function rmMatchLine(line) {
+    const m = line.match(RM_ITEM_RE);
+    if (!m) return null;
+    const indent = rmIndent(m[1]);
+    const marker = m[2] || '-';
+    const boxChar = m[3] !== undefined ? m[3] : m[5];
+    const emojiChar = m[4] || m[6];
+    const hasBox = boxChar !== undefined || emojiChar !== undefined;
+    let boxDone = false;
+    if (boxChar !== undefined) boxDone = /[xX]/.test(boxChar);
+    else if (emojiChar) boxDone = /[✅✔☑️]/.test(emojiChar);
+    return {
+        indent,
+        marker,
+        hasExplicitBox: boxChar !== undefined,
+        hasEmojiBox: Boolean(emojiChar),
+        hasBox,
+        boxDone,
+        rawText: m[7],
+        text: rmCleanText(m[7])
+    };
 }
 
 function rmParseModel(md) {
@@ -6766,6 +6787,7 @@ function rmParseModel(md) {
     const items = [];
     const stack = []; // { level, cls, title }
     let inFence = false;
+    let baseListIndent = null;
 
     const ctx = () => {
         for (let i = stack.length - 1; i >= 0; i--) {
@@ -6775,64 +6797,108 @@ function rmParseModel(md) {
     };
     const group = () => (stack.length ? stack[stack.length - 1].title : '');
 
+    const pushHeading = (level, rawTitle) => {
+        const title = rmCleanText(rawTitle).replace(/:$/, '').trim();
+        while (stack.length && stack[stack.length - 1].level >= level) stack.pop();
+        stack.push({ level, cls: rmClassifyHeading(title), title });
+        baseListIndent = null;
+    };
+
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         if (/^\s*(```|~~~)/.test(line)) { inFence = !inFence; continue; }
         if (inFence) continue;
 
-        // Títulos Markdown (# .. ######) ou linha isolada em negrito (subtítulo implícito)
-        const h = line.match(/^(#{1,6})\s+(.+?)\s*#*\s*$/);
+        // 1. Títulos Markdown (# .. ######), estilo "| Título", linha em negrito ou linha de Marco
+        const h = line.match(/^(#{1,6})\s+(.+?)\s*#*\s*$/) || line.match(/^(\|)\s*(\d+\.\s+.+?|\S.+?)\s*$/);
         const b = !h && line.match(/^\s*\*\*([^*].*?)\*\*\s*:?\s*$/);
-        if (h || b) {
-            const level = h ? h[1].length : 7;
-            const title = rmCleanText(h ? h[2] : b[1]);
-            while (stack.length && stack[stack.length - 1].level >= level) stack.pop();
-            stack.push({ level, cls: rmClassifyHeading(title), title });
+        const plainHeader = !h && !b && !RM_ITEM_RE.test(line) && (
+            line.match(/^\s*((?:marco|milestone|fase|phase|sprint|etapa)\s+\d+[^\r\n]*?)\s*:?\s*$/i) ||
+            (line.match(/^\s*([A-ZÁÉÍÓÚÂÊÔÃÕÇ][^\r\n:]{2,60}):\s*$/) && (RM_DONE_RE.test(line) || RM_NEXT_RE.test(line)))
+        );
+        if (h && !/^\|.*\|/.test(line.trim())) {
+            pushHeading(h[1] === '|' ? 2 : h[1].length, h[2]);
+            continue;
+        }
+        if (b) {
+            pushHeading(7, b[1]);
+            continue;
+        }
+        if (plainHeader) {
+            pushHeading(7, plainHeader[1]);
             continue;
         }
 
-        const m = line.match(RM_ITEM_RE);
-        if (!m) continue;
-        const indent = rmIndent(m[1]);
-        if (indent > 1) continue; // sub-itens (ex.: endpoints listados abaixo de uma tarefa)
+        const parsed = rmMatchLine(line);
+        if (!parsed) continue;
 
         const context = ctx();
-        if (context === 'ignore') continue;
-        const box = m[3];
-        const hasBox = box !== undefined;
-        if (!hasBox && context !== 'done' && context !== 'next') continue;
+        // Se é um bullet sem checkbox que representa um cabeçalho de Marco/Fase (ou pai de checkboxes indentados)
+        if (!parsed.hasBox) {
+            const nextNonEmpty = lines.slice(i + 1).find(x => x.trim());
+            const nextParsed = nextNonEmpty ? rmMatchLine(nextNonEmpty) : null;
+            const hasCheckboxChildren = nextParsed && nextParsed.hasBox && nextParsed.indent > parsed.indent;
+            if (RM_MILESTONE_LINE_RE.test(parsed.text) || hasCheckboxChildren) {
+                pushHeading(8, parsed.text);
+                continue;
+            }
+        }
 
-        let done = hasBox ? /[xX]/.test(box) : context === 'done';
+        if (!parsed.hasBox && (context === 'ignore' || (context !== 'done' && context !== 'next'))) {
+            continue;
+        }
 
-        // Bloco do item: inclui linhas seguintes mais indentadas (sub-itens/continuações)
+        // Controle de indentação para listas sem checkbox (ignora sub-bullets aninhados)
+        if (!parsed.hasBox) {
+            if (baseListIndent === null || parsed.indent < baseListIndent) {
+                baseListIndent = parsed.indent;
+            } else if (parsed.indent > baseListIndent + 1) {
+                continue;
+            }
+        }
+
+        const done = parsed.hasBox ? parsed.boxDone : context === 'done';
+
+        // Bloco do item: absorve apenas sub-linhas mais indentadas que NÃO sejam outra tarefa com checkbox
         let end = i;
         for (let j = i + 1; j < lines.length; j++) {
             const l = lines[j];
             if (!l.trim()) {
-                const nxt = lines.slice(j + 1).find(x => x.trim());
-                if (nxt !== undefined && rmIndent((nxt.match(/^\s*/) || [''])[0]) > indent) continue;
+                const nxtIdx = lines.slice(j + 1).findIndex(x => x.trim());
+                if (nxtIdx >= 0) {
+                    const nxtLine = lines[j + 1 + nxtIdx];
+                    const nxtIndent = rmIndent((nxtLine.match(/^\s*/) || [''])[0]);
+                    const nxtMatch = rmMatchLine(nxtLine);
+                    if (nxtIndent > parsed.indent && !(nxtMatch && nxtMatch.hasBox)) continue;
+                }
                 break;
             }
-            if (rmIndent((l.match(/^\s*/) || [''])[0]) > indent) { end = j; continue; }
+            const subIndent = rmIndent((l.match(/^\s*/) || [''])[0]);
+            const subMatch = rmMatchLine(l);
+            if (subIndent > parsed.indent && !(subMatch && subMatch.hasBox)) {
+                end = j;
+                continue;
+            }
             break;
         }
 
         items.push({
             line: i,
             end,
-            marker: m[2],
-            hasBox,
+            indent: parsed.indent,
+            marker: parsed.marker,
+            hasBox: parsed.hasBox,
+            hasExplicitBox: parsed.hasExplicitBox,
+            hasEmojiBox: parsed.hasEmojiBox,
             done,
-            text: rmCleanText(m[4]),
+            text: parsed.text,
             group: group(),
             context
         });
+        i = end;
     }
 
-    let status = '🟢 Ativo / Em Desenvolvimento';
-    const statusMatch = raw.match(/^#{1,6}\s+Status:\s*([^\r\n]+)/im) || raw.match(/^\s*[-*]\s+\*\*Status\*\*:\s*([^\r\n]+)/im);
-    if (statusMatch && statusMatch[1]) status = statusMatch[1].trim();
-
+    const status = extractProjectStatus('', raw) || '🟢 Ativo / Em Desenvolvimento';
     return { raw, eol, lines, items, status };
 }
 
@@ -6849,19 +6915,151 @@ function parseCurrentStateSections(md) {
     };
 }
 
-// Renderização segura (escapa HTML e converte `código` inline)
+// Renderização segura (escapa HTML e converte `código` e **negrito** inline)
 function rmRenderText(text) {
     const esc = (typeof escapeHtml === 'function')
         ? escapeHtml(text)
         : String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    return esc.replace(/`([^`]+)`/g, '<code style="font-size:11px; padding:1px 5px; border-radius:4px; background:rgba(148,163,184,0.15);">$1</code>');
+    return esc
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/`([^`]+)`/g, '<code style="font-size:11px; padding:1px 5px; border-radius:4px; background:rgba(148,163,184,0.15);">$1</code>');
 }
 
 function rmRenderGroupLabel(meta, idx) {
-    const cur = meta[idx] && meta[idx].group;
-    const prev = idx > 0 ? meta[idx - 1].group : null;
+    const cur = meta && meta[idx] && meta[idx].group;
+    const prev = idx > 0 && meta ? meta[idx - 1].group : null;
     if (!cur || cur === prev || /estado atual/i.test(cur)) return '';
     return `<div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-tertiary); margin:10px 0 4px;">${rmRenderText(cur)}</div>`;
+}
+
+// ── Extração Universal de Metadados (PROJECT.md / ARCHITECTURE.md / CURRENT_STATE.md) ──
+const META_PLACEHOLDER_RE = /^(n[ãa]o\s+(especificad[oa]|definid[oa]|informad[oa])|a\s+definir|tbd|livre|none|null|-|\?+)$/i;
+
+function cleanMetaValue(val) {
+    return String(val || '')
+        .replace(/\*\*(.+?)\*\*/g, '$1')
+        .replace(/__(.+?)__/g, '$1')
+        .replace(/`([^`]+)`/g, '$1')
+        .replace(/^[\s\-–—:|]+|[\s\-–—:|]+$/g, '')
+        .trim();
+}
+
+function isValidMetaValue(val) {
+    const v = cleanMetaValue(val);
+    return Boolean(v && v.length <= 140 && !META_PLACEHOLDER_RE.test(v));
+}
+
+function extractProjectStack(projectMd, archMd) {
+    const p = String(projectMd || '');
+    const a = String(archMd || '');
+
+    const bulletPatterns = [
+        /^\s*[-*+]\s+\*\*(?:Stack[^*:]*|Tech\s*Stack|Tecnologias?\s*Principa(?:l|is)|Linguagem\s*(?:\/\s*Framework)?)\*\*\s*:\s*([^\r\n]+)/im,
+        /^\s*\*\*(?:Stack[^*:]*|Tech\s*Stack|Tecnologias?\s*Principa(?:l|is)|Linguagem\s*(?:\/\s*Framework)?)\*\*\s*:\s*([^\r\n]+)/im,
+        /^\s*(?:Stack(?:\s+Tecnol[óo]gica|\s+Principal|\s+Inicial|\s+Oficial)?|Tech\s+Stack)\s*:\s*([^\r\n]+)/im
+    ];
+    for (const re of bulletPatterns) {
+        const m = p.match(re);
+        if (m && isValidMetaValue(m[1])) return cleanMetaValue(m[1]);
+    }
+
+    const tableMatch = p.match(/\|\s*\*?\*?(?:Stack[^|*:]*|Tech\s*Stack|Linguagem\s*(?:\/\s*Framework)?)\*?\*?\s*\|\s*([^|\r\n]+)\|/i);
+    if (tableMatch && isValidMetaValue(tableMatch[1])) return cleanMetaValue(tableMatch[1]);
+
+    const secMatch = p.match(/^#{1,4}\s+(?:\d+[\.\)]\s*)?(?:Stack\s+Tecnol[óo]gica|Technical\s+Stack|Stack\s+do\s+Projeto|Tecnologias)\b[^\r\n]*\r?\n+([\s\S]*?)(?=^#{1,4}\s|$)/im);
+    if (secMatch && secMatch[1]) {
+        const lines = secMatch[1].split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+        const parts = [];
+        for (const line of lines.slice(0, 5)) {
+            if (/^\|/.test(line)) continue;
+            const kv = line.match(/^[-*+]\s+\*\*([^*]+)\*\*\s*:\s*(.+)$/);
+            if (kv && isValidMetaValue(kv[2])) parts.push(cleanMetaValue(kv[2]));
+            else if (/^[-*+]\s+/.test(line)) {
+                const v = cleanMetaValue(line.replace(/^[-*+]\s+/, ''));
+                if (isValidMetaValue(v)) parts.push(v);
+            } else if (!line.startsWith('#') && !line.startsWith('>') && isValidMetaValue(line)) {
+                parts.push(cleanMetaValue(line));
+            }
+            if (parts.length >= 2) break;
+        }
+        if (parts.length) return parts.join(' · ');
+    }
+
+    const proseMatch = p.match(/(?:desenvolvid[oa]|implementad[oa]|constru[íi]d[oa]|arquitetad[oa]|basead[oa])\s+(?:em|com|sobre)\s+([A-Za-z0-9_#\+\.\/\s\-]+?)(?:\.\s|\.\r?\n|,|\s+utilizando|\s+usando|\s+sobre|\s+com\s+banco|\s+seguindo|\r?\n|$)/i);
+    if (proseMatch && isValidMetaValue(proseMatch[1])) return cleanMetaValue(proseMatch[1]);
+
+    if (a) {
+        for (const re of bulletPatterns) {
+            const m = a.match(re);
+            if (m && isValidMetaValue(m[1])) return cleanMetaValue(m[1]);
+        }
+        const archTable = a.match(/\|\s*\*?\*?(?:Stack[^|*:]*|Linguagem[^|*:]*|Backend)\*?\*?\s*\|\s*([^|\r\n]+)\|/i);
+        if (archTable && isValidMetaValue(archTable[1])) return cleanMetaValue(archTable[1]);
+        const archProse = a.match(/(?:desenvolvid[oa]|implementad[oa]|constru[íi]d[oa]|arquitetad[oa]|basead[oa])\s+(?:em|com|sobre)\s+([A-Za-z0-9_#\+\.\/\s\-]+?)(?:\.\s|\.\r?\n|,|\s+utilizando|\s+usando|\s+sobre|\s+com\s+banco|\s+seguindo|\r?\n|$)/i);
+        if (archProse && isValidMetaValue(archProse[1])) return cleanMetaValue(archProse[1]);
+    }
+    return '';
+}
+
+function extractProjectStatus(projectMd, currentStateMd) {
+    const p = String(projectMd || '');
+    const c = String(currentStateMd || '');
+    const patterns = [
+        /^\s*[-*+]\s+\*\*Status(?:\s+Operacional|\s+Atual|\s+Inicial)?\*\*\s*:\s*([^\r\n]+)/im,
+        /^\s*\*\*Status(?:\s+Operacional|\s+Atual|\s+Inicial)?\*\*\s*:\s*([^\r\n]+)/im,
+        /\|\s*\*?\*?Status(?:\s+Atual)?\*?\*?\s*\|\s*([^|\r\n]+)\|/i,
+        /^#{1,6}\s+Status(?:\s+Atual|\s+Inicial|\s+do\s+Projeto)?\s*:\s*([^\r\n]+)/im,
+        /^#{1,6}\s+Status(?:\s+Atual|\s+Inicial|\s+do\s+Projeto)?\s*\r?\n+\s*(?:[-*+]\s+)?([^\r\n#<|]+)/im
+    ];
+    for (const src of [p, c]) {
+        if (!src) continue;
+        for (const re of patterns) {
+            const m = src.match(re);
+            if (m && isValidMetaValue(m[1])) return cleanMetaValue(m[1]);
+        }
+    }
+    return '';
+}
+
+function extractFirstParagraph(text) {
+    const lines = String(text || '').split(/\r?\n/);
+    const buf = [];
+    let inFence = false;
+    for (let i = 0; i < lines.length; i++) {
+        const l = lines[i].trim();
+        if (/^(```|~~~)/.test(l)) { inFence = !inFence; continue; }
+        if (inFence) continue;
+        if (!l) {
+            if (buf.length) break;
+            continue;
+        }
+        if (/^#{1,6}\s/.test(l) || /^\|\s*\d+\./.test(l) || /^>/.test(l) || /^\|/.test(l) || /^---+$/.test(l)) {
+            if (buf.length) break;
+            continue;
+        }
+        if (/^[-*+]\s+\*\*[^*]+\*\*\s*:/.test(l) || /^[-*+]\s+\[[ xX]\]/.test(l)) {
+            if (buf.length) break;
+            continue;
+        }
+        if (/^[-*+]\s+/.test(l) && buf.length) break;
+        buf.push(l.replace(/^[-*+]\s+/, ''));
+        if (buf.join(' ').length > 340) break;
+    }
+    const result = buf.join(' ').trim();
+    if (!result || /^Projeto\s+(conectado|arquitetado|criado)\b/i.test(result)) return '';
+    return result;
+}
+
+function extractProjectOverview(projectMd) {
+    const p = String(projectMd || '');
+    if (!p.trim()) return '';
+    const headingRe = /^(#{1,6}|\|)\s*(?:\d+[\.\)]\s*)?(?:Vis[ãa]o\s+Geral(?:\s+Executiva|\s+do\s+Projeto|\s+do\s+Produto)?|Objetivo(?:s)?(?:\s+do\s+Projeto|\s+Geral)?|Resumo\s+Executivo|Sobre\s+o\s+Projeto|Descri[çc][ãa]o(?:\s+Geral|\s+do\s+Projeto)?|Contexto(?:\s+e\s+Objetivo)?|Overview|Executive\s+Summary|Project\s+Vision)\b[^\r\n]*$/im;
+    const hm = headingRe.exec(p);
+    if (hm) {
+        const para = extractFirstParagraph(p.slice(hm.index + hm[0].length));
+        if (para) return para;
+    }
+    return extractFirstParagraph(p) || '';
 }
 
 // ── Mutações cirúrgicas (preservam todo o restante do documento) ──
@@ -6877,7 +7075,11 @@ function rmRemoveBlock(model, item) {
 
 function rmToggleBox(model, item, done) {
     const lines = model.lines.slice();
-    lines[item.line] = lines[item.line].replace(/\[([ xX~\-])\]/, done ? '[x]' : '[ ]');
+    if (item.hasExplicitBox) {
+        lines[item.line] = lines[item.line].replace(/\[([ xX~\-])\]/, done ? '[x]' : '[ ]');
+    } else if (item.hasEmojiBox) {
+        lines[item.line] = lines[item.line].replace(/[✅✔☑️☐🔲⏳]/, done ? '✅' : '☐');
+    }
     return rmJoin(model, lines);
 }
 
@@ -6904,7 +7106,6 @@ function rmInsertItem(md, kind, text, projectName) {
         return rmJoin(model, lines);
     }
 
-    // Procura uma seção compatível já existente (mesmo sem itens)
     let headingIdx = -1;
     let inFence = false;
     for (let i = 0; i < lines.length; i++) {
@@ -7108,12 +7309,9 @@ function renderProjectOverviewTab() {
 
     const d = currentProjectData;
 
-    // Extrai a descrição da Visão Geral (removendo markdown cru repetitivo)
-    let visionText = 'Projeto conectado e governado pelo AI Second Brain.';
-    const overviewMatch = (d.projectMd || '').match(/#{2,6}\s+(?:\d+\.\s*)?Vis[ãa]o Geral[^\r\n]*\r?\n+([^#]+?)(?:\r?\n\s*\r?\n|$)/i);
-    if (overviewMatch && overviewMatch[1]) {
-        visionText = overviewMatch[1].trim();
-    }
+    // Extrai a descrição da Visão Geral de forma resiliente (qualquer título ou parágrafo inicial)
+    const extractedVision = extractProjectOverview(d.projectMd) || (d.description && !/^Projeto\s+(no|conectado)/i.test(d.description) ? d.description : '');
+    const visionText = extractedVision ? rmRenderText(extractedVision) : 'Projeto conectado e governado pelo AI Second Brain.';
 
     // Extrai dados do CURRENT_STATE.md
     const { status: currentStatusText, definedItems, nextSteps, definedMeta, nextMeta } = parseCurrentStateSections(d.currentStateMd);
@@ -7445,10 +7643,12 @@ function onProjectMdSaved(newContent) {
     if (currentProjectData) {
         currentProjectData.projectMd = newContent;
         // Atualiza stack e status se alterados
-        const stackMatch = newContent.match(/-\s+\*\*Stack[^*]*\*\*:\s*([^\r\n]+)/i);
-        if (stackMatch) currentProjectData.stack = stackMatch[1].trim();
-        const statusMatch = newContent.match(/-\s+\*\*Status\*\*:\s*([^\r\n]+)/i);
-        if (statusMatch) currentProjectData.status = statusMatch[1].trim();
+        const newStack = extractProjectStack(newContent, currentProjectData.archMd);
+        if (newStack) currentProjectData.stack = newStack;
+        const newStatus = extractProjectStatus(newContent, currentProjectData.currentStateMd);
+        if (newStatus) currentProjectData.status = newStatus;
+        const newDesc = extractProjectOverview(newContent);
+        if (newDesc) currentProjectData.description = newDesc;
 
         const badgeStack = document.getElementById('pwStackBadge');
         if (badgeStack) badgeStack.textContent = currentProjectData.stack;

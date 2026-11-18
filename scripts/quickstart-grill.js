@@ -737,9 +737,9 @@ RESUMO DO PROJETO:
 
 DIRETRIZES:
 1. CURRENT_STATE.md:
-   - Status inicial: 🟢 Em Planejamento / Ativo
-   - O que já foi Formalizado e Especificado (resumo dos contratos fechados).
-   - Roadmap de Implementação com Checklists em 3 a 4 Marcos Práticos derivados diretamente das entidades e rotas da especificação (com checkboxes '- [ ]' prontas para o Cockpit).
+   - Seção '## Status: 🟢 Em Planejamento / Ativo'.
+   - Seção '## O que já foi definido' com itens '- [x]' resumindo as decisões arquiteturais e contratos já formalizados.
+   - Seção '## Roadmap de Implementação' com 3 a 4 Marcos Práticos ('### Marco 1 — ...') derivados diretamente das entidades e rotas da especificação, usando checkboxes '- [ ]' prontas para o Cockpit.
 2. ADR-0001 (ADR-0001-stack-inicial.md):
    - ADR no padrão MADR completo: Status (Aceita), Data, Contexto (requisitos de integridade, concorrência e auditoria), Decisão Técnica (adoção de ${stack}, persistência e auditoria), Consequências Positivas, Consequências Negativas / Trade-offs, Alternativas Consideradas.
 

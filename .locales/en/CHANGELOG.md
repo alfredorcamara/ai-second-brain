@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [1.5.7] — 2026-11-17
+
+### 🧠 Universal Semantic Identification Across the Ecosystem
+- **Expanded Recognition of Defined & Formalized Items (`app.js` and `session-capture.js`)**:
+  - Sections such as *"What Has Been Formalized and Specified"*, *"Established Decisions"*, *"Closed Contracts"*, and *"Completed Deliverables"* are now automatically mapped into **✓ Defined Items**, along with emoji task markers (`✅`, `✔️`, `☑️`, `☐`, `🔲`, `⏳`).
+- **Smart Milestone Hierarchy & Indented Checkboxes**:
+  - Checkbox tasks (`- [ ]` / `- [x]`) are recognized at any indentation level (e.g. nested under numbered *Milestone 1*, *Phase 1*, *Sprint 1* bullets), automatically promoting the parent bullet to a group header while keeping descriptive sub-bullets (such as `GET/POST` routes) attached to their parent task.
+- **Universal Goal, Stack & Status Extraction Across Dashboard, Workspace & Editor**:
+  - Unified resilient metadata extractor across `server.js` and `app.js` (Main Dashboard cards, Project Overview, and Markdown Editor), recognizing **Project Goal** under any heading variant (*Executive Overview*, *Project Goal*, *Executive Summary*, *About*, *Overview*, or lead paragraph) with inline bold and code formatting.
+- **Session Capture Engine Synchronization (`scripts/session-capture.js`)**:
+  - Session Capture now shares the same semantic parser and toggles completed tasks directly on Milestone checkboxes in `CURRENT_STATE.md` without duplicating sections.
+
 ## [1.5.6] — 2026-11-17
 
 ### 🎯 Smart Active Roadmap & Non-Destructive CURRENT_STATE.md Editing

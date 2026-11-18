@@ -1,6 +1,6 @@
 {
   "name": "ai-second-brain",
-  "version": "1.5.6",
+  "version": "1.5.7",
   "description": "Seu segundo cérebro para desenvolvimento com IA. Organiza conhecimento, decisões, memória e governança para todos os seus projetos.",
   "main": "server.js",
   "scripts": {

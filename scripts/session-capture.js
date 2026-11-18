@@ -119,54 +119,207 @@ function resolveProjectDir(rootDir, projectName) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// CURRENT_STATE.md — parsing e atualização cirúrgica
+// CURRENT_STATE.md — parsing inteligente e atualização cirúrgica
 // ─────────────────────────────────────────────────────────────
-const LIST_LINE_RE = /^\s*(?:\d+\.|[-*])\s+/;
-const DEFINED_HEADING_RE = /^##\s+O que já foi definido\b/i;
-const NEXT_HEADING_RE = /^##\s+Próximos Passos\b/i;
+const RM_DONE_RE = /(j[áa]\s+(foi\s+|foram\s+)?(definid|feit|conclu|entreg|implement|formalizad|especificad|estabelecid|aprovad|fechad|decidid|arquitetad|modelad|consolidad)|o\s+que\s+(j[áa]\s+)?(temos|existe|fizemos|foi\s+feito)|conclu[íi]d|finalizad|entregue|realizad|formalizad|especificad|estabelecid|consolidad|\bfeito|\bdone\b|completed|finished|achievements|implementad[oa]s|delivered)/i;
+const RM_NEXT_RE = /(pr[óo]xim|pendent|pend[êe]ncia|backlog|roadmap|cronograma|to-?do|tarefa|next\s*steps?|em\s+andamento|in\s+progress|a\s+fazer|planejad|planejamento|\bmarco|milestone|sprint|\bfase\b|\betapa|plano\s+de\s+(a[çc][ãa]o|implementa|entrega|trabalho)|objetivos?\s+imediat|upcoming|planned|action\s+items?|entregas?\s+previst)/i;
+const RM_IGNORE_RE = /(^status\b|requisito|n[ãa]o[- ]funciona|\bsla\b|acordo\s+de\s+n[íi]vel|pol[íi]tica\s+de|diretriz|risco|bloqueio|impedimento|observa[çc]|refer[êe]ncia|restri[çc]|premissa)/i;
+const RM_MILESTONE_LINE_RE = /^(?:marco|milestone|fase|phase|sprint|etapa)\s+\d+\b/i;
+const RM_ITEM_RE = /^(\s*)(?:([-*+]|\d+[.)])\s+(?:\[([ xX~\-])\]\s+|([✅✔☑️☐🔲⏳])\s+)?|\[([ xX~\-])\]\s+|([☐🔲])\s+)(.*\S)\s*$/;
 
-function splitLines(md) {
-    const eol = /\r\n/.test(md) ? '\r\n' : '\n';
-    return { lines: String(md || '').split(/\r?\n/), eol };
+function rmCleanText(t) {
+    return String(t || '')
+        .replace(/\*\*(.+?)\*\*/g, '$1')
+        .replace(/__(.+?)__/g, '$1')
+        .replace(/~~(.+?)~~/g, '$1')
+        .trim();
 }
 
-function sectionBody(lines, headingRe) {
-    const start = lines.findIndex(l => headingRe.test(l));
-    if (start === -1) return null;
-    let end = lines.length;
-    for (let i = start + 1; i < lines.length; i++) {
-        if (/^##\s/.test(lines[i])) { end = i; break; }
-    }
-    return { start, end, body: lines.slice(start + 1, end) };
+function rmClassifyHeading(title) {
+    const t = rmCleanText(title).replace(/^[#|>\s]+|[#`]+$/g, '').trim();
+    if (/^status\b/i.test(t)) return 'ignore';
+    if (RM_DONE_RE.test(t)) return 'done';
+    if (RM_NEXT_RE.test(t)) return 'next';
+    if (RM_IGNORE_RE.test(t)) return 'ignore';
+    return null;
 }
 
-function listItemsOf(bodyLines) {
-    return bodyLines
-        .filter(l => LIST_LINE_RE.test(l))
-        .map(l => l.replace(/^\s*(?:\d+\.|[-*])\s+(?:\[[ xX]\]\s*)?/, '').trim())
-        .filter(Boolean);
+function rmIndent(ws) {
+    return String(ws || '').replace(/\t/g, '    ').length;
 }
 
-function parseStateSections(md) {
-    const { lines } = splitLines(md);
-    const defined = sectionBody(lines, DEFINED_HEADING_RE);
-    const next = sectionBody(lines, NEXT_HEADING_RE);
-    const statusMatch = String(md || '').match(/##\s+Status:\s*([^\n\r]+)/i);
+function rmMatchLine(line) {
+    const m = line.match(RM_ITEM_RE);
+    if (!m) return null;
+    const indent = rmIndent(m[1]);
+    const marker = m[2] || '-';
+    const boxChar = m[3] !== undefined ? m[3] : m[5];
+    const emojiChar = m[4] || m[6];
+    const hasBox = boxChar !== undefined || emojiChar !== undefined;
+    let boxDone = false;
+    if (boxChar !== undefined) boxDone = /[xX]/.test(boxChar);
+    else if (emojiChar) boxDone = /[✅✔☑️]/.test(emojiChar);
     return {
-        status: statusMatch ? statusMatch[1].trim() : '',
-        definedItems: defined ? listItemsOf(defined.body) : [],
-        nextSteps: next ? listItemsOf(next.body) : []
+        indent,
+        marker,
+        hasExplicitBox: boxChar !== undefined,
+        hasEmojiBox: Boolean(emojiChar),
+        hasBox,
+        boxDone,
+        rawText: m[7],
+        text: rmCleanText(m[7])
     };
 }
 
-function rewriteSection(lines, headingRe, headingText, rewriteFn) {
-    const sec = sectionBody(lines, headingRe);
-    if (!sec) {
-        while (lines.length && lines[lines.length - 1].trim() === '') lines.pop();
-        lines.push('', headingText, ...rewriteFn([]));
-        return;
+function rmParseModel(md) {
+    const raw = String(md || '');
+    const eol = raw.includes('\r\n') ? '\r\n' : '\n';
+    const lines = raw.split(/\r?\n/);
+    const items = [];
+    const stack = [];
+    let inFence = false;
+    let baseListIndent = null;
+
+    const ctx = () => {
+        for (let i = stack.length - 1; i >= 0; i--) {
+            if (stack[i].cls) return stack[i].cls;
+        }
+        return null;
+    };
+    const pushHeading = (level, rawTitle) => {
+        const title = rmCleanText(rawTitle).replace(/:$/, '').trim();
+        while (stack.length && stack[stack.length - 1].level >= level) stack.pop();
+        stack.push({ level, cls: rmClassifyHeading(title), title });
+        baseListIndent = null;
+    };
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        if (/^\s*(```|~~~)/.test(line)) { inFence = !inFence; continue; }
+        if (inFence) continue;
+
+        const h = line.match(/^(#{1,6})\s+(.+?)\s*#*\s*$/) || line.match(/^(\|)\s*(\d+\.\s+.+?|\S.+?)\s*$/);
+        const b = !h && line.match(/^\s*\*\*([^*].*?)\*\*\s*:?\s*$/);
+        const plainHeader = !h && !b && !RM_ITEM_RE.test(line) && (
+            line.match(/^\s*((?:marco|milestone|fase|phase|sprint|etapa)\s+\d+[^\r\n]*?)\s*:?\s*$/i) ||
+            (line.match(/^\s*([A-ZÁÉÍÓÚÂÊÔÃÕÇ][^\r\n:]{2,60}):\s*$/) && (RM_DONE_RE.test(line) || RM_NEXT_RE.test(line)))
+        );
+        if (h && !/^\|.*\|/.test(line.trim())) { pushHeading(h[1] === '|' ? 2 : h[1].length, h[2]); continue; }
+        if (b) { pushHeading(7, b[1]); continue; }
+        if (plainHeader) { pushHeading(7, plainHeader[1]); continue; }
+
+        const parsed = rmMatchLine(line);
+        if (!parsed) continue;
+
+        const context = ctx();
+        if (!parsed.hasBox) {
+            const nextNonEmpty = lines.slice(i + 1).find(x => x.trim());
+            const nextParsed = nextNonEmpty ? rmMatchLine(nextNonEmpty) : null;
+            const hasCheckboxChildren = nextParsed && nextParsed.hasBox && nextParsed.indent > parsed.indent;
+            if (RM_MILESTONE_LINE_RE.test(parsed.text) || hasCheckboxChildren) {
+                pushHeading(8, parsed.text);
+                continue;
+            }
+        }
+
+        if (!parsed.hasBox && (context === 'ignore' || (context !== 'done' && context !== 'next'))) continue;
+
+        if (!parsed.hasBox) {
+            if (baseListIndent === null || parsed.indent < baseListIndent) baseListIndent = parsed.indent;
+            else if (parsed.indent > baseListIndent + 1) continue;
+        }
+
+        const done = parsed.hasBox ? parsed.boxDone : context === 'done';
+        let end = i;
+        for (let j = i + 1; j < lines.length; j++) {
+            const l = lines[j];
+            if (!l.trim()) {
+                const nxtIdx = lines.slice(j + 1).findIndex(x => x.trim());
+                if (nxtIdx >= 0) {
+                    const nxtLine = lines[j + 1 + nxtIdx];
+                    const nxtIndent = rmIndent((nxtLine.match(/^\s*/) || [''])[0]);
+                    const nxtMatch = rmMatchLine(nxtLine);
+                    if (nxtIndent > parsed.indent && !(nxtMatch && nxtMatch.hasBox)) continue;
+                }
+                break;
+            }
+            const subIndent = rmIndent((l.match(/^\s*/) || [''])[0]);
+            const subMatch = rmMatchLine(l);
+            if (subIndent > parsed.indent && !(subMatch && subMatch.hasBox)) { end = j; continue; }
+            break;
+        }
+
+        items.push({
+            line: i,
+            end,
+            indent: parsed.indent,
+            marker: parsed.marker,
+            hasBox: parsed.hasBox,
+            hasExplicitBox: parsed.hasExplicitBox,
+            hasEmojiBox: parsed.hasEmojiBox,
+            done,
+            text: parsed.text
+        });
+        i = end;
     }
-    lines.splice(sec.start + 1, sec.end - sec.start - 1, ...rewriteFn(sec.body));
+
+    const statusMatch = raw.match(/^#{1,6}\s+Status(?:\s+Atual)?\s*:\s*([^\n\r]+)/im) ||
+                        raw.match(/^\s*[-*+]\s+\*\*Status\*\*\s*:\s*([^\n\r]+)/im) ||
+                        raw.match(/^#{1,6}\s+Status(?:\s+Atual)?\s*\r?\n+\s*(?:[-*+]\s+)?([^\r\n#<|]+)/im);
+    return {
+        raw,
+        eol,
+        lines,
+        items,
+        status: statusMatch ? statusMatch[1].trim() : ''
+    };
+}
+
+function parseStateSections(md) {
+    const model = rmParseModel(md);
+    return {
+        status: model.status,
+        definedItems: model.items.filter(it => it.done).map(it => it.text),
+        nextSteps: model.items.filter(it => !it.done).map(it => it.text)
+    };
+}
+
+function rmInsertStateItem(md, kind, text, projectName) {
+    const model = rmParseModel(md);
+    const lines = model.lines.slice();
+    const wantDone = kind === 'done';
+    const sameKind = model.items.filter(it => it.done === wantDone);
+
+    if (sameKind.length) {
+        const ref = sameKind[sameKind.length - 1];
+        const indentWs = (lines[ref.line].match(/^\s*/) || [''])[0];
+        let marker = ref.marker;
+        if (/^\d+/.test(marker)) {
+            const n = parseInt(marker, 10) + 1;
+            marker = `${n}${marker.replace(/^\d+/, '')}`;
+        }
+        const box = ref.hasBox ? (wantDone ? '[x] ' : '[ ] ') : '';
+        lines.splice(ref.end + 1, 0, `${indentWs}${marker} ${box}${text}`);
+        return lines.join(model.eol);
+    }
+
+    let headingIdx = -1;
+    let inFence = false;
+    for (let i = 0; i < lines.length; i++) {
+        if (/^\s*(```|~~~)/.test(lines[i])) { inFence = !inFence; continue; }
+        if (inFence) continue;
+        const h = lines[i].match(/^#{1,6}\s+(.+)$/);
+        if (h && rmClassifyHeading(h[1]) === (wantDone ? 'done' : 'next')) { headingIdx = i; break; }
+    }
+    const newLine = `- ${wantDone ? '[x]' : '[ ]'} ${text}`;
+    if (headingIdx >= 0) {
+        lines.splice(headingIdx + 1, 0, newLine);
+        return lines.join(model.eol);
+    }
+
+    while (lines.length && !lines[lines.length - 1].trim()) lines.pop();
+    lines.push('', `## ${wantDone ? 'O que já foi definido' : 'Próximos Passos'}`, newLine, '');
+    return lines.join(model.eol);
 }
 
 /**
@@ -174,64 +327,67 @@ function rewriteSection(lines, headingRe, headingText, rewriteFn) {
  * @returns {{ markdown: string, movedSteps: number, addedDefined: number, addedSteps: number }}
  */
 function applyStateUpdate(currentMd, projectName, update, today) {
-    const base = String(currentMd || '').trim()
+    let working = String(currentMd || '').trim()
         ? String(currentMd)
         : `# ${projectName} — Estado Atual\n\n> Última atualização: ${today}\n\n## Status: 🟢 Ativo / Em Desenvolvimento\n`;
 
-    const { lines, eol } = splitLines(base);
-    const completedKeys = new Set(update.completedSteps.map(normalizeKey));
+    const completedKeys = new Set((update.completedSteps || []).map(normalizeKey));
     const result = { movedSteps: 0, addedDefined: 0, addedSteps: 0 };
 
-    // 1) Próximos Passos: remove concluídos, adiciona novos, renumera
-    const stepsMoved = [];
-    rewriteSection(lines, NEXT_HEADING_RE, '## Próximos Passos', body => {
-        const others = body.filter(l => !LIST_LINE_RE.test(l) && l.trim() !== '');
-        const kept = [];
-        for (const item of listItemsOf(body)) {
-            if (completedKeys.has(normalizeKey(item))) {
-                stepsMoved.push(item);
-                result.movedSteps++;
-            } else {
-                kept.push(item);
-            }
-        }
-        const keptKeys = new Set(kept.map(normalizeKey));
-        for (const step of update.newNextSteps) {
-            if (!keptKeys.has(normalizeKey(step))) {
-                kept.push(step);
-                keptKeys.add(normalizeKey(step));
-                result.addedSteps++;
-            }
-        }
-        const out = [...others];
-        kept.forEach((s, i) => out.push(`${i + 1}. ${s}`));
-        out.push('');
-        return out;
-    });
+    // 1) Marca como concluídos (ou move) os próximos passos selecionados
+    let model = rmParseModel(working);
+    const pendingToComplete = model.items.filter(it => !it.done && completedKeys.has(normalizeKey(it.text)));
+    const movedTexts = [];
 
-    // 2) O que já foi definido: concluídos + novos itens (sem duplicar)
-    const toDefine = [...stepsMoved, ...update.newDefinedItems];
-    rewriteSection(lines, DEFINED_HEADING_RE, '## O que já foi definido', body => {
-        const out = [...body];
-        while (out.length && out[out.length - 1].trim() === '') out.pop();
-        const existing = new Set(listItemsOf(body).map(normalizeKey));
-        for (const item of toDefine) {
-            if (!existing.has(normalizeKey(item))) {
-                out.push(`- [x] ${item}`);
-                existing.add(normalizeKey(item));
-                result.addedDefined++;
-            }
+    // Processa de trás para frente para não deslocar índices de linhas anteriores
+    for (let k = pendingToComplete.length - 1; k >= 0; k--) {
+        const it = pendingToComplete[k];
+        if (it.hasExplicitBox) {
+            model.lines[it.line] = model.lines[it.line].replace(/\[([ xX~\-])\]/, '[x]');
+        } else if (it.hasEmojiBox) {
+            model.lines[it.line] = model.lines[it.line].replace(/[☐🔲⏳]/, '✅');
+        } else {
+            model.lines.splice(it.line, it.end - it.line + 1);
+            movedTexts.unshift(it.text);
         }
-        out.push('');
-        return out;
-    });
-
-    let markdown = lines.join(eol);
-    if (/^>\s*Última atualização:.*$/m.test(markdown)) {
-        markdown = markdown.replace(/^>\s*Última atualização:.*$/m, `> Última atualização: ${today}`);
+        result.movedSteps++;
     }
-    if (!markdown.endsWith(eol)) markdown += eol;
-    return { markdown, ...result };
+    working = model.lines.join(model.eol);
+
+    for (const txt of movedTexts) {
+        working = rmInsertStateItem(working, 'done', txt, projectName);
+    }
+
+    // 2) Adiciona novos itens definidos (sem duplicar)
+    model = rmParseModel(working);
+    const existingDone = new Set(model.items.filter(it => it.done).map(it => normalizeKey(it.text)));
+    for (const item of (update.newDefinedItems || [])) {
+        const k = normalizeKey(item);
+        if (k && !existingDone.has(k)) {
+            working = rmInsertStateItem(working, 'done', item, projectName);
+            existingDone.add(k);
+            result.addedDefined++;
+        }
+    }
+
+    // 3) Adiciona novos próximos passos (sem duplicar)
+    model = rmParseModel(working);
+    const existingNext = new Set(model.items.filter(it => !it.done).map(it => normalizeKey(it.text)));
+    for (const step of (update.newNextSteps || [])) {
+        const k = normalizeKey(step);
+        if (k && !existingNext.has(k)) {
+            working = rmInsertStateItem(working, 'next', step, projectName);
+            existingNext.add(k);
+            result.addedSteps++;
+        }
+    }
+
+    const eol = /\r\n/.test(working) ? '\r\n' : '\n';
+    if (/^>\s*Última atualização:.*$/m.test(working)) {
+        working = working.replace(/^>\s*Última atualização:.*$/m, `> Última atualização: ${today}`);
+    }
+    if (!working.endsWith(eol)) working += eol;
+    return { markdown: working, ...result };
 }
 
 // ─────────────────────────────────────────────────────────────

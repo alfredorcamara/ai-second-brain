@@ -844,14 +844,15 @@ External repository linked to AI Second Brain.
             decisions.forEach(d => totalGovBytes += d.size);
             sessions.forEach(s => totalGovBytes += s.size);
 
-            // Contagem rápida de arquivos do projeto real
+            // Contagem rápida de arquivos do projeto real (inclui pontes de IA como .github e .cursorrules)
             let totalProjectFiles = 0;
+            const ALLOWED_DOT_ENTRIES = new Set(['.github', '.cursorrules', '.windsurfrules', '.clinerules']);
             try {
                 const countFiles = (dir, depth = 0) => {
                     if (depth > 4) return;
                     const items = fs.readdirSync(dir, { withFileTypes: true });
                     for (const item of items) {
-                        if (item.name.startsWith('.') || item.name === 'node_modules' || item.name === 'bin' || item.name === 'obj') continue;
+                        if ((item.name.startsWith('.') && !ALLOWED_DOT_ENTRIES.has(item.name)) || item.name === 'node_modules' || item.name === 'bin' || item.name === 'obj') continue;
                         if (item.isDirectory()) {
                             countFiles(path.join(dir, item.name), depth + 1);
                         } else {
@@ -863,46 +864,92 @@ External repository linked to AI Second Brain.
             } catch (e) { }
 
             // Extração resiliente de metadados do PROJECT.md e contratos de governança
+            const cleanMeta = (v) => String(v || '')
+                .replace(/\*\*(.+?)\*\*/g, '$1')
+                .replace(/__(.+?)__/g, '$1')
+                .replace(/`([^`]+)`/g, '$1')
+                .replace(/^[\s\-–—:|]+|[\s\-–—:|]+$/g, '')
+                .trim();
+            const isValidMeta = (v) => {
+                const c = cleanMeta(v);
+                return Boolean(c && c.length <= 140 && !/^(n[ãa]o\s+(especificad[oa]|definid[oa]|informad[oa])|a\s+definir|tbd|livre|none|null|-|\?+)$/i.test(c));
+            };
+
             let stack = 'Não especificada';
             let status = 'Ativo';
             let description = 'Projeto no AI Second Brain';
 
-            // 1. Padrão bullet em PROJECT.md (- **Stack**: ou - **Stack Tecnológica**: ou - **Stack Inicial**:)
-            const stackMatch = projectMd.match(/-\s+\*\*Stack[^*]*\*\*:\s*([^\r\n]+)/i);
-            if (stackMatch) {
-                stack = stackMatch[1].trim();
-            } else {
-                // 2. Padrão tabela em PROJECT.md (| **Stack** | C# |)
-                const tableMatch = projectMd.match(/\|\s*\*\*Stack[^*]*\*\*\s*\|\s*([^|\r\n]+)\|/i);
-                if (tableMatch) {
-                    stack = tableMatch[1].trim();
-                } else {
-                    // 3. Padrão texto corrido em PROJECT.md: "desenvolvido em C# / .NET 8, utilizando..."
-                    const textMatch = projectMd.match(/(?:desenvolvido|implementado|constru[íi]do)\s+em\s+([A-Za-z0-9_#\+\.\/\s\-]+?)(?:\.\s|\.\r?\n|,|\s+utilizando|\s+sobre|\s+com\s+banco|\r?\n|$)/i);
-                    if (textMatch) {
-                        stack = textMatch[1].trim();
-                    } else if (hasArchitecture) {
-                        // 4. Fallback no ARCHITECTURE.md
-                        try {
-                            const archFile = path.join(projectDir, 'ARCHITECTURE.md');
-                            const archContent = fs.readFileSync(archFile, 'utf-8');
-                            const archStack = archContent.match(/-\s+\*\*(?:Linguagem\s*\/\s*Framework|Stack[^*]*)\*\*:\s*([^\r\n]+)/i);
-                            if (archStack) stack = archStack[1].trim();
-                        } catch (_) { }
+            const stackPatterns = [
+                /^\s*[-*+]\s+\*\*(?:Stack[^*:]*|Tech\s*Stack|Tecnologias?\s*Principa(?:l|is)|Linguagem\s*(?:\/\s*Framework)?)\*\*\s*:\s*([^\r\n]+)/im,
+                /^\s*\*\*(?:Stack[^*:]*|Tech\s*Stack|Tecnologias?\s*Principa(?:l|is)|Linguagem\s*(?:\/\s*Framework)?)\*\*\s*:\s*([^\r\n]+)/im,
+                /^\s*(?:Stack(?:\s+Tecnol[óo]gica|\s+Principal|\s+Inicial|\s+Oficial)?|Tech\s+Stack)\s*:\s*([^\r\n]+)/im,
+                /\|\s*\*?\*?(?:Stack[^|*:]*|Tech\s*Stack|Linguagem\s*(?:\/\s*Framework)?)\*?\*?\s*\|\s*([^|\r\n]+)\|/i,
+                /(?:desenvolvid[oa]|implementad[oa]|constru[íi]d[oa]|arquitetad[oa]|basead[oa])\s+(?:em|com|sobre)\s+([A-Za-z0-9_#\+\.\/\s\-]+?)(?:\.\s|\.\r?\n|,|\s+utilizando|\s+usando|\s+sobre|\s+com\s+banco|\s+seguindo|\r?\n|$)/i
+            ];
+            for (const src of [projectMd, archMd]) {
+                if (!src) continue;
+                let found = false;
+                for (const re of stackPatterns) {
+                    const m = src.match(re);
+                    if (m && isValidMeta(m[1])) {
+                        stack = cleanMeta(m[1]);
+                        found = true;
+                        break;
                     }
                 }
+                if (found) break;
             }
 
-            // Status (bullet, tabela ou cabeçalho)
-            const statusMatch = projectMd.match(/-\s+\*\*Status\*\*:\s*([^\r\n]+)/i) ||
-                                projectMd.match(/\|\s*\*\*Status\*\*\s*\|\s*([^|\r\n]+)\|/i) ||
-                                projectMd.match(/##\s+Status:\s*([^\r\n]+)/i);
-            if (statusMatch) status = statusMatch[1].trim();
+            // Status (bullet, tabela, cabeçalho na mesma linha ou linha seguinte, tanto em PROJECT.md quanto em CURRENT_STATE.md)
+            const statusPatterns = [
+                /^\s*[-*+]\s+\*\*Status(?:\s+Operacional|\s+Atual|\s+Inicial)?\*\*\s*:\s*([^\r\n]+)/im,
+                /^\s*\*\*Status(?:\s+Operacional|\s+Atual|\s+Inicial)?\*\*\s*:\s*([^\r\n]+)/im,
+                /\|\s*\*?\*?Status(?:\s+Atual)?\*?\*?\s*\|\s*([^|\r\n]+)\|/i,
+                /^#{1,6}\s+Status(?:\s+Atual|\s+Inicial|\s+do\s+Projeto)?\s*:\s*([^\r\n]+)/im,
+                /^#{1,6}\s+Status(?:\s+Atual|\s+Inicial|\s+do\s+Projeto)?\s*\r?\n+\s*(?:[-*+]\s+)?([^\r\n#<|]+)/im
+            ];
+            for (const src of [projectMd, currentStateMd]) {
+                if (!src) continue;
+                let found = false;
+                for (const re of statusPatterns) {
+                    const m = src.match(re);
+                    if (m && isValidMeta(m[1])) {
+                        status = cleanMeta(m[1]);
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) break;
+            }
 
-            // Descrição / Visão Geral
-            const overviewMatch = projectMd.match(/##\s+(?:1\.\s+)?Visão Geral[^\r\n]*\r?\n+([^\n#]+)/i) ||
-                                  projectMd.match(/\|\s*1\.\s+Visão Geral Executiva[^\r\n]*\r?\n+([^\n#]+)/i);
-            if (overviewMatch) description = overviewMatch[1].trim();
+            // Descrição / Visão Geral (qualquer título semântico ou primeiro parágrafo descritivo)
+            const extractFirstPara = (txt) => {
+                const lines = String(txt || '').split(/\r?\n/);
+                const buf = [];
+                let inFence = false;
+                for (const raw of lines) {
+                    const l = raw.trim();
+                    if (/^(```|~~~)/.test(l)) { inFence = !inFence; continue; }
+                    if (inFence) continue;
+                    if (!l) { if (buf.length) break; continue; }
+                    if (/^#{1,6}\s/.test(l) || /^\|\s*\d+\./.test(l) || /^>/.test(l) || /^\|/.test(l) || /^---+$/.test(l)) {
+                        if (buf.length) break;
+                        continue;
+                    }
+                    if (/^[-*+]\s+\*\*[^*]+\*\*\s*:/.test(l) || /^[-*+]\s+\[[ xX]\]/.test(l)) {
+                        if (buf.length) break;
+                        continue;
+                    }
+                    if (/^[-*+]\s+/.test(l) && buf.length) break;
+                    buf.push(l.replace(/^[-*+]\s+/, ''));
+                    if (buf.join(' ').length > 340) break;
+                }
+                return buf.join(' ').trim();
+            };
+            const overviewHeadingRe = /^(#{1,6}|\|)\s*(?:\d+[\.\)]\s*)?(?:Vis[ãa]o\s+Geral(?:\s+Executiva|\s+do\s+Projeto|\s+do\s+Produto)?|Objetivo(?:s)?(?:\s+do\s+Projeto|\s+Geral)?|Resumo\s+Executivo|Sobre\s+o\s+Projeto|Descri[çc][ãa]o(?:\s+Geral|\s+do\s+Projeto)?|Contexto(?:\s+e\s+Objetivo)?|Overview|Executive\s+Summary|Project\s+Vision)\b[^\r\n]*$/im;
+            const ohMatch = overviewHeadingRe.exec(projectMd);
+            const extractedOverview = (ohMatch ? extractFirstPara(projectMd.slice(ohMatch.index + ohMatch[0].length)) : '') || extractFirstPara(projectMd);
+            if (extractedOverview) description = extractedOverview;
 
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({

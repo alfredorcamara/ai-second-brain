@@ -7,6 +7,18 @@ e este projeto adere ao [Versionamento Semântico (SemVer)](https://semver.org/l
 
 ---
 
+## [1.5.7] — 2026-11-17
+
+### 🧠 Identificação Semântica Universal em Todo o Ecossistema
+- **Reconhecimento Expandido de Itens Definidos & Formalizados (`app.js` e `session-capture.js`)**:
+  - Seções como *"O que já foi Formalizado e Especificado"*, *"Decisões Estabelecidas"*, *"Contratos Fechados"* e *"Entregas Realizadas"* agora são automaticamente mapeadas em **✓ O que já foi definido**, além de suporte a marcadores com emoji (`✅`, `✔️`, `☑️`, `☐`, `🔲`, `⏳`).
+- **Hierarquia Inteligente de Marcos e Checkboxes Indentados**:
+  - Tarefas com checkbox (`- [ ]` / `- [x]`) são reconhecidas em qualquer nível de indentação (ex.: aninhadas sob bullets numerados de *Marco 1*, *Fase 1*, *Sprint 1*), transformando automaticamente o item pai em rótulo de agrupamento e mantendo sub-bullets descritivos (como rotas `GET/POST`) agrupados na tarefa pai.
+- **Extração Universal de Objetivo, Stack e Status no Dashboard, Workspace e Editor**:
+  - Unificado o extrator resiliente entre `server.js` e `app.js` (Dashboard Geral, Visão Geral do Projeto e Editor Markdown), reconhecendo **Objetivo do Projeto** em qualquer variação de título (*Visão Geral Executiva*, *Objetivo*, *Resumo Executivo*, *Sobre o Projeto*, *Overview* ou parágrafo inicial) com formatação de negrito e código inline.
+- **Sincronização com o Motor de Captura de Sessão (`scripts/session-capture.js`)**:
+  - O Session Capture agora compartilha o mesmo parser semântico e marca tarefas concluídas diretamente nos checkboxes dos Marcos em `CURRENT_STATE.md` sem duplicar seções.
+
 ## [1.5.6] — 2026-11-17
 
 ### 🎯 Roadmap Ativo Inteligente & Edição Não Destrutiva do CURRENT_STATE.md
