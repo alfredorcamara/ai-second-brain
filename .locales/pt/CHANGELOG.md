@@ -15,7 +15,11 @@ e este projeto adere ao [Versionamento Semântico (SemVer)](https://semver.org/l
   - **Pílulas de Destaque Semântico (*Tech & Domain Highlights*)**: termos em negrito/código recebem realce visual de alto contraste para leitura dinâmica instantânea.
   - **Hierarquia em 2 Camadas**: separação visual automática entre a **Proposta de Negócio** (lead principal) e o **Resumo Técnico/Arquitetural** (`⚙️`).
 - **Input Limpo na Edição Rápida com Preservação de Tags no `.md`**:
-  - Ao abrir a **Edição Rápida**, o campo `<textarea>` exibe o texto limpo (sem poluição de tags `<strong>`), e ao salvar reaplica/preserva automaticamente as tags originais no `PROJECT.md`.
+  - Ao abrir a **Edição Rápida**, o campo `<textarea>` (com altura duplicada para melhor leitura) exibe o texto limpo sem poluição de tags `<strong>`, preservando automaticamente as tags originais no `PROJECT.md` ao salvar.
+  - **Seletor Padronizado de Stack Tecnológica**: o campo de Stack na Edição Rápida agora exibe a mesma caixa de seleção categorizada do Quickstart Studio (incluindo suporte a stack personalizada).
+- **Redesign de UX/UI das Pontes de IA para IDEs & Árvore da Sidebar (`app.js` e `style.css`)**:
+  - **Grid Uniforme de 2 Colunas (Ativas no Topo)**: pontes instaladas (`✓`) sobem automaticamente para o topo do grid, exibindo nome da ferramenta + arquivo em `<code>`, ações compactas no cabeçalho, campo de prefixo sob demanda (`📁 Prefixo ⚙️`) e botão de ajuda `?` em dourado cintilante.
+  - **Alinhamento da Sidebar**: pastas de projetos alinhadas na mesma coluna vertical de `📖 Guia de Projetos`, ganhando +24px de espaço útil para títulos.
 - **Extração de Stack Resiliente a HTML Inline (`app.js` e `server.js`)**:
   - Reconhece stacks escritas com tags `<strong>` em prosa (ex.: *"desenvolvido em `<strong>Node.js</strong>` com `<strong>TypeScript</strong>`"* ➔ `Node.js / TypeScript`) e fallback no `CURRENT_STATE.md`.
 

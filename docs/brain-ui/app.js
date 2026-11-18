@@ -386,37 +386,77 @@ window.openBrainMetricsHelpModal = openBrainMetricsHelpModal;
 window.closeBrainMetricsHelpModal = closeBrainMetricsHelpModal;
 window.handleBrainMetricsHelpBackdropClick = handleBrainMetricsHelpBackdropClick;
 
+function togglePwBridgePrefixRow() {
+    const row = document.getElementById('pwBridgePrefixRow');
+    if (!row) return;
+    const isHidden = row.style.display === 'none' || !row.style.display;
+    row.style.display = isHidden ? 'flex' : 'none';
+    if (isHidden) {
+        const inp = document.getElementById('pwBridgePrefix');
+        if (inp) inp.focus();
+    }
+}
+window.togglePwBridgePrefixRow = togglePwBridgePrefixRow;
+
 function renderProjectBridgesChips(projectName) {
     const files = (window.VAULT && window.VAULT.data && window.VAULT.data.files) || [];
     const prefix = `projects/${projectName}/`;
     const projFiles = files.filter(f => f.path.startsWith(prefix));
+    const govFiles = (typeof currentProjectData !== 'undefined' && currentProjectData && currentProjectData.name === projectName && Array.isArray(currentProjectData.governanceFiles))
+        ? currentProjectData.governanceFiles
+        : [];
+    const selectedEngine = (typeof getSelectedAiEngine === 'function') ? getSelectedAiEngine() : 'antigravity';
+    const preferredKey = selectedEngine === 'universal' ? 'agents' : selectedEngine;
 
     const bridges = [
-        { key: 'cursor', file: '.cursorrules', label: '.cursorrules', icon: '⚡' },
-        { key: 'claude', file: 'CLAUDE.md', label: 'CLAUDE.md', icon: '🤖' },
-        { key: 'windsurf', file: '.windsurfrules', label: '.windsurfrules', icon: '🏄' },
-        { key: 'antigravity', file: 'GEMINI.md', label: 'GEMINI.md', icon: '🪐' },
-        { key: 'copilot', file: '.github/copilot-instructions.md', label: 'copilot-instructions.md', icon: '🐙' },
-        { key: 'cline', file: '.clinerules', label: '.clinerules', icon: '🦾' },
-        { key: 'agents', file: 'AGENTS.md', label: 'AGENTS.md', icon: '🌐' }
+        { key: 'antigravity', ide: 'Antigravity', file: 'GEMINI.md', label: 'GEMINI.md', icon: '🪐' },
+        { key: 'copilot', ide: 'GitHub Copilot', file: '.github/copilot-instructions.md', label: 'copilot-instructions.md', icon: '🐙' },
+        { key: 'cursor', ide: 'Cursor AI', file: '.cursorrules', label: '.cursorrules', icon: '⚡' },
+        { key: 'claude', ide: 'Claude Code', file: 'CLAUDE.md', label: 'CLAUDE.md', icon: '🤖' },
+        { key: 'windsurf', ide: 'Windsurf', file: '.windsurfrules', label: '.windsurfrules', icon: '🏄' },
+        { key: 'cline', ide: 'Cline / Roo', file: '.clinerules', label: '.clinerules', icon: '🦾' },
+        { key: 'agents', ide: 'Padrão Universal', file: 'AGENTS.md', label: 'AGENTS.md', icon: '🌐' }
     ];
 
-    return bridges.map(b => {
+    const enriched = bridges.map((b, idx) => {
         const fullPath = `${prefix}${b.file}`;
-        const exists = projFiles.some(f => f.path.toLowerCase() === fullPath.toLowerCase());
+        const inVault = projFiles.some(f => f.path.toLowerCase() === fullPath.toLowerCase());
+        const inGov = govFiles.some(g => (g.path && g.path.toLowerCase() === fullPath.toLowerCase()) || (g.bridgeKey && g.bridgeKey === b.key));
+        return {
+            ...b,
+            idx,
+            fullPath,
+            exists: inVault || inGov,
+            isPreferred: b.key === preferredKey
+        };
+    });
 
-        if (exists) {
+    // Ordenação inteligente: 1º Ativas no projeto, 2º Motor padrão da Arquitetura, 3º Ordem original
+    enriched.sort((a, b) => {
+        if (a.exists !== b.exists) return a.exists ? -1 : 1;
+        if (a.isPreferred !== b.isPreferred) return a.isPreferred ? -1 : 1;
+        return a.idx - b.idx;
+    });
+
+    return enriched.map(b => {
+        if (b.exists) {
             return `
-                <span class="pw-bridge-chip active" onclick="navigateTo('${fullPath}')" title="Ponte ativa! Clique para visualizar ${b.file}" style="display:inline-flex; align-items:center; gap:6px;">
-                    <span>✓ ${b.icon} ${b.label}</span>
-                    <span onclick="event.stopPropagation(); deleteAiBridge('${projectName}', '${b.key}', '${b.label}')" title="Excluir ponte ${b.file} do disco" style="margin-left:2px; padding:0 5px; border-radius:4px; color:#f87171; font-weight:700; cursor:pointer; background:rgba(248,113,113,0.14); line-height:1.3;">×</span>
-                </span>
+                <div class="pw-bridge-chip active" onclick="navigateTo('${b.fullPath}')" title="Ponte ativa! Clique para visualizar ${b.file}">
+                    <span class="pw-bridge-status">✓</span>
+                    <span class="pw-bridge-icon">${b.icon}</span>
+                    <span class="pw-bridge-ide">${b.ide}</span>
+                    <code class="pw-bridge-file">${b.label}</code>
+                    <span class="pw-bridge-del" onclick="event.stopPropagation(); deleteAiBridge('${projectName}', '${b.key}', '${b.label}')" title="Excluir ponte ${b.file} do disco">×</span>
+                </div>
             `;
         } else {
             return `
-                <span class="pw-bridge-chip pending" onclick="generateAiBridge('${projectName}', '${b.key}')" title="Clique para gerar ponte para ${b.file}">
-                    + ${b.icon} ${b.label}
-                </span>
+                <div class="pw-bridge-chip pending" onclick="generateAiBridge('${projectName}', '${b.key}')" title="Clique para gerar ${b.file} (${b.ide})">
+                    <span class="pw-bridge-status">+</span>
+                    <span class="pw-bridge-icon">${b.icon}</span>
+                    <span class="pw-bridge-ide">${b.ide}</span>
+                    <code class="pw-bridge-file">${b.label}</code>
+                </div>
             `;
         }
     }).join('');
@@ -6626,10 +6666,80 @@ function toggleOverviewQuickEdit(enable) {
     renderProjectOverviewTab();
 }
 
+function onPwQuickEditStackChange(val) {
+    const wrap = document.getElementById('pwEditStackCustomWrap');
+    const input = document.getElementById('pwEditStackCustom');
+    if (wrap) {
+        wrap.style.display = val === 'custom' ? 'block' : 'none';
+        if (val === 'custom' && input) input.focus();
+    }
+}
+window.onPwQuickEditStackChange = onPwQuickEditStackChange;
+
+function buildPwStackSelectHtml(currentStack) {
+    const raw = (currentStack && !META_PLACEHOLDER_RE.test(currentStack)) ? String(currentStack).trim() : 'Node.js / TypeScript';
+    const groups = [
+        {
+            label: '🌐 Web & Fullstack',
+            options: [
+                { value: 'Node.js / TypeScript', text: 'Node.js / TypeScript (Padrão)' },
+                { value: 'React / Next.js', text: 'React / Next.js (App Router)' },
+                { value: 'Vue / Nuxt', text: 'Vue / Nuxt' }
+            ]
+        },
+        {
+            label: '⚡ Backend & APIs',
+            options: [
+                { value: 'Python', text: 'Python (FastAPI / Django / Flask)' },
+                { value: 'C# / .NET', text: 'C# / .NET (C# 12 / .NET 9)' },
+                { value: 'Java / Spring Boot', text: 'Java / Spring Boot' },
+                { value: 'Go', text: 'Go (Golang)' },
+                { value: 'Rust', text: 'Rust (Actix / Axum)' },
+                { value: 'PHP / Laravel', text: 'PHP / Laravel' },
+                { value: 'Ruby on Rails', text: 'Ruby on Rails' },
+                { value: 'Elixir / Phoenix', text: 'Elixir / Phoenix' }
+            ]
+        },
+        {
+            label: '📱 Mobile & Multiplataforma',
+            options: [
+                { value: 'React Native / Expo', text: 'React Native / Expo' },
+                { value: 'Flutter / Dart', text: 'Flutter / Dart' },
+                { value: '.NET MAUI', text: '.NET MAUI (Microsoft / C#)' },
+                { value: 'Kotlin (Android / KMP)', text: 'Kotlin (Android / KMP)' }
+            ]
+        }
+    ];
+    const allValues = groups.flatMap(g => g.options.map(o => o.value));
+    const matchedPreset = allValues.find(v => v.toLowerCase() === raw.toLowerCase());
+    const isCustom = Boolean(raw && !matchedPreset);
+    const selectedVal = matchedPreset || (isCustom ? 'custom' : 'Node.js / TypeScript');
+
+    const groupsHtml = groups.map(g => `
+        <optgroup label="${escapeHtml(g.label)}">
+            ${g.options.map(o => `<option value="${escapeHtml(o.value)}" ${o.value === selectedVal ? 'selected' : ''}>${escapeHtml(o.text)}</option>`).join('')}
+        </optgroup>
+    `).join('');
+
+    return `
+        <select id="pwEditStack" class="pw-form-select" onchange="onPwQuickEditStackChange(this.value)">
+            ${groupsHtml}
+            <optgroup label="✏️ Personalizada">
+                <option value="custom" ${selectedVal === 'custom' ? 'selected' : ''}>✏️ Outra / Stack Personalizada...</option>
+            </optgroup>
+        </select>
+        <div id="pwEditStackCustomWrap" style="display: ${isCustom ? 'block' : 'none'}; margin-top: 8px;">
+            <input type="text" id="pwEditStackCustom" class="pw-form-input" placeholder="Digite a stack personalizada (ex: C# / .NET 8, Fastify + TypeScript + PostgreSQL...)" value="${isCustom ? escapeHtml(raw) : ''}">
+        </div>
+    `;
+}
+
 async function saveOverviewQuickEdit() {
     if (!currentProjectData) return;
     const vision = (document.getElementById('pwEditVision')?.value || '').trim();
-    const stack = (document.getElementById('pwEditStack')?.value || '').trim();
+    const stackSelectVal = (document.getElementById('pwEditStack')?.value || '').trim();
+    const stackCustomVal = (document.getElementById('pwEditStackCustom')?.value || '').trim();
+    const stack = (stackSelectVal === 'custom' ? stackCustomVal : stackSelectVal).trim();
     const status = (document.getElementById('pwEditStatus')?.value || '').trim();
 
     let projectMd = currentProjectData.projectMd || `# ${currentProjectData.name}\n\n`;
@@ -7460,7 +7570,7 @@ function renderProjectOverviewTab() {
                         <div class="pw-form-row">
                             <div class="pw-form-group">
                                 <label class="pw-form-label">Stack Tecnológica</label>
-                                <input id="pwEditStack" class="pw-form-input" placeholder="Ex: Node.js, React, Python..." value="${d.stack || ''}">
+                                ${buildPwStackSelectHtml(d.stack)}
                             </div>
                             <div class="pw-form-group">
                                 <label class="pw-form-label">Status Operacional</label>
@@ -7605,36 +7715,39 @@ function renderProjectOverviewTab() {
 
                         <!-- Seção de Pontes de Contexto para IDEs (Agnosticidade Real) -->
                         <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.06);">
-                            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
-                                <div>
+                            <div class="pw-bridges-header">
+                                <div class="pw-bridges-title-wrap">
                                     <div style="display:flex; align-items:center; gap: 6px;">
                                         <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #38bdf8; letter-spacing: 0.05em;">
-                                            🔌 Pontes de IA para IDEs (.cursorrules, CLAUDE.md, etc.)
+                                            🔌 Pontes de IA para IDEs
                                         </span>
                                         <button type="button" class="ai-engine-help-btn mini" onclick="openAiEngineHelpModal()" title="Como funcionam as pontes de IA no disco?">?</button>
                                     </div>
                                     <span style="font-size: 10px; color: var(--text-tertiary); display: block; margin-top: 2px;">
-                                        Conecta este projeto à sua IDE para que o agente leia os contratos automaticamente
+                                        Conecta este projeto à sua IDE para leitura automática dos contratos
                                     </span>
                                 </div>
-                                <div style="display:flex; gap:6px;">
-                                    <button type="button" class="btn-gov" onclick="generateAiBridge('${d.name}', 'universal')" style="font-size: 10px; padding: 4px 10px;" title="Gera arquivos de pontes para todas as IDEs suportadas simultaneamente">
-                                        🌐 Todas as IDEs
+                                <div class="pw-bridges-actions">
+                                    <button type="button" class="btn-gov" onclick="generateAiBridge('${d.name}', 'universal')" style="font-size: 10px; padding: 4px 8px;" title="Gera arquivos de pontes para todas as IDEs suportadas simultaneamente">
+                                        🌐 Todas
                                     </button>
-                                    <button type="button" class="btn-gov" onclick="deleteAiBridge('${d.name}', 'universal', 'todas as pontes de IA')" style="font-size: 10px; padding: 4px 10px; color:#f87171; border-color:rgba(248,113,113,0.3);" title="Remove todos os arquivos de ponte deste projeto (mantendo os contratos intactos)">
-                                        🗑️ Limpar Todas
+                                    <button type="button" class="btn-gov" onclick="deleteAiBridge('${d.name}', 'universal', 'todas as pontes de IA')" style="font-size: 10px; padding: 4px 8px; color:#f87171; border-color:rgba(248,113,113,0.3);" title="Remove todos os arquivos de ponte deste projeto (mantendo os contratos intactos)">
+                                        🗑️ Limpar
+                                    </button>
+                                    <button type="button" class="btn-gov" onclick="togglePwBridgePrefixRow()" style="font-size: 10px; padding: 4px 8px;" title="Configurar prefixo customizado dos caminhos dentro das pontes">
+                                        📁 Prefixo ⚙️
                                     </button>
                                 </div>
                             </div>
-                            <!-- Chips das pontes existentes no projeto -->
-                            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;" id="pwBridgesList">
+                            <!-- Grid Uniforme 2 Colunas (Ativas no Topo) -->
+                            <div class="pw-bridges-grid" id="pwBridgesList">
                                 ${renderProjectBridgesChips(d.name)}
                             </div>
-                            <div style="display:flex; align-items:center; gap:8px; margin-top:10px; flex-wrap:wrap;">
-                                <label for="pwBridgePrefix" style="font-size:10px; color: var(--text-tertiary);" title="Prefixo dos caminhos escritos dentro das pontes. Vazio = projects/${d.name}/ (dentro do Hub). Para o repositório de código, use por exemplo docs/second-brain/">
+                            <div id="pwBridgePrefixRow" style="display:${(localStorage.getItem('brainBridgePrefix') || '').trim() ? 'flex' : 'none'}; align-items:center; gap:8px; margin-top:10px; flex-wrap:wrap; padding:8px 10px; background:rgba(15,23,42,0.55); border:1px solid rgba(148,163,184,0.16); border-radius:7px;">
+                                <label for="pwBridgePrefix" style="font-size:10.5px; color: var(--text-secondary);" title="Prefixo dos caminhos escritos dentro das pontes. Vazio = projects/${d.name}/ (dentro do Hub). Para o repositório de código, use por exemplo docs/second-brain/">
                                     📁 Prefixo dos caminhos nas pontes:
                                 </label>
-                                <input type="text" id="pwBridgePrefix" placeholder="projects/${d.name}/ (padrão)" value="${(localStorage.getItem('brainBridgePrefix') || '').replace(/"/g, '&quot;')}" onchange="localStorage.setItem('brainBridgePrefix', this.value.trim())" style="flex:1; min-width:180px; font-size:11px; padding:4px 8px; background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.12); border-radius:6px; color: inherit;">
+                                <input type="text" id="pwBridgePrefix" placeholder="projects/${d.name}/ (padrão)" value="${(localStorage.getItem('brainBridgePrefix') || '').replace(/"/g, '&quot;')}" onchange="localStorage.setItem('brainBridgePrefix', this.value.trim())" style="flex:1; min-width:180px; font-size:11px; padding:5px 8px; background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.14); border-radius:6px; color: inherit;">
                             </div>
                         </div>
                     </div>

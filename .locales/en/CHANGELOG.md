@@ -15,7 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   - **Semantic Highlight Pills (*Tech & Domain Highlights*)**: bold and inline code terms receive high-contrast pill styling for instant visual scanning.
   - **Dual-Layer Hierarchy**: automatic visual separation between the **Business Value Proposition** (lead) and the **Technical/Architectural Summary** (`⚙️`).
 - **Clean Quick-Edit Input with Tag Preservation in `.md`**:
-  - Opening **Quick Edit** strips raw `<strong>` tags from the plain `<textarea>` input while automatically preserving/restoring the original tags in `PROJECT.md` upon saving.
+  - Opening **Quick Edit** (now with doubled vertical textarea height) strips raw `<strong>` tags from the plain `<textarea>` input while automatically preserving/restoring the original tags in `PROJECT.md` upon saving.
+  - **Standardized Tech Stack Selector**: Quick Edit now uses the same categorized stack dropdown as Quickstart Studio (including custom stack support).
+- **AI IDE Bridges UX/UI Redesign & Sidebar Tree Alignment (`app.js` and `style.css`)**:
+  - **2-Column Uniform Grid (Active First)**: active bridges (`✓`) automatically sort to the top, displaying both IDE name and filename badge, compact header actions, on-demand path prefix toggle (`📁 Prefix ⚙️`), and a shimmering golden `?` help badge.
+  - **Sidebar Tree Alignment**: project folders now align vertically with `📖 Projects Guide`, gaining +24px of horizontal space for labels.
 - **HTML-Resilient Stack Extraction (`app.js` and `server.js`)**:
   - Detects tech stacks written with inline `<strong>` tags in prose (e.g. *"developed in `<strong>Node.js</strong>` with `<strong>TypeScript</strong>`"* ➔ `Node.js / TypeScript`) and falls back to `CURRENT_STATE.md`.
 
