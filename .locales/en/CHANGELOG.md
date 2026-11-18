@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [1.5.5] — 2026-11-17
+
+### 🐛 Quickstart Grill Fixes & Resilient Tech Stack Detection
+- **Quickstart Grill Bridge Generation Fix (`scripts/quickstart-grill.js`)**:
+  - Fixed a variable scoping issue in atomic project commitment (`commitProject`) that halted the bridge generation engine (`writeBridges`), ensuring new projects created via technical interview generate the active AI bridge configured in `brain.config.json` (e.g., `.github/copilot-instructions.md`).
+- **Guaranteed Metadata & Resilient Stack Parser (`quickstart-grill.js` and `server.js`)**:
+  - Automatically injects canonical `## Informações Gerais` section with `- **Stack Tecnológica**: <stack>` into AI-synthesized `PROJECT.md`.
+  - Added resilient multi-pattern parser in `/api/projects/:name/details` to identify tech stacks across bullets, Markdown tables, inline prose (e.g., *"desenvolvido em C# / .NET 8"*), and fallback in `ARCHITECTURE.md`, resolving "Unspecified" badge issues.
+
 ## [1.5.4] — 2026-11-17
 
 ### 🧭 Active Bridge Governance via System Architecture & Update Detection

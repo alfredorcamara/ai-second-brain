@@ -7,6 +7,15 @@ e este projeto adere ao [Versionamento Semântico (SemVer)](https://semver.org/l
 
 ---
 
+## [1.5.5] — 2026-11-17
+
+### 🐛 Correções no Quickstart Grill & Detecção Resiliente de Stack
+- **Correção na Geração de Pontes do Quickstart Grill (`scripts/quickstart-grill.js`)**:
+  - Corrigida referência de escopo de variável na gravação atômica (`commitProject`) que impedia a execução do motor de pontes (`writeBridges`), garantindo que projetos criados via sabatina técnica nasçam com a ponte de IA ativa configurada em `brain.config.json` (ex.: `.github/copilot-instructions.md`).
+- **Garantia de Metadados e Detecção Resiliente de Stack (`quickstart-grill.js` e `server.js`)**:
+  - Injeção automática da seção canônica `## Informações Gerais` com `- **Stack Tecnológica**: <stack>` no `PROJECT.md` gerado pela IA.
+  - Parser resiliente em `/api/projects/:name/details` para reconhecer stack em múltiplos formatos (bullets, tabelas Markdown, texto corrido em prosa como *"desenvolvido em C# / .NET 8"* e fallback no `ARCHITECTURE.md`), eliminando a exibição indevida de "Não especificada".
+
 ## [1.5.4] — 2026-11-17
 
 ### 🧭 Governança Ativa de Pontes por Arquitetura do Sistema & Detecção de Atualizações

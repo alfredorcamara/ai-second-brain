@@ -6301,7 +6301,8 @@ async function commitGrillProject() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 ...currentGrillProjectInfo,
-                contracts: currentGrillDraft
+                contracts: currentGrillDraft,
+                activeEngine: (typeof getSelectedAiEngine === 'function') ? getSelectedAiEngine() : null
             })
         });
         const data = await res.json();

@@ -862,18 +862,46 @@ External repository linked to AI Second Brain.
                 countFiles(projectDir);
             } catch (e) { }
 
-            // Extração de metadados do PROJECT.md
+            // Extração resiliente de metadados do PROJECT.md e contratos de governança
             let stack = 'Não especificada';
             let status = 'Ativo';
             let description = 'Projeto no AI Second Brain';
 
+            // 1. Padrão bullet em PROJECT.md (- **Stack**: ou - **Stack Tecnológica**: ou - **Stack Inicial**:)
             const stackMatch = projectMd.match(/-\s+\*\*Stack[^*]*\*\*:\s*([^\r\n]+)/i);
-            if (stackMatch) stack = stackMatch[1].trim();
+            if (stackMatch) {
+                stack = stackMatch[1].trim();
+            } else {
+                // 2. Padrão tabela em PROJECT.md (| **Stack** | C# |)
+                const tableMatch = projectMd.match(/\|\s*\*\*Stack[^*]*\*\*\s*\|\s*([^|\r\n]+)\|/i);
+                if (tableMatch) {
+                    stack = tableMatch[1].trim();
+                } else {
+                    // 3. Padrão texto corrido em PROJECT.md: "desenvolvido em C# / .NET 8, utilizando..."
+                    const textMatch = projectMd.match(/(?:desenvolvido|implementado|constru[íi]do)\s+em\s+([A-Za-z0-9_#\+\.\/\s\-]+?)(?:\.\s|\.\r?\n|,|\s+utilizando|\s+sobre|\s+com\s+banco|\r?\n|$)/i);
+                    if (textMatch) {
+                        stack = textMatch[1].trim();
+                    } else if (hasArchitecture) {
+                        // 4. Fallback no ARCHITECTURE.md
+                        try {
+                            const archFile = path.join(projectDir, 'ARCHITECTURE.md');
+                            const archContent = fs.readFileSync(archFile, 'utf-8');
+                            const archStack = archContent.match(/-\s+\*\*(?:Linguagem\s*\/\s*Framework|Stack[^*]*)\*\*:\s*([^\r\n]+)/i);
+                            if (archStack) stack = archStack[1].trim();
+                        } catch (_) { }
+                    }
+                }
+            }
 
-            const statusMatch = projectMd.match(/-\s+\*\*Status\*\*:\s*([^\r\n]+)/i);
+            // Status (bullet, tabela ou cabeçalho)
+            const statusMatch = projectMd.match(/-\s+\*\*Status\*\*:\s*([^\r\n]+)/i) ||
+                                projectMd.match(/\|\s*\*\*Status\*\*\s*\|\s*([^|\r\n]+)\|/i) ||
+                                projectMd.match(/##\s+Status:\s*([^\r\n]+)/i);
             if (statusMatch) status = statusMatch[1].trim();
 
-            const overviewMatch = projectMd.match(/##\s+Visão Geral\s*\n+([^\n#]+)/i);
+            // Descrição / Visão Geral
+            const overviewMatch = projectMd.match(/##\s+(?:1\.\s+)?Visão Geral[^\r\n]*\r?\n+([^\n#]+)/i) ||
+                                  projectMd.match(/\|\s*1\.\s+Visão Geral Executiva[^\r\n]*\r?\n+([^\n#]+)/i);
             if (overviewMatch) description = overviewMatch[1].trim();
 
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });

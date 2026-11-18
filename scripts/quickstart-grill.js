@@ -621,6 +621,7 @@ RESPOSTAS DA SABATINA:
 ${formattedQA || 'Nenhuma resposta adicional.'}
 
 DIRETRIZES DE SÍNTESE:
+- Informações Gerais (MANDATÓRIO): inclua a seção '## Informações Gerais' com '- **Tipo**: Greenfield / Projeto Novo', '- **Stack Tecnológica**: ${stack}', '- **Status**: 🟢 Em Planejamento / Ativo' e '- **Data de Criação**: ${today}'.
 - Visão Geral Executiva, Objetivos e Proposta de Valor.
 - Escopo Funcional do MVP (Mapeamento Exaustivo dos RFs): transcreva e detalhe TODOS os Requisitos Funcionais extraídos do anexo (RF-001 a RF-012 ou mais). Para cada um, forneça descrição detalhada e critérios de funcionamento. NÃO resuma em bullets vagos!
 - Regras de Negócio Fundamentais (RNs): transcreva as principais regras (RN-001 a RN-020: unicidade de CPF/CNPJ, validações de dígitos, inativação lógica, fuso UTC, concorrência otimista, idempotência).
@@ -1134,14 +1135,28 @@ function commitProject(rootDir, projectInfo, contracts, options = {}) {
     }
 
     // 1. PROJECT.md
-    let projectContent = (contracts && contracts.projectMd) || `# ${safeName}
+    let projectContent = contracts && contracts.projectMd;
+    if (projectContent) {
+        // Se o rascunho sintetizado não contiver o bloco padrão de metadados, injeta com a stack selecionada
+        if (!/-\s+\*\*Stack/i.test(projectContent) && !/\|\s*\*\*Stack/i.test(projectContent)) {
+            const metaBlock = `\n## Informações Gerais\n- **Tipo**: Greenfield / Projeto Novo\n- **Stack Tecnológica**: ${stack}\n- **Status**: 🟢 Em Planejamento / Ativo\n- **Data de Criação**: ${today}\n`;
+            const titleMatch = projectContent.match(/^#[^\r\n]+/m);
+            if (titleMatch) {
+                const idx = titleMatch.index + titleMatch[0].length;
+                projectContent = projectContent.slice(0, idx) + '\n' + metaBlock + projectContent.slice(idx);
+            } else {
+                projectContent = `# ${safeName}\n` + metaBlock + '\n' + projectContent;
+            }
+        }
+    } else {
+        projectContent = `# ${safeName}
 
 ## Visão Geral
 ${description}
 
 ## Informações Gerais
 - **Tipo**: Greenfield / Projeto Novo
-- **Stack Inicial**: ${stack}
+- **Stack Tecnológica**: ${stack}
 - **Status**: 🟢 Em Planejamento / Ativo
 - **Data de Criação**: ${today}
 
@@ -1152,6 +1167,7 @@ ${description}
 - Decisões Técnicas: \`DECISIONS/\`
 - Memória de Sessões: \`MEMORY/sessions/\`
 `;
+    }
 
     if (specsListMd && !projectContent.includes('## Especificações')) {
         projectContent += `\n## Especificações & Requisitos de Origem (SPECS)\n${specsListMd}`;
@@ -1250,7 +1266,8 @@ Thumbs.db
     fs.writeFileSync(path.join(targetFolder, 'ARCHITECTURE.md'), archContent, 'utf-8');
     fs.writeFileSync(path.join(targetFolder, 'DECISIONS', 'ADR-0001-stack-inicial.md'), adrContent, 'utf-8');
     fs.writeFileSync(path.join(targetFolder, 'LESSONS_LEARNED.md'), lessonsContent, 'utf-8');
-    writeBridges({ projectDir: targetFolder, projectName: safeName, rootDir: rootDir, tools: (projectInfo && projectInfo.tools) || (opts && opts.tools) });
+    const targetTools = (projectInfo && projectInfo.tools) || (options && options.tools) || (projectInfo && projectInfo.activeEngine ? [projectInfo.activeEngine] : null);
+    writeBridges({ projectDir: targetFolder, projectName: safeName, rootDir: rootDir, tools: targetTools });
     fs.writeFileSync(path.join(targetFolder, '.gitignore'), gitignoreContent, 'utf-8');
 
     // 8. git init opcional
