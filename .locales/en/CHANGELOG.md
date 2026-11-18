@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - **Rich Rendering of Legitimate Inline Tags (`<strong>`, `<b>`, `<em>`, `<i>`, `<code>`, `<br>`) in Overview Card (`app.js` and `style.css`)**:
   - The **Project Goal** card now recognizes and renders legitimate HTML formatting tags alongside inline Markdown (with full XSS protection and preserving the raw `.md` file untouched on disk for preview and editing).
   - **Semantic Highlight Pills (*Tech & Domain Highlights*)**: bold and inline code terms receive high-contrast pill styling for instant visual scanning.
-  - **Dual-Layer Hierarchy**: automatic visual separation between the **Business Value Proposition** (lead) and the **Technical/Architectural Summary** (`⚙️`), plus a quick `✏️ Edit` hover button.
+  - **Dual-Layer Hierarchy**: automatic visual separation between the **Business Value Proposition** (lead) and the **Technical/Architectural Summary** (`⚙️`).
 - **Clean Quick-Edit Input with Tag Preservation in `.md`**:
   - Opening **Quick Edit** strips raw `<strong>` tags from the plain `<textarea>` input while automatically preserving/restoring the original tags in `PROJECT.md` upon saving.
 - **HTML-Resilient Stack Extraction (`app.js` and `server.js`)**:

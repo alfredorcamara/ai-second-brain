@@ -7486,10 +7486,7 @@ function renderProjectOverviewTab() {
                 ` : `
                     <!-- Box da Visão Geral / Missão do Sistema -->
                     <div class="pw-vision-box">
-                        <div class="pw-vision-header">
-                            <div class="pw-vision-title">Objetivo do Projeto</div>
-                            <button type="button" class="pw-vision-edit-btn" onclick="toggleOverviewQuickEdit(true)" title="Edição rápida do objetivo, stack e status">✏️ Editar</button>
-                        </div>
+                        <div class="pw-vision-title">Objetivo do Projeto</div>
                         <div class="pw-vision-text">${visionText}</div>
                     </div>
 

@@ -7978,43 +7978,13 @@ body {
     box-shadow: 0 4px 18px rgba(15, 23, 42, 0.35);
 }
 
-.pw-vision-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 6px;
-}
-
 .pw-vision-title {
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--accent-tertiary);
-    margin-bottom: 0;
-}
-
-.pw-vision-edit-btn {
-    opacity: 0;
-    background: rgba(99, 102, 241, 0.14);
-    border: 1px solid rgba(99, 102, 241, 0.32);
-    color: #c7d2fe;
-    font-size: 10.5px;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: opacity 0.18s ease, background 0.18s ease, transform 0.18s ease;
-}
-
-.pw-vision-box:hover .pw-vision-edit-btn,
-.pw-vision-edit-btn:focus-visible {
-    opacity: 1;
-}
-
-.pw-vision-edit-btn:hover {
-    background: rgba(99, 102, 241, 0.28);
-    color: #ffffff;
+    margin-bottom: 6px;
 }
 
 .pw-vision-text {
