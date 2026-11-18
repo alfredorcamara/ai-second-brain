@@ -8495,6 +8495,7 @@ body {
 
 .pw-form-textarea {
     width: 100%;
+    min-height: 200px;
     background: rgba(13, 14, 23, 0.9);
     border: 1px solid rgba(99, 102, 241, 0.3);
     border-radius: 8px;

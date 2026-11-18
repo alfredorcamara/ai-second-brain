@@ -7454,7 +7454,7 @@ function renderProjectOverviewTab() {
                     <div class="pw-edit-form-wrap">
                         <div class="pw-form-group">
                             <label class="pw-form-label">Objetivo / Missão do Projeto</label>
-                            <textarea id="pwEditVision" class="pw-form-textarea" rows="4" placeholder="Descreva os objetivos principais deste projeto...">${visionInputText}</textarea>
+                            <textarea id="pwEditVision" class="pw-form-textarea" rows="9" placeholder="Descreva os objetivos principais deste projeto...">${visionInputText}</textarea>
                         </div>
 
                         <div class="pw-form-row">
